@@ -1,0 +1,14 @@
+{
+  "sourceLanguage" : "it",
+  "strings" : {
+    "Esci" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Quit" } }
+      }
+    },
+    "IAGO" : {
+      "shouldTranslate" : false
+    }
+  },
+  "version" : "1.0"
+}

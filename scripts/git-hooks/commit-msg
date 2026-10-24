@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# Installed by scripts/bootstrap.sh (core.hooksPath). No AI attribution in commits (ADR-0065).
+if grep -i -q -E '^co-authored-by:.*(claude|anthropic)|generated with .*claude' "$1"; then
+  echo "✘ Commit blocked: no Claude co-author or \"Generated with Claude\" line (ADR-0065)." >&2
+  exit 1
+fi

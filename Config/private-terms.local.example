@@ -1,0 +1,6 @@
+# Copy to Config/private-terms.local (ignored by git) and list, one per line, the real names that must never be
+# committed: people, clients, companies, email domains. scripts/check-private-data.sh blocks any commit containing them
+# (whole words, case ignored). Lines starting with # are comments.
+# Example (invented):
+# Mario Verdi
+# acme-reale.it

@@ -1,0 +1,46 @@
+# Local spec and addendum (not versioned, see CLAUDE.md)
+IAGO-spec.md
+IAGO-spec-addendum.md
+HANDOVER.md
+docs/specs/
+
+# Audio and media (never commit recordings)
+*.m4a
+*.wav
+*.caf
+*.mp3
+*.aiff
+*.mp4
+*.mov
+
+# Models
+Models/
+*.bin
+*.mlmodelc/
+*.mlpackage/
+
+# Generated fixtures
+fixtures/generated/
+
+# Real recordings and their transcripts (never commit)
+test-recordings/
+bench-out/
+
+# Xcode / SwiftPM
+*.xcodeproj
+*.xcworkspace
+DerivedData/
+.build/
+.swiftpm/
+build/
+xcuserdata/
+
+# Local config and secrets
+Config/Local.xcconfig
+Config/private-terms.local
+.env
+.env.*
+
+# macOS
+.DS_Store
+dist/

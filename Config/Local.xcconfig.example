@@ -1,0 +1,3 @@
+// Copy to Config/Local.xcconfig (ignored by git) and set your Apple Development team ID.
+// Find it with: security find-identity -v -p codesigning   (the value in parentheses)
+DEVELOPMENT_TEAM = XXXXXXXXXX

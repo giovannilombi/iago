@@ -1,0 +1,142 @@
+name: IAGO
+options:
+  bundleIdPrefix: com.giovannilombi
+  deploymentTarget:
+    macOS: "15.0"
+  developmentLanguage: it
+  createIntermediateGroups: true
+configFiles:
+  Debug: Config/Base.xcconfig
+  Release: Config/Base.xcconfig
+packages:
+  IAGOCore:
+    path: Packages/IAGOCore
+  IAGOStore:
+    path: Packages/IAGOStore
+  IAGOCapture:
+    path: Packages/IAGOCapture
+  IAGOTranscription:
+    path: Packages/IAGOTranscription
+  IAGOExport:
+    path: Packages/IAGOExport
+  IAGOIngest:
+    path: Packages/IAGOIngest
+  IAGOSync:
+    path: Packages/IAGOSync
+  IAGOIntelligence:
+    path: Packages/IAGOIntelligence
+  IAGOMCP:
+    path: Packages/IAGOMCP
+  IAGOEngine:
+    path: Packages/IAGOEngine
+  # Local engine (ADR-0048): MLX and the tokenizers, only in the app target (App/Sources/Engine).
+  MLXSwiftLM:
+    url: https://github.com/ml-explore/mlx-swift-lm
+    exactVersion: 3.32.3
+  SwiftTransformers:
+    url: https://github.com/huggingface/swift-transformers
+    exactVersion: 1.3.4
+  # Updates from GitHub Releases, signed with EdDSA (ADR-0056).
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.10.0
+targets:
+  iago-mcp:
+    # MCP server for Claude (ADR-0043), bundled in IAGO.app/Contents/MacOS.
+    type: tool
+    platform: macOS
+    sources:
+      - Packages/IAGOMCP/Sources/iago-mcp
+    dependencies:
+      - package: IAGOMCP
+      - package: IAGOStore
+    settings:
+      base:
+        PRODUCT_NAME: iago-mcp
+        PRODUCT_BUNDLE_IDENTIFIER: com.giovannilombi.iago.mcp
+        SKIP_INSTALL: YES
+  IAGO:
+    type: application
+    platform: macOS
+    sources:
+      - App/Sources
+      - path: App/Resources
+        excludes:
+          - "AppIcon.icon"
+          - "AppIcon.icon/**"
+          - "Guide"
+          - "Guide/**"
+      # The user guide (chapters in Markdown and screenshots), kept as a folder in the bundle.
+      - path: App/Resources/Guide
+        type: folder
+        buildPhase: resources
+      # Icon Composer icon (macOS 26+ notifications and Dock use it; the asset catalog stays for older systems).
+      - path: App/Resources/AppIcon.icon
+        type: file
+        buildPhase: resources
+    dependencies:
+      - package: IAGOCore
+      - package: IAGOStore
+      - package: IAGOCapture
+      - package: IAGOTranscription
+      - package: IAGOExport
+      - package: IAGOIngest
+      - package: IAGOSync
+      - package: IAGOIntelligence
+      - package: IAGOEngine
+      - package: MLXSwiftLM
+        product: MLXLLM
+      - package: MLXSwiftLM
+        product: MLXLMCommon
+      - package: MLXSwiftLM
+        product: MLXEmbedders
+      - package: SwiftTransformers
+        product: Tokenizers
+      - package: Sparkle
+      - target: iago-mcp
+        embed: true
+        codeSign: true
+        copy:
+          destination: executables
+    settings:
+      base:
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    info:
+      path: App/Info.plist
+      properties:
+        CFBundleDisplayName: IAGO
+        CFBundleShortVersionString: "1.0.0-beta"
+        CFBundleVersion: "1"
+        LSUIElement: true
+        LSApplicationCategoryType: public.app-category.productivity
+        # Updates (ADR-0056): the feed of the latest GitHub release, signed with this EdDSA key.
+        SUFeedURL: https://github.com/giovannilombi/iago/releases/latest/download/appcast.xml
+        SUPublicEDKey: IheUfF6tY0qHLwq9W+0OPTy+ZvjrnP2352KnCpq00/I=
+        SUEnableAutomaticChecks: true
+        SUScheduledCheckInterval: 86400
+        SUAllowsAutomaticUpdates: false
+        # ADR-0049: "Aggiungi a IAGO" in the Services menu (ServiceProvider.addToIAGO).
+        NSServices:
+          - NSMessage: addToIAGO
+            NSPortName: IAGO
+            NSMenuItem:
+              default: Aggiungi a IAGO
+            NSSendTypes:
+              - NSStringPboardType
+              - public.utf8-plain-text
+            NSRequiredContext: {}
+        NSMicrophoneUsageDescription: IAGO registra la tua voce durante le call per trascriverla in locale.
+        NSAudioCaptureUsageDescription: IAGO registra l'audio delle call per trascriverlo in locale. Nulla lascia il tuo Mac.
+        NSCalendarsFullAccessUsageDescription: IAGO legge il Calendario solo per dare il titolo alle call che registri e ricordarti di registrarle. Nulla lascia il tuo Mac.
+    entitlements:
+      path: App/IAGO.entitlements
+      properties:
+        com.apple.security.device.audio-input: true
+        com.apple.security.personal-information.calendars: true
+schemes:
+  IAGO:
+    build:
+      targets:
+        IAGO: all
+    run:
+      config: Debug

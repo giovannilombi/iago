@@ -1,0 +1,19 @@
+name: Engine (manual)
+
+# The MLX adapter needs Metal shaders, which `swift test` cannot build (ADR-0048). A full app build costs ~100 of the
+# 2,000 free minutes (macOS counts 10x), so this runs only when started by hand; locally: scripts/test-engine.sh.
+on:
+  workflow_dispatch:
+
+jobs:
+  engine:
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tools
+        run: |
+          brew install xcodegen
+          xcodebuild -downloadComponent MetalToolchain
+      - name: Build with MLX
+        run: CODE_SIGNING_ALLOWED=NO scripts/test-engine.sh
