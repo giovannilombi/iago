@@ -249,7 +249,7 @@ Prove su call reali: [`docs/benchmarks/2026-10-21-sintesi-e-glossario.md`](docs/
 - **Aggiornamenti firmati** EdDSA: IAGO installa solo versioni firmate dalla stessa chiave.
 
 ## Le decisioni di progetto
-Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 67 finora, con contesto, alternative scartate e conseguenze. Alcune:
+Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 68 finora, con contesto, alternative scartate e conseguenze. Alcune:
 
 | ADR | Decisione | Perché |
 |---|---|---|
@@ -284,6 +284,7 @@ scripts/install-app.sh        # Release firmata installata in /Applications
 scripts/release.sh 1.2.0 --notes "…" --github   # release firmata, appcast Sparkle, GitHub Release
 ```
 - **Serve:** Xcode con Swift 6, XcodeGen e un Apple ID (anche gratuito) per la firma. Il Team ID va in `Config/Local.xcconfig` (vedi `Config/Local.xcconfig.example`).
+- **Sito di documentazione:** VitePress in `docs/`, con la guida presa da `App/Resources/Guide` (`npm run docs:dev`); sarà su [giovannilombi.github.io/iago](https://giovannilombi.github.io/iago/) quando il repository diventerà pubblico.
 - **Per collaborare:** [`README-collaborators.md`](README-collaborators.md) spiega regole, documenti, stato degli ADR, prove e come lavorare con Claude Code.
 - **Convenzioni:**
   - un branch per funzione;

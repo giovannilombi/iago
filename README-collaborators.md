@@ -20,7 +20,8 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 | [`docs/stato.md`](docs/stato.md) | **Il punto di ripartenza**: versione, cosa è aperto, ultime modifiche | Alla fine di ogni lavoro, nella stessa PR |
 | [`docs/adr/`](docs/adr/README.md) | Le decisioni (ADR), con contesto, alternative e conseguenze; l'indice ha lo stato di ognuna | Per ogni decisione nuova o cambiata |
 | [`docs/prove-tester.md`](docs/prove-tester.md) | Le prove manuali, in ordine, pensate per chi non conosce l'app | A ogni funzione nuova o modificata |
-| [`App/Resources/Guide/`](App/Resources/Guide) | La guida dentro l'app (capitoli in Markdown, screenshot in `img/`) | A ogni modifica visibile all'utente |
+| [`App/Resources/Guide/`](App/Resources/Guide) | La guida dentro l'app (capitoli in Markdown, screenshot in `img/`); è anche la guida del sito | A ogni modifica visibile all'utente |
+| `docs/index.md`, `docs/installazione.md`, `docs/scorciatoie.md`, `docs/problemi-e-log.md` | Le pagine solo del sito di documentazione (ADR-0068) | Quando cambiano requisiti, installazione, permessi, scorciatoie o log |
 | [`docs/licenses.md`](docs/licenses.md) | Dipendenze e modelli, con versioni e licenze | A ogni dipendenza o modello nuovo |
 | [`docs/design/`](docs/design) | Progetti di funzioni ancora da decidere (es. la condivisione) | Durante la discussione |
 | [`docs/benchmarks/`](docs/benchmarks) | Misure di velocità e qualità (solo numeri, mai contenuti delle call) | A ogni misura nuova |
@@ -76,12 +77,13 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 4. `git config user.name` e `git config user.email` con l'indirizzo che deve comparire nei commit; deve essere quello scritto in `Config/team.txt`.
 5. `scripts/bootstrap.sh`: installa i controlli di git e genera `IAGO.xcodeproj` (il progetto Xcode non si committa: si cambia `project.yml`).
 6. `scripts/test-packages.sh` per i test, `scripts/install-app.sh` per installare la propria build in `/Applications`.
+7. Per il sito di documentazione serve Node.js (`brew install node`): `npm install`, poi `npm run docs:dev` (anteprima con ricarica automatica su `http://localhost:5173/iago/`) o `npm run docs:build`.
 
 Comandi utili, con la spiegazione, nel README › Sviluppo e in `CLAUDE.md` › Comandi.
 
 ## 5. Stato degli ADR
 L'indice completo con lo stato è in [`docs/adr/README.md`](docs/adr/README.md). Oggi:
-- **Accettati e fatti:** da 0001 a 0066, tranne quelli sotto.
+- **Accettati e fatti:** da 0001 a 0068, tranne quelli sotto. Il sito di 0068 è pronto ma andrà online solo con il repository pubblico.
 - **Da decidere:**
   - **0057**, progetti condivisi tramite una cartella cloud: è il cuore della fase 4. Quando viene accettato, supera il backend di 0012 (sincronizzazione su Cloudflare).
   - **0067**, MiniCPM al posto di Qwen 3.5 4B o in aggiunta: servono le prove descritte nell'ADR.
@@ -104,7 +106,12 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 - Claude propone, le persone decidono: commit, push, PR e merge solo con l'OK di chi lavora; per le scelte che cambiano il prodotto si scrive o si aggiorna un ADR.
 - Alla fine di ogni lavoro: aggiornare `docs/stato.md`, e se è cambiato qualcosa nel modo di lavorare, questa guida o `CLAUDE.md`.
 
-## 8. Fare una release
+## 8. Il sito di documentazione
+- È fatto con VitePress (ADR-0068) e sarà su `https://giovannilombi.github.io/iago/`. GitHub Free non pubblica siti di repository privati, quindi andrà online quando il repository diventerà pubblico; fino ad allora si guarda in locale con `npm run docs:dev`.
+- La guida del sito **non si scrive due volte**: viene copiata dai capitoli dell'app (`App/Resources/Guide`). Si modifica lì.
+- I documenti interni (ADR, stato, prove, progetti, benchmark) restano fuori dal sito.
+
+## 9. Fare una release
 - La versione è in `project.yml`. Le beta si chiamano `1.0.0-beta.2`, `1.0.0-beta.3`…; la 1.0.0 sarà la prima distribuibile.
 - `scripts/release.sh <versione> --notes "…" --github` compila, firma l'archivio per Sparkle (la chiave è nel Portachiavi di Giovanni) e pubblica la release. Funziona solo con il repository pubblico, cioè quando si decide di distribuire.
 - A ogni release si aggiorna la tabella Versioni del README.

@@ -1,0 +1,29 @@
+/* IAGO's colours: the parrot's yellow and red on a deep green. */
+:root {
+  --vp-c-brand-1: #b08600;
+  --vp-c-brand-2: #c99a00;
+  --vp-c-brand-3: #fdc201;
+  --vp-home-hero-name-color: transparent;
+  --vp-home-hero-name-background: linear-gradient(120deg, #fdc201 30%, #da2124);
+  --vp-home-hero-image-background-image: linear-gradient(135deg, rgba(253, 194, 1, 0.35), rgba(218, 33, 36, 0.35));
+  --vp-home-hero-image-filter: blur(56px);
+}
+.dark {
+  --vp-c-brand-1: #fdc201;
+  --vp-c-brand-2: #e8b100;
+  --vp-c-brand-3: #c99a00;
+  --vp-c-bg: #0d1714;
+  --vp-c-bg-alt: #0a120f;
+  --vp-c-bg-soft: #13211c;
+}
+/* The menu bar icon inside sentences, as in the app's guide. */
+.vp-doc img[alt='icona di IAGO'] {
+  display: inline;
+  height: 1.15em;
+  vertical-align: -0.2em;
+  margin: 0 0.1em;
+}
+.vp-doc img:not([alt='icona di IAGO']) {
+  border-radius: 10px;
+  border: 1px solid var(--vp-c-divider);
+}

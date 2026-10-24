@@ -20,7 +20,7 @@ App macOS nativa in menu bar: registra le call su due tracce (sistema + mic), tr
 - Versione: **1.0.0-beta** finché l'utente non decide di distribuire; poi 1.0.0. Repository `giovannilombi/iago` privato fino ad allora; la storia completa è in `giovannilombi/iago-archivio`.
 - Nessun servizio a pagamento (GitHub Free, Apple ID gratuito).
 - **README.md**: si aggiorna a ogni nuova versione (tabella *Versioni*, numeri, funzioni, motori) e a ogni modifica che cambia ciò che descrive. Anche `docs/licenses.md` a ogni dipendenza o modello nuovo.
-- **Guida** (`App/Resources/Guide/*.md`, immagini in `Guide/img`): va aggiornata a ogni modifica visibile all'utente, insieme a `docs/prove-tester.md`. Screenshot solo da un archivio dimostrativo, mai con dati reali.
+- **Guida** (`App/Resources/Guide/*.md`, immagini in `Guide/img`): va aggiornata a ogni modifica visibile all'utente, insieme a `docs/prove-tester.md`. È anche la fonte del sito di documentazione (ADR-0068): le pagine solo del sito (`docs/index.md`, `installazione.md`, `scorciatoie.md`, `problemi-e-log.md`) si aggiornano quando cambiano requisiti, permessi, scorciatoie o log. Screenshot solo da un archivio dimostrativo, mai con dati reali.
 - **Attività** (`ActivityView.swift`, ADR-0055): ogni nuovo lavoro lungo (coda, motore, download, import, export) deve comparire lì, con percentuale quando si può.
 - **Impostazioni › Permessi** (`PermissionsViews.swift`) va aggiornata a ogni modifica che richiede un nuovo permesso macOS, un'attivazione in un'altra app o un componente da scaricare: checklist, percorso guidato e attivazione della singola voce.
 
@@ -70,6 +70,7 @@ Rispettare il grafo: nessuna dipendenza fuori da quelle elencate.
 ## Comandi
 - `scripts/bootstrap.sh` — installa gli hook di git (dati reali, co-autore) e genera `IAGO.xcodeproj` con XcodeGen (il `.xcodeproj` non si committa e non si modifica a mano: si cambia `project.yml`).
 - `scripts/test-packages.sh` — `swift test` su tutti i package.
+- `npm install` poi `npm run docs:dev` / `npm run docs:build` — sito di documentazione VitePress (ADR-0068); la build fallisce sui link rotti.
 - `scripts/release.sh x.y.z --notes "…" --github` — release firmata, appcast Sparkle e pubblicazione su GitHub (ADR-0056).
 - `scripts/test-engine.sh` — build con MLX (shader Metal, fuori dalla CI automatica): prima di ogni PR che tocca il motore.
 - `xcodebuild -project IAGO.xcodeproj -scheme IAGO build` — build dell'app (richiede Xcode e firma).

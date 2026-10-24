@@ -1,51 +1,70 @@
 # Installare IAGO
 
-Guida per chi riceve IAGO. Bastano 10 minuti.
+Bastano una decina di minuti, compresa la configurazione guidata.
 
-Serve:
-- un Mac con Apple Silicon (M1 o successivi) e macOS 15 o più recente;
-- circa 5 GB liberi: 1,6 GB per la trascrizione, da 2 a 7 GB se vuoi il motore per sintesi e Chiedi.
+## Requisiti
+
+| | Minimo | Consigliato |
+|---|---|---|
+| Mac | Apple Silicon (M1 o successivi) | M2 o successivi |
+| macOS | 15 Sequoia | l'ultima versione |
+| Memoria (RAM) | 8 GB | 16 GB per le sintesi, 32 GB per il motore più grande |
+| Spazio libero | 2 GB (app e trascrizione) | da 5 a 10 GB con il motore locale |
+
+- **Trascrizione:** i modelli occupano circa 1,6 GB e si scaricano durante la configurazione guidata.
+- **Motore locale** (facoltativo, per sintesi, proposte e Chiedi): da 2 a 7 GB a seconda del modello. Le sintesi richiedono almeno Qwen 3.5 9B.
+- **Cuffie:** non obbligatorie, ma senza cuffie il microfono sente anche le casse.
 
 ## 1. Copiare l'app
-1. Apri il file ricevuto (`IAGO-x.y.z.zip`) e trascina **IAGO** nella cartella **Applicazioni**.
-2. Apri IAGO da Applicazioni.
+1. Scarica `IAGO-x.y.z.zip` dalla [pagina delle release](https://github.com/giovannilombi/iago/releases/latest) e aprilo.
+2. Trascina **IAGO** nella cartella **Applicazioni** e aprilo da lì.
 
-## 2. "Apri comunque" (solo la prima volta)
-IAGO non è distribuito tramite l'App Store e non è notarizzato da Apple (serve un account a pagamento). Al primo avvio macOS lo blocca con un messaggio del tipo «Impossibile verificare…».
-1. Premi **Fine** (non "Sposta nel cestino").
+## 2. "Apri comunque" (Gatekeeper, solo la prima volta)
+IAGO non è distribuito tramite l'App Store e non è notarizzato da Apple, perché la notarizzazione richiede un account a pagamento. L'app è comunque firmata. Al primo avvio macOS la blocca con un messaggio del tipo «Impossibile verificare che "IAGO" non contenga malware».
+
+1. Premi **Fine**, non "Sposta nel cestino".
 2. Apri **Impostazioni di Sistema › Privacy e sicurezza**, scorri fino a **Sicurezza** e premi **Apri comunque** accanto a IAGO.
-3. Conferma con la password o con Touch ID, poi **Apri**.
+3. Conferma con la password o con Touch ID, poi premi **Apri**.
 
-Dopo la prima volta IAGO si apre normalmente.
+Dopo la prima volta IAGO si apre normalmente, anche dopo gli aggiornamenti.
+
+::: tip Perché non è nell'App Store
+Le app dell'App Store devono stare in una sandbox, che non permette di registrare l'audio delle altre app. IAGO ha bisogno di sentire l'audio di Teams, Zoom e Meet per registrare la tua call.
+:::
 
 ## 3. Configurazione guidata
-Al primo avvio IAGO ti guida:
-- nome;
-- microfono;
-- prova dell'audio del Mac;
-- notifiche;
-- download dei modelli di trascrizione.
+Al primo avvio IAGO ti chiede:
+- il tuo nome, che nelle trascrizioni diventa "Io";
+- il microfono, con una prova;
+- una prova dell'audio del Mac;
+- le notifiche;
+- il download dei modelli di trascrizione.
 
-Poi un breve tour spiega come si usa. Lo ritrovi in **Aiuto di IAGO**.
+Poi un tour di sette pagine spiega come si usa; lo ritrovi in **Impostazioni › Aiuto**. Nella barra laterale trovi un esempio vuoto di struttura (**Cliente Test** con due progetti): rinominalo per usarlo, oppure eliminalo.
 
-## 4. Permessi
-In **IAGO › Impostazioni › Permessi** trovi la lista di tutto ciò che serve, con lo stato. **Attiva quelli che mancano** ti accompagna una voce alla volta:
-- **obbligatori:** Microfono e Registrazione dell'audio di sistema;
-- **consigliati:** Notifiche e avvio al login;
-- **facoltativi:**
-  - Calendario, per il titolo delle riunioni;
-  - Accessibilità, per seguire il mute di Teams;
-  - motore locale, per sintesi, proposte e Chiedi.
+## 4. Permessi di macOS
+In **IAGO › Impostazioni › Permessi** trovi l'elenco con lo stato di ogni voce. **Attiva quelli che mancano** ti accompagna una voce alla volta.
+
+| Permesso | A cosa serve | Livello |
+|---|---|---|
+| Microfono | la tua traccia | obbligatorio |
+| Registrazione dell'audio di sistema | la traccia degli altri partecipanti | obbligatorio |
+| Notifiche | fine trascrizione, sintesi pronte, proposta di registrare | consigliato |
+| Avvio al login | essere pronto a ogni call | consigliato |
+| Calendario | il titolo delle riunioni e la proposta all'orario d'inizio | facoltativo |
+| Accessibilità | seguire il mute di Teams | facoltativo |
+| Motore locale | sintesi, proposte e Chiedi a IAGO | facoltativo |
+
+Se un permesso è stato negato, si riattiva in **Impostazioni di Sistema › Privacy e sicurezza**, nella voce corrispondente; poi si riavvia IAGO.
 
 ## 5. Calendario di lavoro (consigliato)
 Per avere il titolo delle riunioni e la proposta di registrare all'orario d'inizio:
-1. **Impostazioni di Sistema › Account Internet** › aggiungi il tuo account di lavoro (**Microsoft Exchange**) e, se lo usi, **Google**. Attiva **Calendari**.
+1. **Impostazioni di Sistema › Account Internet**: aggiungi il tuo account di lavoro (per esempio **Microsoft Exchange**) e, se lo usi, **Google**. Attiva **Calendari**.
 2. In IAGO: **Impostazioni › Audio › Riunioni › Usa il Calendario del Mac**.
 
 ## 6. Aggiornamenti
-Vedi ADR-0056 (in via di decisione): con la cartella OneDrive aziendale, IAGO propone da solo le versioni nuove.
+IAGO controlla una volta al giorno se c'è una versione nuova sulla pagina delle release e te la propone. Gli aggiornamenti sono firmati. Una nuova versione **maggiore** è obbligatoria: finché non la installi, IAGO non avvia nuove registrazioni. Il controllo si fa anche a mano, dal menu dell'icona di IAGO › **Controlla aggiornamenti…**.
 
-## Problemi comuni
-- **"Nessun audio di sistema" nella prova:** Impostazioni di Sistema › Privacy e sicurezza › Registrazione dello schermo e dell'audio di sistema: attiva IAGO, poi riavvia IAGO.
-- **Le voci degli altri si sentono anche sulla mia traccia:** usa le cuffie, oppure lascia attiva la cancellazione dell'eco (Impostazioni › Audio).
-- **Teams in mute non viene seguito:** Impostazioni › Audio › Riunioni › attiva l'Accessibilità e consenti IAGO.
+## Disinstallare
+1. Esci da IAGO (menu dell'icona › **Esci**) e trascina l'app dal Finder nel Cestino.
+2. I tuoi dati restano in `~/Library/Application Support/IAGO`: cancella quella cartella solo se vuoi eliminarli davvero. Prima puoi farne un backup cifrato da **Impostazioni › Backup e trasferimento**.
