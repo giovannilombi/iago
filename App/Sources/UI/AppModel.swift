@@ -493,7 +493,7 @@ final class AppModel {
 
     static let pinnedLabelsKey = "sidebar.pinnedLabels"
 
-    /// Tags and categories pinned at the top of the sidebar, as "tag:<id>" and "category:<id>".
+    /// Tags, categories and streams pinned at the top of the sidebar, as "tag:<id>", "category:<id>", "stream:<id>".
     var pinnedLabels: [String] {
         _ = revision
         return ((try? archive.setting(Self.pinnedLabelsKey)) ?? nil)?.split(separator: ",").map(String.init) ?? []
@@ -647,7 +647,7 @@ final class AppModel {
 
     // MARK: Projects
 
-    /// Existing projects whose name looks like `name` (avoids "Ospedalia" / "Ospdalia").
+    /// Existing projects whose name looks like `name` (avoids "Progetto Alfa" / "Progeto Alfa").
     func similarProjects(to name: String) -> [Project] {
         ProjectNameMatcher.similar(to: name, among: projects)
     }

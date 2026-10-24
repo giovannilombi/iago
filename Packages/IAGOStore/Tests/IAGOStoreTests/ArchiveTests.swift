@@ -260,15 +260,15 @@ struct ArchiveFixture {
 
 @Suite struct ProjectNameMatcherTests {
     @Test(arguments: [
-        ("Ospedalia", "ospedalia"), ("Ospedalia", "Ospdalia"), ("Ospedalia", "Ospedalia-Nord"),
-        ("Ospdalia", "Ospedalia Nord"), ("Portale Clienti", "portale-clienti"), ("Città Studi", "Citta studi"),
+        ("Progetto Alfa", "progetto alfa"), ("Progetto Alfa", "Progeto Alfa"), ("Progetto Alfa", "Progetto Alfa-Nord"),
+        ("Progeto Alfa", "Progetto Alfa Nord"), ("Portale Clienti", "portale-clienti"), ("Città Studi", "Citta studi"),
     ])
     func similarNames(a: String, b: String) {
         #expect(ProjectNameMatcher.isSimilar(a, b))
     }
 
     @Test(arguments: [
-        ("Clinica Nord", "Previdenza Sud"), ("Alfa", "Beta"), ("Portale Clienti", "App Interna"), ("SAL", "Sales"),
+        ("Cliente Uno", "Fornitore Due"), ("Alfa", "Beta"), ("Portale Clienti", "App Interna"), ("SAL", "Sales"),
     ])
     func differentNames(a: String, b: String) {
         #expect(!ProjectNameMatcher.isSimilar(a, b))
@@ -350,11 +350,11 @@ struct ArchiveFixture {
 @Suite struct ProjectManagementTests {
     @Test func renameKeepsItemsAndArchiveHidesProject() throws {
         let fixture = try ArchiveFixture()
-        let project = try fixture.archive.createProject(name: "Ospedalia")
+        let project = try fixture.archive.createProject(name: "Progetto Alfa")
         let item = try fixture.makeItem()
         try fixture.archive.updateItem(item.id) { $0.projectId = project.id }
-        try fixture.archive.renameProject(project.id, to: "Ospedalia Nord")
-        #expect(try fixture.archive.summaries(.project(project.id)).map(\.projectName) == ["Ospedalia Nord"])
+        try fixture.archive.renameProject(project.id, to: "Progetto Alfa Nord")
+        #expect(try fixture.archive.summaries(.project(project.id)).map(\.projectName) == ["Progetto Alfa Nord"])
         try fixture.archive.setProjectArchived(project.id, true)
         #expect(try fixture.archive.projects().isEmpty)
         #expect(try fixture.archive.projects(includeArchived: true).map(\.archived) == [true])

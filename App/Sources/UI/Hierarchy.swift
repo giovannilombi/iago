@@ -132,6 +132,19 @@ struct ProjectTree: View {
                 }
                 .tag(AppModel.SidebarSelection.library(.category(category.id)))
                 .contextMenu { unpin(key) }
+            } else if parts[0] == "stream", let stream = model.streams.first(where: { $0.id == parts[1] }) {
+                Label {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text(stream.name).lineLimit(1)
+                        if let project = model.project(stream.projectId) {
+                            Text(project.name).font(.caption).foregroundStyle(.secondary).lineLimit(1)
+                        }
+                    }
+                } icon: {
+                    Text("–").foregroundStyle(.secondary)
+                }
+                .tag(AppModel.SidebarSelection.library(.stream(stream.id)))
+                .contextMenu { unpin(key) }
             }
         }
     }
@@ -442,6 +455,10 @@ private struct StreamRow: View {
         .padding(.leading, ProjectTree.indent + CGFloat(depth) * 15 + 12)
         .contextMenu {
             Button(String(localized: "Rinomina…")) { renaming = true }
+            Button(
+                model.isPinnedLabel("stream:\(stream.id)")
+                    ? String(localized: "Togli dall'alto") : String(localized: "Fissa in alto")
+            ) { model.togglePinnedLabel("stream:\(stream.id)") }
             Divider()
             Button(String(localized: "Elimina stream…"), role: .destructive) { deleting = true }
         }
@@ -456,6 +473,7 @@ private struct StreamRow: View {
         ) {
             Button(String(localized: "Elimina stream"), role: .destructive) {
                 model.perform { try model.archive.deleteStream(stream.id) }
+                if model.isPinnedLabel("stream:\(stream.id)") { model.togglePinnedLabel("stream:\(stream.id)") }
                 if model.sidebar == .library(.stream(stream.id)) {
                     model.select(.library(.project(stream.projectId)))
                 }

@@ -29,3 +29,9 @@
 - Il collega vede codice, ADR, guida e documenti senza la storia che conteneva dati reali.
 - Gli hook sono locali: chi clona deve lanciare `scripts/bootstrap.sh`. La CI non conosce i nomi reali e non può fare lo stesso controllo.
 - Le regole di ADR-0060 restano valide: nomi inventati negli esempi, screenshot solo dall'archivio dimostrativo.
+
+## Modifica del 2026-10-24 (autori)
+- **1.0.0-beta:** unico autore Giovanni Lombi.
+- **Dalle versioni successive:** i diritti sono di **Giovanni Lombi e Gianluca Sestito**. Ogni commit nomina entrambi: chi lo fa è l'autore, l'altro compare come `Co-Authored-By`. L'hook `commit-msg` aggiunge da solo le righe mancanti leggendo `Config/team.txt`; un nuovo autore si aggiunge lì.
+- Claude non compare mai, né come autore né come co-autore.
+- L'esempio dell'archivio nuovo e il divieto di contenuti nell'app sono in ADR-0066.

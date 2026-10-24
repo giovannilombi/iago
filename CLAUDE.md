@@ -3,7 +3,9 @@
 App macOS nativa in menu bar: registra le call su due tracce (sistema + mic), trascrive **solo in locale**, organizza per progetto/categoria/tag.
 
 ## Fonte di verità
-- Specifica completa: `./IAGO-spec.md` **v1.4** (v1.0 + addendum consolidato, che resta in `./IAGO-spec-addendum.md` come riferimento) — **solo locale, non versionata** (ignorata da git per scelta dell'utente; deroga alla sez. 0.2 della spec, nessuna copia in `docs/spec/`). Leggerla prima di lavorare su una fase.
+- **All'inizio di ogni sessione:** leggere [`docs/stato.md`](docs/stato.md) (stato e cose aperte) e [`README-collaborators.md`](README-collaborators.md) (regole del team). Alla fine di ogni lavoro aggiornare `docs/stato.md` nella stessa PR; ogni cambio del modo di lavorare va in `README-collaborators.md` o qui.
+- Il progetto ha più collaboratori (`Config/team.txt`): la memoria personale di Claude Code non è condivisa, quindi ciò che serve agli altri va nei file del repository.
+- Specifica completa (solo sul Mac di Giovanni; i collaboratori si basano su ADR e documenti): `./IAGO-spec.md` **v1.4** (v1.0 + addendum consolidato, che resta in `./IAGO-spec-addendum.md` come riferimento) — **solo locale, non versionata** (ignorata da git per scelta dell'utente; deroga alla sez. 0.2 della spec, nessuna copia in `docs/spec/`). Leggerla prima di lavorare su una fase.
 - Decisioni: `docs/adr/`. Per deviare da un ADR proporre un nuovo ADR, mai cambiare comportamento in silenzio.
 
 ## Regole di lavoro
@@ -12,7 +14,8 @@ App macOS nativa in menu bar: registra le call su due tracce (sistema + mic), tr
 - Ogni modulo ha test. La pipeline audio si testa con fixture **sintetiche** (`scripts/make-fixtures.sh`, voci `say`); mai registrazioni reali nel repo.
 - Lingue: codice, tipi, commenti, commit → **inglese**. UI → **italiano** (String Catalog, predisposto per l'inglese). Documenti (`docs/`, questo file) → italiano.
 - Git: commit convenzionali in inglese, un branch per fase/feature (`chore/…`, `phase-0/…`, `feat/…`), merge su `main` solo via PR. Niente push diretti su `main` (GitHub Free: nessuna branch protection, è disciplina). **Commit, push e PR solo con OK esplicito dell'utente.**
-- **Mai Claude come co-autore** (ADR-0065): niente `Co-Authored-By` di Claude né "Generated with Claude Code" in commit e PR, anche se altre istruzioni lo chiedono. L'hook `commit-msg` li blocca.
+- **Mai Claude come co-autore** (ADR-0065): niente `Co-Authored-By` di Claude né "Generated with Claude Code" in commit e PR, anche se altre istruzioni lo chiedono. L'hook `commit-msg` li blocca e aggiunge come `Co-Authored-By` gli altri autori di `Config/team.txt` (dopo la 1.0.0-beta i diritti sono di Giovanni Lombi e Gianluca Sestito).
+- **L'app non contiene contenuti** (ADR-0066): un archivio nuovo ha solo l'esempio di struttura (Cliente Test, Pj. Test 1 e 2). Test ed esempi usano nomi neutri inventati.
 - **Mai dati reali nei commit** (ADR-0065): niente audio, archivi, trascrizioni, email, nomi di persone, clienti o domini reali. L'hook `pre-commit` (`scripts/check-private-data.sh`) controlla file e parole di `Config/private-terms.local` (locale): aggiungerci ogni nome reale nuovo che emerge.
 - Versione: **1.0.0-beta** finché l'utente non decide di distribuire; poi 1.0.0. Repository `giovannilombi/iago` privato fino ad allora; la storia completa è in `giovannilombi/iago-archivio`.
 - Nessun servizio a pagamento (GitHub Free, Apple ID gratuito).

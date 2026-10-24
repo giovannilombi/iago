@@ -81,9 +81,11 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0057 | Sincronizzazione tramite una cartella cloud condivisa | proposto |
 | 0058 | Il principio sui dati: niente esce senza la scelta dell'utente | accettato |
 | 0059 | Distribuzione senza notarizzazione | accettato |
-| 0060 | Pubblicazione del repository | accettato (da eseguire) |
+| 0060 | Pubblicazione del repository | accettato (repository pulito fatto con ADR-0065; pubblicazione da fare) |
 | 0061 | Guida integrata, tour di benvenuto e archivio dimostrativo | accettato |
 | 0062 | Glossario della trascrizione | accettato |
 | 0063 | Barra laterale e accesso trasversale a categorie e tag | accettato |
 | 0064 | Pulizia dell'eco dopo la registrazione | rifiutato |
 | 0065 | Repository pulito, 1.0.0-beta e niente dati reali nei commit | accettato |
+| 0066 | Esempio iniziale in un archivio nuovo | accettato |
+| 0067 | MiniCPM: al posto di Qwen 3.5 4B o in aggiunta | proposto |

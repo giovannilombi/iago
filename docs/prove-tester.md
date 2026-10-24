@@ -71,6 +71,8 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 3e.3 "Categorie e tag" mostra le categorie con il numero di elementi e i tag; il clic apre l'elenco su tutti i progetti.
 - [ ] 3e.4 Con il tasto destro su una categoria o un tag "Fissa in «In evidenza»": compare in cima alla barra laterale.
 - [ ] 3e.5 Nel campo di ricerca scrivi `#` o `categoria:`: compaiono i tag o le categorie da aprire.
+- [ ] 3e.7 Su un Mac senza IAGO (o con un archivio nuovo): al primo avvio la barra laterale mostra **Cliente Test** con **Pj. Test 1** (stream *Pj1 - Stream 1* e *Pj1 - Stream 2*) e **Pj. Test 2**; in "In evidenza" ci sono *Pj1 - Stream 1* e *Pj. Test 2*. Eliminato il cliente, l'esempio non ricompare al riavvio. Su un archivio già in uso non compare.
+- [ ] 3e.8 Tasto destro su uno stream › **Fissa in alto**: compare in "In evidenza" con sotto il nome del progetto; **Togli dall'alto** lo toglie.
 - [ ] 3e.6 Nella scheda di un elemento, il clic su un tag apre tutti gli elementi con quel tag. Accanto alla categoria non c'è nessuna icona: tutti gli elementi di una categoria si aprono da Categorie e tag.
 
 ## 3f. Aiuto, tour e glossario

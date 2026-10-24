@@ -461,7 +461,7 @@ func decode(_ line: String?) throws -> JSON {
         let folder = fixture.root.appendingPathComponent("Downloads", isDirectory: true)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let file = folder.appendingPathComponent("modulo PX7.txt")
-        try Data("Conferimento integrale a Previdenza Alfa".utf8).write(to: file)
+        try Data("Conferimento integrale a Fornitore Test".utf8).write(to: file)
 
         let preview = try tools.call("import_file", arguments: ["path": .string(file.path)])
         #expect(preview.contains("modulo PX7.txt") && preview.contains("estrae il testo"))
