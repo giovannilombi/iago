@@ -44,3 +44,11 @@ Config/private-terms.local
 # macOS
 .DS_Store
 dist/
+
+# Documentation site (VitePress): dependencies, build and the files generated from App/Resources/Guide
+node_modules/
+docs/.vitepress/dist/
+docs/.vitepress/cache/
+docs/guida/
+docs/public/
+.playwright-mcp/

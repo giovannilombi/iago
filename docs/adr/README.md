@@ -89,3 +89,4 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0065 | Repository pulito, 1.0.0-beta e niente dati reali nei commit | accettato |
 | 0066 | Esempio iniziale in un archivio nuovo | accettato |
 | 0067 | MiniCPM: al posto di Qwen 3.5 4B o in aggiunta | proposto |
+| 0068 | Sito di documentazione con VitePress su GitHub Pages | accettato (online quando il repository è pubblico) |

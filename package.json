@@ -1,0 +1,17 @@
+{
+  "name": "iago-docs",
+  "private": true,
+  "type": "module",
+  "description": "Documentation site of IAGO (VitePress). The guide chapters come from App/Resources/Guide.",
+  "scripts": {
+    "docs:sync": "node scripts/docs-sync-guide.mjs",
+    "docs:dev": "npm run docs:sync && vitepress dev docs",
+    "docs:build": "npm run docs:sync && vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "mermaid": "11.4.1",
+    "vitepress": "1.6.3",
+    "vitepress-plugin-mermaid": "2.0.17"
+  }
+}

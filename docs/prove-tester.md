@@ -20,6 +20,7 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 ## 1. Icona e notifiche
 - [ ] 1.1 Nel Dock e nel Finder l'icona di IAGO è il pappagallo.
 - [ ] 1.2 Impostazioni › Audio › Riunioni › **"Invia una notifica di prova"**: arriva una notifica con l'icona del pappagallo, non un quadrato bianco.
+- [ ] 1.3 Un clic sull'icona di IAGO nella barra dei menu apre il menu (con **Avvia registrazione**); il clic destro, o ctrl-clic, avvia la registrazione, la mette in pausa e la riprende senza aprire il menu. Un clic normale durante una registrazione non la mette in pausa.
 
 ## 2. Proposte di registrazione (riunioni)
 - [ ] 2.1 Impostazioni › Audio › Riunioni › **"Mostra un esempio di proposta"**: in alto a destra compare un pannello di IAGO con **Registra** e **Ignora**.
@@ -118,7 +119,7 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 6.5 "Conversazione temporanea": **Conserva** ed **Elimina** funzionano. Fissa e l'elenco delle conversazioni funzionano.
 - [ ] 6.6 Aggiungi un elemento e riapri una conversazione: compare **"Nuovo materiale aggiunto"** con "Chiedi di nuovo".
 - [ ] 6.7 "Salva come nota" mette la risposta nelle note del progetto.
-- [ ] 6.8 Apri Chiedi da uno stream: la striscia **Contesto** mostra Cliente › Progetto › Stream (con il quadratino del cliente) e il campo dice "Chiedi su <stream>". Con nomi lunghi il percorso va a capo su due righe; passandoci sopra si legge tutto.
+- [ ] 6.8 Apri Chiedi da uno stream: la striscia **Contesto** mostra Cliente › Progetto › Stream (con il quadratino del cliente) e il campo dice "Chiedi su \<stream\>". Con nomi lunghi il percorso va a capo su due righe; passandoci sopra si legge tutto.
 - [ ] 6.9 **Allarga contesto ▾** elenca progetto, cliente e Tutta la memoria, ognuno con il tipo sotto. Prima di chiedere, la scelta cambia solo il contesto.
 - [ ] 6.10 Dopo una domanda, allarga: si apre una nuova conversazione nel contesto scelto con la stessa domanda; la precedente resta nell'elenco.
 - [ ] 6.11 Da contesto allargato il link diventa **Cambia contesto ▾** e propone "Torna a" la sezione di partenza.

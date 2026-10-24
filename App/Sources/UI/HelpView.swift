@@ -111,7 +111,7 @@ struct WelcomeTour: View {
             symbol: "iago", title: String(localized: "Registra le call"),
             text: String(
                 localized:
-                    "Un clic sull'icona di IAGO nella barra dei menu, in alto a destra (il nostro pappagallo con la memoria di ferro), e la call è registrata e trascritta. Quando inizia una riunione IAGO te lo propone, con il titolo dal calendario."
+                    "Clicca l'icona di IAGO nella barra dei menu, in alto a destra (il nostro pappagallo con la memoria di ferro), e scegli Avvia registrazione: la call è registrata e trascritta. Quando inizia una riunione IAGO te lo propone, con il titolo dal calendario."
             )
         ),
         .init(

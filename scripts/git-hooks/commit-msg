@@ -8,6 +8,17 @@ if grep -i -q -E '^co-authored-by:.*(claude|anthropic)|generated with .*claude' 
   echo "✘ Commit blocked: no Claude co-author or \"Generated with Claude\" line (ADR-0065)." >&2
   exit 1
 fi
+# - documentation in the same commit (ADR-0068): a change to the app's or the packages' code also touches the guide
+#   (App/Resources/Guide) or the documentation (docs/), or says why not with a "Docs: <reason>" line.
+STAGED=$(git diff --cached --name-only)
+if printf '%s\n' "$STAGED" | grep -q -E '^(App/Sources/|Packages/[^/]+/Sources/|project\.yml$)' \
+  && ! printf '%s\n' "$STAGED" | grep -q -E '^(App/Resources/Guide/|docs/)' \
+  && ! tail -n +2 "$MSG" | grep -q -E '^Docs:[[:space:]]*[^[:space:]]'; then
+  echo "✘ Commit blocked: the code changes but the documentation does not (ADR-0068)." >&2
+  echo "  Update the in-app guide (App/Resources/Guide, how to use it) and/or the technical pages (docs/tecnica)," >&2
+  echo "  or add a line \"Docs: <reason>\" to the message (e.g. \"Docs: internal refactoring, no visible change\")." >&2
+  exit 1
+fi
 TEAM="$(git rev-parse --show-toplevel)/Config/team.txt"
 [[ -f "$TEAM" ]] || exit 0
 AUTHOR_EMAIL=$(git var GIT_AUTHOR_IDENT | sed -n 's/.*<\(.*\)>.*/\1/p')

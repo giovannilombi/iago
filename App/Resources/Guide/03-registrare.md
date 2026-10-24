@@ -4,8 +4,8 @@
 IAGO registra **due tracce separate**: l'audio del Mac (le voci degli altri in Teams, Zoom, Meet…) e il tuo microfono. Così sa sempre chi sei tu e trascrive meglio.
 
 ## Avviare e fermare
-- **Clic sull'icona di IAGO** {{icona}} nella barra dei menu: avvia; durante la registrazione mostra il tempo.
-- **Clic di nuovo**: pausa e ripresa. Dal menu (clic destro) **Ferma**, **Pausa**, **Scarta**.
+- **Clic sull'icona di IAGO** {{icona}} nella barra dei menu: si apre il menu, con **Avvia registrazione**. Durante la registrazione lo stesso menu ha **Pausa**, **Stop**, **Scarta** e **Segna momento**, e l'icona mostra il tempo.
+- **Clic destro** (o ctrl-clic) sull'icona: avvia, mette in pausa e riprende senza aprire il menu. Un clic normale non mette mai in pausa per sbaglio una call.
 - La registrazione compare in **Attività** con durata, microfono e stato.
 
 ## Segna momento
