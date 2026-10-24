@@ -42,13 +42,15 @@ public enum ContentExtractor {
 
     public static func canExtract(_ url: URL) -> Bool { kind(of: url) != nil }
 
-    enum Kind { case image, pdf, rich, plain }
+    enum Kind { case image, pdf, html, rich, plain }
 
     static func kind(of url: URL) -> Kind? {
         guard let type = UTType(filenameExtension: url.pathExtension.lowercased()) else { return nil }
         if type.conforms(to: .image) { return .image }
         if type.conforms(to: .pdf) { return .pdf }
-        if type.conforms(to: .rtf) || type.conforms(to: .html) || type.conforms(to: .rtfd)
+        // HTML without a web engine: AppKit's HTML import loads WebKit, which can hang off the main thread.
+        if type.conforms(to: .html) { return .html }
+        if type.conforms(to: .rtf) || type.conforms(to: .rtfd)
             || ["docx", "doc", "odt", "webarchive"].contains(url.pathExtension.lowercased())
         {
             return .rich
@@ -67,6 +69,10 @@ public enum ContentExtractor {
             }
             return try extract(image: image)
         case .pdf: return try extractPDF(url)
+        case .html:
+            let data = try Data(contentsOf: url)
+            let html = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
+            return Extraction(markdown: HTMLToMarkdown.convert(html), method: .richText)
         case .rich:
             let text = try NSAttributedString(url: url, options: [:], documentAttributes: nil)
             return Extraction(markdown: MarkdownWriter.markdown(from: text), method: .richText)

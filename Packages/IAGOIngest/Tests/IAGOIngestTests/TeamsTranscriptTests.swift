@@ -3,7 +3,7 @@ import Testing
 
 @testable import IAGOIngest
 
-@Suite struct TeamsTranscriptTests {
+@Suite(.timeLimit(.minutes(1))) struct TeamsTranscriptTests {
     func write(_ text: String, _ name: String) throws -> URL {
         let url = FileManager.default.temporaryDirectory.appendingPathComponent(
             "iago-teams-\(UUID().uuidString)-\(name)")

@@ -4,8 +4,9 @@ import Testing
 
 @testable import IAGOIngest
 
-/// Fixtures are generated here (spec 7.6): never real documents in the repository.
-@Suite struct ContentExtractorTests {
+/// Fixtures are generated here (spec 7.6): never real documents in the repository. Vision, PDFKit and AppKit's
+/// importers run here: a time limit turns a hang on a CI runner into a failure that names the test.
+@Suite(.timeLimit(.minutes(1))) struct ContentExtractorTests {
     let directory: URL
 
     init() throws {
@@ -112,7 +113,7 @@ import Testing
         let markdown = try ContentExtractor.extract(html).markdown
         #expect(markdown.contains("# Oggetto"))
         #expect(markdown.contains("**grassetto**"))
-        #expect(markdown.contains("[link](https://example.com/)"))
+        #expect(markdown.contains("[link](https://example.com)"))
 
         let txt = directory.appendingPathComponent("note.txt")
         try "riga 1\r\nriga 2".write(to: txt, atomically: true, encoding: .utf8)
