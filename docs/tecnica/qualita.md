@@ -17,6 +17,7 @@
 | IAGOSync | 1 |
 
 - La pipeline audio usa fixture **sintetiche** (voci `say`), mai registrazioni reali.
+- I test di OCR con Vision girano solo in locale: sui runner di GitHub Vision si blocca (vedi [Sviluppo](./sviluppo#ci)).
 - Il motore MLX si prova con `scripts/test-engine.sh` e con il banco `-IAGOEngineBench`.
 
 ## Prove manuali

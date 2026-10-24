@@ -43,7 +43,9 @@ L'hook `commit-msg` blocca un commit che tocca il codice dell'app o dei pacchett
 - `ci.yml`, su macOS, solo per le PR che toccano codice: controllo delle API di rete e test dei pacchetti. I minuti macOS contano 10 volte, quindi niente esecuzioni inutili.
 - `deploy.yml`, su Ubuntu: compila il sito a ogni PR che tocca la documentazione e lo pubblica su GitHub Pages a ogni push su `main` (quando il repository è pubblico).
 - `engine.yml`, solo a mano: build con MLX.
-- I test che usano Vision, PDFKit e gli importatori di AppKit hanno un limite di tempo, così un blocco del runner diventa un errore con il nome del test.
+- I test che usano Vision, PDFKit e gli importatori di AppKit hanno un limite di tempo, e ogni pacchetto si ferma dopo 10 minuti con il suo nome.
+- I tre test di OCR con Vision **non girano in CI**: sui runner macOS di GitHub Vision si blocca senza errore. Girano sul Mac di chi sviluppa con `scripts/test-packages.sh` (si saltano dove è impostata la variabile `CI`).
+- L'HTML importato si converte con il convertitore proprio, senza WebKit, che si bloccava fuori dal thread principale.
 
 ## Struttura
 ```
