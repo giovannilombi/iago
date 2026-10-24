@@ -5,5 +5,7 @@ cd "$(dirname "$0")/../Packages"
 for pkg in */; do
   pkg=${pkg%/}
   echo "==> $pkg"
-  swift test --package-path "$pkg" "$@"
+  # A package that hangs fails after 10 minutes with its name, instead of blocking the whole run.
+  perl -e 'alarm shift; exec @ARGV' 600 swift test --package-path "$pkg" "$@" \
+    || { echo "✘ $pkg: tests failed or did not finish within 10 minutes" >&2; exit 1; }
 done
