@@ -1,6 +1,20 @@
 #!/usr/bin/env bash
-# Installed by scripts/bootstrap.sh (core.hooksPath). No AI attribution in commits (ADR-0065).
-if grep -i -q -E '^co-authored-by:.*(claude|anthropic)|generated with .*claude' "$1"; then
+# Installed by scripts/bootstrap.sh (core.hooksPath), ADR-0065:
+# - no AI attribution: a Claude co-author or a "Generated with Claude" line blocks the commit;
+# - every other author in Config/team.txt is added as "Co-Authored-By", so the rights belong to all of them.
+set -euo pipefail
+MSG="$1"
+if grep -i -q -E '^co-authored-by:.*(claude|anthropic)|generated with .*claude' "$MSG"; then
   echo "✘ Commit blocked: no Claude co-author or \"Generated with Claude\" line (ADR-0065)." >&2
   exit 1
 fi
+TEAM="$(git rev-parse --show-toplevel)/Config/team.txt"
+[[ -f "$TEAM" ]] || exit 0
+AUTHOR_EMAIL=$(git var GIT_AUTHOR_IDENT | sed -n 's/.*<\(.*\)>.*/\1/p')
+while IFS= read -r person; do
+  [[ -z "$person" || "$person" == \#* ]] && continue
+  email=$(printf '%s' "$person" | sed -n 's/.*<\(.*\)>.*/\1/p')
+  [[ "$email" == "$AUTHOR_EMAIL" ]] && continue
+  grep -q -i -F "Co-Authored-By: $person" "$MSG" && continue
+  git interpret-trailers --in-place --if-exists addIfDifferent --trailer "Co-Authored-By: $person" "$MSG"
+done < "$TEAM"

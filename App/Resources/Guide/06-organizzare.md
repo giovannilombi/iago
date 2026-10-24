@@ -6,14 +6,17 @@
 ## La barra laterale
 - **In alto, fisse:** *Da classificare*, *Recenti*, *Punti chiave*, *Importa*, *Attività*, *Categorie e tag*.
 - **Progetti** (l'unica parte che scorre):
-  - **In evidenza** (pin rosso): progetti, categorie e tag che fissi.
+  - **In evidenza** (pin rosso): progetti, stream, categorie e tag che fissi.
   - **I clienti**, ognuno con i suoi progetti. Un clic sul nome apre o chiude il cliente; **⌥-clic** apre solo quello e chiude gli altri. Passando sopra: **→** apre tutti gli elementi del cliente, **+** crea un progetto.
   - **Senza cliente** (quadratino grigio), sempre ultimo, con **Non definito** in fondo: gli elementi classificati senza progetto.
 - **In fondo:** **＋** per un nuovo progetto o cliente, e il **Cestino** con il numero di elementi.
 - Con più di 15 progetti compare **Filtra progetti**.
 
 ## Progetti e stream
-Un progetto appartiene a un cliente (o a nessuno). Uno **stream** è una linea di lavoro dentro il progetto (es. Design, Sviluppo, Legale): elementi, note e punti chiave possono appartenere a uno o più stream. Trascina un progetto su un cliente per spostarlo. Tasto destro: impostazioni, nuovo stream, rinomina, sposta, fissa.
+Un progetto appartiene a un cliente (o a nessuno). Uno **stream** è una linea di lavoro dentro il progetto (es. Design, Sviluppo, Legale): elementi, note e punti chiave possono appartenere a uno o più stream. Trascina un progetto su un cliente per spostarlo. Tasto destro: impostazioni, nuovo stream, rinomina, sposta, fissa. Anche uno stream si fissa in alto con il tasto destro.
+
+## L'esempio iniziale
+In un archivio nuovo IAGO crea un esempio di come si organizza il lavoro: il cliente **Cliente Test** con i progetti **Pj. Test 1** (con gli stream **Pj1 - Stream 1** e **Pj1 - Stream 2**) e **Pj. Test 2**. *Pj1 - Stream 1* e *Pj. Test 2* sono in evidenza. È vuoto: rinominalo per usarlo, oppure eliminalo (tasto destro sul cliente). Non ricompare.
 
 ## Da classificare
 Tutto ciò che non ha un progetto. Le proposte del motore possono suggerire il progetto giusto.

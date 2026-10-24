@@ -1,0 +1,48 @@
+# IAGO — Stato del progetto
+
+> Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
+> **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
+> Ultimo aggiornamento: **24 ottobre 2026**.
+
+## In breve
+- **Versione:** 1.0.0-beta, non distribuita. La 1.0.0 sarà la prima versione distribuibile.
+- **Repository:**
+  - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
+  - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
+- **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
+- **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
+- **Test automatici:** 235 nei pacchetti, tutti verdi.
+
+## Cosa fa oggi IAGO
+La descrizione completa è nel [README](../README.md). In sintesi:
+- registra le call su due tracce (sistema e microfono) e le trascrive sul Mac (whisper.cpp o Parakeet);
+- importa email, documenti, PDF, immagini, trascrizioni di Teams, anche da cartelle sorvegliate;
+- organizza per cliente › progetto › stream, con categorie (che decidono la forma della sintesi) e tag;
+- estrae punti chiave (decisioni, attività, tappe) con la loro evoluzione nel tempo;
+- sintesi per categoria, ricerca per parole e per significato, "Chiedi a IAGO" con fonti e "Allarga contesto";
+- motore locale MLX dentro l'app, Claude facoltativo via MCP;
+- barra di registrazione e barra di ascolto, Attività, guida integrata, tour, aggiornamenti con Sparkle.
+
+## Aperto, in ordine di priorità
+1. **Revisione tecnica** del collega e decisione sulla distribuzione.
+2. **Prove di accettazione** con [`docs/prove-tester.md`](prove-tester.md), una issue "Prove" per tester (vedi [README-collaborators](../README-collaborators.md#6-prove)).
+3. **Verifiche dal vivo ancora da fare:**
+   - il microfono di Teams funziona mentre IAGO registra (dopo il ritiro di ADR-0053);
+   - l'icona di IAGO nelle notifiche di macOS.
+4. **ADR proposti, da decidere:**
+   - ADR-0057, progetti condivisi tramite una cartella cloud (progetto in [`docs/design/sync-cartella-condivisa.md`](design/sync-cartella-condivisa.md)); quando accettato supera il backend di ADR-0012 e si apre la fase 4;
+   - ADR-0067, MiniCPM al posto di Qwen 3.5 4B o in aggiunta: servono prove.
+5. **Distribuzione** (ADR-0059, ADR-0060, ADR-0065): senza account Apple a pagamento l'app non è notarizzata e chi la installa deve fare "Apri comunque". Per distribuire: repository pubblico, `scripts/release.sh 1.0.0 --github`, tabella Versioni del README.
+6. **Dopo:**
+   - prove approfondite della qualità della trascrizione su call vere (motori, diarizzazione);
+   - nomi degli speaker riconosciuti tra call diverse;
+   - rifiniture del grafo.
+
+## Ultime modifiche
+- **2026-10-24:** repository pulito e 1.0.0-beta (ADR-0065); controlli automatici sui commit (niente dati reali, niente co-autore IA, co-autori del team); esempio iniziale in un archivio nuovo e stream fissabili in evidenza (ADR-0066); ADR-0067 su MiniCPM; documenti per collaborare.
+- **2026-10-21:** barra di ascolto; contesto in "Chiedi a IAGO" con "Allarga contesto"; tolta l'icona accanto alla categoria; cancellazione dell'eco di macOS ritirata (ADR-0053) e pulizia dell'eco dopo la registrazione rifiutata (ADR-0064).
+
+## Come ripartire con una sessione pulita
+1. Leggere [`CLAUDE.md`](../CLAUDE.md), questo file e [`README-collaborators.md`](../README-collaborators.md).
+2. `git status`, `git log --oneline -5`, `gh pr list`: lavorare su un branch nuovo da `main` aggiornato.
+3. Prima di un lavoro su un'area, leggere gli ADR collegati (indice in [`docs/adr/README.md`](adr/README.md)).

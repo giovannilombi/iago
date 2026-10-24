@@ -61,7 +61,7 @@ func memoryArchive() throws -> Archive {
         let archive = try memoryArchive()
         let project = try archive.createProject(name: "Fondo")
         let call = try archive.createItem(
-            title: "Fondo pensione Alfa", occurredAt: Date(), source: .recording, status: .transcribed)
+            title: "Call di prova", occurredAt: Date(), source: .recording, status: .transcribed)
         try archive.updateItem(call.id) { $0.projectId = project.id }
         let other = try archive.createItem(title: "Logo", occurredAt: Date(), source: .recording, status: .transcribed)
         try archive.updateItem(other.id) { $0.projectId = project.id }
@@ -94,7 +94,7 @@ func memoryArchive() throws -> Archive {
         let active = try archive.createDecision(
             Decision(text: "Contributo azienda al 1,5%", decidedAt: Date(), projectId: project.id, origin: .manual))
         let call = try archive.createItem(
-            title: "Fondo pensione Alfa", occurredAt: Date(), source: .recording, status: .transcribed)
+            title: "Call di prova", occurredAt: Date(), source: .recording, status: .transcribed)
         let embedder = FakeEmbedder()
         try await SemanticIndexer.index(
             [ChunkDraft(text: "il fondo pensione e il contributo dell'azienda")], itemID: older.id, noteID: nil,
@@ -142,7 +142,7 @@ func memoryArchive() throws -> Archive {
         let archive = try memoryArchive()
         let project = try archive.createProject(name: "Fondo")
         let call = try archive.createItem(
-            title: "Fondo pensione Alfa", occurredAt: Date(), source: .recording, status: .transcribed)
+            title: "Call di prova", occurredAt: Date(), source: .recording, status: .transcribed)
         try archive.updateItem(call.id) { $0.projectId = project.id }
         try await SemanticIndexer.index(
             [ChunkDraft(text: "Io: l'azienda versa il 2%", startSec: 120, endSec: 140)], itemID: call.id, noteID: nil,
@@ -158,7 +158,7 @@ func memoryArchive() throws -> Archive {
         let answer = try await ChatAnswerer.answer(
             "Quanto è il contributo dell'azienda?", sources: sources, engine: engine)
         #expect(ChatAnswerer.citations(in: answer, sources: sources) == [1, 2])
-        #expect(engine.requests[0].prompt.contains("[1] Call «Fondo pensione Alfa»"))
+        #expect(engine.requests[0].prompt.contains("[1] Call «Call di prova»"))
         #expect(engine.requests[0].prompt.contains("Decisione ATTIVA"))
         let nothing = try await ChatAnswerer.answer("Altro?", sources: [], engine: engine)
         #expect(nothing.contains("Non trovo nulla"))

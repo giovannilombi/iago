@@ -249,7 +249,7 @@ Prove su call reali: [`docs/benchmarks/2026-10-21-sintesi-e-glossario.md`](docs/
 - **Aggiornamenti firmati** EdDSA: IAGO installa solo versioni firmate dalla stessa chiave.
 
 ## Le decisioni di progetto
-Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 65 finora, con contesto, alternative scartate e conseguenze. Alcune:
+Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 67 finora, con contesto, alternative scartate e conseguenze. Alcune:
 
 | ADR | Decisione | Perché |
 |---|---|---|
@@ -284,6 +284,7 @@ scripts/install-app.sh        # Release firmata installata in /Applications
 scripts/release.sh 1.2.0 --notes "…" --github   # release firmata, appcast Sparkle, GitHub Release
 ```
 - **Serve:** Xcode con Swift 6, XcodeGen e un Apple ID (anche gratuito) per la firma. Il Team ID va in `Config/Local.xcconfig` (vedi `Config/Local.xcconfig.example`).
+- **Per collaborare:** [`README-collaborators.md`](README-collaborators.md) spiega regole, documenti, stato degli ADR, prove e come lavorare con Claude Code.
 - **Convenzioni:**
   - un branch per funzione;
   - merge su `main` solo via pull request con CI verde;
@@ -342,4 +343,4 @@ IAGO si regge su ottimo software open source:
 
 Elenco completo, con versioni e licenze verificate: [`docs/licenses.md`](docs/licenses.md).
 
-**IAGO** © 2026 Giovanni Lombi, licenza [Creative Commons BY-NC-SA 4.0](LICENSE): puoi usarlo, studiarlo e modificarlo citando l'autore, non per scopi commerciali, condividendo le modifiche con la stessa licenza.
+**IAGO** © 2026 Giovanni Lombi (fino alla 1.0.0-beta) e Giovanni Lombi con Gianluca Sestito (dalle versioni successive), licenza [Creative Commons BY-NC-SA 4.0](LICENSE): puoi usarlo, studiarlo e modificarlo citando l'autore, non per scopi commerciali, condividendo le modifiche con la stessa licenza.

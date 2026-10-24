@@ -89,6 +89,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 #if DEBUG
                     await DemoMode.seedIfNeeded(archive)
                 #endif
+                // A brand-new archive starts with a neutral example of the structure (ADR-0066).
+                if (try? archive.archive.setting(WindowManager.onboardingKey)) != "1",
+                    let example = try? archive.archive.createStarterExampleIfNew(),
+                    let stream = example.streamIDs.first
+                {
+                    try? archive.archive.setSetting(AppModel.pinnedLabelsKey, "stream:\(stream)")
+                    model.reload()
+                }
                 await archive.buildSearchIndexIfNeeded()
                 await EngineBench.runIfRequested(
                     archive: archive.archive, engine: engine, root: paths.root, notifier: notifier)

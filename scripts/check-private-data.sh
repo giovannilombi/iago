@@ -12,7 +12,7 @@ fi
 [[ -z "$FILES" ]] && exit 0
 FAIL=0
 
-BLOCKED=$(echo "$FILES" | grep -i -E '\.(m4a|wav|caf|mp3|aac|aiff|flac|mp4|mov|enc|sqlite|sqlite3|db|vtt|eml|bin|gguf|safetensors)$|(^|/)(test-recordings|bench-out|Models|fixtures/generated)/|IAGO-spec|HANDOVER\.md|private-terms\.local$' || true)
+BLOCKED=$(echo "$FILES" | grep -i -E '\.(m4a|wav|caf|mp3|aac|aiff|flac|mp4|mov|enc|sqlite|sqlite3|db|vtt|eml|bin|gguf|safetensors)$|(^|/)(test-recordings|bench-out|Models|fixtures/generated)/|IAGO-spec|HANDOVER[^/]*\.md|private-terms\.local$' || true)
 if [[ -n "$BLOCKED" ]]; then
   echo "✘ Files that must never be committed (recordings, archives, models, local notes):" >&2
   echo "$BLOCKED" | sed 's/^/    /' >&2

@@ -1,7 +1,7 @@
 # Local spec and addendum (not versioned, see CLAUDE.md)
 IAGO-spec.md
 IAGO-spec-addendum.md
-HANDOVER.md
+HANDOVER*.md
 docs/specs/
 
 # Audio and media (never commit recordings)
