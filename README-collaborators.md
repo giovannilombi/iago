@@ -21,7 +21,8 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 | [`docs/adr/`](docs/adr/README.md) | Le decisioni (ADR), con contesto, alternative e conseguenze; l'indice ha lo stato di ognuna | Per ogni decisione nuova o cambiata |
 | [`docs/prove-tester.md`](docs/prove-tester.md) | Le prove manuali, in ordine, pensate per chi non conosce l'app | A ogni funzione nuova o modificata |
 | [`App/Resources/Guide/`](App/Resources/Guide) | La guida dentro l'app (capitoli in Markdown, screenshot in `img/`); è anche la guida del sito | A ogni modifica visibile all'utente |
-| `docs/index.md`, `docs/installazione.md`, `docs/scorciatoie.md`, `docs/problemi-e-log.md` | Le pagine solo del sito di documentazione (ADR-0068) | Quando cambiano requisiti, installazione, permessi, scorciatoie o log |
+| `docs/index.md`, `docs/installazione.md`, `docs/scorciatoie.md`, `docs/problemi-e-log.md` | Le pagine d'uso solo del sito di documentazione (ADR-0068) | Quando cambiano requisiti, installazione, permessi, scorciatoie o log |
+| [`docs/tecnica/`](docs/tecnica) | Il livello **Tecnico** del sito: architettura, dati, pipeline, modelli, rete, sviluppo | Nello stesso commit di ogni modifica a come è fatta l'app |
 | [`docs/licenses.md`](docs/licenses.md) | Dipendenze e modelli, con versioni e licenze | A ogni dipendenza o modello nuovo |
 | [`docs/design/`](docs/design) | Progetti di funzioni ancora da decidere (es. la condivisione) | Durante la discussione |
 | [`docs/benchmarks/`](docs/benchmarks) | Misure di velocità e qualità (solo numeri, mai contenuti delle call) | A ogni misura nuova |
@@ -68,7 +69,15 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 - Il grafo dei pacchetti è fisso (vedi `CLAUDE.md` › Struttura): nessuna dipendenza fuori da quelle elencate.
 - Ogni modulo ha i suoi test. La pipeline audio si prova con fixture sintetiche (`scripts/make-fixtures.sh`, voci `say`).
 - **Rete:** solo le chiamate elencate in `CLAUDE.md` › Rete e privacy, tutte esplicite e registrate. Niente telemetria.
-- A ogni modifica visibile si aggiornano anche la guida, `docs/prove-tester.md` e, se serve, il README. Ogni lavoro lungo compare in Attività; ogni permesso nuovo in Impostazioni › Permessi.
+- Ogni lavoro lungo compare in Attività; ogni permesso nuovo in Impostazioni › Permessi.
+
+### Documentazione a ogni commit
+La documentazione si aggiorna **nello stesso commit** del codice, non dopo:
+- **Guida dell'app** (`App/Resources/Guide`): solo come si usa, nello stile attuale, senza dettagli tecnici. È anche il livello Uso del sito, quindi le due non possono divergere.
+- **Livello Tecnico del sito** (`docs/tecnica`): come è fatto, quando cambia.
+- **ADR** per le decisioni, `docs/prove-tester.md` per le prove, `docs/stato.md` per lo stato.
+
+Il controllo dei commit blocca un commit che tocca il codice dell'app o dei pacchetti senza toccare la guida o `docs/`. Se davvero non c'è niente da documentare (per esempio un refactoring interno), si aggiunge al messaggio una riga `Docs: <motivo>`.
 
 ## 4. Preparare il Mac
 1. Xcode con Swift 6, poi `brew install xcodegen swift-format`.
@@ -108,8 +117,11 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 
 ## 8. Il sito di documentazione
 - È fatto con VitePress (ADR-0068) e sarà su `https://giovannilombi.github.io/iago/`. GitHub Free non pubblica siti di repository privati, quindi andrà online quando il repository diventerà pubblico; fino ad allora si guarda in locale con `npm run docs:dev`.
-- La guida del sito **non si scrive due volte**: viene copiata dai capitoli dell'app (`App/Resources/Guide`). Si modifica lì.
-- I documenti interni (ADR, stato, prove, progetti, benchmark) restano fuori dal sito.
+- **Due livelli** con il selettore **Uso | Tecnico** in alto:
+  - **Uso:** la guida, copiata dai capitoli dell'app (`App/Resources/Guide`): si modifica lì, mai nel sito. Più installazione, scorciatoie, problemi e log.
+  - **Tecnico:** `docs/tecnica` più ADR, stato, prove, licenze, progetti, benchmark e fasi.
+- Ogni capitolo della guida ha il link alla pagina tecnica corrispondente (`docs/.vitepress/theme/level.ts`).
+- A ogni PR che tocca la documentazione la CI compila il sito; a ogni push su `main` lo ripubblica (quando il repository è pubblico).
 
 ## 9. Fare una release
 - La versione è in `project.yml`. Le beta si chiamano `1.0.0-beta.2`, `1.0.0-beta.3`…; la 1.0.0 sarà la prima distribuibile.

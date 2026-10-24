@@ -6,9 +6,8 @@ IAGO vive nella barra dei menu: molte azioni partono dall'**icona di IAGO** ![ic
 
 | Azione | Come |
 |---|---|
-| Avviare la registrazione | clic sull'icona |
-| Pausa e ripresa durante una registrazione | clic sull'icona |
-| Aprire il menu (Stop, Scarta, Segna momento, Nota vocale…) | clic destro sull'icona |
+| Aprire il menu (Avvia registrazione, Stop, Scarta, Segna momento, Nota vocale…) | clic sull'icona |
+| Avviare, mettere in pausa e riprendere senza aprire il menu | clic destro (o ctrl-clic) sull'icona |
 | Segna momento con nota | nel menu, tieni premuto **⌥** su *Segna momento* |
 
 Con il menu aperto:

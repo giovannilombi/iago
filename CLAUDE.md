@@ -20,7 +20,13 @@ App macOS nativa in menu bar: registra le call su due tracce (sistema + mic), tr
 - Versione: **1.0.0-beta** finché l'utente non decide di distribuire; poi 1.0.0. Repository `giovannilombi/iago` privato fino ad allora; la storia completa è in `giovannilombi/iago-archivio`.
 - Nessun servizio a pagamento (GitHub Free, Apple ID gratuito).
 - **README.md**: si aggiorna a ogni nuova versione (tabella *Versioni*, numeri, funzioni, motori) e a ogni modifica che cambia ciò che descrive. Anche `docs/licenses.md` a ogni dipendenza o modello nuovo.
-- **Guida** (`App/Resources/Guide/*.md`, immagini in `Guide/img`): va aggiornata a ogni modifica visibile all'utente, insieme a `docs/prove-tester.md`. È anche la fonte del sito di documentazione (ADR-0068): le pagine solo del sito (`docs/index.md`, `installazione.md`, `scorciatoie.md`, `problemi-e-log.md`) si aggiornano quando cambiano requisiti, permessi, scorciatoie o log. Screenshot solo da un archivio dimostrativo, mai con dati reali.
+- **Documentazione a ogni commit** (ADR-0068), nello stesso commit del codice:
+  - **Guida dell'app** (`App/Resources/Guide/*.md`, immagini in `Guide/img`): solo *come si usa*, nello stile attuale, senza dettagli tecnici. È anche il livello **Uso** del sito, copiato a ogni build: non si scrive due volte.
+  - **Livello Tecnico** del sito (`docs/tecnica/*.md`): come è fatto (pacchetti, dati, pipeline, modelli, rete, scelte), da aggiornare quando cambia; se nasce un'area nuova, una pagina nuova e la voce in `docs/.vitepress/config.mts` (e in `theme/level.ts` se ha un capitolo della guida corrispondente).
+  - Pagine d'uso solo del sito (`docs/index.md`, `installazione.md`, `scorciatoie.md`, `problemi-e-log.md`) quando cambiano requisiti, permessi, scorciatoie o log.
+  - Poi `docs/prove-tester.md`, gli ADR, `docs/stato.md`, e se serve README e `docs/licenses.md`.
+  - L'hook `commit-msg` blocca un commit che cambia `App/Sources`, `Packages/*/Sources` o `project.yml` senza toccare `App/Resources/Guide` o `docs/`; se davvero non c'è nulla da documentare si scrive una riga `Docs: <motivo>` nel messaggio.
+  - Prima della PR: `npm run docs:build` (fallisce sui link rotti). Screenshot solo da un archivio dimostrativo, mai con dati reali.
 - **Attività** (`ActivityView.swift`, ADR-0055): ogni nuovo lavoro lungo (coda, motore, download, import, export) deve comparire lì, con percentuale quando si può.
 - **Impostazioni › Permessi** (`PermissionsViews.swift`) va aggiornata a ogni modifica che richiede un nuovo permesso macOS, un'attivazione in un'altra app o un componente da scaricare: checklist, percorso guidato e attivazione della singola voce.
 

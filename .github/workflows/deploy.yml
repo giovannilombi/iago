@@ -1,6 +1,7 @@
-# Documentation site (VitePress) on GitHub Pages, from the official VitePress workflow.
-# GitHub Free has no Pages for private repositories: while giovannilombi/iago is private the jobs are skipped, and the
-# site goes live by itself on the first push to main after the repository becomes public (ADR-0068).
+# Documentation site (VitePress) on GitHub Pages, from the official VitePress workflow (ADR-0068).
+# - Pull requests: the site is built (broken links fail the build), on Ubuntu, so docs and guide stay publishable.
+# - Push to main: build and deploy. GitHub Free has no Pages for private repositories, so while giovannilombi/iago is
+#   private the deploy is skipped; the site goes live by itself on the first push after the repository becomes public.
 name: Deploy docs
 
 on:
@@ -11,6 +12,14 @@ on:
       - "App/Resources/Guide/**"
       - "Design/iago-logo.svg"
       - "Design/iago-menubar-colors.svg"
+      - "scripts/docs-sync-guide.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
+  pull_request:
+    paths:
+      - "docs/**"
+      - "App/Resources/Guide/**"
       - "scripts/docs-sync-guide.mjs"
       - "package.json"
       - "package-lock.json"
@@ -28,7 +37,6 @@ concurrency:
 
 jobs:
   build:
-    if: ${{ !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,14 +47,16 @@ jobs:
           node-version: 22
           cache: npm
       - uses: actions/configure-pages@v4
+        if: ${{ github.event_name != 'pull_request' && !github.event.repository.private }}
       - run: npm ci
       - run: npm run docs:build
       - uses: actions/upload-pages-artifact@v3
+        if: ${{ github.event_name != 'pull_request' && !github.event.repository.private }}
         with:
           path: docs/.vitepress/dist
 
   deploy:
-    if: ${{ !github.event.repository.private }}
+    if: ${{ github.event_name != 'pull_request' && !github.event.repository.private }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

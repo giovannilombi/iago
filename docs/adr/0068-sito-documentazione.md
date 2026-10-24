@@ -22,3 +22,15 @@
 - Serve Node.js per chi lavora sul sito; l'app e i pacchetti Swift non ne dipendono.
 - I minuti delle Actions per il sito girano su Ubuntu, che GitHub Free conta una volta sola (non dieci come macOS).
 - A ogni modifica di installazione, permessi, scorciatoie o log si aggiorna anche la pagina del sito corrispondente.
+
+## Modifica del 2026-10-24 (due livelli e allineamento)
+- **Due livelli**, con il selettore **Uso | Tecnico** nella barra in alto:
+  - **Uso:** la guida dell'app (copiata da `App/Resources/Guide`, quindi sempre identica a quella interna) più installazione, scorciatoie, problemi e log. Ogni capitolo ha in alto il link alla pagina tecnica corrispondente.
+  - **Tecnico:** `docs/tecnica` (architettura, dati, cattura, trascrizione, importazione, intelligenza, motore, Claude e MCP, privacy e rete, distribuzione, sviluppo, qualità), più ADR, stato, prove, licenze, progetti, benchmark e storia delle fasi.
+- **La guida dentro l'app resta solo d'uso:** niente dettagli tecnici o di costruzione; lo stile resta quello attuale.
+- **Allineamento a ogni commit:**
+  - la parte funzionale del sito *è* la guida dell'app: non può divergere;
+  - l'hook `commit-msg` blocca un commit che cambia il codice dell'app o dei pacchetti senza toccare `App/Resources/Guide` o `docs/`, salvo una riga `Docs: <motivo>`;
+  - a ogni PR che tocca la documentazione la CI compila il sito (i link rotti fanno fallire la build); a ogni push su `main` il sito si ripubblica, quando il repository è pubblico.
+- I documenti di progetto prima esclusi (ADR, stato, prove, benchmark, progetti, fasi, licenze) entrano nel livello Tecnico; resta fuori solo `docs/testing`.
+- Diagrammi mermaid con `vitepress-plugin-mermaid` 2.0.17 e `mermaid` 11.4.1.

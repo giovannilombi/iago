@@ -39,7 +39,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
-- **2026-10-24:** sito di documentazione VitePress (ADR-0068), pronto in locale; online quando il repository diventa pubblico. Corrette in `docs/installazione.md` le parti superate (aggiornamenti, cancellazione dell'eco).
+- **2026-10-24:** sito di documentazione VitePress su due livelli, Uso e Tecnico (ADR-0068), pronto in locale; online quando il repository diventa pubblico. Documentazione obbligatoria a ogni commit (controllo dei commit). Corretti la guida e il tour sul clic dell'icona (il clic apre il menu, il clic destro avvia e mette in pausa, ADR-0026) e `docs/installazione.md` (aggiornamenti, eco). Corretto il blocco della CI sui test di IAGOIngest (HTML senza WebKit, limiti di tempo).
 - **2026-10-24:** repository pulito e 1.0.0-beta (ADR-0065); controlli automatici sui commit (niente dati reali, niente co-autore IA, co-autori del team); esempio iniziale in un archivio nuovo e stream fissabili in evidenza (ADR-0066); ADR-0067 su MiniCPM; documenti per collaborare.
 - **2026-10-21:** barra di ascolto; contesto in "Chiedi a IAGO" con "Allarga contesto"; tolta l'icona accanto alla categoria; cancellazione dell'eco di macOS ritirata (ADR-0053) e pulizia dell'eco dopo la registrazione rifiutata (ADR-0064).
 
