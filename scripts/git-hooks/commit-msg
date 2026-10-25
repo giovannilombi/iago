@@ -8,6 +8,12 @@ if grep -i -q -E '^co-authored-by:.*(claude|anthropic)|generated with .*claude' 
   echo "✘ Commit blocked: no Claude co-author or \"Generated with Claude\" line (ADR-0065)." >&2
   exit 1
 fi
+# - no email address in the message other than the anonymous GitHub ones (ADR-0065).
+if grep -v '^#' "$MSG" | grep -o -E '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}' \
+  | grep -q -v -E '^([0-9]+\+)?[A-Za-z0-9-]+@users\.noreply\.github\.com$'; then
+  echo "✘ Commit blocked: the message contains an email address; only the anonymous GitHub ones (ADR-0065)." >&2
+  exit 1
+fi
 # - documentation in the same commit (ADR-0068): a change to the app's or the packages' code also touches the guide
 #   (App/Resources/Guide) or the documentation (docs/), or says why not with a "Docs: <reason>" line.
 STAGED=$(git diff --cached --name-only)

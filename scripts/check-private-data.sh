@@ -9,13 +9,39 @@ if [[ "${1:-}" == "--all" ]]; then
 else
   FILES=$(git diff --cached --name-only --diff-filter=ACMR)
 fi
-[[ -z "$FILES" ]] && exit 0
 FAIL=0
+
+# The commit's own author and committer use the anonymous GitHub address (ADR-0065), never a personal one.
+if [[ "${1:-}" != "--all" ]]; then
+  for ident in GIT_AUTHOR_IDENT GIT_COMMITTER_IDENT; do
+    EMAIL=$(git var "$ident" | sed -n 's/.*<\(.*\)>.*/\1/p')
+    if ! printf '%s' "$EMAIL" | grep -q -E '^([0-9]+\+)?[A-Za-z0-9-]+@users\.noreply\.github\.com$'; then
+      echo "✘ The commit would be signed <$EMAIL>: use the anonymous GitHub address (GitHub › Settings › Emails)," >&2
+      echo "    git config user.email <id>+<user>@users.noreply.github.com" >&2
+      FAIL=1
+      break
+    fi
+  done
+fi
+[[ -z "$FILES" ]] && exit $FAIL
 
 BLOCKED=$(echo "$FILES" | grep -i -E '\.(m4a|wav|caf|mp3|aac|aiff|flac|mp4|mov|enc|sqlite|sqlite3|db|vtt|eml|bin|gguf|safetensors)$|(^|/)(test-recordings|bench-out|Models|fixtures/generated)/|IAGO-spec|HANDOVER[^/]*\.md|private-terms\.local$' || true)
 if [[ -n "$BLOCKED" ]]; then
   echo "✘ Files that must never be committed (recordings, archives, models, local notes):" >&2
   echo "$BLOCKED" | sed 's/^/    /' >&2
+  FAIL=1
+fi
+
+# Personal email addresses never go in the repository (ADR-0065): authors are named by their anonymous GitHub address,
+# examples use invented domains. Personal mailbox providers are blocked; real work domains go in private-terms.local.
+EMAILS=$(while IFS= read -r file; do
+  [[ -f "$file" ]] || continue
+  if [[ "${1:-}" == "--all" ]]; then CONTENT=$(cat "$file"); else CONTENT=$(git show ":$file" 2>/dev/null || true); fi
+  printf '%s' "$CONTENT" | grep -o -i -E '[a-z0-9._%+-]+@(gmail|googlemail|icloud|me|mac|hotmail|outlook|live|msn|yahoo|libero|virgilio|tiscali|alice|tim|fastwebnet|email|proton|protonmail|pm|gmx|aol)\.[a-z.]{2,6}' | sed "s|^|$file: |" || true
+done <<< "$FILES")
+if [[ -n "$EMAILS" ]]; then
+  echo "✘ Personal email addresses (authors use the GitHub noreply address, examples an invented domain):" >&2
+  echo "$EMAILS" | sort -u | head -10 | sed 's/^/    /' >&2
   FAIL=1
 fi
 

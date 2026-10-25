@@ -35,3 +35,13 @@
 - **Dalle versioni successive:** i diritti sono di **Giovanni Lombi e Gianluca Sestito**. Ogni commit nomina entrambi: chi lo fa è l'autore, l'altro compare come `Co-Authored-By`. L'hook `commit-msg` aggiunge da solo le righe mancanti leggendo `Config/team.txt`; un nuovo autore si aggiunge lì.
 - Claude non compare mai, né come autore né come co-autore.
 - L'esempio dell'archivio nuovo e il divieto di contenuti nell'app sono in ADR-0066.
+
+## Modifica del 2026-10-25 (indirizzi email)
+- **Contesto:** l'indirizzo personale di un autore era finito in `Config/team.txt` e, tramite l'hook, nei `Co-Authored-By`; quello di un altro era l'autore dei merge fatti dal sito di GitHub. La storia è stata riscritta e il repository ricreato, perché le PR chiuse conservano i vecchi commit.
+- **Nessun indirizzo email personale nel repository**, né nei file né nei commit (autore, committer, messaggio). Gli autori usano solo l'indirizzo anonimo di GitHub (`<id>+<utente>@users.noreply.github.com`), anche in `Config/team.txt`; negli esempi si usano domini inventati.
+- **Controlli, su tre livelli:**
+  - `pre-commit` (`scripts/check-private-data.sh`): blocca un autore o un committer che non usa l'indirizzo anonimo e, nei file, gli indirizzi dei servizi di posta personali (Gmail, iCloud, Outlook, Libero…); i domini di lavoro reali vanno in `Config/private-terms.local`;
+  - `commit-msg`: blocca un messaggio con un indirizzo email che non sia quello anonimo di GitHub;
+  - `pre-push` (`scripts/check-commit-emails.sh`): ricontrolla ogni commit che sta per uscire, anche quelli fatti con `--no-verify`, da un merge o da un altro programma;
+  - su GitHub, il workflow `privacy.yml` (Ubuntu, pochi secondi) fa gli stessi controlli su ogni PR e ogni push su `main`, perché gli hook locali si possono saltare e un clone nuovo non li ha finché non lancia `scripts/bootstrap.sh`.
+- **Account GitHub di ogni autore:** in Settings › Emails, "Keep my email addresses private" (i merge fatti dal sito usano l'indirizzo anonimo) e "Block command line pushes that expose my email".

@@ -2,7 +2,7 @@
 
 > Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
 > **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
-> Ultimo aggiornamento: **24 ottobre 2026**.
+> Ultimo aggiornamento: **25 ottobre 2026**.
 
 ## In breve
 - **Versione:** 1.0.0-beta, non distribuita. La 1.0.0 sarà la prima versione distribuibile.
@@ -32,13 +32,14 @@ La descrizione completa è nel [README](../README.md). In sintesi:
 4. **ADR proposti, da decidere:**
    - ADR-0057, progetti condivisi tramite una cartella cloud (progetto in [`docs/design/sync-cartella-condivisa.md`](design/sync-cartella-condivisa.md)); quando accettato supera il backend di ADR-0012 e si apre la fase 4;
    - ADR-0067, MiniCPM al posto di Qwen 3.5 4B o in aggiunta: servono prove.
-5. **Distribuzione** (ADR-0059, ADR-0060, ADR-0065): senza account Apple a pagamento l'app non è notarizzata e chi la installa deve fare "Apri comunque". Per distribuire: repository pubblico, `scripts/release.sh 1.0.0 --github`, tabella Versioni del README, attivazione di GitHub Pages per il sito (ADR-0068).
+5. **Distribuzione** (ADR-0059, ADR-0060, ADR-0065): senza account Apple a pagamento l'app non è notarizzata e chi la installa deve fare "Apri comunque". Per distribuire: repository pubblico, `scripts/release.sh 1.0.0 --github`, tabella Versioni del README, attivazione di GitHub Pages per il sito (ADR-0068) e `https://giovannilombi.github.io/iago/` come "Website" nella sezione About del repository.
 6. **Dopo:**
    - prove approfondite della qualità della trascrizione su call vere (motori, diarizzazione);
    - nomi degli speaker riconosciuti tra call diverse;
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-25:** nessun indirizzo email personale nel repository (modifica di ADR-0065). La storia è stata riscritta con gli indirizzi anonimi di GitHub e `giovannilombi/iago` ricreato, perché le PR chiuse conservavano i vecchi commit: le PR #1 e #2 non ci sono più (il loro contenuto è in `main`), le issue sono state trasferite. Controlli in `pre-commit`, `commit-msg`, nuovo `pre-push` e nuovo workflow `privacy.yml` su GitHub. Link al sito di documentazione in cima al README.
 - **2026-10-24:** sito di documentazione VitePress su due livelli, Uso e Tecnico (ADR-0068), pronto in locale; online quando il repository diventa pubblico. Documentazione obbligatoria a ogni commit (controllo dei commit). Corretti la guida e il tour sul clic dell'icona (il clic apre il menu, il clic destro avvia e mette in pausa, ADR-0026) e `docs/installazione.md` (aggiornamenti, eco). Corretto il blocco della CI sui test di IAGOIngest (HTML senza WebKit, limiti di tempo).
 - **2026-10-24:** repository pulito e 1.0.0-beta (ADR-0065); controlli automatici sui commit (niente dati reali, niente co-autore IA, co-autori del team); esempio iniziale in un archivio nuovo e stream fissabili in evidenza (ADR-0066); ADR-0067 su MiniCPM; documenti per collaborare.
 - **2026-10-21:** barra di ascolto; contesto in "Chiedi a IAGO" con "Allarga contesto"; tolta l'icona accanto alla categoria; cancellazione dell'eco di macOS ritirata (ADR-0053) e pulizia dell'eco dopo la registrazione rifiutata (ADR-0064).
