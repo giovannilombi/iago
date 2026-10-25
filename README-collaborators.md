@@ -52,6 +52,7 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 - Un branch per lavoro (`feat/…`, `fix/…`, `docs/…`, `chore/…`), da `main` aggiornato.
 - Su `main` si entra solo con una **pull request**, con la CI verde e l'OK dell'altro. Niente push diretti su `main`: GitHub Free non lo impedisce, è disciplina.
 - Commit convenzionali in inglese (`feat: …`, `fix: …`, `docs: …`).
+- **Mai un indirizzo email personale**, né nei file né nei commit (ADR-0065): si firma con l'indirizzo anonimo di GitHub. In GitHub › Settings › Emails vanno attivati "Keep my email addresses private" (così anche i merge fatti dal sito usano l'indirizzo anonimo) e "Block command line pushes that expose my email". I controlli di git bloccano commit e push con un indirizzo personale, e il workflow Privacy fa lo stesso su GitHub.
 - La CI gira sulle PR che toccano codice e lancia i test dei pacchetti. I minuti macOS sono pochi (GitHub Free li conta 10 volte), quindi non va lanciata a vuoto.
 
 ### Lingue
@@ -83,7 +84,7 @@ Il controllo dei commit blocca un commit che tocca il codice dell'app o dei pacc
 1. Xcode con Swift 6, poi `brew install xcodegen swift-format`.
 2. `cp Config/Local.xcconfig.example Config/Local.xcconfig` e inserire il proprio Team ID (un Apple ID gratuito basta).
 3. `cp Config/private-terms.local.example Config/private-terms.local` e scriverci i nomi reali da bloccare.
-4. `git config user.name` e `git config user.email` con l'indirizzo che deve comparire nei commit; deve essere quello scritto in `Config/team.txt`.
+4. `git config user.name` e `git config user.email` con il proprio indirizzo **anonimo di GitHub** (`<id>+<utente>@users.noreply.github.com`, in GitHub › Settings › Emails), lo stesso scritto in `Config/team.txt`. Mai un indirizzo personale nel repository: il controllo dei commit lo blocca.
 5. `scripts/bootstrap.sh`: installa i controlli di git e genera `IAGO.xcodeproj` (il progetto Xcode non si committa: si cambia `project.yml`).
 6. `scripts/test-packages.sh` per i test, `scripts/install-app.sh` per installare la propria build in `/Applications`.
 7. Per il sito di documentazione serve Node.js (`brew install node`): `npm install`, poi `npm run docs:dev` (anteprima con ricarica automatica su `http://localhost:5173/iago/`) o `npm run docs:build`.

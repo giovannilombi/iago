@@ -1,0 +1,38 @@
+# No personal email addresses in the repository (ADR-0065), checked on GitHub too: the local hooks can be skipped or
+# missing on a new clone, and merges made on the site are commits as well. Ubuntu, a few seconds, on every pull request
+# and every push to main. Real names stay a local check: their list (Config/private-terms.local) never leaves the Mac.
+name: Privacy
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  emails:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Commits (author, committer, message)
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE: ${{ github.event.pull_request.base.sha }}
+          HEAD: ${{ github.event.pull_request.head.sha }}
+          BEFORE: ${{ github.event.before }}
+        run: |
+          if [[ "$EVENT" == "pull_request" ]]; then
+            scripts/check-commit-emails.sh "$BASE..$HEAD"
+          elif [[ "$EVENT" == "push" && -n "$BEFORE" && "$BEFORE" != 0000000000000000000000000000000000000000 ]]; then
+            scripts/check-commit-emails.sh "$BEFORE..$GITHUB_SHA"
+          else
+            scripts/check-commit-emails.sh HEAD
+          fi
+      - name: Files (personal addresses, recordings, archives, models)
+        run: scripts/check-private-data.sh --all

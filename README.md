@@ -11,6 +11,11 @@ Call, email, documenti, note e decisioni di ogni progetto in un'unica memoria. C
   macOS 15+ · Apple Silicon · Swift 6 · motore locale · Claude facoltativo · licenza CC BY-NC-SA 4.0
 </p>
 
+<p align="center">
+  📖 <strong><a href="https://giovannilombi.github.io/iago/">Documentazione</a></strong>: come si usa e come è fatto.<br>
+  <sub>Online quando il repository sarà pubblico; fino ad allora in locale con <code>npm install && npm run docs:dev</code>.</sub>
+</p>
+
 ![La finestra di IAGO: progetti, timeline e una scheda con la sintesi](App/Resources/Guide/img/finestra.png)
 
 > Gli screenshot vengono da un archivio dimostrativo con persone e aziende inventate.
@@ -270,7 +275,7 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 - **233 test automatici** nei pacchetti: Store 78, Capture 48, Transcription 28, Ingest 19, Intelligence 17, MCP 16, Core 15, Export 7, Engine 4, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
-- **CI** su ogni pull request (GitHub Actions, macOS): tutti i test e il controllo delle API di rete. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
+- **CI** su ogni pull request (GitHub Actions, macOS): tutti i test e il controllo delle API di rete. Su Ubuntu, a ogni PR e push su `main`, il controllo che nessun indirizzo email personale entri nel repository. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
 - **Prove sul campo:** misure su call reali (`docs/benchmarks/`) e una **lista di prove per tester** ([`docs/prove-tester.md`](docs/prove-tester.md)), ordinata e fattibile da chi non conosce l'app.
 - **Lingue:** codice, commenti e commit in inglese; interfaccia in italiano (String Catalog, predisposto per l'inglese).
 
@@ -278,6 +283,7 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 ```bash
 scripts/bootstrap.sh          # genera IAGO.xcodeproj con XcodeGen (project.yml è la fonte)
 scripts/check-private-data.sh --all   # nessun dato reale nei file (anche come hook prima di ogni commit)
+scripts/check-commit-emails.sh main..HEAD   # nessun indirizzo email personale nei commit (hook prima del push e CI)
 scripts/test-packages.sh      # swift test su tutti i pacchetti
 scripts/test-engine.sh        # build dell'app con MLX e shader Metal
 scripts/install-app.sh        # Release firmata installata in /Applications

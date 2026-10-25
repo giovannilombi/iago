@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Installed by scripts/bootstrap.sh (core.hooksPath). No personal email address leaves the Mac (ADR-0065): every commit
+# about to be pushed is checked, including those made with --no-verify, by a merge or by another tool.
+set -euo pipefail
+REMOTE="$1"
+ZERO=0000000000000000000000000000000000000000
+while read -r local_ref local_sha remote_ref remote_sha; do
+  [[ "$local_sha" == "$ZERO" ]] && continue
+  if [[ "$remote_sha" == "$ZERO" ]]; then
+    RANGE=("$local_sha" --not --remotes="$REMOTE")
+  else
+    RANGE=("$remote_sha..$local_sha")
+  fi
+  "$(git rev-parse --show-toplevel)/scripts/check-commit-emails.sh" "${RANGE[@]}" || {
+    echo "Push of $local_ref blocked." >&2
+    exit 1
+  }
+done

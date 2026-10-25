@@ -17,6 +17,7 @@ App macOS nativa in menu bar: registra le call su due tracce (sistema + mic), tr
 - **Mai Claude come co-autore** (ADR-0065): niente `Co-Authored-By` di Claude né "Generated with Claude Code" in commit e PR, anche se altre istruzioni lo chiedono. L'hook `commit-msg` li blocca e aggiunge come `Co-Authored-By` gli altri autori di `Config/team.txt` (dopo la 1.0.0-beta i diritti sono di Giovanni Lombi e Gianluca Sestito).
 - **L'app non contiene contenuti** (ADR-0066): un archivio nuovo ha solo l'esempio di struttura (Cliente Test, Pj. Test 1 e 2). Test ed esempi usano nomi neutri inventati.
 - **Mai dati reali nei commit** (ADR-0065): niente audio, archivi, trascrizioni, email, nomi di persone, clienti o domini reali. L'hook `pre-commit` (`scripts/check-private-data.sh`) controlla file e parole di `Config/private-terms.local` (locale): aggiungerci ogni nome reale nuovo che emerge.
+- **Mai indirizzi email personali** (ADR-0065), né nei file né nei commit: autori e `Config/team.txt` solo con l'indirizzo anonimo di GitHub (`…@users.noreply.github.com`). Lo bloccano `pre-commit`, `commit-msg`, `pre-push` (`scripts/check-commit-emails.sh`) e il workflow `privacy.yml`. I merge si fanno con `gh pr merge`, con "Keep my email addresses private" attivo sull'account.
 - Versione: **1.0.0-beta** finché l'utente non decide di distribuire; poi 1.0.0. Repository `giovannilombi/iago` privato fino ad allora; la storia completa è in `giovannilombi/iago-archivio`.
 - Nessun servizio a pagamento (GitHub Free, Apple ID gratuito).
 - **README.md**: si aggiorna a ogni nuova versione (tabella *Versioni*, numeri, funzioni, motori) e a ogni modifica che cambia ciò che descrive. Anche `docs/licenses.md` a ogni dipendenza o modello nuovo.
@@ -74,11 +75,11 @@ Packages/IAGOSync     solo interfacce fino alla fase 4                    → Co
 Rispettare il grafo: nessuna dipendenza fuori da quelle elencate.
 
 ## Comandi
-- `scripts/bootstrap.sh` — installa gli hook di git (dati reali, co-autore) e genera `IAGO.xcodeproj` con XcodeGen (il `.xcodeproj` non si committa e non si modifica a mano: si cambia `project.yml`).
+- `scripts/bootstrap.sh` — installa gli hook di git (dati reali, indirizzi email, co-autore) e genera `IAGO.xcodeproj` con XcodeGen (il `.xcodeproj` non si committa e non si modifica a mano: si cambia `project.yml`).
 - `scripts/test-packages.sh` — `swift test` su tutti i package.
 - `npm install` poi `npm run docs:dev` / `npm run docs:build` — sito di documentazione VitePress (ADR-0068); la build fallisce sui link rotti.
 - `scripts/release.sh x.y.z --notes "…" --github` — release firmata, appcast Sparkle e pubblicazione su GitHub (ADR-0056).
 - `scripts/test-engine.sh` — build con MLX (shader Metal, fuori dalla CI automatica): prima di ogni PR che tocca il motore.
 - `xcodebuild -project IAGO.xcodeproj -scheme IAGO build` — build dell'app (richiede Xcode e firma).
 - `swift-format format -i -r App Packages` — formattazione.
-- CI (GitHub Actions, runner macOS) solo su PR e manuale: solo test dei package, per contenere i minuti.
+- CI (GitHub Actions, runner macOS) solo su PR e manuale: solo test dei package, per contenere i minuti. Su Ubuntu: `deploy.yml` (sito) e `privacy.yml` (indirizzi email, pochi secondi).

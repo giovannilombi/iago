@@ -6,7 +6,7 @@ Le regole complete del team sono in [`README-collaborators.md`](https://github.c
 1. Xcode con Swift 6, `brew install xcodegen swift-format node`.
 2. `Config/Local.xcconfig` dal suo `.example`, con il proprio Team ID.
 3. `Config/private-terms.local` dal suo `.example`, con i nomi reali da bloccare nei commit.
-4. `git config user.email` uguale all'indirizzo in `Config/team.txt`.
+4. `git config user.email` con l'indirizzo anonimo di GitHub (`<id>+<utente>@users.noreply.github.com`), uguale a quello in `Config/team.txt`; in GitHub › Settings › Emails attivare "Keep my email addresses private" e "Block command line pushes that expose my email".
 5. `scripts/bootstrap.sh`: installa i controlli di git e genera `IAGO.xcodeproj`.
 
 ## Comandi
@@ -18,6 +18,7 @@ Le regole complete del team sono in [`README-collaborators.md`](https://github.c
 | `scripts/install-app.sh` | Release firmata installata in `/Applications` |
 | `scripts/check-network-apis.sh` | nessuna API di rete fuori da quelle ammesse |
 | `scripts/check-private-data.sh --all` | nessun dato reale nei file |
+| `scripts/check-commit-emails.sh main..HEAD` | nessun indirizzo email personale nei commit |
 | `scripts/make-fixtures.sh` | fixture audio sintetiche con le voci `say` |
 | `scripts/new-test-round.sh "Nome" [versione]` | issue di prove per un tester |
 | `scripts/release.sh x.y.z --github` | release firmata e appcast |
@@ -29,6 +30,7 @@ Le regole complete del team sono in [`README-collaborators.md`](https://github.c
 - **Lingue:** codice e commit in inglese, interfaccia e documenti in italiano.
 - **Decisioni:** ogni scelta rilevante è un [ADR](/adr/); un ADR accettato non si riscrive, si modifica con una sezione datata o si sostituisce.
 - **Dati:** mai dati reali nel repository (ADR-0065); l'app non contiene contenuti (ADR-0066).
+- **Indirizzi email:** mai uno personale, né nei file né nei commit; si firma con l'indirizzo anonimo di GitHub (ADR-0065).
 - **Autori:** dopo la 1.0.0-beta ogni commit nomina Giovanni Lombi e Gianluca Sestito (l'hook aggiunge il co-autore); mai un'IA.
 
 ## Documentazione a ogni commit
@@ -37,12 +39,19 @@ Ogni commit che cambia il comportamento dell'app aggiorna la documentazione nell
 - **Livello Tecnico** di questo sito (`docs/tecnica`), se cambia come è fatto: pacchetti, dati, pipeline, modelli, rete.
 - **ADR** se cambia una decisione, `docs/prove-tester.md` per le prove, `docs/stato.md` per lo stato.
 
-L'hook `commit-msg` blocca un commit che tocca il codice dell'app o dei pacchetti senza toccare la documentazione, a meno che il messaggio non contenga una riga `Docs: <motivo>` (per esempio `Docs: refactoring interno, nessun effetto visibile`).
+## Controlli di git
+`scripts/bootstrap.sh` attiva gli hook in `scripts/git-hooks`:
+- `pre-commit`: niente dati reali nei file (audio, archivi, modelli, nomi di `Config/private-terms.local`, indirizzi dei servizi di posta personali) e autore e committer con l'indirizzo anonimo di GitHub;
+- `commit-msg`: niente co-autore IA, niente indirizzi email nel messaggio, co-autori del team aggiunti da soli, documentazione nello stesso commit;
+- `pre-push`: ricontrolla autore, committer e messaggio di ogni commit che sta per uscire, anche quelli fatti saltando gli hook.
+
+L'hook `commit-msg` blocca anche un commit che tocca il codice dell'app o dei pacchetti senza toccare la documentazione, a meno che il messaggio non contenga una riga `Docs: <motivo>` (per esempio `Docs: refactoring interno, nessun effetto visibile`).
 
 ## CI
 - `ci.yml`, su macOS, solo per le PR che toccano codice: controllo delle API di rete e test dei pacchetti. I minuti macOS contano 10 volte, quindi niente esecuzioni inutili.
 - `deploy.yml`, su Ubuntu: compila il sito a ogni PR che tocca la documentazione e lo pubblica su GitHub Pages a ogni push su `main` (quando il repository è pubblico).
 - `engine.yml`, solo a mano: build con MLX.
+- `privacy.yml`, su Ubuntu, a ogni PR e push su `main`: nessun indirizzo email personale nei commit (autore, committer, messaggio) e nei file. Pochi secondi; i nomi reali restano un controllo locale, perché il loro elenco non lascia il Mac.
 - I test che usano Vision, PDFKit e gli importatori di AppKit hanno un limite di tempo, e ogni pacchetto si ferma dopo 10 minuti con il suo nome.
 - I tre test di OCR con Vision **non girano in CI**: sui runner macOS di GitHub Vision si blocca senza errore. Girano sul Mac di chi sviluppa con `scripts/test-packages.sh` (si saltano dove è impostata la variabile `CI`).
 - L'HTML importato si converte con il convertitore proprio, senza WebKit, che si bloccava fuori dal thread principale.
