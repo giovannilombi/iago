@@ -12,6 +12,11 @@ enum ErrorText {
         switch error {
         case let error as DecisionError: decision(error)
         case MCPChangeError.alreadyUndone: String(localized: "Questa modifica è già stata annullata.")
+        case MCPChangeError.changedSince:
+            String(
+                localized:
+                    "La sintesi è stata cambiata dopo questa modifica di Claude: annullarla farebbe perdere quel lavoro."
+            )
         case let error as ArchiveError: archive(error)
         case let error as Backup.BackupError: error.description
         case is EncryptedFile.Error:

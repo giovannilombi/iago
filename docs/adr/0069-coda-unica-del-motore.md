@@ -36,3 +36,6 @@
 - Con proposte e sintesi automatiche spente, su un Mac da 16 GB i risultati arrivano solo quando li chiedi; chi vuole il comportamento di prima riaccende i due interruttori.
 - Una domanda in Chiedi durante una trascrizione lunga, su un Mac sotto i 32 GB, aspetta la fine della trascrizione.
 - Un blocco interrotto si rifà: in caso di molte domande di fila una sintesi in sottofondo richiede più tempo.
+
+## Precisazione del 2026-10-27 (ricerca)
+- La **ricerca per significato mentre si scrive** è interattiva ma **non interrompe**: aspetta la fine del blocco in corso e passa davanti al blocco successivo. Interrompere a ogni tasto farebbe ripartire di continuo una sintesi in sottofondo. Chiedi e *Riordina testo* invece interrompono subito.

@@ -16,6 +16,9 @@ public actor EngineLane {
 
     /// Set around the chat and the other things the user is waiting for.
     @TaskLocal public static var interactive = false
+    /// Cleared around interactive work that is small and frequent, like the search while typing: it goes before the
+    /// next background block but does not interrupt the one in progress, which would otherwise start over at every key.
+    @TaskLocal public static var preempts = true
 
     /// The priority of the calling task.
     public static var currentPriority: Priority { interactive ? .interactive : .background }
@@ -49,12 +52,12 @@ public actor EngineLane {
     /// error or a cancellation of the caller ends it.
     public func run<T: Sendable>(
         _ priority: Priority = EngineLane.currentPriority, preemptible: Bool = true,
-        _ work: @escaping @Sendable () async throws -> T
+        preempts: Bool = EngineLane.preempts, _ work: @escaping @Sendable () async throws -> T
     ) async throws -> T {
         while true {
             try Task.checkCancellation()
             let id = UUID()
-            await acquire(id, priority: priority, preemptible: preemptible)
+            await acquire(id, priority: priority, preemptible: preemptible, preempts: preempts)
             if Task.isCancelled {
                 release(id)
                 throw CancellationError()
@@ -94,15 +97,31 @@ public actor EngineLane {
 
     // MARK: Lane
 
-    private func acquire(_ id: UUID, priority: Priority, preemptible: Bool) async {
+    private func acquire(_ id: UUID, priority: Priority, preemptible: Bool, preempts: Bool) async {
         if canStart(priority) {
             holders.append(Holder(id: id, priority: priority, preemptible: preemptible))
             return
         }
-        await withCheckedContinuation { continuation in
-            waiters.append(Waiter(id: id, priority: priority, preemptible: preemptible, continuation: continuation))
-            if priority == .interactive { interruptBackground() }
+        // A caller cancelled while waiting (a chat stopped, a transcription cancelled) leaves at once, instead of
+        // waiting for the lane only to give it back.
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                if Task.isCancelled {
+                    continuation.resume()
+                    return
+                }
+                waiters.append(Waiter(id: id, priority: priority, preemptible: preemptible, continuation: continuation))
+                if priority == .interactive, preempts { interruptBackground() }
+            }
+        } onCancel: {
+            Task { await self.stopWaiting(id) }
         }
+    }
+
+    private func stopWaiting(_ id: UUID) {
+        guard let index = waiters.firstIndex(where: { $0.id == id }) else { return }
+        waiters.remove(at: index).continuation.resume()
+        startWaiting()
     }
 
     private func canStart(_ priority: Priority) -> Bool {

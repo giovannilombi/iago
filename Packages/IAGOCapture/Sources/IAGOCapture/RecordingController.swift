@@ -135,11 +135,12 @@ public actor RecordingController {
         router.updateBookmarkNote(at: position, note: note)
     }
 
-    /// "Segna momento con screenshot" (ADR-0072): only while recording (also paused). Returns the position.
+    /// "Segna momento con screenshot" (ADR-0072): only while recording (also paused). `hostTime` is the moment the
+    /// user asked for it (capture and OCR take a moment). Returns the position.
     @discardableResult
-    public func addScreenshot(png: Data, text: String?) throws -> Double? {
+    public func addScreenshot(png: Data, text: String?, at hostTime: UInt64 = HostClock.now()) throws -> Double? {
         guard state != .idle else { return nil }
-        return try router.addScreenshot(png: png, text: text, at: HostClock.now())
+        return try router.addScreenshot(png: png, text: text, at: hostTime)
     }
 
     public func setMicOverride(uid: String?) {

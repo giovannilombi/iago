@@ -24,7 +24,8 @@ IAGO registra **due tracce separate** (ADR-0002): l'audio del Mac (gli altri) e 
 - **Segna momento** mette il segnalibro 5 secondi prima del clic (ADR-0024).
 - **Scarta** tiene la registrazione recuperabile per un'ora (ADR-0032).
 - **Segna momento con screenshot** (ADR-0072): `ScreenshotService` cattura con ScreenCaptureKit (`SCScreenshotManager`) lo schermo sotto il puntatore, o tutti, escludendo le finestre di IAGO; il testo si legge con l'OCR di Vision (`ContentExtractor.extract(image:)`). PNG e testo vanno nella cartella della sessione con un marcatore `screenshot` in `session.json`; `RecordingArchiver` li cifra come asset `screenshot` dell'elemento, con `at_sec` e `text` (migrazione `v19-screenshots`). Il testo entra nell'indice di ricerca come riga della trascrizione e nelle righe che leggono motore e Claude (`SuggestionEngine.Input.load`).
-- **Scorciatoie globali** (`GlobalShortcuts`): `RegisterEventHotKey` di Carbon, senza permessi; ⌃⌥M, ⌃⌥S, ⌃⌥R di default, salvate nell'archivio (`shortcut.<azione>`), modificabili o spente.
+- **Scorciatoie globali** (`GlobalShortcuts`): `RegisterEventHotKey` di Carbon, senza permessi; ⌃⌥M, ⌃⌥S, ⌃⌥R di default, salvate nell'archivio (`shortcut.<azione>`), modificabili o spente. Ogni combinazione contiene ⌃ o ⌥ (mai solo ⌘) e non può ripetere quella di un'altra azione di IAGO.
+- Il minuto di una schermata è quello della richiesta (`HostClock` al tasto), non la fine di cattura e OCR; con più schermi si catturano tutti subito e si leggono dopo, fuori dal thread principale. Un'importazione interrotta da un crash non duplica le schermate, e una schermata eliminata (o l'elemento) non lascia il suo testo nel database.
 
 ## Riunioni
 Rilevamento solo locale (ADR-0051):

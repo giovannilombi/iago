@@ -10,12 +10,24 @@ extension Archive {
 
     @discardableResult
     public func addScreenshot(itemID: String, png: Data, atSec: Double, text: String?) throws -> Asset {
-        let writer = self.writer
         let id = newID(at: writer.now)
         let relPath = "\(itemID)/screenshot-\(id).png.enc"
         let result = try EncryptedFile.encrypt(
             png, to: itemsRoot.appendingPathComponent(relPath), key: try itemKey(itemID), context: relPath)
         let cleaned = text?.trimmingCharacters(in: .whitespacesAndNewlines)
+        // No orphan encrypted file if the database refuses the row.
+        do {
+            return try record(id: id, itemID: itemID, relPath: relPath, result: result, atSec: atSec, text: cleaned)
+        } catch {
+            try? FileManager.default.removeItem(at: itemsRoot.appendingPathComponent(relPath))
+            throw error
+        }
+    }
+
+    private func record(
+        id: String, itemID: String, relPath: String, result: EncryptedFile.Result, atSec: Double, text cleaned: String?
+    ) throws -> Asset {
+        let writer = self.writer
         return try database.writer.write { db in
             var asset = Asset(id: id, itemId: itemID, kind: .screenshot, relPath: relPath)
             asset.sizeBytes = result.size
@@ -48,6 +60,9 @@ extension Archive {
         let relPath: String? = try database.writer.write { db in
             guard var asset = try Asset.fetchOne(db, key: id), asset.kind == .screenshot else { return nil }
             asset.deletedAt = now
+            asset.text = nil
+            asset.originalName = nil
+            asset.sha256 = nil
             try writer.save(&asset, db)
             try db.execute(
                 sql: "DELETE FROM search_index WHERE source_id = ?", arguments: ["\(asset.itemId)#shot-\(id)"])

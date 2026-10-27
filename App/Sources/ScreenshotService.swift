@@ -58,7 +58,8 @@ enum ScreenshotService {
             ? Set(content.displays.map(\.displayID))
             : Set([underPointer.flatMap(displayID) ?? CGMainDisplayID()])
         let ownApp = content.applications.filter { $0.processID == ProcessInfo.processInfo.processIdentifier }
-        var shots: [Shot] = []
+        // Every screen first, all at the moment asked; reading them comes after.
+        var images: [CGImage] = []
         for display in content.displays where wanted.contains(display.displayID) {
             let filter = SCContentFilter(display: display, excludingApplications: ownApp, exceptingWindows: [])
             let configuration = SCStreamConfiguration()
@@ -66,14 +67,18 @@ enum ScreenshotService {
             configuration.width = Int(CGFloat(display.width) * scale)
             configuration.height = Int(CGFloat(display.height) * scale)
             configuration.showsCursor = false
-            let image = try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration)
-            guard let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
-                continue
-            }
-            // Read on the Mac, off the main thread; a screenshot without text is still kept.
-            let text = await Task.detached { try? ContentExtractor.extract(image: image).markdown }.value
-            shots.append(Shot(png: png, text: text))
+            images.append(
+                try await SCScreenshotManager.captureImage(contentFilter: filter, configuration: configuration))
         }
+        // PNG and OCR off the main thread; a screenshot without text is still kept.
+        let shots = await Task.detached {
+            images.compactMap { image -> Shot? in
+                guard let png = NSBitmapImageRep(cgImage: image).representation(using: .png, properties: [:]) else {
+                    return nil
+                }
+                return Shot(png: png, text: try? ContentExtractor.extract(image: image).markdown)
+            }
+        }.value
         guard !shots.isEmpty else { throw Failure.nothingCaptured }
         Logger(subsystem: "com.giovannilombi.iago", category: "capture").notice(
             "Screenshot taken: \(shots.count) screen(s)")

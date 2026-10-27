@@ -66,6 +66,30 @@ import Testing
         #expect(await attempts.events.count == 2)
     }
 
+    @Test func theSearchWaitsForTheBlockButGoesBeforeTheNextOne() async throws {
+        let lane = EngineLane(chatBesideTranscription: false)
+        let log = Log()
+        let attempts = Log()
+        let summary = Task {
+            for block in 1...2 {
+                try await lane.run(.background) {
+                    await attempts.add("block \(block)")
+                    try await Task.sleep(for: .milliseconds(200))
+                    await log.add("block \(block)")
+                }
+            }
+        }
+        try await Task.sleep(for: .milliseconds(50))
+        try await EngineLane.$interactive.withValue(true) {
+            try await EngineLane.$preempts.withValue(false) {
+                try await lane.run { await log.add("search") }
+            }
+        }
+        try await summary.value
+        #expect(await log.events == ["block 1", "search", "block 2"])
+        #expect(await attempts.events == ["block 1", "block 2"])
+    }
+
     @Test func aTranscriptionIsNeverInterrupted() async throws {
         let lane = EngineLane(chatBesideTranscription: false)
         let log = Log()
@@ -98,6 +122,24 @@ import Testing
         }
         try await transcription.value
         #expect(await log.events == ["chat", "transcription"])
+    }
+
+    @Test func aCallerCancelledWhileWaitingLeavesAtOnce() async throws {
+        let lane = EngineLane(chatBesideTranscription: false)
+        let transcription = Task {
+            try await lane.run(.background, preemptible: false) { try await Task.sleep(for: .seconds(3)) }
+        }
+        try await Task.sleep(for: .milliseconds(50))
+        let chat = Task {
+            try await EngineLane.$interactive.withValue(true) { try await lane.run { "answer" } }
+        }
+        try await Task.sleep(for: .milliseconds(100))
+        let cancelled = Date()
+        chat.cancel()
+        await #expect(throws: CancellationError.self) { try await chat.value }
+        #expect(Date().timeIntervalSince(cancelled) < 1)
+        #expect(await lane.load.waiting == 0)
+        transcription.cancel()
     }
 
     @Test func errorsAreNotRetried() async {

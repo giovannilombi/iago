@@ -165,11 +165,14 @@ final class AppModel {
             // Words first, at once; then words and meaning together when the search model is there (ADR-0049).
             searchHits = (try? archive.search(text, scope: scope, sources: sources)) ?? []
             guard let embedder = engine.embedder else { return }
-            // The user is waiting: the search goes first in the engine lane (ADR-0069).
+            // The user is waiting: the search goes before the next background block, without interrupting the one
+            // in progress, which would start over at every key (ADR-0069).
             let hybrid = try? await EngineLane.$interactive.withValue(true) {
-                try await HybridSearch.search(
-                    text, scope: scope, sources: sources, archive: archive, embedder: embedder,
-                    cache: intelligence.cache)
+                try await EngineLane.$preempts.withValue(false) {
+                    try await HybridSearch.search(
+                        text, scope: scope, sources: sources, archive: archive, embedder: embedder,
+                        cache: intelligence.cache)
+                }
             }
             guard !Task.isCancelled, let hybrid else { return }
             searchHits = hybrid

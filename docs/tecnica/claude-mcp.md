@@ -16,10 +16,10 @@ IAGO si può collegare a **Claude Desktop** o **Claude Code** con il Model Conte
 
 ## Sintesi e proposte fatte da Claude (ADR-0071)
 - **Trovare l'elemento:** «Copia per Claude» nella scheda copia `item_id` e la richiesta; senza, `recent_items` elenca gli ultimi elementi di tutti i progetti consultabili.
-- **`set_summary`:** Claude manda sezioni e punti con la **citazione esatta**; IAGO li compone con `SummaryGenerator.compose`, nel modello della categoria (`summary_template`), verificando ogni citazione con `KeyPointExtractor.locate` come per il motore locale. I punti senza citazione, con una citazione che non trova, o in una sezione che il modello non ha, vengono scartati e riportati nell'anteprima. I punti letti su una schermata usano `screenshot_at`.
+- **`set_summary`:** Claude manda sezioni e punti con la **citazione esatta**; IAGO li compone con `SummaryGenerator.compose`, nel modello della categoria (`summary_template`), verificando ogni citazione con `KeyPointExtractor.locate` come per il motore locale. I punti senza citazione, con una citazione che non trova, o in una sezione che il modello non ha, vengono scartati e riportati nell'anteprima. I punti letti su una schermata usano `screenshot_at` e restano solo se la call ha una schermata entro 5 secondi da quel minuto.
 - **`propose_suggestions`:** decisioni e attività (con citazione verificata) e tag diventano `suggestion` con `origin = claude`, in attesa di conferma. Il motore e Claude non cancellano le proposte in attesa l'uno dell'altro.
 - La sintesi si salva con `origin = claude` e `model` = l'app da cui si usa Claude (`clientInfo` di `initialize`). «Rigenera» con il motore chiede conferma; la sintesi automatica salta gli elementi che ne hanno già una.
-- Entrambe finiscono in `mcp_change` (`summary`, `suggestion`) e si annullano da Impostazioni › Claude: la sintesi precedente torna com'era, le proposte ancora in attesa spariscono.
+- Entrambe finiscono in `mcp_change` (`summary`, `suggestion`) e si annullano da Impostazioni › Claude: la sintesi precedente torna com'era, le proposte ancora in attesa spariscono. Una sintesi riscritta dopo (da Claude, dal motore o a mano) non si annulla: IAGO lo spiega invece di perdere quel lavoro. La sintesi automatica, prima di salvare, ricontrolla che nel frattempo non sia arrivata una sintesi di Claude o una modifica a mano.
 
 ## Schermate (ADR-0072)
 - `get_item` include il **testo** delle schermate al loro minuto.

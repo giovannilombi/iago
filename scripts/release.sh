@@ -26,7 +26,9 @@ sed -i '' "s/CFBundleShortVersionString: \"[^\"]*\"/CFBundleShortVersionString: 
 sed -i '' "s/CFBundleVersion: \"[^\"]*\"/CFBundleVersion: \"$BUILD\"/" project.yml
 
 scripts/bootstrap.sh >/dev/null
-# IAGO_DISTRIBUTION: only this build looks for updates (a build from source does not).
+# IAGO_DISTRIBUTION: only this build looks for updates (a build from source does not). The previous product is
+# removed first, so a failed build can never be packaged under the new version.
+rm -rf build/DerivedData/Build/Products/Release/IAGO.app
 xcodebuild -project IAGO.xcodeproj -scheme IAGO -configuration Release -derivedDataPath build/DerivedData build \
   IAGO_DISTRIBUTION=YES | grep -E "error:|BUILD" || true
 APP=build/DerivedData/Build/Products/Release/IAGO.app

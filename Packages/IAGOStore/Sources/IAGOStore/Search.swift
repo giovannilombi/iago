@@ -186,6 +186,17 @@ extension Archive {
                 try indexDocument(String(decoding: data, as: UTF8.self), itemID: item.id)
                 count += 1
             }
+            if !assets.contains(where: { $0.kind == .transcriptJSON }) {
+                // Screenshots of a call not yet transcribed (with a transcript, indexTranscript adds them).
+                try database.writer.write { db in
+                    for shot in try Asset.filter(
+                        Column("item_id") == item.id && Column("kind") == Asset.Kind.screenshot.rawValue
+                            && Column("deleted_at") == nil
+                    ).fetchAll(db) {
+                        try Self.indexScreenshot(shot, projectID: item.projectId, db)
+                    }
+                }
+            }
         }
         try database.writer.write { db in
             for note in try Note.filter(Column("deleted_at") == nil).fetchAll(db) { try indexNote(note, db) }

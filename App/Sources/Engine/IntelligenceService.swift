@@ -181,14 +181,16 @@ final class IntelligenceService {
         }
         while !summaryRequests.isEmpty || !queue.isEmpty {
             guard await waitUntilFree() else { return }
-            let itemID = summaryRequests.isEmpty ? queue.removeFirst() : summaryRequests.removeFirst()
+            let asked = !summaryRequests.isEmpty
+            let itemID = asked ? summaryRequests.removeFirst() : queue.removeFirst()
             queue.removeAll { $0 == itemID }
             worked = true
-            await writeSummary(itemID, with: chat)
+            await writeSummary(itemID, with: chat, asked: asked)
         }
     }
 
-    private func writeSummary(_ itemID: String, with chat: any LLMProvider) async {
+    /// `asked`: the user asked for it ("Genera sintesi", or "Rigenera" confirmed), so it may replace what is there.
+    private func writeSummary(_ itemID: String, with chat: any LLMProvider, asked: Bool) async {
         guard let item = try? archive.item(itemID) else { return }
         let category = item.categoryId.flatMap { try? archive.category($0) }
         guard let template = Self.template(for: category) else {
@@ -213,6 +215,11 @@ final class IntelligenceService {
                 Task { @MainActor [weak self] in
                     if self?.summarizing?.itemID == itemID { self?.summarizing?.fraction = fraction }
                 }
+            }
+            // An automatic summary takes minutes: one written meanwhile by Claude or edited by hand stays (ADR-0071).
+            if !asked, let current = try archive.summary(itemID: itemID), current.origin == .claude || current.edited {
+                try? archive.setSetting(Self.summaryDoneKey(itemID), "kept")
+                return
             }
             try archive.saveSummary(
                 itemID: itemID, categoryID: category?.id, templateID: template.id, markdown: result.markdown,

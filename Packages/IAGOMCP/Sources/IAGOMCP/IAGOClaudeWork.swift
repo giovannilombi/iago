@@ -345,7 +345,8 @@ extension IAGOTools {
             .init(
                 lines: input.lines, template: template, date: item.occurredAt, participants: participants,
                 title: item.title),
-            brief: arguments["brief"]?.string, sections: sections)
+            brief: arguments["brief"]?.string, sections: sections,
+            screenshots: try archive.screenshots(itemID: item.id).compactMap(\.atSec))
         let kept = result.sections.reduce(0) { $0 + $1.points.count }
         guard kept > 0 else {
             throw ToolError(
@@ -370,7 +371,7 @@ extension IAGOTools {
                 model: client, origin: .claude)
             try writer.recordMCPChange(
                 .summary, id: item.id, action: existing == nil ? .create : .update,
-                previous: existing.map { MCPPrevious(summary: $0) })
+                previous: MCPPrevious(body: result.markdown, summary: existing))
             returned.append(item.id)
             return
                 "Sintesi scritta: \(kept) punti verificati. In IAGO compare come «Sintetizzata da Claude» e l'utente può annullarla da Impostazioni › Claude."

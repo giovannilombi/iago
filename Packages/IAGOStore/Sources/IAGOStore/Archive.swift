@@ -671,6 +671,9 @@ public final class Archive: Sendable {
             try removeLinks(itemID: id, writer: writer, db)
             for var asset in try Asset.filter(Column("item_id") == id && Column("deleted_at") == nil).fetchAll(db) {
                 asset.sha256 = nil
+                // A screenshot's text and name say what was on the screen: they go with the key (ADR-0072).
+                asset.text = nil
+                asset.originalName = nil
                 try writer.tombstone(&asset, db)
             }
             for var marker in try Marker.filter(Column("item_id") == id && Column("deleted_at") == nil).fetchAll(db) {

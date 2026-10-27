@@ -10,16 +10,21 @@ struct ShortcutSettings: View {
     @State private var monitor: Any?
     @State private var revision = 0
     @State private var allScreens = false
+    /// The last combination refused, and why.
+    @State private var refused: String?
 
     var body: some View {
         SettingsGroup(
             title: String(localized: "Scorciatoie in tutte le app"),
             footnote: String(
                 localized:
-                    "Funzionano anche quando sei in Teams o in un'altra app. Per cambiarne una premi «Cambia…» e poi la nuova combinazione, con ⌘, ⌃ o ⌥."
+                    "Funzionano anche quando sei in Teams o in un'altra app. Per cambiarne una premi «Cambia…» e poi la nuova combinazione, con ⌃ o ⌥ (anche insieme a ⌘ o ⇧)."
             )
         ) {
             let _ = revision
+            if let refused {
+                Label(refused, systemImage: "exclamationmark.triangle").font(.caption).foregroundStyle(.orange)
+            }
             ForEach(GlobalShortcuts.Action.allCases) { action in
                 HStack {
                     Text(action.title)
@@ -76,7 +81,18 @@ struct ShortcutSettings: View {
                 stopRecording()
                 return nil
             }
-            guard let shortcut = GlobalShortcuts.Shortcut(event: event) else { return nil }
+            guard let shortcut = GlobalShortcuts.Shortcut(event: event) else {
+                refused = String(
+                    localized: "Serve ⌃ o ⌥ nella combinazione: le scorciatoie con solo ⌘ appartengono alle altre app.")
+                return nil
+            }
+            if let other = GlobalShortcuts.Action.allCases.first(where: {
+                $0 != action && shortcuts.shortcut($0) == shortcut
+            }) {
+                refused = String(localized: "\(shortcut.display) è già usata per «\(other.title)».")
+                return nil
+            }
+            refused = nil
             shortcuts.set(shortcut, for: action)
             stopRecording()
             return nil

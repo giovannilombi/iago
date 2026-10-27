@@ -349,10 +349,12 @@ final class StatusItemController: NSObject {
             return
         }
         let allScreens = (try? archive.archive.setting(ScreenshotService.allScreensKey)) == "1"
+        // The minute of the call is the moment of the request, not the end of capture and OCR.
+        let asked = HostClock.now()
         Task {
             do {
                 let shots = try await ScreenshotService.capture(allScreens: allScreens)
-                for shot in shots { try await controller.addScreenshot(png: shot.png, text: shot.text) }
+                for shot in shots { try await controller.addScreenshot(png: shot.png, text: shot.text, at: asked) }
                 flashBookmark()
             } catch ScreenshotService.Failure.permission {
                 ScreenshotService.openSystemSettings()

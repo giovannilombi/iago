@@ -44,10 +44,11 @@ final class GlobalShortcuts {
             self.modifiers = modifiers
         }
 
-        /// From a key press in the settings: needs ⌘, ⌃ or ⌥, so typing never triggers it.
+        /// From a key press in the settings: needs ⌃ or ⌥, so typing never triggers it and ⌘ shortcuts of other apps
+        /// (⌘W, ⌘C…) are never taken over.
         init?(event: NSEvent) {
             let flags = event.modifierFlags.intersection([.command, .control, .option, .shift])
-            guard !flags.intersection([.command, .control, .option]).isEmpty else { return nil }
+            guard !flags.intersection([.control, .option]).isEmpty else { return nil }
             var modifiers = 0
             if flags.contains(.command) { modifiers |= cmdKey }
             if flags.contains(.control) { modifiers |= controlKey }
