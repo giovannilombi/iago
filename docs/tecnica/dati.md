@@ -21,7 +21,7 @@ Il database è escluso da Time Machine (contiene l'indice di ricerca in chiaro);
 - **Pronto per la sincronizzazione** (ADR-0008): ogni riga ha `created_at`, `updated_at`, `deleted_at`, `version`, `device_id`; ogni modifica finisce in `change_log`.
 
 ## Migrazioni
-Diciotto finora, da `v1` a `v18-provenance` (chi ha prodotto sintesi, proposte e punti chiave confermati, ADR-0070). Una migrazione non si modifica mai dopo il rilascio: se ne aggiunge una nuova. Prima di installare una build che porta migrazioni nuove sull'archivio di un utente si fa un backup.
+Diciannove finora, da `v1` a `v19-screenshots` (schermate delle call con minuto e testo letto, ADR-0072); `v18-provenance` registra chi ha prodotto sintesi, proposte e punti chiave confermati (ADR-0070). Una migrazione non si modifica mai dopo il rilascio: se ne aggiunge una nuova. Prima di installare una build che porta migrazioni nuove sull'archivio di un utente si fa un backup.
 
 ## Cifratura
 - **File cifrati a blocchi** con AES-GCM (ADR-0027): si legge e si scrive a pezzi, anche file grandi, senza decifrarli tutti in memoria.

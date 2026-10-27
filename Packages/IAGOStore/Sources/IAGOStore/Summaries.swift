@@ -148,6 +148,14 @@ extension Archive {
         }
     }
 
+    /// Puts back a summary as it was (undoing a summary Claude wrote over it, ADR-0071).
+    public func restoreSummary(_ summary: ItemSummaryText) throws {
+        try database.writer.write { db in
+            try summary.save(db)
+            try indexSummary(summary, db)
+        }
+    }
+
     /// The user's edit.
     public func editSummary(itemID: String, markdown: String) throws {
         let now = self.now()

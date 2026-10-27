@@ -4,8 +4,8 @@
 Serve un Mac con Apple Silicon (M1 o successivi) e macOS 15 o più recente. Spazio: 1,6 GB per la trascrizione, da 2 a 7 GB in più per il motore locale.
 
 ## Installare
-1. Scarica `IAGO-x.y.z.zip` dalla pagina delle release e aprilo.
-2. Trascina **IAGO** nella cartella **Applicazioni** e aprilo da lì.
+1. Scarica `IAGO-x.y.z.dmg` dalla pagina delle release e aprilo.
+2. Trascina **IAGO** sulla cartella **Applicazioni** che vedi accanto, poi aprilo da Applicazioni.
 
 ## "Apri comunque" (solo la prima volta)
 IAGO non è distribuito tramite l'App Store e non è notarizzato da Apple. Al primo avvio macOS può bloccarlo:

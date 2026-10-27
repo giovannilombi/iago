@@ -18,6 +18,15 @@ Con il menu aperto:
 | Impostazioni | **,** |
 | Esci | **Q** |
 
+## In tutte le app
+Funzionano anche mentre sei in Teams o in un'altra app; si cambiano o disattivano in **Impostazioni › Generale › Scorciatoie in tutte le app**.
+
+| Azione | Scorciatoia |
+|---|---|
+| Segna momento | **⌃⌥M** |
+| Segna momento con screenshot | **⌃⌥S** |
+| Avvia / Stop registrazione | **⌃⌥R** |
+
 ## Finestra principale
 
 | Azione | Scorciatoia |

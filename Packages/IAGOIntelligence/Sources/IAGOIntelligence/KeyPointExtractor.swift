@@ -190,7 +190,7 @@ public enum KeyPointExtractor {
     /// 3 of them) must be in one line or in two consecutive lines. Numbers are strict: every number in the quote must
     /// be there, so an invented amount or percentage is always discarded.
     /// `span`: how many consecutive lines may hold the quote (2 for key points; summaries paraphrase more).
-    static func locate(_ quote: String, in block: [Line], span: Int = 2) -> Double? {
+    public static func locate(_ quote: String, in block: [Line], span: Int = 2) -> Double? {
         let wanted = words(quote)
         let meaningful = Set(wanted.filter { $0.count >= 4 && !$0.allSatisfy(\.isNumber) })
         let numbers = Set(wanted.filter { $0.contains(where: \.isNumber) })

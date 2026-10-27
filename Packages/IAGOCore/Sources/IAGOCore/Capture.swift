@@ -16,6 +16,9 @@ public struct CaptureMarker: Codable, Sendable, Equatable {
         case autoPauseSleep
         /// "Segna momento" (FR-05): `detail` holds the optional note.
         case bookmark
+        /// "Segna momento con screenshot" (ADR-0072): `detail` is the PNG's file name in the session folder; the text
+        /// read on it is next to it, with the extension `.txt`.
+        case screenshot
         /// ADR-0051: the user is muted in Teams; the mic track gets silence until `micUnmuted`.
         case micMuted
         case micUnmuted

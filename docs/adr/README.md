@@ -80,7 +80,7 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0056 | Aggiornamenti dell'app | accettato |
 | 0057 | Sincronizzazione tramite una cartella cloud condivisa | proposto |
 | 0058 | Il principio sui dati: niente esce senza la scelta dell'utente | accettato |
-| 0059 | Distribuzione senza notarizzazione | accettato |
+| 0059 | Distribuzione senza notarizzazione | accettato (DMG dal 2026-10-27) |
 | 0060 | Pubblicazione del repository | accettato (repository pulito fatto con ADR-0065; pubblicazione da fare) |
 | 0061 | Guida integrata, tour di benvenuto e archivio dimostrativo | accettato |
 | 0062 | Glossario della trascrizione | accettato |
@@ -92,3 +92,5 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0068 | Sito di documentazione con VitePress su GitHub Pages | accettato (online quando il repository è pubblico) |
 | 0069 | Coda unica del motore e memoria | accettato |
 | 0070 | Chi ha prodotto ogni risultato | accettato |
+| 0071 | Sintesi e proposte fatte da Claude | accettato |
+| 0072 | Segna momento con screenshot e scorciatoie in tutte le app | accettato |

@@ -52,6 +52,37 @@ import Testing
         #expect(!FileManager.default.fileExists(atPath: folder.path))
     }
 
+    /// ADR-0072: screenshots of the session become encrypted files of the call, with minute and text, searchable.
+    @Test func screenshotsJoinTheCall() throws {
+        let fixture = try ArchiveFixture()
+        let id = ItemID.generate()
+        let folder = try finalizedFolder(in: fixture, id: id, tracks: ["mic.m4a"])
+        var manifest = try SessionManifest.decode(from: Data(contentsOf: folder.appendingPathComponent("session.json")))
+        manifest.markers.append(.init(kind: .screenshot, at: 25, detail: "screenshot-1.png"))
+        manifest.markers.append(.init(kind: .screenshot, at: 8, detail: "screenshot-2.png"))
+        try manifest.encoded().write(to: folder.appendingPathComponent("session.json"))
+        try Data("png one".utf8).write(to: folder.appendingPathComponent("screenshot-1.png"))
+        try Data("Roadmap del portale\nRilascio a novembre".utf8).write(
+            to: folder.appendingPathComponent("screenshot-1.txt"))
+        try Data("png two".utf8).write(to: folder.appendingPathComponent("screenshot-2.png"))
+
+        let item = try RecordingArchiver(archive: fixture.archive).archive(folder: folder)
+        let shots = try fixture.archive.screenshots(itemID: item.id)
+        #expect(shots.map(\.atSec) == [8, 25])
+        #expect(shots[1].text == "Roadmap del portale\nRilascio a novembre")
+        #expect(shots[1].originalName == "Schermata 00:25.png")
+        #expect(try fixture.archive.readAssetData(shots[1]) == Data("png one".utf8))
+        // Not among the files of the call, and not in the capture metadata.
+        #expect(try fixture.archive.assets(itemID: item.id).map(\.kind) == [.audioMic])
+        #expect(item.captureMeta?.contains("screenshot") == false)
+        // The text read on the slide is found by the search, at its minute.
+        let hits = try fixture.archive.search("roadmap")
+        #expect(hits.first?.itemID == item.id && hits.first?.atSec == 25)
+
+        try fixture.archive.deleteScreenshot(shots[0].id)
+        #expect(try fixture.archive.screenshots(itemID: item.id).count == 1)
+    }
+
     @Test func resumesAfterInterruptedArchiving() throws {
         let fixture = try ArchiveFixture()
         let id = ItemID.generate()

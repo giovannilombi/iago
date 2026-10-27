@@ -85,6 +85,33 @@ import Testing
         #expect(!SummaryGenerator.isCopy("Scelto il codice attività 22", of: "mettiamo la 22 così"))
     }
 
+    /// ADR-0071: a summary written by Claude gets the same template, checks and Markdown as the engine's.
+    @Test func aSummaryFromClaudeIsCheckedLikeTheEngines() {
+        let input = SummaryGenerator.Input(
+            lines: lines, template: template, date: nil, participants: ["Anna", "Mario"], title: "SAL")
+        let result = SummaryGenerator.compose(
+            input, brief: "Home chiusa, rilascio al 15 novembre.",
+            sections: [
+                (
+                    "avanzamento",
+                    [
+                        .init(text: "Chiusa la grafica della home", quote: "abbiamo chiuso la grafica della home"),
+                        .init(text: "Testi in ritardo", quote: "i testi sono pronti da un mese"),
+                        .init(text: "Senza fonte"),
+                        .init(text: "Nuova pagina prezzi in bozza", screenshotAtSec: 95),
+                    ]
+                ),
+                ("Sezione inventata", [.init(text: "x", quote: "Abbiamo chiuso la grafica della home")]),
+            ])
+        #expect(result.markdown.contains("## In breve\n\nHome chiusa, rilascio al 15 novembre."))
+        #expect(
+            result.markdown.contains(
+                "Chiusa la grafica della home [00:12](iago://seek/12) Nuova pagina prezzi in bozza (dalla schermata) [01:35](iago://seek/95)"
+            ))
+        #expect(result.markdown.contains("_Non emerso_"))
+        #expect(Set(result.discarded.map(\.point)) == ["Testi in ritardo", "Senza fonte", "x"])
+    }
+
     @Test func templatesRoundTripInMeetilysFormat() throws {
         let json = template.json()
         #expect(json.contains("\"item_format\""))

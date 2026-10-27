@@ -19,6 +19,8 @@ Le uniche uscite di rete, tutte esplicite e registrate nel registro accessi:
 
 `scripts/check-network-apis.sh` gira in CI e fallisce se nel codice compare un'API di rete fuori da questi punti.
 
+Le **schermate** di *Segna momento con screenshot* restano cifrate sul Mac come le registrazioni. A Claude arriva il loro testo, come la trascrizione, per i progetti consultabili; le immagini solo se l'utente attiva «Condividi con Claude anche le immagini delle schermate» (ADR-0072).
+
 ## Nessuna telemetria
 - Niente analytics, crash reporter remoti o telemetria: se una libreria la fa, va spenta o sostituita.
 - I **log** di sistema (`subsystem com.giovannilombi.iago`) non contengono contenuti delle trascrizioni, dei documenti o delle note.

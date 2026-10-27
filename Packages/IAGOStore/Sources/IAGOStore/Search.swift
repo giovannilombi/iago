@@ -60,6 +60,13 @@ extension Archive {
                         "\(speakers[segment.speaker] ?? ""): \(segment.text)",
                     ])
             }
+            // The text of the screenshots is part of the call (ADR-0072).
+            for shot in try Asset.filter(
+                Column("item_id") == itemID && Column("kind") == Asset.Kind.screenshot.rawValue
+                    && Column("deleted_at") == nil
+            ).fetchAll(db) {
+                try Self.indexScreenshot(shot, projectID: projectID, db)
+            }
         }
     }
 

@@ -4,12 +4,13 @@
 Un elemento è una **call**, un'**email** o un **documento**. La scheda raccoglie tutto:
 
 - **Intestazione:** titolo, data, progetto, stream, categoria, tag. Tutto modificabile.
-- **Azioni:** trascrivi, ritrascrivi, esporta, elimina.
+- **Azioni:** trascrivi, ritrascrivi, esporta, elimina, **Copia per Claude** (vedi il capitolo *Claude*).
 - **Sintesi:** vedi il capitolo *Sintesi*.
 - **Proposte:** ciò che il motore suggerisce, da confermare o scartare.
 - **Audio:** lettore con scelta della traccia (entrambe, solo microfono, solo sistema).
 - **Segnalibri** dei momenti segnati durante la call.
-- **Trascrizione** con chi parla e il minuto: un clic su un minuto fa partire l'audio da lì; tasto destro su una frase per farne un punto chiave.
+- **Schermate** catturate con *Segna momento con screenshot*, con il minuto e il testo letto.
+- **Trascrizione** con chi parla e il minuto: un clic su un minuto fa partire l'audio da lì; tasto destro su una frase per farne un punto chiave. Le schermate compaiono al loro minuto, con il testo letto.
 - **Contenuto** per documenti ed email (con immagine originale e testo riconosciuto).
 - **Note** datate, anche dettate a voce.
 - **Punti chiave** nati da questo elemento.

@@ -352,22 +352,8 @@ final class IntelligenceService {
         }
     }
 
+    /// The text the engine reads, with the screenshots of a call at their minute (ADR-0072).
     private func input(for item: Item) throws -> SuggestionEngine.Input? {
-        switch item.type {
-        case .call:
-            let document = try ItemDocument.load(item.id, from: archive)
-            guard let transcript = document.transcript else { return nil }
-            let names = Dictionary(uniqueKeysWithValues: transcript.speakers.map { ($0.id, $0.label) })
-                .merging(document.speakerLabels) { $1 }
-            let lines = transcript.segments.map {
-                KeyPointExtractor.Line(atSec: $0.start, speaker: names[$0.speaker] ?? $0.speaker, text: $0.text)
-            }
-            return .init(itemID: item.id, projectID: item.projectId, lines: lines, isCall: true, speakers: names)
-        case .email, .document:
-            guard let text = try markdown(item.id) else { return nil }
-            let lines = text.components(separatedBy: "\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
-                .map { KeyPointExtractor.Line(atSec: 0, speaker: "", text: $0) }
-            return .init(itemID: item.id, projectID: item.projectId, lines: lines, isCall: false)
-        }
+        try SuggestionEngine.Input.load(item, from: archive)
     }
 }

@@ -2,7 +2,8 @@
 # Builds and publishes a release of IAGO (ADR-0056): version in project.yml, signed Release build, zip signed with
 # Sparkle's EdDSA key (in the login keychain, account "iago"), appcast.xml with this version. A new major version is
 # marked critical: users must install it before recording again. With --github the zip and the appcast go to a GitHub
-# release (the app reads releases/latest/download/appcast.xml). Nothing else is pushed.
+# release (the app reads releases/latest/download/appcast.xml), with the DMG people install from (ADR-0059, amended):
+# drag IAGO to Applicazioni, then "Apri comunque" once. Nothing else is pushed.
 #
 #   scripts/release.sh 1.0.0 [--notes "Novità…"] [--github]     (also 1.0.0-beta.2 for a beta)
 set -euo pipefail
@@ -25,8 +26,9 @@ sed -i '' "s/CFBundleShortVersionString: \"[^\"]*\"/CFBundleShortVersionString: 
 sed -i '' "s/CFBundleVersion: \"[^\"]*\"/CFBundleVersion: \"$BUILD\"/" project.yml
 
 scripts/bootstrap.sh >/dev/null
+# IAGO_DISTRIBUTION: only this build looks for updates (a build from source does not).
 xcodebuild -project IAGO.xcodeproj -scheme IAGO -configuration Release -derivedDataPath build/DerivedData build \
-  | grep -E "error:|BUILD" || true
+  IAGO_DISTRIBUTION=YES | grep -E "error:|BUILD" || true
 APP=build/DerivedData/Build/Products/Release/IAGO.app
 [[ -d "$APP" ]] || { echo "Build failed" >&2; exit 1; }
 codesign --verify --deep --strict "$APP"
@@ -35,6 +37,16 @@ mkdir -p dist
 ZIP="dist/IAGO-$VERSION.zip"
 rm -f "$ZIP"
 ditto -c -k --keepParent "$APP" "$ZIP"
+# The DMG for the first installation: IAGO and a link to Applicazioni, signed with the app's identity.
+DMG="dist/IAGO-$VERSION.dmg"
+STAGE=$(mktemp -d)
+ditto "$APP" "$STAGE/IAGO.app"
+ln -s /Applications "$STAGE/Applicazioni"
+rm -f "$DMG"
+hdiutil create -volname "IAGO $VERSION" -srcfolder "$STAGE" -fs HFS+ -format UDZO -ov "$DMG" >/dev/null
+rm -rf "$STAGE"
+IDENTITY=$(codesign -dvv "$APP" 2>&1 | sed -n 's/^Authority=//p' | head -1)
+[[ -n "$IDENTITY" ]] && codesign --sign "$IDENTITY" "$DMG"
 SIGN_UPDATE=$(find build/DerivedData/SourcePackages/artifacts "$HOME"/Library/Developer/Xcode/DerivedData/IAGO-*/SourcePackages/artifacts \
   -name sign_update -path "*Sparkle*" 2>/dev/null | head -1)
 [[ -x "$SIGN_UPDATE" ]] || { echo "Sparkle sign_update not found: build once with Xcode" >&2; exit 1; }
@@ -64,7 +76,8 @@ print(f'''<?xml version="1.0" encoding="utf-8"?>
 PY
 echo "Release $VERSION (build $BUILD)$([[ $CRITICAL -eq 1 ]] && echo ", obbligatoria (nuova versione maggiore)")"
 if [[ $GITHUB -eq 1 ]]; then
-  gh release create "v$VERSION" "$ZIP" dist/appcast.xml --title "IAGO $VERSION" --notes "${NOTES:-Nuova versione di IAGO.}"
+  gh release create "v$VERSION" "$DMG" "$ZIP" dist/appcast.xml --title "IAGO $VERSION" \
+    --notes "${NOTES:-Nuova versione di IAGO.}"$'\n\n'"Prima installazione: scarica IAGO-$VERSION.dmg, trascina IAGO in Applicazioni, poi la prima volta Impostazioni di Sistema › Privacy e sicurezza › Apri comunque."
   echo "Published: https://github.com/giovannilombi/iago/releases/tag/v$VERSION"
 fi
 echo "Next: update README.md (Versioni) and commit it with project.yml (version $VERSION, build $BUILD)."

@@ -19,7 +19,17 @@ extension IAGOTools {
     /// How long a preview stays valid, in minutes.
     static let confirmationMinutes = 15
 
-    var writeTools: [ToolDefinition] {
+    var writeTools: [ToolDefinition] { baseWriteTools + workWriteTools(confirmation: Self.confirmationArgument) }
+
+    static let confirmationArgument: JSON = [
+        "type": "string",
+        "description": """
+        Codice dell'anteprima. Senza: lo strumento non scrive e restituisce l'anteprima da mostrare \
+        all'utente. Con il codice e gli stessi parametri: scrive.
+        """,
+    ]
+
+    var baseWriteTools: [ToolDefinition] {
         let project: JSON = [
             "type": "string",
             "description": "ID o nome del progetto; facoltativo se la connessione ha un solo progetto.",
@@ -276,6 +286,8 @@ extension IAGOTools {
         case "add_email": try planEmail(scope, arguments)
         case "import_file": try planFile(scope, arguments)
         case "write_batch": try planBatch(scope, arguments)
+        case "set_summary": try planSummary(scope, arguments)
+        case "propose_suggestions": try planSuggestions(scope, arguments)
         default: throw ToolError("Strumento sconosciuto: \(name).")
         }
     }

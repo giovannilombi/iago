@@ -92,6 +92,22 @@ final class RecordingSession {
         return position
     }
 
+    /// "Segna momento con screenshot" (ADR-0072): the PNG and the text read on it go into the session folder, so the
+    /// archiver encrypts them with the recording; the marker is at the current position, without look-back.
+    func addScreenshot(png: Data, text: String?, at hostTime: UInt64) throws -> Double {
+        let position = timeline.elapsed(at: hostTime)
+        let count = manifest.markers.filter { $0.kind == .screenshot }.count + 1
+        let name = "screenshot-\(count).png"
+        try png.write(to: directory.appendingPathComponent(name), options: .atomic)
+        if let text, !text.isEmpty {
+            try Data(text.utf8).write(
+                to: directory.appendingPathComponent("screenshot-\(count).txt"), options: .atomic)
+        }
+        manifest.markers.append(CaptureMarker(kind: .screenshot, at: position, detail: name))
+        try saveManifest()
+        return position
+    }
+
     func updateBookmarkNote(at position: Double, note: String?) {
         guard let index = manifest.markers.lastIndex(where: { $0.kind == .bookmark && $0.at == position }) else {
             return

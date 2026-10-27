@@ -7,3 +7,5 @@ IAGO controlla da solo se c'è una versione nuova (Impostazioni › Generale ›
 - Ogni aggiornamento è firmato: IAGO installa solo versioni firmate dallo stesso autore.
 
 Le note di ogni versione sono sulla pagina delle release.
+
+Gli aggiornamenti automatici valgono per IAGO installato dal **DMG**. Una copia compilata dal codice sorgente (chi sviluppa IAGO) non li cerca: si aggiorna con git e una nuova build.

@@ -218,6 +218,8 @@ final class StatusItemController: NSObject {
             bookmarkWithNote.isAlternate = true
             bookmarkWithNote.keyEquivalentModifierMask = .option
             menu.addItem(bookmarkWithNote)
+            // ADR-0072: also while paused, the slide on screen is still worth keeping.
+            menu.addItem(item(String(localized: "Segna momento con screenshot"), #selector(addScreenshot)))
         }
         menu.addItem(micMenuItem())
         menu.addItem(.separator())
@@ -317,6 +319,49 @@ final class StatusItemController: NSObject {
         Task {
             do { try await controller.newRecording() } catch { presentError(error) }
             await refresh()
+        }
+    }
+
+    // MARK: Shortcuts (ADR-0072)
+
+    /// The global shortcut "Segna momento": like the menu item; nothing to mark without a recording.
+    func markMoment() {
+        guard (snapshot?.state ?? .idle) == .recording else {
+            notifier.post(
+                title: String(localized: "Nessuna registrazione in corso"),
+                body: String(localized: "Segna momento funziona durante una call."))
+            return
+        }
+        addBookmark()
+    }
+
+    /// The global shortcut "Avvia / Stop registrazione".
+    func startOrStopRecording() {
+        if (snapshot?.state ?? .idle) == .idle { toggleRecording() } else { stopRecording() }
+    }
+
+    /// "Segna momento con screenshot": the screen goes into the call at this second, with the text read on it.
+    @objc func addScreenshot() {
+        guard (snapshot?.state ?? .idle) != .idle else {
+            notifier.post(
+                title: String(localized: "Nessuna registrazione in corso"),
+                body: String(localized: "Segna momento con screenshot funziona durante una call."))
+            return
+        }
+        let allScreens = (try? archive.archive.setting(ScreenshotService.allScreensKey)) == "1"
+        Task {
+            do {
+                let shots = try await ScreenshotService.capture(allScreens: allScreens)
+                for shot in shots { try await controller.addScreenshot(png: shot.png, text: shot.text) }
+                flashBookmark()
+            } catch ScreenshotService.Failure.permission {
+                ScreenshotService.openSystemSettings()
+                notifier.post(
+                    title: String(localized: "Serve il permesso di registrare lo schermo"),
+                    body: ScreenshotService.Failure.permission.errorDescription ?? "", fallbackToAlert: true)
+            } catch {
+                presentError(error)
+            }
         }
     }
 

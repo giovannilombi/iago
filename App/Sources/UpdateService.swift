@@ -22,7 +22,18 @@ final class UpdateService: NSObject, SPUUpdaterDelegate {
     init(archive: Archive) {
         self.archive = archive
         super.init()
+        // A copy built from source (developers) is updated with git: Sparkle would replace it with the published
+        // build, signed by someone else, and macOS would ask for every permission again (ADR-0059, amended).
+        guard Self.isDistributed else {
+            logger.notice("Built from source: no update checks")
+            return
+        }
         controller = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: self, userDriverDelegate: nil)
+    }
+
+    /// The build published with `scripts/release.sh` (installed from the DMG).
+    static var isDistributed: Bool {
+        (Bundle.main.object(forInfoDictionaryKey: "IAGODistribution") as? String) == "YES"
     }
 
     static var currentVersion: String {

@@ -216,6 +216,105 @@ func decode(_ line: String?) throws -> JSON {
         #expect(try wide.call("get_item", arguments: ["item_id": .string(loose.id)]).contains("Senza casa"))
     }
 
+    /// ADR-0071, ADR-0072: Claude finds a recent item, writes its summary and proposals (checked and undoable), and
+    /// sees the screenshots only when the user shares them.
+    @Test func claudeSummarizesAndProposesInsteadOfTheEngine() throws {
+        let fixture = try Fixture()
+        let app = fixture.app
+        let project = try app.createProject(name: "Portale")
+        try app.setProjectClaudeAccessible(project.id, true)
+        try app.setProjectClaudeWritable(project.id, true)
+        let call = try makeCall(
+            app, title: "SAL portale", text: "Il rilascio slitta al 15 novembre per il ritardo dei testi.",
+            project: project)
+        let png = try #require(
+            Data(
+                base64Encoded:
+                    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="
+            ))
+        try app.addScreenshot(itemID: call.id, png: png, atSec: 90, text: "Roadmap\nRilascio a novembre")
+        let databaseURL = fixture.databaseURL
+        let key = fixture.key
+        let itemsRoot = fixture.root.appendingPathComponent("Items")
+        let tools = IAGOTools(
+            archive: try fixture.server(), timeZone: utc,
+            clock: { Date(timeIntervalSince1970: 1_791_100_000) },
+            openWriter: {
+                try Archive(
+                    database: try AppDatabase.openWithoutMigrating(at: databaseURL), itemsRoot: itemsRoot,
+                    keyStore: key)
+            }
+        ) { _, _ in }
+        let server = MCPServer(provider: tools, version: "1.0")
+        _ = server.handle(
+            line:
+                #"{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-06-18","clientInfo":{"name":"claude-ai","title":"Claude Desktop","version":"1"}}}"#
+        )
+
+        let recent = try tools.call("recent_items", arguments: ["days": 7])
+        #expect(recent.contains("«SAL portale»") && recent.contains(call.id) && recent.contains("senza sintesi"))
+        #expect(try tools.call("summary_template", arguments: ["item_id": .string(call.id)]).contains("Sezioni"))
+        #expect(try tools.call("get_item", arguments: ["item_id": .string(call.id)]).contains("[00:01:30] Roadmap"))
+
+        // The summary: one point verified, one dropped; written as Claude's, undoable.
+        let summary = try write(
+            tools, "set_summary",
+            arguments: [
+                "item_id": .string(call.id), "brief": "Il rilascio slitta.",
+                "sections": [
+                    [
+                        "title": "punti salienti",
+                        "points": [
+                            ["text": "Rilascio spostato al 15 novembre", "quote": "Il rilascio slitta al 15 novembre"],
+                            ["text": "Budget raddoppiato", "quote": "il budget raddoppia"],
+                            ["text": "Roadmap mostrata", "screenshot_at": "01:30"],
+                        ],
+                    ]
+                ],
+            ])
+        #expect(summary.contains("2 punti verificati"))
+        let saved = try #require(try app.summary(itemID: call.id))
+        #expect(saved.origin == .claude && saved.model == "Claude Desktop")
+        #expect(saved.markdown.contains("Rilascio spostato al 15 novembre [01:15](iago://seek/75)"))
+        #expect(saved.markdown.contains("Roadmap mostrata (dalla schermata) [01:30](iago://seek/90)"))
+        #expect(!saved.markdown.contains("Budget"))
+
+        // Proposals: they wait for the user, and do not replace the engine's.
+        try app.replacePendingSuggestions(
+            itemID: call.id, model: "qwen3.5-4b", [(.tag, SuggestionPayload(text: "portale", isNew: true))])
+        _ = try write(
+            tools, "propose_suggestions",
+            arguments: [
+                "item_id": .string(call.id),
+                "items": [
+                    [
+                        "kind": "decision", "text": "Rilascio al 15 novembre",
+                        "quote": "Il rilascio slitta al 15 novembre",
+                    ],
+                    ["kind": "tag", "text": "rilascio"],
+                ],
+            ])
+        let pending = try app.suggestions(itemID: call.id)
+        #expect(pending.count == 3)
+        #expect(
+            pending.filter { $0.origin == .claude }.map(\.kind).sorted { $0.rawValue < $1.rawValue } == [
+                .decision, .tag,
+            ])
+
+        // Screenshots: only their text until the user shares the images.
+        #expect(throws: ToolError.self) {
+            try tools.content("get_screenshots", arguments: ["item_id": .string(call.id)])
+        }
+        try app.setSetting(IAGOTools.shareScreenshotsKey, "1")
+        let content = try tools.content("get_screenshots", arguments: ["item_id": .string(call.id)])
+        #expect(content.contains { $0["type"]?.string == "image" && $0["mimeType"]?.string == "image/jpeg" })
+
+        // Undo from Settings › Claude: the summary and Claude's proposals go away, the engine's stay.
+        for change in try app.mcpChanges() { try app.undoMCPChange(try #require(change.id)) }
+        #expect(try app.summary(itemID: call.id) == nil)
+        #expect(try app.suggestions(itemID: call.id).map(\.origin) == [.engine])
+    }
+
     @Test func writesOnlyWhereAllowedMarkedAndUndoable() throws {
         let fixture = try Fixture()
         let app = fixture.app

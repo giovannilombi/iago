@@ -14,6 +14,8 @@ struct ItemDetailView: View {
     @State private var item: Item?
     @State private var assets: [Asset] = []
     @State private var markers: [Marker] = []
+    /// Screenshots of the call (ADR-0072), shown in the transcript at their minute.
+    @State private var shots: [Asset] = []
     @State private var decisions: [DecisionSummary] = []
     @State private var notes: [Note] = []
     @State private var speakers: [ItemSpeaker] = []
@@ -57,6 +59,12 @@ struct ItemDetailView: View {
                         ) { Task { await listen() } }
                     }
                     if !markers.isEmpty { markersSection }
+                    if item.type == .call {
+                        ScreenshotsSection(model: model, itemID: itemID) { seconds in
+                            tab = .transcript
+                            Task { await listen(at: seconds) }
+                        }
+                    }
                     switch item.type {
                     case .document: documentSection
                     case .email:
@@ -107,6 +115,7 @@ struct ItemDetailView: View {
         self.item = item
         assets = (try? archive.assets(itemID: itemID)) ?? []
         markers = (try? archive.markers(itemID: itemID)) ?? []
+        shots = (try? archive.screenshots(itemID: itemID)) ?? []
         decisions = (try? archive.decisions(sourceItemID: itemID)) ?? []
         notes = (try? archive.notes(itemID: itemID)) ?? []
         speakers = (try? archive.speakers(itemID: itemID)) ?? []
@@ -186,6 +195,7 @@ struct ItemDetailView: View {
                         detail: String(localized: "L'audio si elimina dopo la verifica della trascrizione")
                     ) { transcribe(deleteAudio: true) }
                 }
+                CopyForClaudeLink(model: model, item: item)
                 if hasAudio {
                     ActionLink(
                         title: String(localized: "Allega trascrizione Teams…"),
@@ -411,19 +421,10 @@ struct ItemDetailView: View {
                 case .transcript:
                     CappedScroll(isLong: transcript.segments.count > 14) {
                         LazyVStack(alignment: .leading, spacing: 8) {
-                            ForEach(transcript.segments, id: \.id) { segment in
-                                HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                    timestampButton(segment.start).frame(width: 64, alignment: .leading)
-                                    Text(label(segment.speaker)).fontWeight(.semibold).frame(
-                                        width: 110, alignment: .leading)
-                                    Text(segment.text).textSelection(.enabled)
-                                }
-                                .contextMenu {
-                                    Button(String(localized: "Segna come decisione…")) { decide(from: segment) }
-                                    Button(String(localized: "Ascolta da qui")) {
-                                        Task { await listen(at: segment.start) }
-                                    }
-                                    .disabled(!hasAudio)
+                            ForEach(Self.rows(transcript.segments, shots)) { row in
+                                switch row {
+                                case .shot(let shot): screenshotRow(shot)
+                                case .segment(let segment): segmentRow(segment)
                                 }
                             }
                         }
@@ -441,6 +442,62 @@ struct ItemDetailView: View {
                 )
                 .foregroundStyle(.secondary)
             }
+        }
+    }
+
+    /// The transcript with the screenshots at their minute (ADR-0072).
+    enum TranscriptRow: Identifiable {
+        case segment(Transcript.Segment)
+        case shot(Asset)
+
+        var id: String {
+            switch self {
+            case .segment(let segment): "s\(segment.id)"
+            case .shot(let shot): "p\(shot.id)"
+            }
+        }
+    }
+
+    static func rows(_ segments: [Transcript.Segment], _ shots: [Asset]) -> [TranscriptRow] {
+        var rows: [TranscriptRow] = []
+        var pending = shots[...]
+        for segment in segments {
+            while let shot = pending.first, (shot.atSec ?? 0) < segment.start {
+                rows.append(.shot(shot))
+                pending = pending.dropFirst()
+            }
+            rows.append(.segment(segment))
+        }
+        return rows + pending.map { .shot($0) }
+    }
+
+    private func screenshotRow(_ shot: Asset) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            timestampButton(shot.atSec ?? 0).frame(width: 64, alignment: .leading)
+            Label(String(localized: "Schermata"), systemImage: "camera.viewfinder").foregroundStyle(.teal)
+                .frame(width: 110, alignment: .leading)
+            Text(
+                shot.text.map { $0.replacingOccurrences(of: "\n", with: " · ") }
+                    ?? String(localized: "(nessun testo letto)")
+            )
+            .foregroundStyle(.secondary).lineLimit(2).textSelection(.enabled)
+        }
+        .help(String(localized: "L'immagine è nella sezione Schermate"))
+    }
+
+    private func segmentRow(_ segment: Transcript.Segment) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            timestampButton(segment.start).frame(width: 64, alignment: .leading)
+            Text(label(segment.speaker)).fontWeight(.semibold).frame(
+                width: 110, alignment: .leading)
+            Text(segment.text).textSelection(.enabled)
+        }
+        .contextMenu {
+            Button(String(localized: "Segna come decisione…")) { decide(from: segment) }
+            Button(String(localized: "Ascolta da qui")) {
+                Task { await listen(at: segment.start) }
+            }
+            .disabled(!hasAudio)
         }
     }
 
@@ -814,6 +871,7 @@ private struct AssetRow: View {
         case .noteAttachment: String(localized: "Allegato")
         case .originalEmail: String(localized: "Email originale (.eml)")
         case .contentMDAuto: String(localized: "Testo automatico (prima delle correzioni)")
+        case .screenshot: String(localized: "Schermata")
         }
     }
 
@@ -823,6 +881,7 @@ private struct AssetRow: View {
         case .transcriptTXT: "txt"
         case .transcriptMD, .contentMD, .contentMDAuto: "md"
         case .originalEmail: "eml"
+        case .screenshot: "png"
         default: "m4a"
         }
     }

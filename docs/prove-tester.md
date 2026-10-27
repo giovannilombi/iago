@@ -171,6 +171,29 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 10d.2 Ogni proposta mostra «Proposta da … sul Mac»; con Qwen 3.5 4B compare anche «modello piccolo», con la spiegazione al passaggio del mouse.
 - [ ] 10d.3 Conferma una proposta di decisione e apri il punto chiave: dice «Proposto da … sul Mac, confermato da te».
 
+## 10e. Segna momento con screenshot e scorciatoie
+- [ ] 10e.1 Impostazioni › Permessi: la voce **Registrazione schermo** si attiva con *Consenti* (la prima volta macOS chiede, poi va in Impostazioni di Sistema).
+- [ ] 10e.2 Durante una registrazione con una presentazione condivisa: **⌃⌥S** (anche mentre Teams è in primo piano). L'icona lampeggia; nella scheda, a fine call, la sezione **Schermate** mostra l'immagine al minuto giusto, senza finestre di IAGO.
+- [ ] 10e.3 Nella trascrizione compare la riga «Schermata» con il testo letto; la ricerca di una parola della slide trova la call a quel minuto.
+- [ ] 10e.4 *Genera sintesi*: se la slide contiene un fatto importante, un punto della sintesi può citarlo con il suo minuto.
+- [ ] 10e.5 **⌃⌥M** segna un momento, **⌃⌥R** ferma la registrazione e la riavvia; senza registrazione ⌃⌥M e ⌃⌥S mostrano «Nessuna registrazione in corso».
+- [ ] 10e.6 Impostazioni › Generale › *Scorciatoie in tutte le app*: cambia una combinazione, ripristina la predefinita, disattivala. Una combinazione già usata da un'altra app mostra «Usata da un'altra app».
+- [ ] 10e.7 Apri una schermata ed **Elimina**: sparisce dalla scheda, dalla trascrizione e dalla ricerca.
+
+## 10f. Claude fa sintesi e proposte
+- [ ] 10f.1 Nella scheda di una call: **Copia per Claude… › Per la sintesi** con il progetto non consultabile: IAGO lo dice e offre di consentire lettura e scrittura; poi copia.
+- [ ] 10f.2 Incolla in Claude Desktop: Claude mostra l'anteprima con i punti tenuti e scartati; dopo l'OK la sintesi compare con **«Sintetizzata da Claude»**.
+- [ ] 10f.3 **Rigenera** chiede conferma prima di sostituire la sintesi di Claude.
+- [ ] 10f.4 *Per le proposte*: le proposte compaiono come **«Consigliata da Claude»** e si confermano come quelle del motore.
+- [ ] 10f.5 Chiedi a Claude «fai la sintesi della call di ieri»: trova l'elemento con gli elementi recenti, e se sono più d'uno chiede quale.
+- [ ] 10f.6 Impostazioni › Claude › *Modifiche*: annulla la sintesi e le proposte di Claude.
+- [ ] 10f.7 Con una call con schermate: senza «Condividi con Claude anche le immagini delle schermate» Claude legge solo il testo; attivandolo legge anche le immagini.
+
+## 10g. Installazione da DMG e aggiornamenti
+- [ ] 10g.1 Su un account utente o un Mac pulito: apri `IAGO-x.y.z.dmg`, trascina IAGO in Applicazioni; al primo avvio "Apri comunque" una sola volta.
+- [ ] 10g.2 Aggiorna alla versione successiva con Sparkle: niente nuovo blocco, i permessi restano.
+- [ ] 10g.3 Su una build compilata da sorgente, Impostazioni › Generale › Aggiornamenti dice che si aggiorna con git.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

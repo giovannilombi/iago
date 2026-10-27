@@ -172,6 +172,7 @@ private struct GeneralPane: View {
                 }
         }
         .onAppear { name = (try? model.archive.setting(TranscriptionService.meLabelKey)) ?? "Io" }
+        if let shortcuts = model.shortcuts { ShortcutSettings(model: model, shortcuts: shortcuts) }
     }
 
     private func save() {
@@ -465,7 +466,15 @@ private struct UpdatesGroup: View {
             )
         ) {
             Text(String(localized: "Versione installata: \(UpdateService.currentVersion)")).font(.callout)
-            if let mandatory = updates.mandatoryVersion {
+            if !UpdateService.isDistributed {
+                Label(
+                    String(
+                        localized:
+                            "Questa copia è compilata dal codice sorgente: si aggiorna con git e una nuova build, non da qui. Gli aggiornamenti automatici sono per chi installa IAGO dal DMG."
+                    ), systemImage: "hammer"
+                )
+                .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            } else if let mandatory = updates.mandatoryVersion {
                 Label(
                     String(localized: "Aggiornamento obbligatorio disponibile: \(mandatory)"),
                     systemImage: "exclamationmark.triangle.fill"
@@ -474,23 +483,28 @@ private struct UpdatesGroup: View {
             } else if let available = updates.availableVersion {
                 Label(String(localized: "Disponibile la versione \(available)"), systemImage: "arrow.down.circle")
             }
-            Toggle(
-                String(localized: "Controlla automaticamente"),
-                isOn: Binding(
-                    get: { automatic },
-                    set: { value in
-                        automatic = value
-                        updates.automaticChecks = value
-                    }))
-            HStack {
-                Button(String(localized: "Controlla ora")) { updates.checkNow() }
-                if let last = updates.lastCheck {
-                    Text(String(localized: "Ultimo controllo: \(last.formatted(date: .abbreviated, time: .shortened))"))
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-            }
+            if UpdateService.isDistributed { automaticControls }
         }
         .onAppear { automatic = updates.automaticChecks }
+    }
+
+    @ViewBuilder
+    private var automaticControls: some View {
+        Toggle(
+            String(localized: "Controlla automaticamente"),
+            isOn: Binding(
+                get: { automatic },
+                set: { value in
+                    automatic = value
+                    updates.automaticChecks = value
+                }))
+        HStack {
+            Button(String(localized: "Controlla ora")) { updates.checkNow() }
+            if let last = updates.lastCheck {
+                Text(String(localized: "Ultimo controllo: \(last.formatted(date: .abbreviated, time: .shortened))"))
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+        }
     }
 }
 

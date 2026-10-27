@@ -40,12 +40,17 @@ struct SummarySection: View {
             }
         }
         .confirmationDialog(
-            String(localized: "Sostituire la sintesi modificata a mano?"), isPresented: $confirmRegenerate,
+            summary?.origin == .claude && summary?.edited == false
+                ? String(localized: "Sostituire la sintesi di Claude?")
+                : String(localized: "Sostituire la sintesi modificata a mano?"), isPresented: $confirmRegenerate,
             titleVisibility: .visible
         ) {
             Button(String(localized: "Rigenera")) { intelligence.summarize(item.id) }
         } message: {
-            Text(String(localized: "Le tue modifiche andranno perse."))
+            Text(
+                summary?.origin == .claude && summary?.edited == false
+                    ? String(localized: "Il motore del Mac scriverà una nuova sintesi al posto di quella di Claude.")
+                    : String(localized: "Le tue modifiche andranno perse."))
         }
     }
 
@@ -168,7 +173,12 @@ struct SummarySection: View {
     }
 
     private func regenerate(_ summary: ItemSummaryText) {
-        if summary.edited { confirmRegenerate = true } else { intelligence.summarize(item.id) }
+        // A summary edited by hand or written by Claude (ADR-0071) is replaced only after asking.
+        if summary.edited || summary.origin == .claude {
+            confirmRegenerate = true
+        } else {
+            intelligence.summarize(item.id)
+        }
     }
 
     private func caption(_ summary: ItemSummaryText) -> String {

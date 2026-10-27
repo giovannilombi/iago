@@ -327,6 +327,13 @@ enum Migrations {
             try db.alter(table: "suggestion") { t in t.add(column: "origin", .text).notNull().defaults(to: "engine") }
             try db.alter(table: "decision") { t in t.add(column: "model", .text) }
         }
+        migrator.registerMigration("v19-screenshots") { db in
+            // ADR-0072: screenshots taken during a call, at their second, with the text read on them.
+            try db.alter(table: "asset") { t in
+                t.add(column: "at_sec", .double)
+                t.add(column: "text", .text)
+            }
+        }
         return migrator
     }
 
