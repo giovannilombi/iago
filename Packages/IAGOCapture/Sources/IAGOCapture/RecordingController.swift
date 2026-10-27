@@ -135,6 +135,13 @@ public actor RecordingController {
         router.updateBookmarkNote(at: position, note: note)
     }
 
+    /// "Segna momento con screenshot" (ADR-0072): only while recording (also paused). Returns the position.
+    @discardableResult
+    public func addScreenshot(png: Data, text: String?) throws -> Double? {
+        guard state != .idle else { return nil }
+        return try router.addScreenshot(png: png, text: text, at: HostClock.now())
+    }
+
     public func setMicOverride(uid: String?) {
         engine?.setMicOverride(uid: uid)
     }
@@ -170,7 +177,6 @@ public actor RecordingController {
     }
 
     // MARK: Private
-
 
     private func makeEngine() -> CaptureEngine {
         let router = router
@@ -314,6 +320,10 @@ final class SessionRouter: @unchecked Sendable {
 
     func updateBookmarkNote(at position: Double, note: String?) {
         queue.sync { current?.updateBookmarkNote(at: position, note: note) }
+    }
+
+    func addScreenshot(png: Data, text: String?, at hostTime: UInt64) throws -> Double? {
+        try queue.sync { try current?.addScreenshot(png: png, text: text, at: hostTime) }
     }
 
     func noteDevice(_ name: String, for track: TrackKind, in session: RecordingSession) {

@@ -20,6 +20,8 @@
 	<string>1.0.0-beta</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<key>IAGODistribution</key>
+	<string>$(IAGO_DISTRIBUTION)</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.productivity</string>
 	<key>LSUIElement</key>

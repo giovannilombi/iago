@@ -17,6 +17,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private let notifier = Notifier()
     private var services: ServiceProvider?
     private var updates: UpdateService?
+    private var shortcuts: GlobalShortcuts?
     private var pausedForSleep = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -78,6 +79,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSUpdateDynamicServices()
             statusItemController.windows = windows
             NSApp.mainMenu = MainMenu.make { [weak windows] in windows?.showSettings() }
+            // ADR-0072: mark a moment, with a screenshot, start or stop, from any app.
+            let shortcuts = GlobalShortcuts(archive: archive.archive) { [weak statusItemController] action in
+                switch action {
+                case .bookmark: statusItemController?.markMoment()
+                case .screenshot: statusItemController?.addScreenshot()
+                case .record: statusItemController?.startOrStopRecording()
+                }
+            }
+            shortcuts.start()
+            self.shortcuts = shortcuts
+            model.shortcuts = shortcuts
             observeControllerEvents(controller, archive: archive)
             observeSleep()
             Task {

@@ -115,6 +115,8 @@ targets:
         SUEnableAutomaticChecks: true
         SUScheduledCheckInterval: 86400
         SUAllowsAutomaticUpdates: false
+        # ADR-0059 (amended): only the published build looks for updates; one compiled from source updates with git.
+        IAGODistribution: $(IAGO_DISTRIBUTION)
         # ADR-0049: "Aggiungi a IAGO" in the Services menu (ServiceProvider.addToIAGO).
         NSServices:
           - NSMessage: addToIAGO

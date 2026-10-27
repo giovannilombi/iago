@@ -44,6 +44,17 @@ public struct RecordingArchiver: Sendable {
                 try archive.addMarker(itemID: id, atSec: marker.at, note: marker.detail)
             }
         }
+        // Screenshots (ADR-0072): each file goes into the archive and then away; after a crash the ones left are added.
+        for marker in manifest.markers where marker.kind == .screenshot {
+            guard let name = marker.detail else { continue }
+            let file = folder.appendingPathComponent(name)
+            guard FileManager.default.fileExists(atPath: file.path) else { continue }
+            let sidecar = file.deletingPathExtension().appendingPathExtension("txt")
+            let text = try? String(contentsOf: sidecar, encoding: .utf8)
+            try archive.addScreenshot(itemID: id, png: Data(contentsOf: file), atSec: marker.at, text: text)
+            try FileManager.default.removeItem(at: file)
+            try? FileManager.default.removeItem(at: sidecar)
+        }
         for track in Self.tracks {
             let file = folder.appendingPathComponent(track.file)
             guard FileManager.default.fileExists(atPath: file.path) else { continue }
@@ -64,7 +75,8 @@ public struct RecordingArchiver: Sendable {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.sortedKeys]
         let meta = Meta(
-            markers: manifest.markers.filter { $0.kind != .bookmark }, devices: manifest.devices,
+            markers: manifest.markers.filter { $0.kind != .bookmark && $0.kind != .screenshot },
+            devices: manifest.devices,
             sampleRate: manifest.sampleRate)
         return String(decoding: try encoder.encode(meta), as: UTF8.self)
     }

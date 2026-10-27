@@ -90,6 +90,7 @@ struct TrashView: View {
         case .noteAttachment: String(localized: "Allegato")
         case .originalEmail: String(localized: "Email originale (.eml)")
         case .contentMDAuto: String(localized: "Testo automatico")
+        case .screenshot: String(localized: "Schermata")
         }
     }
 }

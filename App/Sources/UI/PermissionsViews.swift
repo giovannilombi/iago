@@ -17,7 +17,7 @@ struct PermissionStep: Identifiable, Equatable {
     enum State: Equatable { case granted, missing, unknown }
     enum ID: String, CaseIterable {
         case microphone, systemAudio, notifications, transcriptionModels, loginItem, calendar, calendarAccounts,
-            engine, searchModel, teamsAccessibility, teamsAPI
+            engine, searchModel, teamsAccessibility, teamsAPI, screenRecording
     }
 
     var id: ID
@@ -149,6 +149,14 @@ final class PermissionCenter {
                         "Per sapere quando sei in riunione e in mute: in mute IAGO non registra il tuo microfono. Si attiva in Teams › Impostazioni › Privacy › API di app di terze parti, poi in una riunione si consente IAGO."
                 ), icon: "person.2.wave.2", level: .optional, state: ok ? .granted : .missing,
                 action: String(localized: "Collega"))
+        case .screenRecording:
+            return PermissionStep(
+                id: id, title: String(localized: "Registrazione schermo"),
+                why: String(
+                    localized:
+                        "Per «Segna momento con screenshot»: IAGO cattura lo schermo solo quando premi il comando, mai da solo. macOS chiede ogni tanto di confermare il permesso."
+                ), icon: "camera.viewfinder", level: .optional,
+                state: ScreenshotService.hasPermission ? .granted : .missing, action: String(localized: "Consenti"))
         }
     }
 
@@ -203,6 +211,9 @@ final class PermissionCenter {
             if TeamsAccessibility.trusted == false {
                 open("x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")
             }
+        case .screenRecording:
+            // The first time macOS asks; afterwards it is turned on only in System Settings.
+            if !ScreenshotService.requestPermission() { ScreenshotService.openSystemSettings() }
         case .teamsAPI:
             model.calls.teams.enabled = true
             if let teams = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "com.microsoft.teams2") {

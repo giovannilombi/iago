@@ -4,7 +4,8 @@ import GRDB
 /// One write made by the user through Claude (ADR-0044): what was created or changed, and the values before a
 /// change, so it can be undone from IAGO.
 public struct MCPChange: Codable, FetchableRecord, PersistableRecord, Sendable, Hashable, Identifiable {
-    public enum Entity: String, Codable, Sendable { case note, decision, item }
+    /// `summary` and `suggestion` (ADR-0071): `entityId` is the item's.
+    public enum Entity: String, Codable, Sendable { case note, decision, item, summary, suggestion }
     public enum Action: String, Codable, Sendable { case create, update }
 
     public static let databaseTableName = "mcp_change"
@@ -32,6 +33,10 @@ public struct MCPPrevious: Codable, Sendable, Equatable {
     public var streamIDs: [String]?
     /// Links and states of the chains touched by a change of "supersedes" (ADR-0047).
     public var chain: [ChainLink]?
+    /// The summary Claude replaced (ADR-0071).
+    public var summary: ItemSummaryText?
+    /// The proposals Claude added (ADR-0071).
+    public var suggestionIDs: [String]?
 
     public struct ChainLink: Codable, Sendable, Equatable {
         public var id: String
@@ -51,8 +56,11 @@ public struct MCPPrevious: Codable, Sendable, Equatable {
 
     public init(
         body: String? = nil, text: String? = nil, notes: String? = nil, status: Decision.Status? = nil,
-        chainName: String? = nil, streamIDs: [String]? = nil, chain: [ChainLink]? = nil
+        chainName: String? = nil, streamIDs: [String]? = nil, chain: [ChainLink]? = nil,
+        summary: ItemSummaryText? = nil, suggestionIDs: [String]? = nil
     ) {
+        self.summary = summary
+        self.suggestionIDs = suggestionIDs
         self.body = body
         self.text = text
         self.notes = notes
@@ -126,6 +134,10 @@ extension Archive {
                 try setChainName(previous.chainName, decisionID: change.entityId)
             }
         case (.item, .update): break
+        case (.summary, .create): try deleteSummary(itemID: change.entityId)
+        case (.summary, .update):
+            if let summary = previous?.summary { try restoreSummary(summary) }
+        case (.suggestion, _): try deletePendingSuggestions(previous?.suggestionIDs ?? [])
         }
         let now = self.now()
         try database.writer.write { db in

@@ -239,6 +239,8 @@ final class AppModel {
     var openTour: (() -> Void)?
     /// Updates from GitHub Releases (ADR-0056).
     var updates: UpdateService?
+    /// The global shortcuts (ADR-0072), set by the app delegate.
+    @ObservationIgnored var shortcuts: GlobalShortcuts?
 
     /// Voice notes (FR-210…218): temporary audio, transcription, leftovers.
     let voiceNotes: VoiceNoteService

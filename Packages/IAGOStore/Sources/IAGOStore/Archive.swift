@@ -563,10 +563,11 @@ public final class Archive: Sendable {
 
     public func assets(itemID: String, includeTrashed: Bool = false) throws -> [Asset] {
         try database.writer.read { db in
-            // Note attachments are listed with their note, not among the item's files.
+            // Note attachments are listed with their note, screenshots in their own section, not among the files.
             var request = Asset.filter(
                 Column("item_id") == itemID && Column("deleted_at") == nil
-                    && Column("kind") != Asset.Kind.noteAttachment.rawValue)
+                    && Column("kind") != Asset.Kind.noteAttachment.rawValue
+                    && Column("kind") != Asset.Kind.screenshot.rawValue)
             if !includeTrashed { request = request.filter(Column("trashed_at") == nil) }
             return try request.order(Column("kind")).fetchAll(db)
         }

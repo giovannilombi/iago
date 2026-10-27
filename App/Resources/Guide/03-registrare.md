@@ -11,6 +11,24 @@ IAGO registra **due tracce separate**: l'audio del Mac (le voci degli altri in T
 ## Segna momento
 Durante la call scegli **Segna momento** dal menu: IAGO mette un segnalibro qualche secondo prima di adesso, con una nota facoltativa. Nella scheda lo ritrovi tra i *Segnalibri* e un clic ti porta in quel punto dell'audio. Da un segnalibro puoi creare direttamente un punto chiave.
 
+## Segna momento con screenshot
+Quando qualcuno condivide una slide, una tabella o un grafico, scegli **Segna momento con screenshot** (o premi **⌃⌥S**): IAGO cattura lo schermo su cui c'è il puntatore, senza le sue finestre, e lo mette nella call **in quel minuto**.
+- Il Mac legge il testo della schermata: lo ritrovi nella trascrizione al suo minuto, nella ricerca e nelle sintesi, che possono citare una slide.
+- Nella scheda le schermate stanno nella sezione **Schermate**: un clic apre l'immagine con il testo letto, e da lì ascolti la call da quel punto.
+- Serve il permesso **Registrazione schermo** (Impostazioni › Permessi). IAGO cattura lo schermo solo quando lo chiedi tu, mai da solo. macOS chiede ogni tanto di confermare il permesso.
+- In Impostazioni › Generale puoi scegliere di catturare tutti gli schermi.
+
+## Scorciatoie in tutte le app
+Funzionano anche mentre sei in Teams o in un'altra app:
+
+| Azione | Scorciatoia |
+| --- | --- |
+| Segna momento | **⌃⌥M** |
+| Segna momento con screenshot | **⌃⌥S** |
+| Avvia / Stop registrazione | **⌃⌥R** |
+
+Le cambi o le disattivi in **Impostazioni › Generale › Scorciatoie in tutte le app**. Se un'altra app usa già una combinazione, IAGO te lo dice: scegline un'altra.
+
 ## Microfono
 - **Automatico** (consigliato): IAGO usa il microfono dell'app di call e lo segue se colleghi o scolleghi le cuffie.
 - **Fisso**: scegline uno in Impostazioni › Audio o dal menu dell'icona di IAGO {{icona}}.

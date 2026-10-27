@@ -43,6 +43,18 @@ public protocol ToolProvider: Sendable {
     var instructions: String { get }
     var tools: [ToolDefinition] { get }
     func call(_ name: String, arguments: JSON) throws -> String
+    /// The result as MCP content blocks: text, and images where a tool returns them (ADR-0072).
+    func content(_ name: String, arguments: JSON) throws -> [JSON]
+    /// The client introduced itself in `initialize` (e.g. "Claude Desktop", ADR-0070).
+    func connected(client: String)
+}
+
+extension ToolProvider {
+    public func content(_ name: String, arguments: JSON) throws -> [JSON] {
+        [["type": "text", "text": .string(try call(name, arguments: arguments))]]
+    }
+
+    public func connected(client: String) {}
 }
 
 public struct ToolError: Error, Sendable, CustomStringConvertible {
@@ -83,6 +95,9 @@ public struct MCPServer: Sendable {
         let params = message["params"] ?? .object([:])
         switch method {
         case "initialize":
+            if let client = params["clientInfo"]?["title"]?.string ?? params["clientInfo"]?["name"]?.string {
+                provider.connected(client: client)
+            }
             let requested = params["protocolVersion"]?.string ?? ""
             let agreed = Self.supportedVersions.contains(requested) ? requested : Self.supportedVersions.last!
             return Self.result(
@@ -104,19 +119,20 @@ public struct MCPServer: Sendable {
             guard provider.tools.contains(where: { $0.name == name }) else {
                 return Self.error(id: id, code: -32602, message: "Unknown tool: \(name)")
             }
-            let text: String
+            var content: [JSON]
             var isError = false
             do {
-                text = try provider.call(name, arguments: params["arguments"] ?? .object([:]))
+                content = try provider.content(name, arguments: params["arguments"] ?? .object([:]))
             } catch let error as ToolError {
-                text = error.message
+                content = [["type": "text", "text": .string(error.message)]]
                 isError = true
             } catch {
-                text = "IAGO non è riuscito a leggere l'archivio (\(type(of: error)))."
+                content = [
+                    ["type": "text", "text": .string("IAGO non è riuscito a leggere l'archivio (\(type(of: error))).")]
+                ]
                 isError = true
             }
-            return Self.result(
-                id: id, ["content": [["type": "text", "text": .string(text)]], "isError": .bool(isError)])
+            return Self.result(id: id, ["content": .array(content), "isError": .bool(isError)])
         default:
             return Self.error(id: id, code: -32601, message: "Method not found: \(method)")
         }

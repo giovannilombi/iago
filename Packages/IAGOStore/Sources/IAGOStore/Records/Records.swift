@@ -139,6 +139,8 @@ public struct Asset: SyncRecord, Identifiable, Hashable {
         case originalEmail = "original_eml"
         /// The Markdown as extracted, kept when the user corrects it (FR-191).
         case contentMDAuto = "content_md_auto"
+        /// A screenshot taken during the call ("Segna momento con screenshot", ADR-0072), with `atSec` and `text`.
+        case screenshot
 
         public var isAudio: Bool { [.audioMic, .audioSystem, .audioMix, .audioImport].contains(self) }
     }
@@ -156,6 +158,10 @@ public struct Asset: SyncRecord, Identifiable, Hashable {
     public var noteId: String?
     /// Original file name, for display and export.
     public var originalName: String?
+    /// Second of the call a screenshot belongs to (ADR-0072).
+    public var atSec: Double?
+    /// Text read on a screenshot with OCR (ADR-0072).
+    public var text: String?
     public var trashedAt: Date?
     public var createdAt = Date.distantPast
     public var updatedAt = Date.distantPast

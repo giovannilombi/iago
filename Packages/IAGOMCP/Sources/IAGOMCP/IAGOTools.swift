@@ -2,6 +2,7 @@ import CryptoKit
 import Foundation
 import IAGOExport
 import IAGOStore
+import Synchronization
 
 /// The tools Claude uses to read IAGO (spec 12 v1.4, ADR-0043). Only projects marked "Consultabile da Claude"
 /// exist for these tools; every call is written to the audit log, never its content.
@@ -31,6 +32,27 @@ public struct IAGOTools: ToolProvider {
     let inbox: URL?
     /// Signs the confirmation codes of write previews (ADR-0047); new for every server process.
     let previewKey = SymmetricKey(size: .bits256)
+    /// What the connection learned about its client.
+    let session = Session()
+
+    final class Session: Sendable {
+        private let name = Mutex<String?>(nil)
+        var client: String? { name.withLock { $0 } }
+        func set(_ client: String) { name.withLock { $0 = client } }
+    }
+
+    public func connected(client: String) { session.set(client) }
+
+    public func content(_ name: String, arguments: JSON) throws -> [JSON] {
+        guard name == "get_screenshots" else {
+            return [["type": "text", "text": .string(try call(name, arguments: arguments))]]
+        }
+        let scope = try Scope(archive: archive, restriction: restriction)
+        var returned: [String] = []
+        let content = try screenshotsContent(scope, arguments, &returned)
+        audit(name, Self.auditDetail(arguments, returned: returned))
+        return content
+    }
 
     public init(
         archive: Archive, restriction: Restriction? = nil, timeZone: TimeZone = .current,
@@ -71,8 +93,9 @@ public struct IAGOTools: ToolProvider {
             - Le informazioni si susseguono nel tempo: in caso di conflitto prevale la più recente, e il conflitto va \
             segnalato.
             - Cita sempre la fonte: titolo dell'elemento, data e, per le call, il minuto [mm:ss].
-            Inizia da list_projects; usa search per trovare passaggi e get_item per leggere un elemento intero.
-            """ + (openWriter == nil ? "" : Self.writingGuide)
+            Inizia da list_projects; usa search per trovare passaggi e get_item per leggere un elemento intero; \
+            recent_items per gli ultimi elementi di tutti i progetti.
+            """ + (openWriter == nil ? "" : Self.writingGuide + Self.workGuide)
     }
 
     /// How to write (ADR-0047): context first, ask instead of guessing, preview before every write.
@@ -127,10 +150,10 @@ public struct IAGOTools: ToolProvider {
     ]
 
     public var tools: [ToolDefinition] {
-        readTools.map { tool in
+        (readTools + workReadTools).map { tool in
             var tool = tool
             tool.readOnly = true
-            tool.title = Self.readTitles[tool.name]
+            tool.title = Self.readTitles[tool.name] ?? Self.workTitles[tool.name]
             return tool
         }
             + (openWriter == nil
@@ -285,6 +308,8 @@ public struct IAGOTools: ToolProvider {
         case "get_thread": text = try thread(scope, arguments, &returned)
         case "export_project": text = try exportProject(scope, arguments, &returned)
         case "find_file": text = try findFile(arguments)
+        case "recent_items": text = try recentItems(scope, arguments, &returned)
+        case "summary_template": text = try summaryTemplate(scope, arguments, &returned)
         default:
             guard let written = try callWrite(name, scope, arguments, &returned) else {
                 throw ToolError("Strumento sconosciuto: \(name)")
@@ -511,6 +536,19 @@ public struct IAGOTools: ToolProvider {
         let item = try visibleItem(scope, arguments["item_id"]?.string)
         returned.append(item.id)
         var text = try ProjectExporter.itemMarkdown(item.id, archive: archive, timeZone: timeZone)
+        // ADR-0072: the text read on the screenshots of the call, at their minute.
+        let shots = try archive.screenshots(itemID: item.id)
+        if !shots.isEmpty {
+            text += "\n### Schermate catturate durante la call\n\n"
+            text +=
+                shots.map {
+                    "- [\(TranscriptRenderer.clock($0.atSec ?? 0))] \(oneLine($0.text ?? "(nessun testo letto)", limit: 600))"
+                }
+                .joined(separator: "\n") + "\n"
+            if (try archive.setting(Self.shareScreenshotsKey)) == "1" {
+                text += "\nLe immagini si leggono con get_screenshots.\n"
+            }
+        }
         let decisions = try archive.decisions(sourceItemID: item.id)
         if !decisions.isEmpty {
             text += "\n### Decisioni nate da questo elemento\n\n"

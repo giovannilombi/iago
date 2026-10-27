@@ -16,8 +16,10 @@ Bastano una decina di minuti, compresa la configurazione guidata.
 - **Cuffie:** non obbligatorie, ma senza cuffie il microfono sente anche le casse.
 
 ## 1. Copiare l'app
-1. Scarica `IAGO-x.y.z.zip` dalla [pagina delle release](https://github.com/giovannilombi/iago/releases/latest) e aprilo.
-2. Trascina **IAGO** nella cartella **Applicazioni** e aprilo da lì.
+1. Scarica `IAGO-x.y.z.dmg` dalla [pagina delle release](https://github.com/giovannilombi/iago/releases/latest) e aprilo.
+2. Trascina **IAGO** sulla cartella **Applicazioni** che vedi accanto, poi aprilo da Applicazioni.
+
+Chi sviluppa IAGO usa la propria build compilata dal codice: non installa il DMG sullo stesso account utente, perché due copie di IAGO si contendono permessi e archivio.
 
 ## 2. "Apri comunque" (Gatekeeper, solo la prima volta)
 IAGO non è distribuito tramite l'App Store e non è notarizzato da Apple, perché la notarizzazione richiede un account a pagamento. L'app è comunque firmata. Al primo avvio macOS la blocca con un messaggio del tipo «Impossibile verificare che "IAGO" non contenga malware».
@@ -53,6 +55,7 @@ In **IAGO › Impostazioni › Permessi** trovi l'elenco con lo stato di ogni vo
 | Avvio al login | essere pronto a ogni call | consigliato |
 | Calendario | il titolo delle riunioni e la proposta all'orario d'inizio | facoltativo |
 | Accessibilità | seguire il mute di Teams | facoltativo |
+| Registrazione schermo | *Segna momento con screenshot* (cattura solo quando lo chiedi) | facoltativo |
 | Motore locale | sintesi, proposte e Chiedi a IAGO | facoltativo |
 
 Se un permesso è stato negato, si riattiva in **Impostazioni di Sistema › Privacy e sicurezza**, nella voce corrispondente; poi si riavvia IAGO.
@@ -63,7 +66,7 @@ Per avere il titolo delle riunioni e la proposta di registrare all'orario d'iniz
 2. In IAGO: **Impostazioni › Audio › Riunioni › Usa il Calendario del Mac**.
 
 ## 6. Aggiornamenti
-IAGO controlla una volta al giorno se c'è una versione nuova sulla pagina delle release e te la propone. Gli aggiornamenti sono firmati. Una nuova versione **maggiore** è obbligatoria: finché non la installi, IAGO non avvia nuove registrazioni. Il controllo si fa anche a mano, dal menu dell'icona di IAGO › **Controlla aggiornamenti…**.
+IAGO controlla una volta al giorno se c'è una versione nuova sulla pagina delle release e te la propone. Gli aggiornamenti sono firmati. Una nuova versione **maggiore** è obbligatoria: finché non la installi, IAGO non avvia nuove registrazioni. Il controllo si fa anche a mano, dal menu dell'icona di IAGO › **Controlla aggiornamenti…**. Vale per IAGO installato dal DMG; una copia compilata dal codice sorgente si aggiorna con git.
 
 ## Disinstallare
 1. Esci da IAGO (menu dell'icona › **Esci**) e trascina l'app dal Finder nel Cestino.

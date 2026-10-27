@@ -61,7 +61,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 ### Ricorda ciò che conta
 - **Punti chiave:** decisioni, attività e tappe, ognuno con la fonte (fino al minuto della call), le persone e la data.
 - **L'evoluzione delle decisioni:** una voce può superarne altre, anche di tipo diverso, e IAGO tiene la storia di come ci si è arrivati.
-- **Momenti segnati** durante una call, **note** datate sul progetto o sull'elemento, anche dettate a voce.
+- **Momenti segnati** durante una call, anche **con lo screenshot** della slide condivisa (il testo letto entra nella trascrizione, nella ricerca e nelle sintesi), e **note** datate sul progetto o sull'elemento, anche dettate a voce. Le scorciatoie (⌃⌥M, ⌃⌥S, ⌃⌥R) funzionano in qualsiasi app.
 - **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
 
 ### Capisce
@@ -92,6 +92,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **Claude** (Claude Desktop o Claude Code) collegato a IAGO via MCP, per ragionare sui tuoi progetti con un modello più potente:
   - legge solo ciò che abiliti;
   - scrive note, punti chiave e documenti solo con anteprima e tua conferma;
+  - può fare **sintesi e proposte al posto del motore del Mac**: «Copia per Claude» nella scheda gli dà l'elemento giusto, e IAGO verifica ogni citazione come con il suo motore;
   - ogni scrittura si può annullare.
 - **Condivisione con il gruppo** *(in arrivo, fase 4)*: progetti condivisi in spazi fidati che controlli tu o la tua azienda (OneDrive, SharePoint, Google Drive), senza un server di IAGO.
 - **Obsidian**, **esportazioni** per progetto (anche in Markdown per un LLM) e **backup cifrato** per passare a un altro Mac.
@@ -118,7 +119,7 @@ Uno script in CI (`scripts/check-network-apis.sh`) fallisce se nel codice compar
 - 1,6 GB per i modelli di trascrizione;
 - da 2 a 7 GB in più per il motore locale.
 
-1. Scarica `IAGO-x.y.z.zip` dalla [pagina delle release](https://github.com/giovannilombi/iago/releases/latest), aprilo e trascina **IAGO** in **Applicazioni**.
+1. Scarica `IAGO-x.y.z.dmg` dalla [pagina delle release](https://github.com/giovannilombi/iago/releases/latest), aprilo e trascina **IAGO** in **Applicazioni**.
 2. **Primo avvio.** IAGO non è notarizzato da Apple, quindi macOS lo blocca la prima volta:
    - premi **Fine**;
    - apri **Impostazioni di Sistema › Privacy e sicurezza**;
@@ -136,7 +137,7 @@ Uno script in CI (`scripts/check-network-apis.sh`) fallisce se nel codice compar
    - il calendario di lavoro (Exchange o Google in *Account Internet*), per i titoli delle riunioni;
    - il **motore locale** in Impostazioni › Motore: Qwen 3.5 9B con 16 GB, Gemma 4 12B con 32 GB.
 
-**Aggiornamenti.** IAGO controlla una volta al giorno. Le versioni minori sono proposte; una nuova versione maggiore è obbligatoria prima di registrare di nuovo, senza interrompere una registrazione in corso.
+**Aggiornamenti.** IAGO installato dal DMG controlla una volta al giorno. Le versioni minori sono proposte; una nuova versione maggiore è obbligatoria prima di registrare di nuovo, senza interrompere una registrazione in corso. Una copia compilata dal codice sorgente non cerca aggiornamenti: si aggiorna con git.
 
 Istruzioni dettagliate in [`docs/installazione.md`](docs/installazione.md).
 
@@ -270,11 +271,13 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0052](docs/adr/0052-superamenti-multipli.md) | Superamenti multipli e tra tipi diversi | la storia delle decisioni com'è davvero |
 | [0054](docs/adr/0054-sintesi-per-categoria.md) | Sintesi per categoria con citazioni verificate | sintesi utili e controllabili |
 | [0069](docs/adr/0069-coda-unica-del-motore.md) | Un lavoro pesante alla volta, la chat per prima | il Mac non si riempie, le risposte non aspettano |
+| [0071](docs/adr/0071-claude-sintesi-e-proposte.md) | Sintesi e proposte anche da Claude, con le stesse verifiche | qualità alta sui Mac piccoli, sempre controllabile |
+| [0072](docs/adr/0072-segna-momento-con-screenshot.md) | Screenshot solo su richiesta, letti sul Mac | le slide entrano nella memoria senza catture automatiche |
 | [0056](docs/adr/0056-aggiornamenti.md) | Aggiornamenti Sparkle firmati, maggiori obbligatori | tutti sulla stessa versione sicura |
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
 
 ## Qualità e test
-- **253 test automatici** nei pacchetti: Store 81, Capture 48, Transcription 28, Ingest 22, Intelligence 22, MCP 16, Core 15, Engine 13, Export 7, Sync 1.
+- **256 test automatici** nei pacchetti: Store 82, Capture 48, Transcription 28, Intelligence 23, Ingest 22, MCP 17, Core 15, Engine 13, Export 7, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
 - **CI** su ogni pull request (GitHub Actions, macOS): tutti i test e il controllo delle API di rete. Su Ubuntu, a ogni PR e push su `main`, il controllo che nessun indirizzo email personale entri nel repository. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.

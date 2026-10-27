@@ -52,6 +52,8 @@ Uniche chiamate di rete ammesse, tutte esplicite e registrate nell'audit log:
 4. sync Cloudflare cifrata E2E (fase 4; in discussione la cartella OneDrive condivisa, ADR-0057);
 5. controllo e download degli aggiornamenti da GitHub Releases con Sparkle, firmati EdDSA, nel registro accessi (ADR-0056).
 
+Le schermate di «Segna momento con screenshot» (ADR-0072) si catturano solo su richiesta dell'utente; a Claude va il loro testo, le immagini solo se l'utente le condivide (Impostazioni › Claude).
+
 Nessuna telemetria, crash reporter remoto o analytics. Se una libreria fa telemetria va disattivata o sostituita. Log locali senza contenuti delle trascrizioni.
 
 ## Affidabilità

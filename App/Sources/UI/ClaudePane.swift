@@ -71,6 +71,24 @@ struct ClaudePane: View {
             }
         }
         SettingsGroup(
+            title: String(localized: "Schermate"),
+            footnote: String(
+                localized:
+                    "Il testo letto sulle schermate delle call è sempre consultabile da Claude, come la trascrizione. Le immagini contengono tutto ciò che era sullo schermo, notifiche e altre app comprese: condividile solo se ti serve che Claude legga slide, tabelle e grafici."
+            )
+        ) {
+            Toggle(
+                String(localized: "Condividi con Claude anche le immagini delle schermate"),
+                isOn: Binding(
+                    get: { (try? model.archive.setting(Archive.shareScreenshotsWithClaudeKey)) == "1" },
+                    set: { value in
+                        model.perform {
+                            try model.archive.setSetting(Archive.shareScreenshotsWithClaudeKey, value ? "1" : "0")
+                        }
+                    })
+            )
+        }
+        SettingsGroup(
             title: String(localized: "Collega Claude"),
             footnote: String(
                 localized:
@@ -247,6 +265,14 @@ struct ClaudePane: View {
         case .item:
             what = String(localized: "Elemento inserito")
             title = model.item(change.entityId)?.title ?? (try? model.archive.item(change.entityId))??.title
+        case .summary:
+            what =
+                change.action == .create
+                ? String(localized: "Sintesi scritta") : String(localized: "Sintesi sostituita")
+            title = model.item(change.entityId)?.title
+        case .suggestion:
+            what = String(localized: "Proposte aggiunte")
+            title = model.item(change.entityId)?.title
         }
         guard let title, !title.isEmpty else { return what }
         let flat = title.split(whereSeparator: \.isNewline).joined(separator: " ")

@@ -276,6 +276,14 @@ extension Archive {
         }
     }
 
+    /// Removes proposals still waiting for an answer; confirmed or dismissed ones stay (undo of ADR-0071).
+    public func deletePendingSuggestions(_ ids: [String]) throws {
+        guard !ids.isEmpty else { return }
+        try database.writer.write { db in
+            _ = try Suggestion.filter(ids.contains(Column("id"))).filter(Column("status") == "pending").deleteAll(db)
+        }
+    }
+
     public func suggestion(_ id: String) throws -> Suggestion? {
         try database.writer.read { db in try Suggestion.fetchOne(db, key: id) }
     }
