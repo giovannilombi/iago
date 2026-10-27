@@ -63,6 +63,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **L'evoluzione delle decisioni:** una voce può superarne altre, anche di tipo diverso, e IAGO tiene la storia di come ci si è arrivati.
 - **Momenti segnati** durante una call, anche **con lo screenshot** della slide condivisa (il testo letto entra nella trascrizione, nella ricerca e nelle sintesi), e **note** datate sul progetto o sull'elemento, anche dettate a voce. Le scorciatoie (⌃⌥M, ⌃⌥S, ⌃⌥R) funzionano in qualsiasi app.
 - **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
+- **Riconosce le voci** (se lo attivi): dai un nome a uno speaker e nelle call successive IAGO propone quel nome quando sente la stessa voce. Le impronte restano cifrate sul Mac, non vanno mai a Claude e si eliminano quando vuoi.
 
 ### Capisce
 - **Sintesi per tipo di riunione:** un 1to1 ha impegni e feedback, un SAL tappe, rischi e decisioni, un incontro commerciale esigenze, obiezioni e prossimi passi.
@@ -273,11 +274,12 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0069](docs/adr/0069-coda-unica-del-motore.md) | Un lavoro pesante alla volta, la chat per prima | il Mac non si riempie, le risposte non aspettano |
 | [0071](docs/adr/0071-claude-sintesi-e-proposte.md) | Sintesi e proposte anche da Claude, con le stesse verifiche | qualità alta sui Mac piccoli, sempre controllabile |
 | [0072](docs/adr/0072-segna-momento-con-screenshot.md) | Screenshot solo su richiesta, letti sul Mac | le slide entrano nella memoria senza catture automatiche |
+| [0073](docs/adr/0073-riconoscere-le-voci.md) | Voci riconosciute tra le call, solo se attivo e solo come proposta | meno nomi da scrivere, dati biometrici sotto controllo |
 | [0056](docs/adr/0056-aggiornamenti.md) | Aggiornamenti Sparkle firmati, maggiori obbligatori | tutti sulla stessa versione sicura |
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
 
 ## Qualità e test
-- **260 test automatici** nei pacchetti: Store 84, Capture 48, Transcription 28, Intelligence 23, Ingest 22, MCP 17, Core 15, Engine 15, Export 7, Sync 1.
+- **271 test automatici** nei pacchetti: Store 94, Capture 48, Transcription 29, Intelligence 23, Ingest 22, MCP 17, Core 15, Engine 15, Export 7, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
 - **CI** su ogni pull request (GitHub Actions, macOS): tutti i test e il controllo delle API di rete. Su Ubuntu, a ogni PR e push su `main`, il controllo che nessun indirizzo email personale entri nel repository. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
@@ -311,7 +313,7 @@ scripts/release.sh 1.2.0 --notes "…" --github   # release firmata, appcast Spa
   - Progetto in discussione: [`docs/design/sync-cartella-condivisa.md`](docs/design/sync-cartella-condivisa.md).
 - **Poi:**
   - prove approfondite della trascrizione su call reali;
-  - nomi degli speaker riconosciuti tra call diverse;
+  - voci della stanza nel riconoscimento delle voci;
   - rifiniture del grafo.
 
 ## Versioni

@@ -54,6 +54,8 @@ Uniche chiamate di rete ammesse, tutte esplicite e registrate nell'audit log:
 
 Le schermate di «Segna momento con screenshot» (ADR-0072) si catturano solo su richiesta dell'utente; a Claude va il loro testo, le immagini solo se l'utente le condivide (Impostazioni › Claude).
 
+Le impronte delle voci (ADR-0073) sono dati biometrici: solo con Impostazioni › Voci attivo, cifrate con la chiave dell'elemento, mai a Claude, negli export o nella sync.
+
 Nessuna telemetria, crash reporter remoto o analytics. Se una libreria fa telemetria va disattivata o sostituita. Log locali senza contenuti delle trascrizioni.
 
 ## Affidabilità

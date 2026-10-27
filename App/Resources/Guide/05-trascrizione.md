@@ -13,6 +13,13 @@ La tua traccia è **Io** (il nome che hai dato all'inizio). Le voci degli altri 
 
 Con più persone nella stessa stanza attiva **Più persone nella stanza** quando trascrivi: IAGO separa anche le voci della tua traccia.
 
+## Riconoscere le voci
+In **Impostazioni › Voci** puoi attivare *Riconosci le voci tra una call e l'altra* (spento di default). Quando dai un nome a uno speaker, IAGO ricorda la sua voce; nelle call successive propone il nome («Speaker 2 diventa Marco», *Riconosciuta dalla voce*) e tu confermi o scarti. Non assegna mai un nome da solo.
+
+- Vale per le call trascritte dopo l'attivazione; per una call già trascritta usa **Ritrascrivi**.
+- Servono almeno una decina di secondi di parlato per riconoscere una voce.
+- Le voci restano solo sul Mac e non vanno mai a Claude né nelle esportazioni. Nello stesso pannello vedi le voci conosciute e le elimini una per una o tutte insieme.
+
 ## Glossario
 In **Impostazioni › Trascrizione › Glossario** scrivi nomi e sigle che vanno scritti giusti (aziende, prodotti, persone), separati da virgole. Per ogni call IAGO aggiunge da solo progetto, cliente, stream e contatti. Vale per Whisper e aiuta su molti nomi, non su tutti.
 

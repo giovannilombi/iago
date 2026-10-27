@@ -21,6 +21,8 @@ Le uniche uscite di rete, tutte esplicite e registrate nel registro accessi:
 
 Le **schermate** di *Segna momento con screenshot* restano cifrate sul Mac come le registrazioni. A Claude arriva il loro testo, come la trascrizione, per i progetti consultabili; le immagini solo se l'utente attiva «Condividi con Claude anche le immagini delle schermate» (ADR-0072).
 
+Le **impronte delle voci** (ADR-0073) sono dati biometrici: si salvano solo se l'utente attiva Impostazioni › Voci, cifrate con la chiave della call da cui vengono, e non vanno mai a Claude, negli export, in Obsidian o nella condivisione. Si eliminano una per una o tutte insieme.
+
 ## Nessuna telemetria
 - Niente analytics, crash reporter remoti o telemetria: se una libreria la fa, va spenta o sostituita.
 - I **log** di sistema (`subsystem com.giovannilombi.iago`) non contengono contenuti delle trascrizioni, dei documenti o delle note.

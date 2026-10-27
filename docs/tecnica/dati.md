@@ -17,11 +17,12 @@ Il database è escluso da Time Machine (contiene l'indice di ricerca in chiaro);
 - **Gerarchia** cliente › progetto › stream (ADR-0038). Un progetto senza cliente sta in "Senza cliente"; un elemento classificato senza progetto in "Non definito" (ADR-0035).
 - **Note** datate, su un elemento o su un progetto, anche vocali (ADR-0016, ADR-0021, ADR-0039). **Segnalibri** (`Marker`) con l'ora nella call (ADR-0024).
 - **Punti chiave** (`Decision`) con tipo (decisione, attività, tappa…), fonte fino al minuto, persone, e catene di superamento anche multiple (ADR-0013, ADR-0014, ADR-0046, ADR-0052).
-- **Suggerimenti** del motore o di Claude, sempre da confermare (ADR-0009). Sintesi e suggerimenti hanno `origin` (`engine` o `claude`) e `model`; un punto chiave confermato da un suggerimento conserva `model` (ADR-0070). **Collegamenti** tra elementi (`ItemLink`).
+- **Suggerimenti** del motore o di Claude, sempre da confermare (ADR-0009). Sintesi e suggerimenti hanno `origin` (`engine`, `claude` o, per i nomi degli speaker, `voice`) e `model`; un punto chiave confermato da un suggerimento conserva `model` (ADR-0070). **Collegamenti** tra elementi (`ItemLink`).
+- **Voci** (ADR-0073, solo se attive): `item_voice` tiene l'impronta di ogni speaker di una call, cifrata con la chiave dell'elemento; `voice` solo il nome della persona. L'impronta di una persona è la media delle sue call, calcolata al momento: eliminare una call la toglie. Le voci non entrano nel `change_log` né negli export.
 - **Pronto per la sincronizzazione** (ADR-0008): ogni riga ha `created_at`, `updated_at`, `deleted_at`, `version`, `device_id`; ogni modifica finisce in `change_log`.
 
 ## Migrazioni
-Diciannove finora, da `v1` a `v19-screenshots` (schermate delle call con minuto e testo letto, ADR-0072); `v18-provenance` registra chi ha prodotto sintesi, proposte e punti chiave confermati (ADR-0070). Una migrazione non si modifica mai dopo il rilascio: se ne aggiunge una nuova. Prima di installare una build che porta migrazioni nuove sull'archivio di un utente si fa un backup.
+Venti finora, da `v1` a `v20-voices` (impronte delle voci, ADR-0073); `v19-screenshots` aggiunge le schermate delle call con minuto e testo letto (ADR-0072); `v18-provenance` registra chi ha prodotto sintesi, proposte e punti chiave confermati (ADR-0070). Una migrazione non si modifica mai dopo il rilascio: se ne aggiunge una nuova. Prima di installare una build che porta migrazioni nuove sull'archivio di un utente si fa un backup.
 
 ## Cifratura
 - **File cifrati a blocchi** con AES-GCM (ADR-0027): si legge e si scrive a pezzi, anche file grandi, senza decifrarli tutti in memoria.

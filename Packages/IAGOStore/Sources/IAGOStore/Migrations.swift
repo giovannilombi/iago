@@ -334,6 +334,26 @@ enum Migrations {
                 t.add(column: "text", .text)
             }
         }
+        migrator.registerMigration("v20-voices") { db in
+            // ADR-0073: voice prints, only on this Mac and only when the user turns them on. Not synced, no
+            // change log: biometric data never leaves the Mac.
+            try db.create(table: "voice") { t in
+                t.primaryKey("id", .text)
+                t.column("name", .text).notNull().unique(onConflict: .abort).collate(.nocase)
+                t.column("created_at", .datetime).notNull()
+                t.column("updated_at", .datetime).notNull()
+            }
+            try db.create(table: "item_voice") { t in
+                t.column("item_id", .text).notNull().references("item")
+                t.column("speaker_id", .text).notNull()
+                // The speaker's embedding, sealed with the item's key: it goes with the item (crypto-shredding).
+                t.column("embedding", .blob).notNull()
+                t.column("seconds", .double).notNull()
+                t.column("voice_id", .text).references("voice", onDelete: .setNull)
+                t.primaryKey(["item_id", "speaker_id"])
+            }
+            try db.create(index: "item_voice_voice", on: "item_voice", columns: ["voice_id"])
+        }
         return migrator
     }
 

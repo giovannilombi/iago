@@ -1,8 +1,9 @@
 import Foundation
 import GRDB
 
-/// Who produced a summary or a proposal (ADR-0070): the local engine on the Mac, or Claude through MCP.
-public enum ResultOrigin: String, Codable, Sendable, Hashable { case engine, claude }
+/// Who produced a summary or a proposal (ADR-0070): the local engine on the Mac, or Claude through MCP; for a
+/// speaker's name, also a known voice (ADR-0073).
+public enum ResultOrigin: String, Codable, Sendable, Hashable { case engine, claude, voice }
 
 /// The summary of an item, written by the local engine with its category's template (ADR-0054), or by Claude through
 /// MCP (ADR-0071). One per item; the user can edit it.
