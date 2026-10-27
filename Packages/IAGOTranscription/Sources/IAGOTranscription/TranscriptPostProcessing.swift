@@ -264,6 +264,16 @@ public enum TranscriptPostProcessing {
         return (mapped, ids)
     }
 
+    /// The voices of `normalizeSpeakerIDs`' speakers: raw diarizer IDs → `s1`, `s2`… with the same mapping.
+    public static func normalizeVoices(_ voices: [String: [Float]], turns: [SpeakerTurn]) -> [String: [Float]] {
+        var result: [String: [Float]] = [:]
+        var seen: Set<String> = []
+        for turn in turns.sorted(by: { $0.start < $1.start }) where seen.insert(turn.speaker).inserted {
+            if let voice = voices[turn.speaker] { result["s\(seen.count)"] = voice }
+        }
+        return result
+    }
+
     // MARK: Echo filter
 
     /// Drops mic segments that overlap in time with a system segment of very similar text: with

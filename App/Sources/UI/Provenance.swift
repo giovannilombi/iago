@@ -24,14 +24,18 @@ enum Provenance {
         switch summary.origin {
         case .claude: String(localized: "Sintetizzata da Claude")
         case .engine: summary.model.map { String(localized: "Sintetizzata con \(engineName($0)) sul Mac") }
+        case .voice: nil
         }
     }
 
-    /// "Proposta da Qwen 3.5 4B" or "Consigliata da Claude".
+    /// "Proposta da Qwen 3.5 4B", "Consigliata da Claude" or "Riconosciuta dalla voce (somiglianza 82%)".
     static func suggestion(_ suggestion: Suggestion) -> String {
         switch suggestion.origin {
         case .claude: String(localized: "Consigliata da Claude")
         case .engine: String(localized: "Proposta da \(engineName(suggestion.model)) sul Mac")
+        case .voice:
+            suggestion.content.confidence.map { String(localized: "Riconosciuta dalla voce (somiglianza \($0)%)") }
+                ?? String(localized: "Riconosciuta dalla voce")
         }
     }
 
@@ -54,7 +58,7 @@ struct ProvenanceLine: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Image(systemName: text.contains("Claude") ? "sparkles" : "cpu")
+            Image(systemName: text.contains("Claude") ? "sparkles" : text.contains("voce") ? "waveform" : "cpu")
             Text(text)
             if let model, Provenance.isSmall(model) {
                 Text(String(localized: "· modello piccolo")).foregroundStyle(.orange)

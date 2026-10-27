@@ -22,6 +22,11 @@ extension AppModel {
             case .person:
                 if let speakerID = content.targetID {
                     try archive.renameSpeaker(speakerID, of: item.id, to: content.text)
+                    // One name per speaker: the other proposals for it (engine or voice) are answered.
+                    for other in try archive.suggestions(itemID: item.id)
+                    where other.id != suggestion.id && other.kind == .person && other.content.targetID == speakerID {
+                        try archive.setSuggestionStatus(other.id, .rejected)
+                    }
                 }
             case .tag:
                 let current = try archive.tags(for: item.id).map(\.name)

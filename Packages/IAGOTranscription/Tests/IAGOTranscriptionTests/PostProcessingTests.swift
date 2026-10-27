@@ -163,6 +163,16 @@ typealias P = TranscriptPostProcessing
         #expect(result.ids == ["s1", "s2"])
         #expect(result.turns.map(\.speaker) == ["s1", "s2", "s2"])
     }
+
+    @Test func voicesFollowTheSameRenaming() {
+        let raw = [
+            P.SpeakerTurn(speaker: "SPEAKER_07", start: 5, end: 8),
+            P.SpeakerTurn(speaker: "SPEAKER_02", start: 0, end: 1),
+        ]
+        let voices = P.normalizeVoices(
+            ["SPEAKER_02": [1, 0], "SPEAKER_07": [0, 1], "SPEAKER_09": [1, 1]], turns: raw)
+        #expect(voices == ["s1": [1, 0], "s2": [0, 1]])
+    }
 }
 
 @Suite struct EchoFilterTests {

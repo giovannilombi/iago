@@ -11,7 +11,7 @@
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 260 nei pacchetti, tutti verdi.
+- **Test automatici:** 271 nei pacchetti, tutti verdi.
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -29,7 +29,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
 3. **Verifiche dal vivo ancora da fare:**
    - il microfono di Teams funziona mentre IAGO registra (dopo il ritiro di ADR-0053);
    - l'icona di IAGO nelle notifiche di macOS;
-   - le novità del 27 ottobre, sezioni 10b-10g di [`docs/prove-tester.md`](prove-tester.md): coda del motore e memoria su un Mac da 16 GB, schermate e scorciatoie nell'app vera (con il permesso Registrazione schermo dato a IAGO), sintesi e proposte fatte da Claude Desktop, DMG e aggiornamenti.
+   - le novità del 27 ottobre, sezioni 10b-10h di [`docs/prove-tester.md`](prove-tester.md), con la taratura della soglia delle voci su call vere (10h): coda del motore e memoria su un Mac da 16 GB, schermate e scorciatoie nell'app vera (con il permesso Registrazione schermo dato a IAGO), sintesi e proposte fatte da Claude Desktop, DMG e aggiornamenti.
 4. **ADR proposti, da decidere:**
    - ADR-0057, progetti condivisi tramite una cartella cloud (progetto in [`docs/design/sync-cartella-condivisa.md`](design/sync-cartella-condivisa.md)); quando accettato supera il backend di ADR-0012 e si apre la fase 4;
    - ADR-0067, MiniCPM al posto di Qwen 3.5 4B o in aggiunta: servono prove. Un modello visivo locale (MiniCPM-V) si valuta solo se l'OCR delle schermate non basta (ADR-0072).
@@ -37,10 +37,11 @@ La descrizione completa è nel [README](../README.md). In sintesi:
 5. **Distribuzione** (ADR-0059, ADR-0060, ADR-0065): senza account Apple a pagamento l'app non è notarizzata e chi la installa deve fare "Apri comunque". Si distribuisce con il **DMG** di `scripts/release.sh`. **Da verificare prima** su un Mac o un account utente pulito: "Apri comunque" una sola volta, aggiornamento con Sparkle senza un nuovo blocco e con i permessi conservati, durata del certificato gratuito e cosa succede alla scadenza. Per distribuire: repository pubblico, `scripts/release.sh 1.0.0 --github`, tabella Versioni del README, attivazione di GitHub Pages per il sito (ADR-0068) e `https://giovannilombi.github.io/iago/` come "Website" nella sezione About del repository.
 6. **Dopo:**
    - prove approfondite della qualità della trascrizione su call vere (motori, diarizzazione);
-   - nomi degli speaker riconosciuti tra call diverse;
+   - voci della stanza (ADR-0031) nel riconoscimento delle voci;
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-27:** riconoscere le stesse voci in call diverse (ADR-0073): Impostazioni › Voci, spento di default. Dare un nome a uno speaker insegna la sua voce; nelle call successive arriva la proposta «Speaker 2 diventa Marco» con «Riconosciuta dalla voce (somiglianza …%)», sempre da confermare. Impronte cifrate con la chiave della call, mai a Claude o negli export; voci eliminabili una per una o tutte (tre passi). Migrazione `v20-voices`.
 - **2026-10-27:** correzioni dopo la revisione del codice: una chat annullata mentre aspetta in coda esce subito; la ricerca mentre si scrive non interrompe il lavoro in sottofondo; i punti di Claude «dalla schermata» richiedono una schermata vera a quel minuto; la sintesi automatica non sovrascrive una sintesi di Claude o modificata a mano arrivata nel frattempo; annullare una sintesi di Claude riscritta dopo è rifiutato; schermate senza doppioni dopo un crash e senza testo rimasto dopo l'eliminazione; minuto della schermata preso alla richiesta; scorciatoie sempre con ⌃ o ⌥; `release.sh` non può impacchettare una build vecchia.
 - **2026-10-27:** Claude fa sintesi e proposte al posto del motore (ADR-0071): «Copia per Claude» nella scheda, strumenti MCP `recent_items`, `summary_template`, `set_summary`, `propose_suggestions` con le citazioni verificate da IAGO, annullabili. «Segna momento con screenshot» e scorciatoie in tutte le app ⌃⌥M, ⌃⌥S, ⌃⌥R (ADR-0072): schermate cifrate nella call, testo letto con l'OCR del Mac nella trascrizione, nella ricerca e nelle sintesi; immagini a Claude solo se l'utente lo sceglie; nuovo permesso Registrazione schermo. Distribuzione con DMG; le copie compilate da sorgente non cercano aggiornamenti (modifica di ADR-0059).
 - **2026-10-27:** coda unica del motore (ADR-0069): trascrizione, motore e ricerca uno alla volta, la chat interrompe il lavoro in sottofondo, limiti di memoria di MLX e pausa con la pressione di memoria; sotto i 32 GB proposte e sintesi automatiche spente di default (nuovo interruttore «Sintesi automatiche») e modello liberato a fine lavoro; Gemma 4 12B non usabile sotto i 24 GB. Provenienza dei risultati (ADR-0070): ogni sintesi, proposta e punto chiave confermato dice quale modello o se Claude l'ha prodotto, con «modello piccolo» sotto i 9B (migrazione `v18-provenance`).

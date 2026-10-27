@@ -40,9 +40,19 @@ public enum FluidAudioServices {
         }
 
         public func speakerTurns(_ samples: [Float]) async throws -> [TranscriptPostProcessing.SpeakerTurn] {
-            try await manager.process(audio: samples).segments.map {
-                .init(speaker: $0.speakerId, start: Double($0.startTimeSeconds), end: Double($0.endTimeSeconds))
+            try await speakers(samples).turns
+        }
+
+        /// The turns and, for each raw speaker ID, the embedding of its voice (ADR-0073).
+        public func speakers(_ samples: [Float]) async throws -> (
+            turns: [TranscriptPostProcessing.SpeakerTurn], voices: [String: [Float]]
+        ) {
+            let result = try await manager.process(audio: samples)
+            let turns = result.segments.map {
+                TranscriptPostProcessing.SpeakerTurn(
+                    speaker: $0.speakerId, start: Double($0.startTimeSeconds), end: Double($0.endTimeSeconds))
             }
+            return (turns, result.speakerDatabase ?? [:])
         }
     }
 }

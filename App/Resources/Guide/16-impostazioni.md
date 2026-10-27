@@ -5,6 +5,7 @@
 - **Permessi:** cosa è attivo e cosa manca, con l'attivazione guidata.
 - **Audio:** microfono, riunioni (proposte, calendario, mute di Teams).
 - **Trascrizione:** motore, lingua, glossario, cosa fare dopo lo Stop, solo con alimentazione, modelli.
+- **Voci:** riconoscimento delle stesse voci tra una call e l'altra (spento di default) e voci conosciute, da eliminare una per una o tutte.
 - **Motore:** modello locale, ricerca per significato, lavori automatici (proposte e sintesi; spenti di default sotto i 32 GB di memoria).
 - **Progetti:** rinomina, archivia, elimina (in tre passi).
 - **Email e persone:** i tuoi indirizzi, contatti, cartelle sorvegliate, regole.

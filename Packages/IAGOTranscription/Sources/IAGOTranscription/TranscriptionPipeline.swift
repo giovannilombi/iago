@@ -29,6 +29,15 @@ public struct TranscriptionPipeline: Sendable {
     public struct Output: Sendable {
         public var transcript: Transcript
         public var metrics: Metrics
+        /// The voices of the diarized speakers of the other side (or of an import), with their seconds of speech:
+        /// what recognises them in later calls (ADR-0073). The user's own track has none.
+        public var voices: [Voice] = []
+    }
+
+    public struct Voice: Sendable, Equatable {
+        public var speakerID: String
+        public var embedding: [Float]
+        public var seconds: Double
     }
 
     public let engine: any TranscriptionEngine
@@ -55,6 +64,7 @@ public struct TranscriptionPipeline: Sendable {
         var metrics = Metrics()
         var speakers: [Transcript.Speaker] = []
         var labeled: [(speaker: String, segment: TranscribedSegment)] = []
+        var voiceTrack: TrackResult?
 
         switch input {
         case .recording(let micURL, let systemURL, let roomMode):
@@ -65,6 +75,7 @@ public struct TranscriptionPipeline: Sendable {
             let echo = TranscriptPostProcessing.removeEcho(mic: mic.segments, system: system.segments)
             metrics.droppedEcho = echo.dropped
             metrics.audioDuration = max(mic.duration, system.duration)
+            voiceTrack = system
             speakers =
                 [.me(label: meLabel)]
                 + system.speakerIDs.enumerated().map { index, id in
@@ -92,6 +103,7 @@ public struct TranscriptionPipeline: Sendable {
             let track = try await transcribeTrack(
                 url, options: options, diarize: true, metrics: &metrics, progress: progress)
             metrics.audioDuration = track.duration
+            voiceTrack = track
             let ids = track.speakerIDs.isEmpty ? ["s1"] : track.speakerIDs
             speakers = ids.enumerated().map { Transcript.Speaker(id: $1, label: "Speaker \($0 + 1)", source: .import) }
             labeled = track.labeled
@@ -107,7 +119,15 @@ public struct TranscriptionPipeline: Sendable {
             engine: .init(
                 asr: engine.asrName, model: engine.modelName, diarization: diarizer == nil ? nil : "fluidaudio"),
             language: options.language, speakers: speakers, segments: segments)
-        return Output(transcript: transcript, metrics: metrics)
+        return Output(transcript: transcript, metrics: metrics, voices: voiceTrack.map(Self.voices) ?? [])
+    }
+
+    private static func voices(_ track: TrackResult) -> [Voice] {
+        var seconds: [String: Double] = [:]
+        for entry in track.labeled { seconds[entry.speaker, default: 0] += entry.segment.end - entry.segment.start }
+        return track.voices.keys.sorted().compactMap { id in
+            track.voices[id].map { Voice(speakerID: id, embedding: $0, seconds: seconds[id] ?? 0) }
+        }
     }
 
     /// Voice note (FR-211, spec 7.7): one mic track, no diarization nor echo filter; the text of the segments.
@@ -124,6 +144,8 @@ public struct TranscriptionPipeline: Sendable {
         /// Segments split at speaker changes, with their speaker.
         var labeled: [(speaker: String, segment: TranscribedSegment)]
         var speakerIDs: [String]
+        /// Normalized speaker ID → embedding of its voice.
+        var voices: [String: [Float]] = [:]
     }
 
     private func scaled(_ progress: (@Sendable (Double) -> Void)?, _ from: Double, _ to: Double) -> (
@@ -180,11 +202,12 @@ public struct TranscriptionPipeline: Sendable {
         // Diarization can refuse short or quiet audio ("no speech detected"): the transcript is still
         // valid, with a single speaker.
         let turns: [TranscriptPostProcessing.SpeakerTurn]
+        let voices: [String: [Float]]
         do {
-            turns = try await diarizer.speakerTurns(samples)
+            (turns, voices) = try await diarizer.speakers(samples)
         } catch {
             try Task.checkCancellation()
-            turns = []
+            (turns, voices) = ([], [:])
         }
         let normalized = TranscriptPostProcessing.normalizeSpeakerIDs(turns)
         metrics.diarization += lap()
@@ -193,7 +216,7 @@ public struct TranscriptionPipeline: Sendable {
             labeled: TranscriptPostProcessing.joinSentences(
                 TranscriptPostProcessing.splitBySpeaker(
                     filtered.kept, turns: normalized.turns, fallback: "s1", minRun: minSpeakerRun)),
-            speakerIDs: normalized.ids)
+            speakerIDs: normalized.ids, voices: TranscriptPostProcessing.normalizeVoices(voices, turns: turns))
     }
 }
 

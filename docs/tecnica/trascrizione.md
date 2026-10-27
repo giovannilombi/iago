@@ -10,6 +10,13 @@ Tutto avviene sul Mac (ADR-0005), nella coda dei lavori, un elemento alla volta.
 5. **Segmentazione per speaker:** tempi per parola di whisper, segmenti divisi ai cambi di speaker e frasi spezzate ricucite.
 6. **Unione** delle due tracce sulla linea del tempo e **filtro dell'eco:** le frasi del microfono che ripetono quelle della traccia di sistema vengono scartate.
 7. **Indicizzazione** dei segmenti per la ricerca.
+8. **Voci** (solo se attive in Impostazioni › Voci, ADR-0073): vedi sotto.
+
+## Riconoscere le voci (ADR-0073)
+- La diarizzazione dà per ogni speaker un'**impronta WeSpeaker** (256 numeri, `DiarizationResult.speakerDatabase`), rinumerata come gli speaker (`TranscriptPostProcessing.normalizeVoices`). La pipeline la restituisce in `Output.voices`, con i secondi di parlato, per la traccia di sistema o per il file importato; il microfono ("Io") e le voci della stanza no.
+- Dopo la trascrizione `TranscriptionService` la salva (`Archive.storeVoices`, almeno 10 s di parlato) e cerca le voci conosciute (`Archive.voiceMatches`): somiglianza del coseno ≥ 0,60 con la media delle impronte della persona, almeno 0,05 sopra la seconda voce, una persona per speaker. Le corrispondenze diventano proposte `person` con `origin = voice`.
+- `Archive.renameSpeaker` lega l'impronta della call al nome (o la slega, se torna generico). Un errore nelle voci non fa fallire la trascrizione.
+- Costi: nessun modello in più, circa 1 KB per speaker, confronto sotto il millisecondo.
 
 ## Motori (ADR-0023)
 | Motore | Implementazione | Velocità misurata | Note |

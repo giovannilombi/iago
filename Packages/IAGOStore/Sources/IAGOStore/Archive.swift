@@ -474,6 +474,7 @@ public final class Archive: Sendable {
             try db.execute(
                 sql: "UPDATE item_speaker SET label = ? WHERE item_id = ? AND speaker_id = ?",
                 arguments: [label, itemID, speakerID])
+            try Self.linkVoice(itemID: itemID, speakerID: speakerID, label: label, now: now, db)
             try ChangeLog.append(
                 db, table: "item_speaker", rowID: "\(itemID)/\(speakerID)", op: .update, version: 0, at: now)
         }
@@ -666,6 +667,7 @@ public final class Archive: Sendable {
             try removeFromIndex(itemID: id, db)
             try db.execute(sql: "DELETE FROM item_tag WHERE item_id = ?", arguments: [id])
             try db.execute(sql: "DELETE FROM item_speaker WHERE item_id = ?", arguments: [id])
+            try Self.removeVoices(itemID: id, db)
             try db.execute(sql: "DELETE FROM item_stream WHERE item_id = ?", arguments: [id])
             try removeIntelligence(itemID: id, db)
             try removeLinks(itemID: id, writer: writer, db)

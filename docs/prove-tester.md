@@ -194,6 +194,14 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 10g.2 Aggiorna alla versione successiva con Sparkle: niente nuovo blocco, i permessi restano.
 - [ ] 10g.3 Su una build compilata da sorgente, Impostazioni › Generale › Aggiornamenti dice che si aggiorna con git.
 
+## 10h. Riconoscere le voci
+- [ ] 10h.1 Impostazioni › Voci: l'interruttore è spento di default e la lista è vuota.
+- [ ] 10h.2 Attivalo, registra o importa una call con almeno due persone dell'altra parte (ognuna parla più di 10 secondi) e rinomina "Speaker 1" con un nome inventato: la voce compare in Impostazioni › Voci con "1 call".
+- [ ] 10h.3 Trascrivi una seconda call con la stessa persona: tra le proposte c'è «Speaker N diventa …» con «Riconosciuta dalla voce (somiglianza …%)». Conferma: il nome cambia e la voce sale a "2 call". Annota la percentuale, serve a tarare la soglia.
+- [ ] 10h.4 Una persona diversa non riceve quel nome (se succede, annota la percentuale).
+- [ ] 10h.5 Elimina la voce: un solo avviso, poi sparisce dalla lista. *Elimina tutte le voci…* chiede tre passaggi (avviso, DELETE, ultima conferma).
+- [ ] 10h.6 Spegni l'interruttore: una nuova trascrizione non propone più nomi dalla voce.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

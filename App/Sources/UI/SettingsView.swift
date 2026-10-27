@@ -11,7 +11,8 @@ struct SettingsView: View {
     let model: AppModel
 
     enum Pane: String, CaseIterable, Identifiable {
-        case general, permissions, audio, transcription, engine, projects, email, categories, claude, obsidian, privacy,
+        case general, permissions, audio, transcription, voices, engine, projects, email, categories, claude, obsidian,
+            privacy,
             backup,
             space, help, about
         var id: String { rawValue }
@@ -22,6 +23,7 @@ struct SettingsView: View {
             case .permissions: String(localized: "Permessi")
             case .audio: String(localized: "Audio")
             case .transcription: String(localized: "Trascrizione")
+            case .voices: String(localized: "Voci")
             case .engine: String(localized: "Motore")
             case .projects: String(localized: "Progetti")
             case .email: String(localized: "Email e persone")
@@ -42,6 +44,7 @@ struct SettingsView: View {
             case .permissions: "checklist"
             case .audio: "mic"
             case .transcription: "text.bubble"
+            case .voices: "person.wave.2"
             case .engine: "cpu"
             case .projects: "folder"
             case .email: "envelope"
@@ -87,6 +90,7 @@ struct SettingsView: View {
                     case .permissions: PermissionsPane(model: model)
                     case .audio: AudioPane(model: model)
                     case .transcription: TranscriptionPane(model: model)
+                    case .voices: VoicesPane(model: model)
                     case .engine: EnginePane(model: model)
                     case .projects:
                         ClientsPane(model: model)

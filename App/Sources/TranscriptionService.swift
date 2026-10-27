@@ -92,6 +92,10 @@ final class TranscriptionService: Sendable {
                 progress: progress)
             try Task.checkCancellation()
             try store(output.transcript, itemID: itemID)
+            // Voices are a help: a failure there does not lose the transcript.
+            do { try recognizeVoices(output.voices, itemID: itemID) } catch {
+                logger.error("Voice prints of \(itemID, privacy: .public) failed: \(error, privacy: .public)")
+            }
             if payload.deleteAudio { try deleteAudioAfterVerifying(output.transcript, itemID: itemID) }
             try archive.updateItem(itemID) { $0.status = .transcribed }
             logger.notice(
@@ -149,6 +153,26 @@ final class TranscriptionService: Sendable {
         try archive.setSpeakers(transcript.speakers.map { ($0.id, $0.label) }, for: itemID)
         try archive.indexTranscript(transcript, itemID: itemID)
         try renderTextAssets(itemID: itemID, transcript: transcript)
+    }
+
+    /// Voice prints (ADR-0073), only when the user turned them on: the speakers' voices are kept, and a speaker
+    /// that sounds like a known voice gets a proposal with that name, to confirm like any other.
+    private func recognizeVoices(_ voices: [TranscriptionPipeline.Voice], itemID: String) throws {
+        guard archive.voicesEnabled() else { return }
+        try archive.storeVoices(
+            voices.map { SpeakerVoice(speakerID: $0.speakerID, embedding: $0.embedding, seconds: $0.seconds) },
+            itemID: itemID)
+        let labels = Dictionary(
+            uniqueKeysWithValues: try archive.speakers(itemID: itemID).map { ($0.speakerId, $0.label) })
+        let proposals = try archive.voiceMatches(itemID: itemID).map { match in
+            (
+                kind: Suggestion.Kind.person,
+                payload: SuggestionPayload(
+                    text: match.name, confidence: String(Int((match.similarity * 100).rounded())),
+                    targetID: match.speakerID, reason: labels[match.speakerID] ?? match.speakerID)
+            )
+        }
+        try archive.replacePendingSuggestions(itemID: itemID, model: "voice", origin: .voice, proposals)
     }
 
     /// Regenerates `transcript.txt` and `transcript.md` (also after renames and notes).
