@@ -198,14 +198,18 @@ final class ArchiveService: Sendable {
                 text.split(whereSeparator: \.isNewline).first.map { $0.trimmingCharacters(in: .whitespaces) }?
                     .prefix(80) ?? "")
             : trimmed
-        let title = name.isEmpty ? String(localized: "Testo incollato") : name
+        // Pasted JSON is shown indented, like an imported .json file; its first line ("{") is no title.
+        let json = ContentExtractor.jsonMarkdown(text)
+        let title =
+            trimmed.isEmpty && json != nil
+            ? String(localized: "JSON incollato") : name.isEmpty ? String(localized: "Testo incollato") : name
         let folder = paths.scratch.appendingPathComponent(UUID().uuidString, isDirectory: true)
         let file = folder.appendingPathComponent("text.md")
         defer { try? FileManager.default.removeItem(at: folder) }
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         try Data(text.utf8).write(to: file)
         return try await background {
-            try archive.importDocument(file, isImage: false, markdown: text, title: title, occurredAt: Date())
+            try archive.importDocument(file, isImage: false, markdown: json ?? text, title: title, occurredAt: Date())
         }
     }
 

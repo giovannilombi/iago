@@ -62,6 +62,9 @@ public enum KeyPointExtractor {
 
     static let blockSeconds: Double = 600
     static let blockCharacters = 10_000
+    /// The longest line a block takes whole: longer ones (a pasted JSON, a text without line breaks) are cut, so a
+    /// block never goes much beyond `blockCharacters` and a request never fills the memory.
+    static let lineCharacters = 2_500
     static let maxItems = 12
 
     static let system = """
@@ -127,12 +130,18 @@ public enum KeyPointExtractor {
         return Result(items: kept, discarded: discarded)
     }
 
-    /// Lines in blocks of about `blockSeconds`, cut between lines.
+    /// Lines in blocks of about `blockSeconds` or `blockCharacters`, cut between lines; a line longer than
+    /// `lineCharacters` is cut first.
     static func blocks(_ lines: [Line]) -> [[Line]] {
         var result: [[Line]] = []
         var current: [Line] = []
         var start: Double?
         var characters = 0
+        let lines = lines.flatMap { line in
+            TextPieces.split(line.text, limit: lineCharacters).map {
+                Line(atSec: line.atSec, speaker: line.speaker, text: $0)
+            }
+        }
         for line in lines {
             // Blocks of ~10 minutes of call; texts without times (emails, documents) by length.
             if let first = start, line.atSec - first >= blockSeconds || characters > blockCharacters, !current.isEmpty {

@@ -30,8 +30,16 @@ Con il menu aperto:
 
 ## Note e finestre
 
+Con una finestra di IAGO aperta, in alto compaiono i menu **IAGO**, **Modifica** e **Finestra**.
+
 | Azione | Scorciatoia |
 |---|---|
+| Copiare, tagliare, incollare, selezionare tutto | **⌘C**, **⌘X**, **⌘V**, **⌘A** |
+| Annullare e ripetere | **⌘Z**, **⇧⌘Z** |
+| Incollare senza formattazione | **⌥⇧⌘V** |
+| Chiudere la finestra | **⌘W** |
+| Impostazioni | **⌘,** |
+| Uscire da IAGO (con una registrazione in corso chiede conferma) | **⌘Q** |
 | Incollare uno screenshot o un'immagine in una nota | **⇧⌘V** |
 | Confermare (Salva, Crea, Fatto) | **↩** |
 | Annullare o chiudere una finestra di dialogo | **Esc** |

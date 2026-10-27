@@ -151,6 +151,13 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 10.6 Con Claude: "la firma del PX7 chiude la decisione X e le attività Y e Z". L'anteprima elenca tutte le voci che diventano Superate. Poi in Impostazioni › Claude **Annulla**: legami e stati tornano come prima.
 - [ ] 10.7 Il grafo e l'esportazione del progetto mostrano tutti i legami.
 
+## 10b. Importare JSON e incollare
+- [ ] 10b.1 Trascina un file `.json` nella finestra: diventa un documento, con il JSON in ordine (un valore per riga).
+- [ ] 10b.2 *Importa › Da testo*: incolla un JSON lungo su una riga sola e importa. Il titolo è "JSON incollato", il Mac resta reattivo e le proposte automatiche, se partono, finiscono senza bloccare nulla.
+- [ ] 10b.3 Trascina un file `.csv` e uno `.yaml`: vengono importati come testo. Un file `.zip` mostra "Tipo di file non supportato".
+- [ ] 10b.4 In una nota: **⌘V**, **⌘C**, **⌘X**, **⌘A** e **⌘Z** funzionano. Copia un file JSON nel Finder e incollalo nella nota con il tasto destro › *Incolla*: il suo testo entra nella nota, senza errori.
+- [ ] 10b.5 Con la finestra aperta, in alto ci sono i menu IAGO, Modifica e Finestra; **⌘W** chiude la finestra, **⌘,** apre le Impostazioni.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

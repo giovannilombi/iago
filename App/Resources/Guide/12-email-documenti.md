@@ -2,8 +2,8 @@
 # Email e documenti
 
 ## Importare
-- **Trascina** file nella finestra o in *Importa*: PDF, Word, testi, immagini (con riconoscimento del testo), email (.eml, .msg), audio e video, trascrizioni di Teams.
-- **Incolla** un testo o un'email da *Importa*.
+- **Trascina** file nella finestra o in *Importa*: PDF, Word, testi, immagini (con riconoscimento del testo), email (.eml, .msg), audio e video, trascrizioni di Teams, file JSON, CSV e altri file di testo.
+- **Incolla** un testo o un'email da *Importa*. Un JSON incollato o importato si vede in ordine, un valore per riga.
 - **Aggiungi a IAGO** da qualsiasi app: seleziona un testo › tasto destro › *Servizi* › *Aggiungi a IAGO*.
 - Dal menu dell'icona di IAGO {{icona}}: **Importa file…**.
 

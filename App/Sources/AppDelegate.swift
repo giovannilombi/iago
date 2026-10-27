@@ -73,6 +73,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.servicesProvider = services
             NSUpdateDynamicServices()
             statusItemController.windows = windows
+            NSApp.mainMenu = MainMenu.make { [weak windows] in windows?.showSettings() }
             observeControllerEvents(controller, archive: archive)
             observeSleep()
             Task {

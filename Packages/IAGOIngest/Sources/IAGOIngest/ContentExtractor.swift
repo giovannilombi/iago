@@ -42,7 +42,7 @@ public enum ContentExtractor {
 
     public static func canExtract(_ url: URL) -> Bool { kind(of: url) != nil }
 
-    enum Kind { case image, pdf, html, rich, plain }
+    enum Kind { case image, pdf, html, rich, json, plain }
 
     static func kind(of url: URL) -> Kind? {
         guard let type = UTType(filenameExtension: url.pathExtension.lowercased()) else { return nil }
@@ -55,7 +55,9 @@ public enum ContentExtractor {
         {
             return .rich
         }
-        if type.conforms(to: .plainText) || ["md", "markdown"].contains(url.pathExtension.lowercased()) {
+        if type.conforms(to: .json) { return .json }
+        // Any other text: plain text and Markdown, but also CSV, XML, YAML, logs and source code.
+        if type.conforms(to: .text) || ["md", "markdown"].contains(url.pathExtension.lowercased()) {
             return .plain
         }
         return nil
@@ -76,6 +78,10 @@ public enum ContentExtractor {
         case .rich:
             let text = try NSAttributedString(url: url, options: [:], documentAttributes: nil)
             return Extraction(markdown: MarkdownWriter.markdown(from: text), method: .richText)
+        case .json:
+            let data = try Data(contentsOf: url)
+            let text = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
+            return Extraction(markdown: jsonMarkdown(text) ?? text, method: .plainText)
         case .plain:
             let data = try Data(contentsOf: url)
             let text = String(data: data, encoding: .utf8) ?? String(decoding: data, as: UTF8.self)
@@ -83,6 +89,73 @@ public enum ContentExtractor {
         case nil:
             throw ExtractionError.unsupported(url.lastPathComponent)
         }
+    }
+
+    // MARK: JSON
+
+    /// Valid JSON as a Markdown code block, one value per line and indented, keys in their original order. A JSON is
+    /// often a single very long line: unreadable in the card, and a block the engine could not cut. `nil` when the
+    /// text is not JSON.
+    public static func jsonMarkdown(_ text: String) -> String? {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let first = trimmed.first, first == "{" || first == "[",
+            (try? JSONSerialization.jsonObject(with: Data(trimmed.utf8), options: [.fragmentsAllowed])) != nil
+        else { return nil }
+        return "```json\n" + indentedJSON(trimmed) + "\n```"
+    }
+
+    /// Re-indents valid JSON without parsing it into objects, so nothing (key order, number formats) changes.
+    static func indentedJSON(_ json: String) -> String {
+        let characters = Array(json)
+        var output = ""
+        output.reserveCapacity(characters.count * 2)
+        var depth = 0
+        var inString = false
+        var escaped = false
+        func newline() { output += "\n" + String(repeating: "  ", count: depth) }
+        func nextSignificant(after index: Int) -> Character? {
+            var next = index + 1
+            while next < characters.count, characters[next].isWhitespace { next += 1 }
+            return next < characters.count ? characters[next] : nil
+        }
+        for (index, character) in characters.enumerated() {
+            if inString {
+                output.append(character)
+                if escaped {
+                    escaped = false
+                } else if character == "\\" {
+                    escaped = true
+                } else if character == "\"" {
+                    inString = false
+                }
+                continue
+            }
+            switch character {
+            case "\"":
+                inString = true
+                output.append(character)
+            case "{", "[":
+                output.append(character)
+                let next = nextSignificant(after: index)
+                if next == "}" || next == "]" { continue }
+                depth += 1
+                newline()
+            case "}", "]":
+                if let last = output.last, last != "{", last != "[" {
+                    depth = max(0, depth - 1)
+                    newline()
+                }
+                output.append(character)
+            case ",":
+                output.append(character)
+                newline()
+            case ":":
+                output += ": "
+            default:
+                if !character.isWhitespace { output.append(character) }
+            }
+        }
+        return output
     }
 
     /// OCR of an image (screenshots, photos of documents).
