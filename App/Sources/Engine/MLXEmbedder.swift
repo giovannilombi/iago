@@ -8,10 +8,11 @@ import os
 
 /// The embedding model on MLX (ADR-0049): Qwen3 Embedding, last-token pooling, L2-normalised vectors. Loaded from its
 /// folder at the first request and freed after 10 minutes idle, like the chat engine. Questions get the instruction
-/// the model was trained with; passages go as they are.
+/// the model was trained with; passages go as they are. Requests go through the engine lane (ADR-0069).
 actor MLXEmbedder: TextEmbedder {
     nonisolated let modelID: String
     private let folder: URL
+    private let lane: EngineLane?
     private var container: EmbedderModelContainer?
     private var unload: Task<Void, Never>?
     private let logger = Logger(subsystem: "com.giovannilombi.iago", category: "engine")
@@ -20,13 +21,19 @@ actor MLXEmbedder: TextEmbedder {
     static let instruction =
         "Instruct: Given a question, retrieve passages of work calls, emails, documents and notes that answer it\nQuery: "
 
-    init(model: EngineModel, folder: URL) {
+    init(model: EngineModel, folder: URL, lane: EngineLane? = nil) {
         modelID = model.id
         self.folder = folder
+        self.lane = lane
     }
 
     func embed(_ texts: [String], query: Bool) async throws -> [[Float]] {
         guard !texts.isEmpty else { return [] }
+        guard let lane else { return try await vectors(texts, query: query) }
+        return try await lane.run { try await self.vectors(texts, query: query) }
+    }
+
+    private func vectors(_ texts: [String], query: Bool) async throws -> [[Float]] {
         unload?.cancel()
         let container = try await loaded()
         let inputs = query ? texts.map { Self.instruction + $0 } : texts
@@ -71,6 +78,8 @@ actor MLXEmbedder: TextEmbedder {
     }
 
     func free() {
+        guard container != nil else { return }
+        unload?.cancel()
         container = nil
         Memory.clearCache()
     }

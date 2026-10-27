@@ -93,3 +93,7 @@ Richieste dell'utente:
 - **Sintesi solo da 9B in su** (`EngineCatalog.minimumBillions`). Con un modello più piccolo il blocco Sintesi spiega che serve un motore più grande, e le sintesi automatiche non partono. Il 4B resta valido per proposte, Chiedi e riordino.
 - **Modello consigliato:** Gemma 4 12B da 32 GB, **Qwen 3.5 9B da 16 GB** (prima era il 4B), Qwen 3.5 4B sotto i 16 GB.
 - **Motivo:** nella prova su tre call reali il 4B teneva da 1 a 8 punti, il 9B 10-17, Gemma 10-31 (`docs/benchmarks/2026-10-21-sintesi-e-glossario.md`).
+
+## Modifica del 2026-10-27 (ADR-0069)
+- Il punto 6 ("un job alla volta") è implementato con la **coda unica** di ADR-0069, che vale anche per trascrizione ed embedding.
+- Gemma 4 12B non si avvisa più soltanto: sotto i 24 GB **non si può scaricare né usare**, perché supera la memoria che macOS concede alla GPU.

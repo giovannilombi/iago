@@ -100,6 +100,37 @@ import Testing
         #expect(try archive.suggestions(itemID: call.id, status: nil).isEmpty)
     }
 
+    /// ADR-0070: who produced each result is kept, and the engine and Claude do not remove each other's proposals.
+    @Test func resultsKeepWhoProducedThem() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let call = try fixture.makeItem()
+        try archive.replacePendingSuggestions(
+            itemID: call.id, model: "qwen3.5-4b", [(.decision, SuggestionPayload(text: "Logo blu"))])
+        try archive.replacePendingSuggestions(
+            itemID: call.id, model: "Claude Desktop", origin: .claude,
+            [(.activity, SuggestionPayload(text: "Mandare il preventivo"))])
+        // A new run of the engine replaces only its own pending proposals.
+        try archive.replacePendingSuggestions(
+            itemID: call.id, model: "qwen3.5-9b", [(.decision, SuggestionPayload(text: "Font nuovo"))])
+        let pending = try archive.suggestions(itemID: call.id)
+        #expect(Set(pending.map(\.content.text)) == ["Mandare il preventivo", "Font nuovo"])
+        #expect(pending.first { $0.origin == .claude }?.model == "Claude Desktop")
+        #expect(pending.first { $0.origin == .engine }?.model == "qwen3.5-9b")
+
+        try archive.saveSummary(itemID: call.id, categoryID: nil, templateID: nil, markdown: "# Sintesi", model: "m")
+        #expect(try archive.summary(itemID: call.id)?.origin == .engine)
+        try archive.saveSummary(
+            itemID: call.id, categoryID: nil, templateID: nil, markdown: "# Sintesi", model: "Claude Desktop",
+            origin: .claude)
+        #expect(try archive.summary(itemID: call.id)?.origin == .claude)
+
+        var draft = Decision(text: "Logo blu", decidedAt: fixture.clock.now, sourceItemId: call.id, origin: .extraction)
+        draft.model = "qwen3.5-4b"
+        let decision = try archive.createDecision(draft)
+        #expect(try archive.decision(decision.id)?.model == "qwen3.5-4b")
+    }
+
     @Test func conversationsLast48HoursUnlessKept() throws {
         let fixture = try ArchiveFixture()
         let archive = fixture.archive

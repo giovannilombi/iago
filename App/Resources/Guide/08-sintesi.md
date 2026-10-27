@@ -6,8 +6,8 @@ Con il motore locale IAGO scrive la **sintesi** di una call nella forma della su
 ![Il blocco Sintesi](img/sintesi.png)
 
 ## Come si ottiene
-- **Da sola:** se la call ha già una categoria, la sintesi arriva a fine trascrizione, con una notifica.
-- **A mano:** senza categoria il blocco *Sintesi* dice "non ancora disponibile": scegli la categoria e premi **Genera sintesi**.
+- **Da sola:** se la call ha già una categoria e le **sintesi automatiche** sono accese, la sintesi arriva a fine trascrizione, con una notifica. Sui Mac con meno di 32 GB di memoria sono spente di default: le accendi in Impostazioni › Motore.
+- **A mano:** premi **Genera sintesi** nel blocco *Sintesi*. Senza categoria il blocco dice "non ancora disponibile": scegli prima la categoria.
 - Mentre la scrive vedi l'avanzamento, anche in **Attività**.
 
 ## Come leggerla
@@ -27,5 +27,7 @@ Ogni categoria ha un **modello** (le sezioni da riempire). I modelli vengono da 
 
 ## Quale motore
 Le sintesi richiedono almeno **Qwen 3.5 9B**; **Gemma 4 12B** (Mac con 32 GB) scrive le sintesi più ricche. Il 4B è troppo piccolo. Tempi per una call di 30 minuti: circa 1-1,5 minuti con il 9B, 2,5-4,5 minuti con Gemma.
+
+Sotto la sintesi c'è sempre chi l'ha scritta: «Sintetizzata con Qwen 3.5 9B sul Mac», oppure «Sintetizzata da Claude» se l'hai fatta fare a Claude.
 
 Sono **bozze da rileggere**: la qualità dipende dalla trascrizione.

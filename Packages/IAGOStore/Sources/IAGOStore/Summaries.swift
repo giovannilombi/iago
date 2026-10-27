@@ -1,8 +1,11 @@
 import Foundation
 import GRDB
 
-/// The summary of an item, written by the local engine with its category's template (ADR-0054). One per item; the
-/// user can edit it.
+/// Who produced a summary or a proposal (ADR-0070): the local engine on the Mac, or Claude through MCP.
+public enum ResultOrigin: String, Codable, Sendable, Hashable { case engine, claude }
+
+/// The summary of an item, written by the local engine with its category's template (ADR-0054), or by Claude through
+/// MCP (ADR-0071). One per item; the user can edit it.
 public struct ItemSummaryText: Codable, FetchableRecord, PersistableRecord, Sendable, Equatable {
     public static let databaseTableName = "summary"
     public static var databaseColumnDecodingStrategy: DatabaseColumnDecodingStrategy { .convertFromSnakeCase }
@@ -12,12 +15,13 @@ public struct ItemSummaryText: Codable, FetchableRecord, PersistableRecord, Send
     public var categoryId: String?
     public var templateId: String?
     public var markdown: String
-    /// The engine that wrote it.
+    /// The engine that wrote it (catalog id), or for Claude the app it was used from.
     public var model: String?
     /// Changed by hand: regenerating asks first.
     public var edited: Bool
     public var createdAt: Date
     public var updatedAt: Date
+    public var origin: ResultOrigin = .engine
 }
 
 /// A category of the library (ADR-0054): name, family (nil: main) and template.
@@ -130,14 +134,15 @@ extension Archive {
 
     /// A summary written by the engine: replaces the previous one.
     public func saveSummary(
-        itemID: String, categoryID: String?, templateID: String?, markdown: String, model: String?
+        itemID: String, categoryID: String?, templateID: String?, markdown: String, model: String?,
+        origin: ResultOrigin = .engine
     ) throws {
         let now = self.now()
         try database.writer.write { db in
             let created = try ItemSummaryText.fetchOne(db, key: itemID)?.createdAt ?? now
             let summary = ItemSummaryText(
                 itemId: itemID, categoryId: categoryID, templateId: templateID, markdown: markdown, model: model,
-                edited: false, createdAt: created, updatedAt: now)
+                edited: false, createdAt: created, updatedAt: now, origin: origin)
             try summary.save(db)
             try indexSummary(summary, db)
         }

@@ -48,6 +48,9 @@ struct DecisionDetailView: View {
                 Button(String(localized: "Modifica…")) { model.editingDecision = DecisionDraft(summary) }
             }
             ViaClaudeBadge(model: model, entity: .decision, id: decision.id)
+            if let provenance = Provenance.decision(decision) {
+                ProvenanceLine(text: provenance, model: decision.model == Provenance.claude ? nil : decision.model)
+            }
             Text(decision.text).font(.title2.weight(.semibold)).textSelection(.enabled)
                 .strikethrough(decision.status == .superseded || decision.status == .cancelled, color: .secondary)
                 .fixedSize(horizontal: false, vertical: true)

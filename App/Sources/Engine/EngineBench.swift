@@ -65,7 +65,7 @@ enum EngineBench {
             ]
             for model in EngineCatalog.models
             where engine.library.isInstalled(model) && (only?.contains(model.id) ?? true) {
-                let provider = MLXProvider(model: model, folder: engine.library.folder(of: model))
+                let provider = MLXProvider(model: model, folder: engine.library.folder(of: model), lane: engine.lane)
                 await provider.resetPeakMemory()
                 do {
                     try await provider.warmUp()
@@ -138,7 +138,7 @@ enum EngineBench {
         var runs: [Run] = []
         for model in models {
             var run = Run(model: model)
-            let provider = MLXProvider(model: model, folder: engine.library.folder(of: model))
+            let provider = MLXProvider(model: model, folder: engine.library.folder(of: model), lane: engine.lane)
             await provider.resetPeakMemory()
             do {
                 var started = ContinuousClock.now

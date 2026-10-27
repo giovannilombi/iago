@@ -11,7 +11,7 @@
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 243 nei pacchetti, tutti verdi.
+- **Test automatici:** 253 nei pacchetti, tutti verdi.
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -39,6 +39,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-27:** coda unica del motore (ADR-0069): trascrizione, motore e ricerca uno alla volta, la chat interrompe il lavoro in sottofondo, limiti di memoria di MLX e pausa con la pressione di memoria; sotto i 32 GB proposte e sintesi automatiche spente di default (nuovo interruttore «Sintesi automatiche») e modello liberato a fine lavoro; Gemma 4 12B non usabile sotto i 24 GB. Provenienza dei risultati (ADR-0070): ogni sintesi, proposta e punto chiave confermato dice quale modello o se Claude l'ha prodotto, con «modello piccolo» sotto i 9B (migrazione `v18-provenance`).
 - **2026-10-27:** JSON importabili (trascinati, da file o incollati), mostrati in ordine; CSV, XML, YAML e gli altri file di testo importabili. Menu IAGO, Modifica e Finestra: ⌘C, ⌘V, ⌘X, ⌘A, ⌘Z, ⌘W e ⌘, funzionano nei campi di testo e nelle finestre (prima solo il tasto destro). Limite rigido per richiesta al motore: una riga enorme (un JSON compatto) non satura più la memoria.
 - **2026-10-25:** nessun indirizzo email personale nel repository (modifica di ADR-0065). La storia è stata riscritta con gli indirizzi anonimi di GitHub e `giovannilombi/iago` ricreato, perché le PR chiuse conservavano i vecchi commit: le PR #1 e #2 non ci sono più (il loro contenuto è in `main`), le issue sono state trasferite. Controlli in `pre-commit`, `commit-msg`, nuovo `pre-push` e nuovo workflow `privacy.yml` su GitHub. Link al sito di documentazione in cima al README.
 - **2026-10-24:** sito di documentazione VitePress su due livelli, Uso e Tecnico (ADR-0068), pronto in locale; online quando il repository diventa pubblico. Documentazione obbligatoria a ogni commit (controllo dei commit). Corretti la guida e il tour sul clic dell'icona (il clic apre il menu, il clic destro avvia e mette in pausa, ADR-0026) e `docs/installazione.md` (aggiornamenti, eco). Corretto il blocco della CI sui test di IAGOIngest (HTML senza WebKit, limiti di tempo).

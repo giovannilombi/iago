@@ -1,3 +1,4 @@
+import IAGOEngine
 import IAGOIntelligence
 import IAGOStore
 import SwiftUI
@@ -625,9 +626,11 @@ struct ChatPanel: View {
             return
         }
         let hits =
-            (try? await HybridSearch.search(
-                last.question, scope: scope, archive: model.archive, embedder: embedder,
-                cache: model.intelligence.cache, limit: 60)) ?? []
+            (try? await EngineLane.$interactive.withValue(true) {
+                try await HybridSearch.search(
+                    last.question, scope: scope, archive: model.archive, embedder: embedder,
+                    cache: model.intelligence.cache, limit: 60)
+            }) ?? []
         let fresh = Set(changed.items)
         newMaterial = Set(hits.compactMap(\.itemID).filter(fresh.contains)).count + changed.decisions
     }
@@ -656,10 +659,15 @@ struct ChatPanel: View {
                 model.intelligence.chatBusy = false
             }
             do {
-                let sources = try await ChatAnswerer.sources(
-                    for: text, scope: scope, archive: model.archive, embedder: model.engine.embedder,
-                    cache: model.intelligence.cache)
-                let answer = try await ChatAnswerer.answer(text, history: history, sources: sources, engine: engine)
+                // The chat goes first in the engine lane: background work waits or is interrupted (ADR-0069).
+                let (sources, answer) = try await EngineLane.$interactive.withValue(true) {
+                    let sources = try await ChatAnswerer.sources(
+                        for: text, scope: scope, archive: model.archive, embedder: model.engine.embedder,
+                        cache: model.intelligence.cache)
+                    return (
+                        sources, try await ChatAnswerer.answer(text, history: history, sources: sources, engine: engine)
+                    )
+                }
                 guard !Task.isCancelled, index < turns.count else { return }
                 turns[index].sources = sources
                 turns[index].answer = answer

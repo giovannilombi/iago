@@ -90,3 +90,5 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0066 | Esempio iniziale in un archivio nuovo | accettato |
 | 0067 | MiniCPM: al posto di Qwen 3.5 4B o in aggiunta | proposto |
 | 0068 | Sito di documentazione con VitePress su GitHub Pages | accettato (online quando il repository è pubblico) |
+| 0069 | Coda unica del motore e memoria | accettato |
+| 0070 | Chi ha prodotto ogni risultato | accettato |

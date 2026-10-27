@@ -1,3 +1,4 @@
+import IAGOEngine
 import IAGOIngest
 import IAGOIntelligence
 import IAGOStore
@@ -249,7 +250,10 @@ struct NoteEditor: View {
             let work = model.activity.begin(.tidy, engine.modelName)
             defer { model.activity.end(work) }
             do {
-                let text = try await TextTidier.tidy(original, with: engine)
+                // The user waits for the preview: it goes first in the engine lane (ADR-0069).
+                let text = try await EngineLane.$interactive.withValue(true) {
+                    try await TextTidier.tidy(original, with: engine)
+                }
                 if !Task.isCancelled, !text.isEmpty {
                     tidied = TidyProposal(original: original, text: text, modelName: engine.modelName)
                 }

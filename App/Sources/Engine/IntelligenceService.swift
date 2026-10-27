@@ -37,8 +37,11 @@ final class IntelligenceService {
     @ObservationIgnored private var wake: AsyncStream<Void>.Continuation?
     @ObservationIgnored private var loop: Task<Void, Never>?
     @ObservationIgnored private var manual: [String] = []
+    /// Something was done in this round: on Macs with little memory the models are freed at its end (ADR-0069).
+    @ObservationIgnored private var worked = false
 
     static let autoKey = "intelligence.autoSuggest"
+    static let autoSummaryKey = "summaries.auto"
     static let sinceKey = "intelligence.since"
     static func doneKey(_ itemID: String) -> String { "intelligence.suggested.\(itemID)" }
     static let summarySinceKey = "summaries.since"
@@ -51,12 +54,33 @@ final class IntelligenceService {
         self.notifier = notifier
     }
 
-    /// "Proponi automaticamente" (on by default when an engine is there).
+    /// "Proponi automaticamente". Until the user chooses, on only on Macs with 32 GB or more (ADR-0069): the default
+    /// is worked out on each Mac and never saved, because the archive can move to another Mac.
     var autoSuggest: Bool {
-        get { (try? archive.setting(Self.autoKey)) != "0" }
+        get { Self.choice(archive, Self.autoKey) ?? EnginePolicy.automaticWorkByDefault(ramGB: EnginePolicy.ramGB) }
         set {
             try? archive.setSetting(Self.autoKey, newValue ? "1" : "0")
             poke()
+        }
+    }
+
+    /// "Sintesi automatiche" after each transcription, with the same default as the proposals (ADR-0069).
+    var autoSummarize: Bool {
+        get {
+            Self.choice(archive, Self.autoSummaryKey) ?? EnginePolicy.automaticWorkByDefault(ramGB: EnginePolicy.ramGB)
+        }
+        set {
+            try? archive.setSetting(Self.autoSummaryKey, newValue ? "1" : "0")
+            poke()
+        }
+    }
+
+    /// The user turned it on or off; nil: never chosen.
+    private static func choice(_ archive: Archive, _ key: String) -> Bool? {
+        switch (try? archive.setting(key)).flatMap({ $0 }) {
+        case "1": true
+        case "0": false
+        default: nil
         }
     }
 
@@ -113,6 +137,12 @@ final class IntelligenceService {
     // MARK: Work
 
     private func runOnce() async {
+        worked = false
+        defer {
+            if worked, EnginePolicy.freesModelAfterBackgroundWork(ramGB: EnginePolicy.ramGB) {
+                Task { await engine.freeModels() }
+            }
+        }
         // ADR-0049 (amended): temporary conversations go after 48 hours.
         if let removed = try? archive.purgeExpiredConversations(), removed > 0 { revision += 1 }
         if let embedder = engine.embedder { await index(with: embedder) }
@@ -134,8 +164,9 @@ final class IntelligenceService {
     /// Items asked by hand, and new transcribed items whose category has a template (ADR-0054).
     private func summarize(with chat: any LLMProvider) async {
         var queue: [String] = []
-        if let since = (try? archive.setting(Self.summarySinceKey)).flatMap({ $0 }).flatMap(
-            ISO8601DateFormatter().date(from:))
+        if autoSummarize,
+            let since = (try? archive.setting(Self.summarySinceKey)).flatMap({ $0 }).flatMap(
+                ISO8601DateFormatter().date(from:))
         {
             let categories = Dictionary(
                 uniqueKeysWithValues: ((try? archive.categories(includeArchived: true)) ?? []).map { ($0.id, $0) })
@@ -152,6 +183,7 @@ final class IntelligenceService {
             guard await waitUntilFree() else { return }
             let itemID = summaryRequests.isEmpty ? queue.removeFirst() : summaryRequests.removeFirst()
             queue.removeAll { $0 == itemID }
+            worked = true
             await writeSummary(itemID, with: chat)
         }
     }
@@ -222,6 +254,7 @@ final class IntelligenceService {
             cache.invalidate()
         }
         var done = 0
+        worked = true
         for itemID in pending.items {
             guard await waitUntilFree() else { return }
             do {
@@ -290,6 +323,7 @@ final class IntelligenceService {
         }
         for itemID in queue {
             guard await waitUntilFree() else { return }
+            worked = true
             await propose(itemID, with: chat)
         }
     }

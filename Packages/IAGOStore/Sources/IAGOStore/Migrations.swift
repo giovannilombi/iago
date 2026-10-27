@@ -320,6 +320,13 @@ enum Migrations {
                 t.column("updated_at", .datetime).notNull()
             }
         }
+        migrator.registerMigration("v18-provenance") { db in
+            // ADR-0070: who produced each result. Summaries and proposals come from the local engine or from Claude;
+            // a key point confirmed from a proposal keeps the model that proposed it.
+            try db.alter(table: "summary") { t in t.add(column: "origin", .text).notNull().defaults(to: "engine") }
+            try db.alter(table: "suggestion") { t in t.add(column: "origin", .text).notNull().defaults(to: "engine") }
+            try db.alter(table: "decision") { t in t.add(column: "model", .text) }
+        }
         return migrator
     }
 

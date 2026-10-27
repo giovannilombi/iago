@@ -94,3 +94,7 @@ Valgono le stesse regole del motore:
 - Un modello in più da scaricare, piccolo e legato al primo motore.
 - `IAGOIntelligence` ospita chunking, ricerca ibrida, estrazione e contesto della chat, testati con un motore finto. La parte MLX resta nell'app (`App/Sources/Engine`).
 - Il menu Condividi completo è rimandato alla distribuzione, perché richiede un'estensione firmata.
+
+## Modifica del 2026-10-27 (ADR-0069)
+- "Motore ed embedding uno alla volta", "la chat ha la precedenza" e "con poca memoria il job si sospende" sono implementati dalla **coda unica** di ADR-0069: la chat interrompe il blocco in corso, che poi si rifà.
+- **"Proponi automaticamente"** è acceso di default solo sui Mac da 32 GB in su; sotto, le proposte partono da «Cerca proposte», e l'utente può riaccenderlo.
