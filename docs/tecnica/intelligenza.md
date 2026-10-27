@@ -15,6 +15,8 @@
 
 ## Proposte (ADR-0009, ADR-0049)
 Dopo ogni nuovo contenuto il motore propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti. Ogni proposta porta **la frase da cui viene**; IAGO la cerca nel testo e scarta quelle che non trova. Niente viene applicato senza conferma.
+- **Automatiche o a mano** (ADR-0069): proposte e sintesi automatiche (`intelligence.autoSuggest`, `summaries.auto`) sono accese di default solo da 32 GB (`EnginePolicy.automaticWorkByDefault`); il default si calcola su ogni Mac e non si salva. «Cerca proposte» e «Genera sintesi» funzionano sempre.
+- **Provenienza** (ADR-0070): `suggestion.origin` e `summary.origin` (`engine` o `claude`) e `model`; un punto chiave confermato tiene `decision.model`. La UI usa `Provenance` per la stessa riga ovunque, con «modello piccolo» sotto i 9B.
 
 ## Sintesi per categoria (ADR-0054)
 - La **categoria** dell'elemento sceglie il **modello di sintesi**: 18 modelli nel formato JSON di Meetily (sezioni con istruzione, formato e formato delle voci), presi da Meetily e Hyprnote (MIT) e modificabili.

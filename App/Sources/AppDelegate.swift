@@ -1,6 +1,7 @@
 import AVFoundation
 import AppKit
 import IAGOCapture
+import IAGOEngine
 import IAGOTranscription
 import os
 
@@ -36,7 +37,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if restoring { try? archive.archive.audit(.backup, action: "backup_restored") }
             let controller = RecordingController(paths: paths)
             self.controller = controller
-            let transcription = TranscriptionService(archive: archive.archive, paths: paths)
+            // One heavy job at a time on the GPU and the memory: transcription, engine, embedding (ADR-0069).
+            let lane = EngineLane(
+                chatBesideTranscription: EnginePolicy.chatDuringTranscription(ramGB: EnginePolicy.ramGB))
+            let transcription = TranscriptionService(archive: archive.archive, paths: paths, lane: lane)
             self.transcription = transcription
             let activity = ActivityCenter()
             let statusItemController = StatusItemController(
@@ -45,7 +49,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             self.statusItemController = statusItemController
             let engine = EngineService(
                 root: paths.models.appendingPathComponent("LLM", isDirectory: true), archive: archive.archive,
-                notifier: notifier)
+                notifier: notifier, lane: lane)
             let intelligence = IntelligenceService(
                 archive: archive.archive, engine: engine, recorder: controller, notifier: notifier)
             let folderImporter = FolderImporter(archiveService: archive, notifier: notifier)

@@ -60,10 +60,10 @@ struct EnginePane: View {
             }
         }
         SettingsGroup(
-            title: String(localized: "Proposte automatiche"),
+            title: String(localized: "Lavori automatici"),
             footnote: String(
                 localized:
-                    "Dopo ogni trascrizione o importazione il motore propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti. Le trovi nella scheda dell'elemento e in Punti chiave › Da confermare; niente viene applicato senza la tua conferma. Per gli elementi già in archivio usa «Cerca proposte» nella loro scheda."
+                    "Dopo ogni trascrizione o importazione il motore propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti, e scrive la sintesi delle call che hanno una categoria. Le proposte sono nella scheda dell'elemento e in Punti chiave › Da confermare; niente viene applicato senza la tua conferma. Spenti, partono dai pulsanti «Cerca proposte» e «Genera sintesi» nella scheda."
             )
         ) {
             Toggle(
@@ -71,6 +71,21 @@ struct EnginePane: View {
                 isOn: Binding(get: { model.intelligence.autoSuggest }, set: { model.intelligence.autoSuggest = $0 })
             )
             .disabled(engine.activeModel == nil)
+            Toggle(
+                String(localized: "Sintesi automatiche"),
+                isOn: Binding(
+                    get: { model.intelligence.autoSummarize }, set: { model.intelligence.autoSummarize = $0 })
+            )
+            .disabled(engine.activeModel == nil)
+            if !EnginePolicy.automaticWorkByDefault(ramGB: EngineService.ramGB) {
+                Text(
+                    String(
+                        localized:
+                            "Spenti di default su questo Mac (\(EngineService.ramGB) GB di memoria): puoi accenderli, ma mentre lavorano il Mac rallenta. Il modello si libera alla fine di ogni lavoro."
+                    )
+                )
+                .font(.caption).foregroundStyle(.secondary)
+            }
             if let title = model.intelligence.proposingFor {
                 Label(String(localized: "Sto preparando le proposte per «\(title)»"), systemImage: "cpu")
                     .font(.caption).foregroundStyle(.secondary)
@@ -156,6 +171,16 @@ struct EnginePane: View {
                 Link(String(localized: "Licenza \(entry.license)"), destination: entry.licenseURL)
             }
             .font(.caption).foregroundStyle(.secondary)
+            if !engine.fits(entry) {
+                // ADR-0069: beyond what macOS gives the GPU here, the model would crash the work.
+                Label(
+                    String(
+                        localized:
+                            "Serve almeno \(EnginePolicy.minimumRAMGB[entry.id] ?? 0) GB di memoria: su questo Mac (\(EngineService.ramGB) GB) non funziona e non si può usare."
+                    ), systemImage: "exclamationmark.triangle"
+                )
+                .font(.caption).foregroundStyle(.orange).fixedSize(horizontal: false, vertical: true)
+            }
             if let progress = engine.progress[entry.id] {
                 HStack {
                     ProgressView(value: progress.fraction).frame(maxWidth: 260)
@@ -167,7 +192,7 @@ struct EnginePane: View {
                 HStack {
                     switch state {
                     case .missing:
-                        Button(String(localized: "Scarica")) { startDownload(entry) }
+                        Button(String(localized: "Scarica")) { startDownload(entry) }.disabled(!engine.fits(entry))
                     case .partial(let bytes):
                         Text(
                             String(
@@ -176,12 +201,12 @@ struct EnginePane: View {
                             )
                         )
                         .font(.caption).foregroundStyle(.secondary)
-                        Button(String(localized: "Riprendi")) { startDownload(entry) }
+                        Button(String(localized: "Riprendi")) { startDownload(entry) }.disabled(!engine.fits(entry))
                         Button(String(localized: "Elimina"), role: .destructive) { confirmingDelete = entry }
                             .buttonStyle(.link)
                     case .installed:
                         if !isActive, entry.role == .chat {
-                            Button(String(localized: "Usa questo")) { engine.use(entry) }
+                            Button(String(localized: "Usa questo")) { engine.use(entry) }.disabled(!engine.fits(entry))
                         }
                         Text(Format.bytes(engine.diskSize(of: entry))).font(.caption).monospacedDigit()
                             .foregroundStyle(.secondary)

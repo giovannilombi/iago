@@ -64,10 +64,12 @@ public struct Suggestion: Codable, FetchableRecord, PersistableRecord, Sendable,
     public var status: Status
     /// Kind and normalised text: a proposal the user already answered is not proposed again for the same item.
     public var fingerprint: String
-    /// Catalog id of the model that proposed it.
+    /// Catalog id of the model that proposed it, or for Claude the app it was used from.
     public var model: String
     public var createdAt: Date
     public var updatedAt: Date
+    /// The local engine or Claude (ADR-0070).
+    public var origin: ResultOrigin = .engine
 
     public var content: SuggestionPayload {
         (try? JSONDecoder().decode(SuggestionPayload.self, from: Data(payload.utf8))) ?? SuggestionPayload(text: "")
@@ -233,17 +235,20 @@ extension Archive {
             .filter { $0.isLetter || $0.isNumber }
     }
 
-    /// Records new proposals for an item. Pending ones from an earlier run go away; one the user already accepted or
-    /// rejected is not proposed again. Returns what was added.
+    /// Records new proposals for an item. Pending ones from an earlier run of the same origin go away (the engine
+    /// does not remove Claude's, nor the other way round); one the user already accepted or rejected is not proposed
+    /// again. Returns what was added.
     @discardableResult
     public func replacePendingSuggestions(
-        itemID: String, model: String, _ proposals: [(kind: Suggestion.Kind, payload: SuggestionPayload)]
+        itemID: String, model: String, origin: ResultOrigin = .engine,
+        _ proposals: [(kind: Suggestion.Kind, payload: SuggestionPayload)]
     ) throws -> [Suggestion] {
         let now = self.now()
         let writer = self.writer
         return try database.writer.write { db in
             try db.execute(
-                sql: "DELETE FROM suggestion WHERE item_id = ? AND status = 'pending'", arguments: [itemID])
+                sql: "DELETE FROM suggestion WHERE item_id = ? AND status = 'pending' AND origin = ?",
+                arguments: [itemID, origin.rawValue])
             let answered = Set(
                 try String.fetchAll(
                     db, sql: "SELECT fingerprint FROM suggestion WHERE item_id = ?", arguments: [itemID]))
@@ -255,7 +260,7 @@ extension Archive {
                 let payload = String(decoding: try JSONEncoder().encode(proposal.payload), as: UTF8.self)
                 let suggestion = Suggestion(
                     id: newID(at: writer.now), itemId: itemID, kind: proposal.kind, payload: payload, status: .pending,
-                    fingerprint: fingerprint, model: model, createdAt: now, updatedAt: now)
+                    fingerprint: fingerprint, model: model, createdAt: now, updatedAt: now, origin: origin)
                 try suggestion.insert(db)
                 added.append(suggestion)
             }

@@ -65,17 +65,54 @@ final class EngineService {
     private(set) var revision = 0
     private var provider: MLXProvider?
     private var embedderInstance: MLXEmbedder?
+    /// The single lane of heavy work (ADR-0069), shared with the transcription.
+    let lane: EngineLane
+    @ObservationIgnored private var memory: EngineMemory?
 
     /// "Il motore è pronto": shown once after a download (ADR-0048).
     var readyToAnnounce: EngineModel?
     /// A feature was asked for without an engine: "Serve un motore locale".
     var neededFor: EngineFeature?
 
-    init(root: URL, archive: Archive, notifier: Notifier) {
+    init(root: URL, archive: Archive, notifier: Notifier, lane: EngineLane) {
         library = EngineLibrary(root: root)
         self.archive = archive
         self.notifier = notifier
+        self.lane = lane
+        let memory = EngineMemory(lane: lane) { [weak self] in await self?.freeModels() }
+        memory.start()
+        self.memory = memory
+        adaptToThisMac()
     }
+
+    /// The models are freed now (after background work on Macs with little memory, or under memory pressure); the
+    /// next request loads them again.
+    func freeModels() async {
+        await provider?.free()
+        await embedderInstance?.free()
+    }
+
+    /// A model that does not fit this Mac (ADR-0069: Gemma 4 12B below 24 GB) is not used: the biggest installed
+    /// model that fits takes its place, and the user is told.
+    private func adaptToThisMac() {
+        guard let active = library.activeModel, !fits(active) else { return }
+        let installed = EngineCatalog.models.filter { library.state(of: $0) == .installed }
+        guard let replacement = EnginePolicy.replacement(for: active, installed: installed, ramGB: Self.ramGB) else {
+            logger.notice("Engine \(active.id, privacy: .public) does not fit this Mac and has no replacement")
+            return
+        }
+        try? library.setActive(replacement.id)
+        try? archive.audit(.llm, action: "engine_selected", detail: replacement.id)
+        notifier.post(
+            title: String(localized: "Motore cambiato"),
+            body: String(
+                localized:
+                    "\(active.name) richiede più memoria di quella di questo Mac: IAGO usa \(replacement.name)."))
+        logger.notice("Engine \(active.id, privacy: .public) replaced by \(replacement.id, privacy: .public)")
+    }
+
+    /// The model can work on this Mac (ADR-0069).
+    func fits(_ model: EngineModel) -> Bool { EnginePolicy.fits(model, ramGB: Self.ramGB) }
 
     var activeModel: EngineModel? {
         _ = revision
@@ -94,7 +131,7 @@ final class EngineService {
 
     var totalDiskSize: Int64 { EngineCatalog.models.reduce(0) { $0 + diskSize(of: $1) } }
 
-    static var ramGB: Int { Int(ProcessInfo.processInfo.physicalMemory / 1_073_741_824) }
+    static var ramGB: Int { EnginePolicy.ramGB }
 
     /// The engine for a feature; nil after asking the user to choose one (also when the active one is too small for
     /// it: summaries need 9B or more).
@@ -108,7 +145,7 @@ final class EngineService {
 
     /// The active model is big enough for the feature (no active model: false).
     func isBigEnough(for feature: EngineFeature) -> Bool {
-        guard let model = activeModel else { return false }
+        guard let model = activeModel, fits(model) else { return false }
         return model.billions >= (EngineCatalog.minimumBillions[feature.rawValue] ?? 0)
     }
 
@@ -119,9 +156,9 @@ final class EngineService {
 
     /// The engine for background work: nil without one, and nobody is asked.
     var currentEngine: (any LLMProvider)? {
-        guard let model = activeModel else { return nil }
+        guard let model = activeModel, fits(model) else { return nil }
         if let provider, provider.modelID == model.id { return provider }
-        let fresh = MLXProvider(model: model, folder: library.folder(of: model))
+        let fresh = MLXProvider(model: model, folder: library.folder(of: model), lane: lane)
         provider = fresh
         return fresh
     }
@@ -131,7 +168,7 @@ final class EngineService {
         _ = revision
         guard let model = library.embeddingModel else { return nil }
         if let embedderInstance { return embedderInstance }
-        let fresh = MLXEmbedder(model: model, folder: library.folder(of: model))
+        let fresh = MLXEmbedder(model: model, folder: library.folder(of: model), lane: lane)
         embedderInstance = fresh
         return fresh
     }
@@ -139,7 +176,7 @@ final class EngineService {
     // MARK: Download
 
     func download(_ model: EngineModel) {
-        guard tasks[model.id] == nil else { return }
+        guard tasks[model.id] == nil, fits(model) else { return }
         failures[model.id] = nil
         progress[model.id] = EngineProgress(
             bytes: library.diskSize(of: model), total: model.downloadBytes, bytesPerSecond: 0)
@@ -198,6 +235,7 @@ final class EngineService {
     // MARK: Choice
 
     func use(_ model: EngineModel) {
+        guard fits(model) else { return }
         do {
             try library.setActive(model.id)
             try? archive.audit(.llm, action: "engine_selected", detail: model.id)

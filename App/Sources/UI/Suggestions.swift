@@ -11,13 +11,14 @@ extension AppModel {
         perform {
             switch suggestion.kind {
             case .decision, .activity:
+                var decision = Decision(
+                    text: content.text,
+                    decidedAt: item.occurredAt.addingTimeInterval(content.atSec ?? 0), projectId: item.projectId,
+                    sourceItemId: item.id, sourceAtSec: content.atSec, supersedesId: content.supersedesID,
+                    origin: .extraction, kind: suggestion.kind == .activity ? .action : .decision)
+                decision.model = Provenance.decisionModel(of: suggestion)
                 try archive.createDecision(
-                    Decision(
-                        text: content.text,
-                        decidedAt: item.occurredAt.addingTimeInterval(content.atSec ?? 0), projectId: item.projectId,
-                        sourceItemId: item.id, sourceAtSec: content.atSec, supersedesId: content.supersedesID,
-                        origin: .extraction, kind: suggestion.kind == .activity ? .action : .decision),
-                    people: content.owner.map { DecisionDraft.isPersonName($0) ? [$0] : [] } ?? [])
+                    decision, people: content.owner.map { DecisionDraft.isPersonName($0) ? [$0] : [] } ?? [])
             case .person:
                 if let speakerID = content.targetID {
                     try archive.renameSpeaker(speakerID, of: item.id, to: content.text)
@@ -94,7 +95,7 @@ struct SuggestionsSection: View {
                     }
                     Spacer()
                     if !suggestions.isEmpty {
-                        Text(String(localized: "Proposte del motore locale: controllale prima di confermarle."))
+                        Text(String(localized: "Proposte da controllare: niente cambia finché non le confermi."))
                             .font(.caption).foregroundStyle(.secondary)
                     }
                 }
@@ -135,6 +136,9 @@ struct SuggestionRow: View {
             if let reason = Self.reason(suggestion.kind, content, model) {
                 Text(reason).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
+            ProvenanceLine(
+                text: Provenance.suggestion(suggestion),
+                model: suggestion.origin == .engine ? suggestion.model : nil)
             HStack {
                 Button(String(localized: "Conferma")) { model.accept(suggestion) }
                 if suggestion.kind == .decision || suggestion.kind == .activity {

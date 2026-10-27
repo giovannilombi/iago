@@ -1,6 +1,7 @@
 import Foundation
 import IAGOCapture
 import IAGOCore
+import IAGOEngine
 import IAGOExport
 import IAGOStore
 import IAGOTranscription
@@ -37,7 +38,11 @@ final class TranscriptionService: Sendable {
     private let pipeline = PipelineCache()
     private let logger = Logger(subsystem: "com.giovannilombi.iago", category: "transcription")
 
-    init(archive: Archive, paths: StoragePaths) {
+    /// Transcriptions take the engine lane (ADR-0069) and cannot be interrupted.
+    private let lane: EngineLane?
+
+    init(archive: Archive, paths: StoragePaths, lane: EngineLane? = nil) {
+        self.lane = lane
         self.archive = archive
         self.paths = paths
         self.models = ModelManager(root: paths.models)
@@ -49,7 +54,8 @@ final class TranscriptionService: Sendable {
 
     func start() async throws {
         await queue.register(Self.jobType) { [self] job, progress in
-            try await run(job, progress: progress)
+            guard let lane else { return try await run(job, progress: progress) }
+            try await lane.run(.background, preemptible: false) { try await self.run(job, progress: progress) }
         }
         try await queue.start()
     }

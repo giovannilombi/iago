@@ -158,6 +158,19 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 10b.4 In una nota: **⌘V**, **⌘C**, **⌘X**, **⌘A** e **⌘Z** funzionano. Copia un file JSON nel Finder e incollalo nella nota con il tasto destro › *Incolla*: il suo testo entra nella nota, senza errori.
 - [ ] 10b.5 Con la finestra aperta, in alto ci sono i menu IAGO, Modifica e Finestra; **⌘W** chiude la finestra, **⌘,** apre le Impostazioni.
 
+## 10c. Coda del motore e memoria (Mac con 16 GB se possibile)
+- [ ] 10c.1 Su un Mac con meno di 32 GB: Impostazioni › Motore › *Lavori automatici* mostra «Proponi automaticamente» e «Sintesi automatiche» spenti, con la riga che spiega perché. Su un Mac da 32 GB sono accesi.
+- [ ] 10c.2 Con gli interruttori spenti, una call nuova trascritta non riceve né proposte né sintesi da sola; *Cerca proposte* e *Genera sintesi* funzionano.
+- [ ] 10c.3 Avvia *Genera sintesi* su una call lunga e, mentre la scrive, fai una domanda in *Chiedi*: la risposta arriva senza aspettare la fine della sintesi, e poi la sintesi finisce comunque.
+- [ ] 10c.4 Mentre una call si trascrive, fai una domanda in *Chiedi*: sotto i 32 GB la risposta arriva dopo la fine della trascrizione; il Mac resta reattivo.
+- [ ] 10c.5 Su un Mac sotto i 24 GB: Gemma 4 12B mostra «Serve almeno 24 GB di memoria», e *Scarica* e *Usa questo* sono spenti.
+- [ ] 10c.6 Monitoraggio Attività › Memoria durante una sintesi con Qwen 3.5 9B su 16 GB: la pressione di memoria non diventa rossa e nessuna app si chiude.
+
+## 10d. Chi ha prodotto i risultati
+- [ ] 10d.1 Sotto una sintesi: «Sintetizzata con Qwen 3.5 9B sul Mac» (o il modello usato).
+- [ ] 10d.2 Ogni proposta mostra «Proposta da … sul Mac»; con Qwen 3.5 4B compare anche «modello piccolo», con la spiegazione al passaggio del mouse.
+- [ ] 10d.3 Conferma una proposta di decisione e apri il punto chiave: dice «Proposto da … sul Mac, confermato da te».
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

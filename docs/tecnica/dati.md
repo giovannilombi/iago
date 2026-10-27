@@ -17,11 +17,11 @@ Il database è escluso da Time Machine (contiene l'indice di ricerca in chiaro);
 - **Gerarchia** cliente › progetto › stream (ADR-0038). Un progetto senza cliente sta in "Senza cliente"; un elemento classificato senza progetto in "Non definito" (ADR-0035).
 - **Note** datate, su un elemento o su un progetto, anche vocali (ADR-0016, ADR-0021, ADR-0039). **Segnalibri** (`Marker`) con l'ora nella call (ADR-0024).
 - **Punti chiave** (`Decision`) con tipo (decisione, attività, tappa…), fonte fino al minuto, persone, e catene di superamento anche multiple (ADR-0013, ADR-0014, ADR-0046, ADR-0052).
-- **Suggerimenti** del motore, sempre da confermare (ADR-0009). **Collegamenti** tra elementi (`ItemLink`).
+- **Suggerimenti** del motore o di Claude, sempre da confermare (ADR-0009). Sintesi e suggerimenti hanno `origin` (`engine` o `claude`) e `model`; un punto chiave confermato da un suggerimento conserva `model` (ADR-0070). **Collegamenti** tra elementi (`ItemLink`).
 - **Pronto per la sincronizzazione** (ADR-0008): ogni riga ha `created_at`, `updated_at`, `deleted_at`, `version`, `device_id`; ogni modifica finisce in `change_log`.
 
 ## Migrazioni
-Diciassette finora, da `v1` a `v17-summaries`. Una migrazione non si modifica mai dopo il rilascio: se ne aggiunge una nuova. Prima di installare una build che porta migrazioni nuove sull'archivio di un utente si fa un backup.
+Diciotto finora, da `v1` a `v18-provenance` (chi ha prodotto sintesi, proposte e punti chiave confermati, ADR-0070). Una migrazione non si modifica mai dopo il rilascio: se ne aggiunge una nuova. Prima di installare una build che porta migrazioni nuove sull'archivio di un utente si fa un backup.
 
 ## Cifratura
 - **File cifrati a blocchi** con AES-GCM (ADR-0027): si legge e si scrive a pezzi, anche file grandi, senza decifrarli tutti in memoria.

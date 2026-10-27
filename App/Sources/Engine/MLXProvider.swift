@@ -9,26 +9,34 @@ import os
 
 /// The local engine on MLX (ADR-0048): the only code that imports MLX. It loads the model from its folder only — the
 /// downloader given to MLX refuses to download — at the first request, and frees the memory after 10 minutes idle.
+/// Every request goes through the engine lane (ADR-0069), one at a time with the embedder and the transcription.
 /// No text is logged: only model, duration and length.
 actor MLXProvider: LLMProvider {
     nonisolated let modelID: String
     nonisolated let modelName: String
     private let folder: URL
     private let extraEOSTokens: Set<String>
+    private let lane: EngineLane?
     private var container: ModelContainer?
     private var unload: Task<Void, Never>?
     private let logger = Logger(subsystem: "com.giovannilombi.iago", category: "engine")
 
     static let idleTime: Duration = .seconds(600)
 
-    init(model: EngineModel, folder: URL) {
+    init(model: EngineModel, folder: URL, lane: EngineLane? = nil) {
         modelID = model.id
         modelName = model.name
         self.folder = folder
+        self.lane = lane
         extraEOSTokens = Set(model.extraEOSTokens)
     }
 
     func generate(_ request: LLMRequest) async throws -> String {
+        guard let lane else { return try await respond(request) }
+        return try await lane.run { try await self.respond(request) }
+    }
+
+    private func respond(_ request: LLMRequest) async throws -> String {
         unload?.cancel()
         let container = try await loaded()
         let started = ContinuousClock.now
@@ -38,6 +46,8 @@ actor MLXProvider: LLMProvider {
             // Qwen thinks aloud by default: not wanted for rewriting and extraction.
             additionalContext: ["enable_thinking": false])
         let answer = try await session.respond(to: request.prompt)
+        // Interrupted (for a chat, or by the user): MLX stops and returns what it had, which must not be used.
+        try Task.checkCancellation()
         logger.notice(
             "Generated with \(self.modelID, privacy: .public) in \(started.duration(to: .now), privacy: .public): \(request.prompt.count) → \(answer.count) characters"
         )
@@ -75,9 +85,11 @@ actor MLXProvider: LLMProvider {
     func resetPeakMemory() { Memory.peakMemory = 0 }
 
     func free() {
+        guard container != nil else { return }
+        unload?.cancel()
         container = nil
         Memory.clearCache()
-        logger.notice("Unloaded \(self.modelID, privacy: .public) after inactivity")
+        logger.notice("Unloaded \(self.modelID, privacy: .public)")
     }
 }
 

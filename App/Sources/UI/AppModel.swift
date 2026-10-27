@@ -2,6 +2,7 @@ import AppKit
 import Foundation
 import IAGOCapture
 import IAGOCore
+import IAGOEngine
 import IAGOExport
 import IAGOIngest
 import IAGOIntelligence
@@ -164,8 +165,12 @@ final class AppModel {
             // Words first, at once; then words and meaning together when the search model is there (ADR-0049).
             searchHits = (try? archive.search(text, scope: scope, sources: sources)) ?? []
             guard let embedder = engine.embedder else { return }
-            let hybrid = try? await HybridSearch.search(
-                text, scope: scope, sources: sources, archive: archive, embedder: embedder, cache: intelligence.cache)
+            // The user is waiting: the search goes first in the engine lane (ADR-0069).
+            let hybrid = try? await EngineLane.$interactive.withValue(true) {
+                try await HybridSearch.search(
+                    text, scope: scope, sources: sources, archive: archive, embedder: embedder,
+                    cache: intelligence.cache)
+            }
             guard !Task.isCancelled, let hybrid else { return }
             searchHits = hybrid
         }
@@ -415,7 +420,12 @@ final class AppModel {
     }
 
     func saveDecision(_ draft: DecisionDraft) {
-        let decision = draft.decision
+        var proposed = draft.decision
+        // A confirmed proposal keeps the model that proposed it (ADR-0070).
+        if let suggestionID = draft.suggestionID, let suggestion = try? archive.suggestion(suggestionID) {
+            proposed.model = Provenance.decisionModel(of: suggestion)
+        }
+        let decision = proposed
         perform {
             if let id = draft.existingID {
                 try archive.updateDecision(

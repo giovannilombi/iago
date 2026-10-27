@@ -173,10 +173,10 @@ struct SummarySection: View {
 
     private func caption(_ summary: ItemSummaryText) -> String {
         let template = SummaryLibrary.template(summary.templateId)?.name
-        let engine = summary.model.flatMap { id in EngineCatalog.models.first { $0.id == id }?.name } ?? summary.model
         var parts: [String] = []
-        if let template { parts.append(String(localized: "Modello «\(template)»")) }
-        if let engine { parts.append(String(localized: "scritta da \(engine)")) }
+        // Who wrote it (ADR-0070): the model of the Mac, or Claude.
+        if let provenance = Provenance.summary(summary) { parts.append(provenance) }
+        if let template { parts.append(String(localized: "modello «\(template)»")) }
         parts.append(summary.updatedAt.formatted(date: .abbreviated, time: .shortened))
         if summary.edited { parts.append(String(localized: "modificata a mano")) }
         return parts.joined(separator: " · ")

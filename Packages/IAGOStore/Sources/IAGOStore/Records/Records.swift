@@ -281,6 +281,8 @@ public struct Decision: SyncRecord, Identifiable, Hashable {
     public var notes: String?
     /// Name the user gave to the chain this decision starts (only on the first decision of a chain).
     public var chainName: String?
+    /// The model that proposed it, when it comes from a confirmed proposal: a catalog id, or `claude` (ADR-0070).
+    public var model: String?
     public var shared = false
     public var createdAt = Date.distantPast
     public var updatedAt = Date.distantPast

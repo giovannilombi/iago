@@ -62,7 +62,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **Punti chiave:** decisioni, attività e tappe, ognuno con la fonte (fino al minuto della call), le persone e la data.
 - **L'evoluzione delle decisioni:** una voce può superarne altre, anche di tipo diverso, e IAGO tiene la storia di come ci si è arrivati.
 - **Momenti segnati** durante una call, **note** datate sul progetto o sull'elemento, anche dettate a voce.
-- **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma.
+- **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
 
 ### Capisce
 - **Sintesi per tipo di riunione:** un 1to1 ha impegni e feedback, un SAL tappe, rischi e decisioni, un incontro commerciale esigenze, obiezioni e prossimi passi.
@@ -236,7 +236,8 @@ MLX Swift **dentro l'app**: nessun server locale, nessuna porta aperta. I modell
 
 **Come IAGO controlla il modello**, invece di fidarsi:
 - ogni punto di sintesi e ogni proposta deve **citare la trascrizione**. IAGO trova la citazione, con i numeri identici, e collega il punto al suo minuto; se non la trova, lo scarta;
-- le call vengono lette a **blocchi di 10 minuti**;
+- le call vengono lette a **blocchi di 10 minuti**, e nessuna richiesta al motore supera un limite fisso di testo;
+- trascrizione, motore e ricerca lavorano **uno alla volta**, con la precedenza a Chiedi; sotto i 32 GB proposte e sintesi automatiche sono spente di default, e Gemma 4 12B non si usa sotto i 24 GB;
 - le sezioni senza contenuto dicono **"Non emerso"**;
 - "In breve" è scritto **solo dai punti verificati**;
 - restano fuori i fatti personali e le frasi parlate copiate invece che riassunte;
@@ -268,11 +269,12 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0048](docs/adr/0048-motore-locale.md) | Motore MLX dentro l'app, modelli a scelta | niente server locali, niente Apple Intelligence per i contenuti |
 | [0052](docs/adr/0052-superamenti-multipli.md) | Superamenti multipli e tra tipi diversi | la storia delle decisioni com'è davvero |
 | [0054](docs/adr/0054-sintesi-per-categoria.md) | Sintesi per categoria con citazioni verificate | sintesi utili e controllabili |
+| [0069](docs/adr/0069-coda-unica-del-motore.md) | Un lavoro pesante alla volta, la chat per prima | il Mac non si riempie, le risposte non aspettano |
 | [0056](docs/adr/0056-aggiornamenti.md) | Aggiornamenti Sparkle firmati, maggiori obbligatori | tutti sulla stessa versione sicura |
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
 
 ## Qualità e test
-- **243 test automatici** nei pacchetti: Store 80, Capture 48, Transcription 28, Ingest 22, Intelligence 22, MCP 16, Core 15, Export 7, Engine 4, Sync 1.
+- **253 test automatici** nei pacchetti: Store 81, Capture 48, Transcription 28, Ingest 22, Intelligence 22, MCP 16, Core 15, Engine 13, Export 7, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
 - **CI** su ogni pull request (GitHub Actions, macOS): tutti i test e il controllo delle API di rete. Su Ubuntu, a ogni PR e push su `main`, il controllo che nessun indirizzo email personale entri nel repository. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
