@@ -124,6 +124,55 @@ import Testing
         #expect(try ContentExtractor.extract(txt).markdown == "riga 1\nriga 2")
     }
 
+    @Test func jsonBecomesAnIndentedCodeBlock() throws {
+        let url = directory.appendingPathComponent("export.json")
+        try #"{"progetto":"Portale","voci":[{"nome":"Anna \"A\", {test}","ore":12.50},{}],"vuoto":[]}"#.write(
+            to: url, atomically: true, encoding: .utf8)
+        #expect(ContentExtractor.canExtract(url))
+        let markdown = try ContentExtractor.extract(url).markdown
+        #expect(
+            markdown == """
+                ```json
+                {
+                  "progetto": "Portale",
+                  "voci": [
+                    {
+                      "nome": "Anna \\"A\\", {test}",
+                      "ore": 12.50
+                    },
+                    {}
+                  ],
+                  "vuoto": []
+                }
+                ```
+                """)
+        // Indenting changes nothing else: the JSON inside the block is still the same data.
+        let inner = markdown.dropFirst("```json\n".count).dropLast("\n```".count)
+        let original = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? NSDictionary
+        let indented = try JSONSerialization.jsonObject(with: Data(inner.utf8)) as? NSDictionary
+        #expect(original == indented)
+    }
+
+    @Test func textThatIsNotJSONStaysAsItIs() throws {
+        #expect(ContentExtractor.jsonMarkdown("{ appunti della call") == nil)
+        #expect(ContentExtractor.jsonMarkdown("Riunione del 3 marzo") == nil)
+        let broken = directory.appendingPathComponent("broken.json")
+        try "{\"a\": ".write(to: broken, atomically: true, encoding: .utf8)
+        #expect(try ContentExtractor.extract(broken).markdown == "{\"a\": ")
+    }
+
+    @Test func otherTextFormatsAreRead() throws {
+        for (name, content) in [
+            ("dati.csv", "nome;ore\nAnna;12"), ("config.yaml", "progetto: Portale"),
+            ("pagina.xml", "<voce>Anna</voce>"), ("script.py", "print('ciao')"),
+        ] {
+            let url = directory.appendingPathComponent(name)
+            try content.write(to: url, atomically: true, encoding: .utf8)
+            #expect(ContentExtractor.canExtract(url), "\(name)")
+            #expect(try ContentExtractor.extract(url).markdown == content)
+        }
+    }
+
     @Test func unsupportedFilesAreRejected() {
         #expect(!ContentExtractor.canExtract(URL(fileURLWithPath: "/tmp/x.zip")))
         #expect(throws: ExtractionError.self) { try ContentExtractor.extract(URL(fileURLWithPath: "/tmp/x.zip")) }

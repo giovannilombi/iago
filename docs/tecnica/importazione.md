@@ -11,8 +11,11 @@ Tutto quello che non è una call entra da `IAGOIngest`, che dipende solo da `IAG
 | Immagini, screenshot | documento | OCR con Vision (`it-IT`, `en-US`, correzione linguistica) |
 | DOCX, RTF, ODT | documento | `NSAttributedString` → Markdown con titoli, elenchi e grassetti |
 | HTML | documento | convertitore HTML → Markdown proprio, senza WebKit |
-| Testo, Markdown | documento | lettura diretta |
+| JSON | documento | blocco di codice in Markdown, **un valore per riga e indentato**, chiavi nell'ordine originale (`ContentExtractor.jsonMarkdown`); vale anche per il JSON incollato in *Importa › Da testo* |
+| Testo, Markdown, CSV, XML, YAML, log, codice | documento | lettura diretta (ogni tipo di file che macOS riconosce come testo) |
 | Email `.eml`, `.emlx`, `.msg` | email con mittente, conversazione e allegati | parser MIME proprio (ADR-0040) |
+
+Un file che IAGO non sa leggere viene rifiutato con un messaggio ("Tipo di file non supportato"), mai in silenzio.
 
 Si conservano **l'originale cifrato** e il **Markdown derivato**; il testo si può correggere a mano e resta la versione automatica di prima.
 

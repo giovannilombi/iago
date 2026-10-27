@@ -33,7 +33,7 @@ public enum TextTidier {
         return pieces.filter { !$0.isEmpty }.joined(separator: "\n\n")
     }
 
-    /// Paragraphs grouped up to `chunkLength`; a longer paragraph is cut between sentences.
+    /// Paragraphs grouped up to `chunkLength`; a longer paragraph is cut between sentences, or at a space.
     static func chunks(_ text: String) -> [String] {
         let paragraphs = text.components(separatedBy: "\n").map { $0.trimmingCharacters(in: .whitespaces) }
             .filter { !$0.isEmpty }
@@ -51,15 +51,8 @@ public enum TextTidier {
                 push(paragraph)
                 continue
             }
-            var sentence = ""
-            for character in paragraph {
-                sentence.append(character)
-                if ".!?".contains(character), sentence.count > 200 {
-                    push(sentence.trimmingCharacters(in: .whitespaces))
-                    sentence = ""
-                }
-            }
-            if !sentence.isEmpty { push(sentence.trimmingCharacters(in: .whitespaces)) }
+            // Cut between sentences, or at a space when there are none (a pasted JSON): never over the limit.
+            TextPieces.split(paragraph, limit: chunkLength).forEach(push)
         }
         if !current.isEmpty { result.append(current) }
         return result

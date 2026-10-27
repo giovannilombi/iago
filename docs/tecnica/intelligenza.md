@@ -20,7 +20,7 @@ Dopo ogni nuovo contenuto il motore propone decisioni, attività, nomi degli spe
 - La **categoria** dell'elemento sceglie il **modello di sintesi**: 18 modelli nel formato JSON di Meetily (sezioni con istruzione, formato e formato delle voci), presi da Meetily e Hyprnote (MIT) e modificabili.
 - Serve un motore da **almeno 9B** di parametri (`EngineCatalog.minimumBillions["summary"] = 9`).
 - **Come si evita che il modello inventi:**
-  - la call viene letta a **blocchi di 10 minuti**;
+  - la call viene letta a **blocchi di 10 minuti** (o 10.000 caratteri per i testi senza minuti). Una riga più lunga di 2.500 caratteri, come un JSON compatto o un testo senza a capo, viene prima tagliata alla fine di una frase o a uno spazio (`TextPieces`): nessuna richiesta al motore può superare il limite e riempire la memoria. Lo stesso limite vale per *Riordina testo*;
   - ogni punto deve riportare una **citazione**; `KeyPointExtractor.locate` la cerca nella trascrizione con i numeri identici e collega il punto al suo minuto, altrimenti il punto viene scartato;
   - le frasi parlate copiate invece che riassunte, i fatti personali e gli aneddoti restano fuori;
   - le sezioni vuote dicono "Non emerso"; "In breve" si scrive solo dai punti verificati;
