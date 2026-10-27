@@ -94,7 +94,7 @@ Comandi utili, con la spiegazione, nel README › Sviluppo e in `CLAUDE.md` › 
 
 ## 5. Stato degli ADR
 L'indice completo con lo stato è in [`docs/adr/README.md`](docs/adr/README.md). Oggi:
-- **Accettati e fatti:** da 0001 a 0068, tranne quelli sotto. Il sito di 0068 è pronto ma andrà online solo con il repository pubblico.
+- **Accettati e fatti:** da 0001 a 0072, tranne quelli sotto. Il sito di 0068 è pronto ma andrà online solo con il repository pubblico.
 - **Da decidere:**
   - **0057**, progetti condivisi tramite una cartella cloud: è il cuore della fase 4. Quando viene accettato, supera il backend di 0012 (sincronizzazione su Cloudflare).
   - **0067**, MiniCPM al posto di Qwen 3.5 4B o in aggiunta: servono le prove descritte nell'ADR.

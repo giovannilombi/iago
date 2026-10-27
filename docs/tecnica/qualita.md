@@ -1,11 +1,11 @@
 # Qualità e misure
 
 ## Test automatici
-256 test nei pacchetti, con Swift Testing, tutti verdi a ogni PR:
+260 test nei pacchetti, con Swift Testing, tutti verdi a ogni PR:
 
 | Pacchetto | Test |
 |---|---|
-| IAGOStore | 82 |
+| IAGOStore | 84 |
 | IAGOCapture | 48 |
 | IAGOTranscription | 28 |
 | IAGOIngest | 22 |
@@ -13,7 +13,7 @@
 | IAGOMCP | 17 |
 | IAGOCore | 15 |
 | IAGOExport | 7 |
-| IAGOEngine | 13 |
+| IAGOEngine | 15 |
 | IAGOSync | 1 |
 
 - La pipeline audio usa fixture **sintetiche** (voci `say`), mai registrazioni reali.

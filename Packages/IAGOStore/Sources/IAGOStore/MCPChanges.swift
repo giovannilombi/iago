@@ -73,6 +73,8 @@ public struct MCPPrevious: Codable, Sendable, Equatable {
 
 public enum MCPChangeError: Error, Equatable {
     case alreadyUndone
+    /// What Claude wrote has been changed or replaced since (a summary rewritten): undoing would lose that work.
+    case changedSince
 }
 
 extension Archive {
@@ -134,9 +136,17 @@ extension Archive {
                 try setChainName(previous.chainName, decisionID: change.entityId)
             }
         case (.item, .update): break
-        case (.summary, .create): try deleteSummary(itemID: change.entityId)
-        case (.summary, .update):
-            if let summary = previous?.summary { try restoreSummary(summary) }
+        case (.summary, .create), (.summary, .update):
+            // Only Claude's summary as written is undone; one rewritten since (by Claude, the engine or by hand) stays.
+            let current = try summary(itemID: change.entityId)
+            guard current?.origin == .claude, current?.markdown == previous?.body else {
+                throw MCPChangeError.changedSince
+            }
+            if change.action == .create {
+                try deleteSummary(itemID: change.entityId)
+            } else if let summary = previous?.summary {
+                try restoreSummary(summary)
+            }
         case (.suggestion, _): try deletePendingSuggestions(previous?.suggestionIDs ?? [])
         }
         let now = self.now()

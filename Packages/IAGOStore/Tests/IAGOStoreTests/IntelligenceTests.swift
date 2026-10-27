@@ -131,6 +131,21 @@ import Testing
         #expect(try archive.decision(decision.id)?.model == "qwen3.5-4b")
     }
 
+    /// ADR-0071: undoing Claude's summary never throws away what was written after it.
+    @Test func undoingAClaudeSummaryKeepsLaterWork() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let call = try fixture.makeItem()
+        try archive.saveSummary(
+            itemID: call.id, categoryID: nil, templateID: nil, markdown: "# Di Claude", model: "Claude Desktop",
+            origin: .claude)
+        let change = try archive.recordMCPChange(
+            .summary, id: call.id, action: .create, previous: MCPPrevious(body: "# Di Claude"))
+        try archive.editSummary(itemID: call.id, markdown: "# Corretta a mano")
+        #expect(throws: MCPChangeError.changedSince) { try archive.undoMCPChange(try #require(change.id)) }
+        #expect(try archive.summary(itemID: call.id)?.markdown == "# Corretta a mano")
+    }
+
     @Test func conversationsLast48HoursUnlessKept() throws {
         let fixture = try ArchiveFixture()
         let archive = fixture.archive

@@ -277,7 +277,7 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
 
 ## Qualità e test
-- **256 test automatici** nei pacchetti: Store 82, Capture 48, Transcription 28, Intelligence 23, Ingest 22, MCP 17, Core 15, Engine 13, Export 7, Sync 1.
+- **260 test automatici** nei pacchetti: Store 84, Capture 48, Transcription 28, Intelligence 23, Ingest 22, MCP 17, Core 15, Engine 15, Export 7, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
 - **CI** su ogni pull request (GitHub Actions, macOS): tutti i test e il controllo delle API di rete. Su Ubuntu, a ogni PR e push su `main`, il controllo che nessun indirizzo email personale entri nel repository. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.

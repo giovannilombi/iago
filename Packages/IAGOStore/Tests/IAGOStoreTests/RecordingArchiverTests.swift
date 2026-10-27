@@ -81,6 +81,35 @@ import Testing
 
         try fixture.archive.deleteScreenshot(shots[0].id)
         #expect(try fixture.archive.screenshots(itemID: item.id).count == 1)
+        // Deleted: no text left in the database, nor in the search.
+        #expect(try fixture.archive.search("png two").isEmpty)
+        try fixture.archive.purgeItem(item.id)
+        #expect(try fixture.archive.search("roadmap").isEmpty)
+    }
+
+    /// Two screens captured together, and a crash after the first was stored: no duplicate, nothing lost.
+    @Test func screenshotsSurviveACrashWithoutDuplicates() throws {
+        let fixture = try ArchiveFixture()
+        let id = ItemID.generate()
+        let folder = try finalizedFolder(in: fixture, id: id, tracks: ["mic.m4a"])
+        var manifest = try SessionManifest.decode(from: Data(contentsOf: folder.appendingPathComponent("session.json")))
+        manifest.markers += [
+            .init(kind: .screenshot, at: 30, detail: "screenshot-1.png"),
+            .init(kind: .screenshot, at: 30, detail: "screenshot-2.png"),
+        ]
+        try manifest.encoded().write(to: folder.appendingPathComponent("session.json"))
+        try Data("left".utf8).write(to: folder.appendingPathComponent("screenshot-1.png"))
+        try Data("right".utf8).write(to: folder.appendingPathComponent("screenshot-2.png"))
+        // First run "crashed" after storing the first screenshot, before removing its file.
+        try fixture.archive.createItem(
+            id: id.rawValue, title: "x", occurredAt: fixture.clock.now, source: .recording, status: .recorded)
+        try fixture.archive.addScreenshot(itemID: id.rawValue, png: Data("left".utf8), atSec: 30, text: nil)
+
+        let item = try RecordingArchiver(archive: fixture.archive).archive(folder: folder)
+        let shots = try fixture.archive.screenshots(itemID: item.id)
+        #expect(shots.count == 2)
+        #expect(
+            Set(try shots.map { try fixture.archive.readAssetData($0) }) == [Data("left".utf8), Data("right".utf8)])
     }
 
     @Test func resumesAfterInterruptedArchiving() throws {

@@ -45,13 +45,21 @@ public struct RecordingArchiver: Sendable {
             }
         }
         // Screenshots (ADR-0072): each file goes into the archive and then away; after a crash the ones left are added.
+        // Several screens captured together share the second: they are told apart by their order.
+        var seen: [Double: Int] = [:]
         for marker in manifest.markers where marker.kind == .screenshot {
+            let order = seen[marker.at, default: 0]
+            seen[marker.at] = order + 1
             guard let name = marker.detail else { continue }
             let file = folder.appendingPathComponent(name)
             guard FileManager.default.fileExists(atPath: file.path) else { continue }
             let sidecar = file.deletingPathExtension().appendingPathExtension("txt")
             let text = try? String(contentsOf: sidecar, encoding: .utf8)
-            try archive.addScreenshot(itemID: id, png: Data(contentsOf: file), atSec: marker.at, text: text)
+            // After a crash between storing and removing the file, the screenshot is already there.
+            let stored = try archive.screenshots(itemID: id).filter { abs(($0.atSec ?? -1) - marker.at) < 0.001 }.count
+            if order >= stored {
+                try archive.addScreenshot(itemID: id, png: Data(contentsOf: file), atSec: marker.at, text: text)
+            }
             try FileManager.default.removeItem(at: file)
             try? FileManager.default.removeItem(at: sidecar)
         }

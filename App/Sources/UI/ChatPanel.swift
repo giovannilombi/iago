@@ -627,9 +627,11 @@ struct ChatPanel: View {
         }
         let hits =
             (try? await EngineLane.$interactive.withValue(true) {
-                try await HybridSearch.search(
-                    last.question, scope: scope, archive: model.archive, embedder: embedder,
-                    cache: model.intelligence.cache, limit: 60)
+                try await EngineLane.$preempts.withValue(false) {
+                    try await HybridSearch.search(
+                        last.question, scope: scope, archive: model.archive, embedder: embedder,
+                        cache: model.intelligence.cache, limit: 60)
+                }
             }) ?? []
         let fresh = Set(changed.items)
         newMaterial = Set(hits.compactMap(\.itemID).filter(fresh.contains)).count + changed.decisions

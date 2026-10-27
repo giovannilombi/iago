@@ -27,7 +27,7 @@ Funzionano anche mentre sei in Teams o in un'altra app:
 | Segna momento con screenshot | **⌃⌥S** |
 | Avvia / Stop registrazione | **⌃⌥R** |
 
-Le cambi o le disattivi in **Impostazioni › Generale › Scorciatoie in tutte le app**. Se un'altra app usa già una combinazione, IAGO te lo dice: scegline un'altra.
+Le cambi o le disattivi in **Impostazioni › Generale › Scorciatoie in tutte le app**: ogni combinazione contiene ⌃ o ⌥, così non prende mai il posto delle scorciatoie con ⌘ delle altre app. Se un'altra app usa già una combinazione, IAGO te lo dice: scegline un'altra.
 
 ## Microfono
 - **Automatico** (consigliato): IAGO usa il microfono dell'app di call e lo segue se colleghi o scolleghi le cuffie.

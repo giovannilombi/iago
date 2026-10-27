@@ -3,6 +3,9 @@ import Foundation
 /// A summary written outside the local engine, by Claude through MCP (ADR-0071): the same template as the category,
 /// the same check of every quote, the same Markdown with the minutes. Only the writer changes.
 extension SummaryGenerator {
+    /// How far, in seconds, the minute given for a screenshot may be from the real one (Claude reads mm:ss).
+    static let screenshotTolerance: Double = 5
+
     public struct ExternalPoint: Sendable, Equatable {
         public var text: String
         /// The sentence of the text it comes from, word for word.
@@ -22,9 +25,11 @@ extension SummaryGenerator {
     }
 
     /// Points with a quote IAGO finds keep the minute of the quote; points without one, or whose quote is not in the
-    /// text, or in a section the template does not have, are dropped with the reason.
+    /// text, or in a section the template does not have, are dropped with the reason. A point read on a screenshot
+    /// is kept only if the call has a screenshot within a few seconds of the minute given (`screenshots`, seconds).
     public static func compose(
-        _ input: Input, brief: String?, sections: [(title: String, points: [ExternalPoint])]
+        _ input: Input, brief: String?, sections: [(title: String, points: [ExternalPoint])],
+        screenshots: [Double] = []
     ) -> Result {
         let hasTimes = input.lines.contains { $0.atSec > 0 }
         var verified: [(title: String, points: [Point])] = input.template.sections.map { ($0.title, []) }
@@ -42,7 +47,13 @@ extension SummaryGenerator {
                 let text = point.text.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard !text.isEmpty else { continue }
                 let fields = point.fields.filter { !emptyValues.contains(normalized($0.value)) }
-                if let at = point.screenshotAtSec {
+                if let wanted = point.screenshotAtSec {
+                    guard let at = screenshots.min(by: { abs($0 - wanted) < abs($1 - wanted) }),
+                        abs(at - wanted) <= screenshotTolerance
+                    else {
+                        discarded.append((text, "nessuna schermata a quel minuto"))
+                        continue
+                    }
                     verified[index].points.append(
                         Point(text: text + " (dalla schermata)", fields: fields, atSec: hasTimes ? at : nil))
                     continue

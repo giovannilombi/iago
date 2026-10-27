@@ -99,17 +99,18 @@ import Testing
                         .init(text: "Testi in ritardo", quote: "i testi sono pronti da un mese"),
                         .init(text: "Senza fonte"),
                         .init(text: "Nuova pagina prezzi in bozza", screenshotAtSec: 95),
+                        .init(text: "Slide inventata", screenshotAtSec: 400),
                     ]
                 ),
                 ("Sezione inventata", [.init(text: "x", quote: "Abbiamo chiuso la grafica della home")]),
-            ])
+            ], screenshots: [93])
         #expect(result.markdown.contains("## In breve\n\nHome chiusa, rilascio al 15 novembre."))
         #expect(
             result.markdown.contains(
-                "Chiusa la grafica della home [00:12](iago://seek/12) Nuova pagina prezzi in bozza (dalla schermata) [01:35](iago://seek/95)"
+                "Chiusa la grafica della home [00:12](iago://seek/12) Nuova pagina prezzi in bozza (dalla schermata) [01:33](iago://seek/93)"
             ))
         #expect(result.markdown.contains("_Non emerso_"))
-        #expect(Set(result.discarded.map(\.point)) == ["Testi in ritardo", "Senza fonte", "x"])
+        #expect(Set(result.discarded.map(\.point)) == ["Testi in ritardo", "Senza fonte", "x", "Slide inventata"])
     }
 
     @Test func templatesRoundTripInMeetilysFormat() throws {
