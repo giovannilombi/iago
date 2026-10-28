@@ -31,6 +31,16 @@ struct MainView: View {
                     ActivityView(model: model)
                 } else if model.sidebar == .labels {
                     LabelsBrowser(model: model)
+                } else if model.sidebar == .inbox, model.viewMode != .board {
+                    WorkInbox(model: model)
+                } else if model.viewMode == .board, model.sidebar == .inbox || model.sidebar == .decisions {
+                    WorkBoard(model: model, scope: .all)
+                } else if let scope = model.workScope, model.viewMode == .board || model.viewMode == .overview {
+                    if model.viewMode == .board {
+                        WorkBoard(model: model, scope: scope)
+                    } else {
+                        WorkOverview(model: model, scope: scope)
+                    }
                 } else if model.showsGraph {
                     GraphView(model: model)
                 } else if model.showsDecisions {
@@ -270,6 +280,8 @@ extension MainView {
         case .importer: return (560, 730)
         case .activity, .labels: return (420, 560)
         default:
+            if model.viewMode == .board { return (560, 1000) }
+            if model.sidebar == .inbox || model.viewMode == .overview { return (360, 620) }
             if model.showsGraph { return (420, 730) }
             if model.showsTimeline || model.showsDecisions { return (280, 560) }
             return (280, 320)
@@ -349,6 +361,7 @@ private struct Sidebar: View {
         .tag(AppModel.SidebarSelection.library(.unclassified))
         Label(String(localized: "Recenti"), systemImage: "clock").tag(AppModel.SidebarSelection.library(.recent))
         Label(String(localized: "Punti chiave"), systemImage: "checkmark.seal").tag(AppModel.SidebarSelection.decisions)
+        WorkInboxSidebarLabel(model: model).tag(AppModel.SidebarSelection.inbox)
         Label(String(localized: "Importa"), systemImage: "square.and.arrow.down").tag(
             AppModel.SidebarSelection.importer)
         Label {
@@ -557,10 +570,28 @@ struct ViewModePicker: View {
                             AppModel.ViewMode.decisions)
                         Label(String(localized: "Grafo"), systemImage: "point.3.connected.trianglepath.dotted").tag(
                             AppModel.ViewMode.graph)
+                        // ADR-0074: the overview in both modes, the kanban in «Gestisci».
+                        if model.workScope != nil {
+                            Label(String(localized: "Riepilogo"), systemImage: "list.bullet.clipboard").tag(
+                                AppModel.ViewMode.overview)
+                            if model.boardAvailable(for: model.decisionScope) {
+                                Label(String(localized: "Kanban"), systemImage: "rectangle.split.3x1").tag(
+                                    AppModel.ViewMode.board)
+                            }
+                        }
                     }
                     .pickerStyle(.segmented).labelsHidden().fixedSize()
                 } else {
                     Label(String(localized: "Tutti i punti chiave"), systemImage: "checkmark.seal").font(.headline)
+                    if model.boardAvailable(for: .all) {
+                        Picker(String(localized: "Vista"), selection: $model.viewMode) {
+                            Label(String(localized: "Elenco"), systemImage: "list.bullet").tag(
+                                AppModel.ViewMode.decisions)
+                            Label(String(localized: "Kanban"), systemImage: "rectangle.split.3x1").tag(
+                                AppModel.ViewMode.board)
+                        }
+                        .pickerStyle(.segmented).labelsHidden().fixedSize()
+                    }
                 }
                 Spacer(minLength: 8)
                 if case .library = model.sidebar {
