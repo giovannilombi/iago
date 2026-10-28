@@ -7,7 +7,9 @@ public enum KeyPointLabels {
         case .decision: "Decisione"
         case .action: "Attività"
         case .milestone: "Tappa"
-        case .openQuestion: "Domanda aperta"
+        case .openQuestion: "Punto da chiarire"
+        case .risk: "Rischio"
+        case .request: "Richiesta"
         }
     }
 
@@ -20,6 +22,9 @@ public enum KeyPointLabels {
         case (.milestone, _): "Raggiunta"
         case (_, .done): "Fatta"
         case (_, .active): "Attiva"
+        case (_, .inProgress): "In corso"
+        case (_, .waiting): "In attesa"
+        case (_, .blocked): "Bloccata"
         }
     }
 
