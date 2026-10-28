@@ -324,12 +324,14 @@ extension Archive {
         }
     }
 
-    /// Pending decisions and activities of a scope ("Da confermare" in Punti chiave), most recent item first.
+    /// Pending key points of a scope ("Da confermare" in Punti chiave): decisions, activities, points to clear up,
+    /// risks and requests (ADR-0074), most recent item first.
     public func pendingKeyPointSuggestions(_ scope: DecisionQuery.Scope) throws -> [Suggestion] {
         try database.writer.read { db in
             var sql = """
                 SELECT suggestion.* FROM suggestion JOIN item ON item.id = suggestion.item_id
-                WHERE suggestion.status = 'pending' AND suggestion.kind IN ('decision', 'activity')
+                WHERE suggestion.status = 'pending'
+                  AND suggestion.kind IN ('decision', 'activity', 'question', 'risk', 'request')
                   AND item.deleted_at IS NULL AND item.trashed_at IS NULL
                 """
             var arguments: StatementArguments = []

@@ -28,7 +28,9 @@ extension SuggestionEngine.Input {
                     atSec: at, speaker: screenshotSpeaker, text: text.replacingOccurrences(of: "\n", with: " · "))
             }
             lines.sort { $0.atSec < $1.atSec }
-            return .init(itemID: item.id, projectID: item.projectId, lines: lines, isCall: true, speakers: names)
+            return .init(
+                itemID: item.id, projectID: item.projectId, lines: lines, isCall: true, speakers: names,
+                date: item.occurredAt)
         case .email, .document:
             guard let asset = try archive.assets(itemID: item.id).first(where: { $0.kind == .contentMD }) else {
                 return nil
@@ -36,7 +38,8 @@ extension SuggestionEngine.Input {
             let text = String(decoding: try archive.readAssetData(asset), as: UTF8.self)
             let lines = text.components(separatedBy: "\n").filter { !$0.trimmingCharacters(in: .whitespaces).isEmpty }
                 .map { KeyPointExtractor.Line(atSec: 0, speaker: "", text: $0) }
-            return .init(itemID: item.id, projectID: item.projectId, lines: lines, isCall: false)
+            return .init(
+                itemID: item.id, projectID: item.projectId, lines: lines, isCall: false, date: item.occurredAt)
         }
     }
 }

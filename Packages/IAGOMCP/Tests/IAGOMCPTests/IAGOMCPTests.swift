@@ -315,6 +315,85 @@ func decode(_ line: String?) throws -> JSON {
         #expect(try app.suggestions(itemID: call.id).map(\.origin) == [.engine])
     }
 
+    /// ADR-0074: Claude proposes the open work kinds, with owner, deadline, "waiting on", severity and the open entry
+    /// a proposal closes; quotes are checked as before, wrong links and unclear deadlines are reported and dropped.
+    @Test func claudeProposesOpenWork() throws {
+        let fixture = try Fixture()
+        let app = fixture.app
+        let project = try app.createProject(name: "Portale")
+        try app.setProjectClaudeAccessible(project.id, true)
+        try app.setProjectClaudeWritable(project.id, true)
+        // Saturday 3 October 2026.
+        let call = try makeCall(
+            app, title: "SAL portale",
+            text:
+                "Anna ci manda i file definitivi entro venerdì. Usiamo Azure AD per il login. Se il fornitore ritarda salta la consegna. Chi gestisce gli accessi esterni?",
+            project: project)
+        let question = try app.createDecision(
+            Decision(
+                text: "Quale provider per il login?", decidedAt: Date(timeIntervalSince1970: 1_790_000_000),
+                projectId: project.id, origin: .manual, kind: .openQuestion))
+        let databaseURL = fixture.databaseURL
+        let key = fixture.key
+        let itemsRoot = fixture.root.appendingPathComponent("Items")
+        let tools = IAGOTools(
+            archive: try fixture.server(), timeZone: utc,
+            openWriter: {
+                try Archive(
+                    database: try AppDatabase.openWithoutMigrating(at: databaseURL), itemsRoot: itemsRoot,
+                    keyStore: key)
+            }
+        ) { _, _ in }
+        #expect(IAGOTools.workGuide.contains("waiting_on") && IAGOTools.workGuide.contains("closes"))
+        let schema = try #require(tools.tools.first { $0.name == "propose_suggestions" }).inputSchema
+        #expect("\(schema)".contains("question") && "\(schema)".contains("severity"))
+
+        let arguments: JSON = [
+            "item_id": .string(call.id),
+            "items": [
+                [
+                    "kind": "decision", "text": "Login con Azure AD", "quote": "Usiamo Azure AD per il login",
+                    "closes": .string(question.id),
+                ],
+                [
+                    "kind": "activity", "text": "File definitivi", "quote": "Anna ci manda i file definitivi",
+                    "waiting_on": "Anna", "due": "venerdì",
+                ],
+                [
+                    "kind": "risk", "text": "Ritardo del fornitore",
+                    "quote": "Se il fornitore ritarda salta la consegna",
+                    "severity": "high", "due": "quando capita",
+                ],
+                [
+                    "kind": "question", "text": "Chi gestisce gli accessi esterni?",
+                    "quote": "Chi gestisce gli accessi esterni?", "closes": .string(question.id),
+                ],
+                [
+                    "kind": "request", "text": "Accesso con SSO", "quote": "ci serve l'accesso con SSO per tutti",
+                ],
+            ],
+        ]
+        let preview = try tools.call("propose_suggestions", arguments: arguments)
+        #expect(preview.contains("Decisione: Login con Azure AD · chiude «Quale provider per il login?»"))
+        #expect(preview.contains("Attività: File definitivi · attende Anna · entro 2026-10-09"))
+        #expect(preview.contains("Rischio: Ritardo del fornitore · gravità alta"))
+        #expect(preview.contains("scadenza «quando capita» non chiara"))
+        #expect(preview.contains("non può chiudere"))
+        #expect(preview.contains("Scartata «Accesso con SSO»: citazione non trovata"))
+        _ = try write(tools, "propose_suggestions", arguments: arguments)
+
+        let pending = Dictionary(
+            uniqueKeysWithValues: try app.suggestions(itemID: call.id).map { ($0.content.text, $0) })
+        #expect(pending.count == 4)
+        #expect(pending["Login con Azure AD"]?.content.supersedesID == question.id)
+        let files = try #require(pending["File definitivi"])
+        #expect(files.kind == .activity && files.content.waitingOn == "Anna" && files.content.due == "2026-10-09")
+        let risk = try #require(pending["Ritardo del fornitore"])
+        #expect(risk.kind == .risk && risk.content.severity == "high" && risk.content.due == nil)
+        let open = try #require(pending["Chi gestisce gli accessi esterni?"])
+        #expect(open.kind == .question && open.content.supersedesID == nil && open.content.atSec == 75)
+    }
+
     @Test func writesOnlyWhereAllowedMarkedAndUndoable() throws {
         let fixture = try Fixture()
         let app = fixture.app

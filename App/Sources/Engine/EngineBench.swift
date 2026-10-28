@@ -145,7 +145,8 @@ enum EngineBench {
                 try await provider.warmUp()
                 run.load = started.duration(to: .now)
                 started = .now
-                run.result = try await KeyPointExtractor.extract(lines, with: provider)
+                run.result = try await KeyPointExtractor.extract(
+                    lines, context: .init(date: call.item.occurredAt), with: provider)
                 run.extraction = started.duration(to: .now)
                 for passage in passages {
                     started = .now
@@ -243,6 +244,16 @@ struct Scorecard {
         return list.sorted { $0.point.atSec < $1.point.atSec }
     }
 
+    static func kindLabel(_ point: ProposedKeyPoint) -> String {
+        switch point.kind {
+        case .decision: point.closesID == nil ? "Decisione" : "Decisione (chiude una voce aperta)"
+        case .activity: "Attività"
+        case .question: "Punto da chiarire"
+        case .risk: "Rischio · gravità \(["high": "alta", "low": "bassa"][point.severity ?? ""] ?? "media")"
+        case .request: "Richiesta"
+        }
+    }
+
     /// For every passage, which letter is which model, shuffled once.
     private var letters: [[String]] {
         passages.indices.map { _ in runs.map(\.model.id).shuffled() }
@@ -259,9 +270,11 @@ struct Scorecard {
             "<p>Per ognuna scegli: <b>Giusta</b>, <b>Giusta ma poco importante</b> oppure <b>Sbagliata o inventata</b>.</p>"
         for entry in entries {
             let point = entry.point
-            body += "<div class=card><div class=kind>\(point.kind == .decision ? "Decisione" : "Attività")"
+            body += "<div class=card><div class=kind>\(Self.kindLabel(point))"
             body += " · \(TranscriptRenderer.clock(point.atSec))</div><div class=text>\(escape(point.text))"
             if let owner = point.owner { body += " <span class=owner>— \(escape(owner))</span>" }
+            if let waiting = point.waitingOn { body += " <span class=owner>· attende \(escape(waiting))</span>" }
+            if let due = point.due { body += " <span class=owner>· entro \(due)</span>" }
             body += "</div><div class=quote>«\(escape(point.quote))»</div><div class=choices>"
             for (value, label) in [
                 ("giusta", "Giusta"), ("minore", "Giusta ma poco importante"), ("sbagliata", "Sbagliata o inventata"),

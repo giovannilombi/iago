@@ -124,9 +124,11 @@ extension IAGOTools {
             ToolDefinition(
                 name: "propose_suggestions",
                 description: """
-                    Propone decisioni, attività e tag per un elemento, al posto delle proposte del motore locale. \
-                    Restano proposte: l'utente le conferma o le scarta nella scheda dell'elemento, dove compaiono \
-                    come «Consigliata da Claude». Ogni decisione e attività porta la citazione esatta del testo.
+                    Propone decisioni, attività, punti da chiarire, rischi, richieste del cliente e tag per un \
+                    elemento, al posto delle proposte del motore locale. Restano proposte: l'utente le conferma o le \
+                    scarta nella scheda dell'elemento, dove compaiono come «Consigliata da Claude». Ogni voce (tranne \
+                    i tag) porta la citazione esatta del testo. Un'attività può avere responsabile, scadenza e «in \
+                    attesa di»; un rischio la gravità; una voce può chiudere una voce aperta del progetto (closes).
                     """ + preview,
                 inputSchema: [
                     "type": "object",
@@ -137,13 +139,37 @@ extension IAGOTools {
                             "items": [
                                 "type": "object",
                                 "properties": [
-                                    "kind": ["type": "string", "enum": ["decision", "activity", "tag"]],
+                                    "kind": [
+                                        "type": "string",
+                                        "enum": ["decision", "activity", "question", "risk", "request", "tag"],
+                                        "description":
+                                            "question: punto da chiarire, una domanda rimasta senza risposta; risk: rischio; request: richiesta del cliente.",
+                                    ],
                                     "text": ["type": "string"],
                                     "quote": [
                                         "type": "string",
-                                        "description": "Frase esatta del testo (per decisioni e attività).",
+                                        "description": "Frase esatta del testo (per tutti i tipi tranne i tag).",
                                     ],
-                                    "owner": ["type": "string", "description": "Chi la fa (attività)."],
+                                    "owner": ["type": "string", "description": "Chi la fa: nome della persona."],
+                                    "due": [
+                                        "type": "string",
+                                        "description":
+                                            "Scadenza: AAAA-MM-GG, oppure come è detta («venerdì», «entro il 10 novembre»): IAGO la conta dalla data dell'elemento.",
+                                    ],
+                                    "waiting_on": [
+                                        "type": "string",
+                                        "description":
+                                            "Attività promessa da un altro («Anna ci manda i file»): il nome di chi aspettiamo. La voce nasce «In attesa», con due come data promessa.",
+                                    ],
+                                    "severity": [
+                                        "type": "string", "enum": ["high", "medium", "low"],
+                                        "description": "Gravità del rischio (default medium).",
+                                    ],
+                                    "closes": [
+                                        "type": "string",
+                                        "description":
+                                            "Id di una voce aperta dello stesso progetto (da list_decisions) che questa chiude: una decisione risponde a un punto da chiarire, accoglie una richiesta o sostituisce una decisione; un'attività accoglie una richiesta.",
+                                    ],
                                 ],
                                 "required": ["kind", "text"],
                             ],
@@ -163,7 +189,11 @@ extension IAGOTools {
         2. Sintesi: summary_template, poi get_item (e get_screenshots se ci sono schermate e l'utente le condivide), \
         poi set_summary con le sezioni del modello. Ogni punto ha la citazione esatta; i punti letti su una \
         schermata usano screenshot_at.
-        3. Proposte: get_item, poi propose_suggestions con decisioni, attività e tag, ciascuna con la citazione.
+        3. Proposte: get_item, poi propose_suggestions con decisioni, attività, punti da chiarire (question: \
+        domande rimaste senza risposta), rischi (risk, con severity), richieste del cliente (request) e tag, ciascuna \
+        con la citazione. Per le attività indica owner, due e, se è un altro a dover consegnare qualcosa, waiting_on. \
+        Se una decisione risponde a un punto da chiarire aperto o accoglie una richiesta (o un'attività accoglie una \
+        richiesta), leggi le voci aperte con list_decisions e metti il loro id in closes.
         4. Come ogni scrittura: anteprima, OK dell'utente, conferma. Riferisci quanti punti IAGO ha tenuto e quali ha \
         scartato, e correggi le citazioni se serve.
         """
@@ -391,7 +421,8 @@ extension IAGOTools {
             switch entry["kind"]?.string {
             case "tag":
                 proposals.append((.tag, SuggestionPayload(text: text, isNew: !tags.contains(text.lowercased()))))
-            case let kind? where kind == "decision" || kind == "activity":
+            case let name? where Self.keyPointKinds[name] != nil:
+                let kind = Self.keyPointKinds[name]!
                 guard let quote = entry["quote"]?.string, !quote.isEmpty else {
                     doubts.append("Scartata «\(oneLine(text, limit: 80))»: manca la citazione.")
                     continue
@@ -400,15 +431,37 @@ extension IAGOTools {
                     doubts.append("Scartata «\(oneLine(text, limit: 80))»: citazione non trovata nel testo.")
                     continue
                 }
-                proposals.append(
-                    (
-                        kind == "decision" ? .decision : .activity,
-                        SuggestionPayload(
-                            text: text, quote: quote, atSec: item.type == .call ? at : nil,
-                            owner: entry["owner"]?.string, confidence: "high")
-                    ))
+                var payload = SuggestionPayload(
+                    text: text, quote: quote, atSec: item.type == .call ? at : nil,
+                    owner: Self.nonEmpty(entry["owner"]?.string), confidence: "high",
+                    waitingOn: Self.nonEmpty(entry["waiting_on"]?.string))
+                if let due = Self.nonEmpty(entry["due"]?.string) {
+                    var calendar = Calendar(identifier: .gregorian)
+                    calendar.timeZone = timeZone
+                    payload.due = DueDates.resolve(due, from: item.occurredAt, calendar: calendar)
+                    if payload.due == nil {
+                        doubts.append("«\(oneLine(text, limit: 80))»: scadenza «\(due)» non chiara, tolta.")
+                    }
+                }
+                if kind == .risk {
+                    switch entry["severity"]?.string?.lowercased() {
+                    case "high", "alta": payload.severity = "high"
+                    case "low", "bassa": payload.severity = "low"
+                    default: payload.severity = "medium"
+                    }
+                }
+                if let closes = Self.nonEmpty(entry["closes"]?.string) {
+                    do {
+                        payload.supersedesID = try closable(closes, by: kind, projectID: item.projectId)
+                    } catch let error as ToolError {
+                        doubts.append("«\(oneLine(text, limit: 80))»: \(error.message)")
+                    }
+                }
+                proposals.append((kind, payload))
             default:
-                doubts.append("Voce «\(oneLine(text, limit: 80))»: kind deve essere decision, activity o tag.")
+                doubts.append(
+                    "Voce «\(oneLine(text, limit: 80))»: kind deve essere decision, activity, question, risk, request o tag."
+                )
             }
         }
         guard !proposals.isEmpty else {
@@ -416,7 +469,18 @@ extension IAGOTools {
         }
         let summary =
             ["Proposte per «\(item.title)», progetto \(project.name): restano da confermare nella scheda."]
-            + proposals.map { "\(Self.kindLabel($0.kind)): \(oneLine($0.payload.text, limit: 100))" }
+            + proposals.map { proposal in
+                var line = "\(Self.kindLabel(proposal.kind)): \(oneLine(proposal.payload.text, limit: 100))"
+                let payload = proposal.payload
+                if let owner = payload.owner { line += " · \(owner)" }
+                if let waiting = payload.waitingOn { line += " · attende \(waiting)" }
+                if let due = payload.due { line += " · entro \(due)" }
+                if let severity = payload.severity { line += " · gravità \(Self.severityLabel(severity))" }
+                if let closed = payload.supersedesID.flatMap({ try? archive.decision($0) }) {
+                    line += " · chiude «\(oneLine(closed.text, limit: 60))»"
+                }
+                return line
+            }
         let client = clientName
         return WritePlan(summary: summary, doubts: doubts) { writer, returned in
             let added = try writer.replacePendingSuggestions(
@@ -437,7 +501,50 @@ extension IAGOTools {
         case .person: "Nome"
         case .project: "Progetto"
         case .link: "Collegamento"
+        case .question: "Punto da chiarire"
+        case .risk: "Rischio"
+        case .request: "Richiesta"
         }
+    }
+
+    /// The kinds of propose_suggestions that are key points, with their quote (ADR-0074).
+    static let keyPointKinds: [String: Suggestion.Kind] = [
+        "decision": .decision, "activity": .activity, "question": .question, "risk": .risk, "request": .request,
+    ]
+
+    static func severityLabel(_ severity: String) -> String {
+        switch severity {
+        case "high": "alta"
+        case "low": "bassa"
+        default: "media"
+        }
+    }
+
+    static func nonEmpty(_ text: String?) -> String? {
+        guard let text = text?.trimmingCharacters(in: .whitespacesAndNewlines), !text.isEmpty else { return nil }
+        return text
+    }
+
+    /// The open entry `id` if a proposal of `kind` may close it (ADR-0074): of the same project and still open; a
+    /// decision answers a point to clear up, accepts a request or replaces a decision; an activity accepts a request.
+    func closable(_ id: String, by kind: Suggestion.Kind, projectID: String?) throws -> String {
+        guard let entry = try archive.decision(id), entry.deletedAt == nil, entry.projectId == projectID else {
+            throw ToolError("closes: voce \(id) non trovata nel progetto dell'elemento, ignorato.")
+        }
+        guard entry.status.isOpen else {
+            throw ToolError("closes: «\(oneLine(entry.text, limit: 60))» è già chiusa, ignorato.")
+        }
+        let allowed: Bool =
+            switch (kind, entry.kind) {
+            case (.decision, .openQuestion), (.decision, .request), (.decision, .decision), (.activity, .request): true
+            default: false
+            }
+        guard allowed else {
+            throw ToolError(
+                "closes: una voce di tipo \(Self.kindLabel(kind).lowercased()) non può chiudere «\(oneLine(entry.text, limit: 60))», ignorato."
+            )
+        }
+        return entry.id
     }
 
     /// The app Claude is used from, as it introduced itself; "Claude" before it did.
