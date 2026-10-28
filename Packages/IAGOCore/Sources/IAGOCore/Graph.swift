@@ -4,6 +4,8 @@ import Foundation
 public struct GraphNode: Sendable, Hashable, Identifiable {
     public enum Kind: String, Sendable, Hashable, CaseIterable {
         case project, client, call, email, document, person, tag, decision, activity, milestone, note
+        /// Open work (ADR-0074): a point to clear up, a risk, a request of the client.
+        case question, risk, request
         /// Items of one month, grouped when the graph is too large (FR-165).
         case group
     }
@@ -18,7 +20,7 @@ public struct GraphNode: Sendable, Hashable, Identifiable {
     public var recordID: String?
     /// Palette name for clients.
     public var color: String?
-    /// Decisions no longer valid are drawn faded.
+    /// Decisions no longer valid, and work closed, are drawn faded.
     public var inactive = false
 
     public init(
@@ -38,6 +40,8 @@ public struct GraphNode: Sendable, Hashable, Identifiable {
 public struct GraphEdge: Sendable, Hashable {
     public enum Kind: String, Sendable, Hashable {
         case inProject, ofClient, tagged, involves, linked, source, supersedes, about, grouped
+        /// ADR-0074: an entry born from another ("nata da"), an entry blocked by another ("dipende da").
+        case derivedFrom, dependsOn
     }
 
     public var from: String

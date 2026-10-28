@@ -157,7 +157,9 @@ struct GraphView: View {
                         edge.kind == .supersedes
                             ? Color.green.opacity(faded ? 0.15 : 0.7)
                             : Color.secondary.opacity(faded ? 0.08 : highlighted ? 0.7 : 0.3)),
-                    style: StrokeStyle(lineWidth: highlighted ? 1.6 : 1, dash: edge.kind == .supersedes ? [4, 3] : []))
+                    style: StrokeStyle(
+                        lineWidth: highlighted ? 1.6 : 1,
+                        dash: [.supersedes, .derivedFrom, .dependsOn].contains(edge.kind) ? [4, 3] : []))
             }
             for node in graph.nodes.values {
                 guard let p = point(node.id) else { continue }
@@ -441,6 +443,9 @@ enum GraphStyle {
         case .decision: String(localized: "Decisioni")
         case .activity: String(localized: "Attività")
         case .milestone: String(localized: "Tappe")
+        case .question: String(localized: "Punti da chiarire")
+        case .risk: String(localized: "Rischi")
+        case .request: String(localized: "Richieste")
         case .note: String(localized: "Note")
         case .group: String(localized: "Gruppi")
         }
@@ -458,6 +463,9 @@ enum GraphStyle {
         case .decision: .green
         case .activity: .pink
         case .milestone: .blue.opacity(0.75)
+        case .question: .mint
+        case .risk: .red
+        case .request: .brown
         case .note: .yellow
         case .group: .secondary
         }
@@ -468,7 +476,7 @@ enum GraphStyle {
         case .client: 11
         case .project: 10
         case .group: 10
-        case .call, .email, .document, .decision, .activity, .milestone: 7
+        case .call, .email, .document, .decision, .activity, .milestone, .question, .risk, .request: 7
         case .person: 6
         case .tag: 5.5
         case .note: 4.5
@@ -494,6 +502,9 @@ enum GraphStyle {
         case .decision: return star(p, r)
         case .activity: return polygon(p, r, sides: 5, rotation: -.pi / 2)
         case .milestone: return polygon(p, r * 1.15, sides: 3, rotation: -.pi / 2)
+        case .question: return polygon(p, r, sides: 8, rotation: .pi / 8)
+        case .risk: return polygon(p, r * 1.15, sides: 3, rotation: .pi / 2)
+        case .request: return Path(CGRect(x: p.x - r, y: p.y - r * 0.7, width: 2 * r, height: r * 1.4))
         case .group: return Path(roundedRect: rect.insetBy(dx: -r * 0.4, dy: 0), cornerRadius: r)
         }
     }
