@@ -444,7 +444,10 @@ final class AppModel {
             let decision = proposed
             // The state only when the user changed it: "Bloccata" comes from the dependencies, and "Traccia" shows
             // under way and blocked as "Aperta".
-            let status = draft.status != draft.loadedStatus ? draft.status : nil
+            let changed = draft.status != draft.loadedStatus ? draft.status : nil
+            // Marked done here: the checklist is saved first, so a repeating entry copies the checklist as edited.
+            let closing = draft.existingID != nil && changed == .done
+            let status = closing ? nil : changed
             let id: String
             if let existing = draft.existingID {
                 try archive.updateDecision(
@@ -492,6 +495,7 @@ final class AppModel {
             if draft.existingID == nil || draft.checklistLoaded {
                 try saveChecklist(decision.kind.isWork ? draft.checklist : [], decisionID: id)
             }
+            if closing { try archive.updateDecision(id) { $0.status = .done } }
             if let convertsID = draft.convertsID {
                 let into = DecisionRow.kindLabel(decision.kind).lowercased()
                 try archive.updateDecision(convertsID) { request in

@@ -11,7 +11,7 @@
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 271 nei pacchetti, tutti verdi.
+- **Test automatici:** 301 nei pacchetti, tutti verdi (1.1.0-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:

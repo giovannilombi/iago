@@ -77,7 +77,11 @@ extension AppModel {
         var draft = DecisionDraft(item: item, atSec: content.atSec, text: content.text, origin: .extraction)
         draft.kind = suggestion.kind.keyPointKind ?? .decision
         draft.supersedesID = content.supersedesID
-        if let owner = content.owner, DecisionDraft.isPersonName(owner) {
+        // As in `accept`: "Io" on a call is the user.
+        if let owner = content.owner.flatMap({ name in
+            name.caseInsensitiveCompare("Io") == .orderedSame || name == meName
+                ? meName : DecisionDraft.isPersonName(name) ? name : nil
+        }) {
             draft.people = [owner]
             if draft.kind.isWork { draft.ownerName = owner }
         }

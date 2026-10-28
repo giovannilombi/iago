@@ -195,3 +195,91 @@ import Testing
         #expect(try archive.checklistItems(decisionID: task.id).map(\.text) == ["Bozza"])
     }
 }
+
+@Suite struct WorkReviewTests {
+    func entry(_ archive: Archive, _ text: String, _ kind: Decision.Kind = .action, project: String? = nil) throws
+        -> Decision
+    {
+        try archive.createDecision(
+            Decision(
+                text: text, decidedAt: Date(timeIntervalSince1970: 1_800_000_000), projectId: project,
+                origin: .manual, kind: kind))
+    }
+
+    @Test func aRepeatingEntryIsCopiedOnceAndNotWhenRejected() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let task = try entry(archive, "Report settimanale")
+        try archive.updateDecision(task.id) { $0.recurrence = .weekly }
+        try archive.setDecisionStatus(task.id, .done)
+        try archive.setDecisionStatus(task.id, .active)
+        try archive.setDecisionStatus(task.id, .done)
+        let copies = try archive.decisions(DecisionQuery(statuses: [])).filter { $0.decision.derivedFromId == task.id }
+        #expect(copies.count == 1)
+        // The copy can be found.
+        #expect(try archive.search("Report settimanale").count >= 2)
+
+        let request = try entry(archive, "Report mensile", .request)
+        try archive.updateDecision(request.id) {
+            $0.recurrence = .monthly
+            $0.status = .done
+            $0.outcomeKind = .rejected
+        }
+        #expect(
+            try archive.decisions(DecisionQuery(statuses: [])).allSatisfy { $0.decision.derivedFromId != request.id })
+    }
+
+    @Test func memoryNeverBlocksNorIsBlocked() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let decision = try entry(archive, "Usiamo Azure AD", .decision)
+        let task = try entry(archive, "Configurare SSO")
+        try archive.setBlockers([decision.id], of: task.id)
+        #expect(try archive.decision(task.id)?.status == .active)
+
+        let other = try entry(archive, "Firmare il contratto")
+        try archive.setBlockers([other.id], of: task.id)
+        #expect(try archive.decision(task.id)?.status == .blocked)
+        let turned = try archive.updateDecision(task.id) { $0.kind = .decision }
+        #expect(turned.status == .active)
+        #expect(try archive.blockers(of: task.id).isEmpty)
+    }
+
+    @Test func reopeningClearsOutcomeAndLeavingWaitingClearsWhom() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let anna = try #require(try archive.person(named: "Anna"))
+        let request = try entry(archive, "App mobile", .request)
+        try archive.updateDecision(request.id) {
+            $0.status = .done
+            $0.outcomeKind = .rejected
+            $0.outcome = "fuori budget"
+        }
+        let reopened = try archive.updateDecision(request.id) { $0.status = .active }
+        #expect(reopened.outcome == nil && reopened.outcomeKind == nil)
+
+        let task = try entry(archive, "File definitivi")
+        try archive.updateDecision(task.id) {
+            $0.status = .waiting
+            $0.waitingOnId = anna.id
+            $0.waitingUntil = Date()
+        }
+        let moved = try archive.updateDecision(task.id) { $0.status = .inProgress }
+        #expect(moved.waitingOnId == nil && moved.waitingUntil == nil)
+    }
+
+    @Test func deletingAProjectRemovesItsChecklistsAndFreesOthers() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let project = try archive.createProject(name: "Vecchio")
+        let other = try archive.createProject(name: "Nuovo")
+        let blocker = try entry(archive, "Consegna", project: project.id)
+        let blocked = try entry(archive, "Collaudo", project: other.id)
+        try archive.setBlockers([blocker.id], of: blocked.id)
+        let list = try archive.createChecklist(projectID: project.id, name: "Consegna finale")
+        try archive.addChecklistItem("Manuale", checklistID: list.id)
+        try archive.deleteProject(project.id)
+        #expect(try archive.checklists(pinnedOnly: true).isEmpty)
+        #expect(try archive.decision(blocked.id)?.status == .active)
+    }
+}

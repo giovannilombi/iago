@@ -1,18 +1,18 @@
 # Qualità e misure
 
 ## Test automatici
-271 test nei pacchetti, con Swift Testing, tutti verdi a ogni PR:
+301 test nei pacchetti, con Swift Testing, tutti verdi a ogni PR:
 
 | Pacchetto | Test |
 |---|---|
-| IAGOStore | 94 |
+| IAGOStore | 109 |
 | IAGOCapture | 48 |
 | IAGOTranscription | 29 |
 | IAGOIngest | 22 |
-| IAGOIntelligence | 23 |
-| IAGOMCP | 17 |
+| IAGOIntelligence | 32 |
+| IAGOMCP | 20 |
 | IAGOCore | 15 |
-| IAGOExport | 7 |
+| IAGOExport | 10 |
 | IAGOEngine | 15 |
 | IAGOSync | 1 |
 

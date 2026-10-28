@@ -261,7 +261,7 @@ public enum ProjectExporter {
         let status = KeyPointLabels.tag(decision, closedBy: summary.supersededByAll)
         var line =
             "- **[\(status)] \(TranscriptRenderer.format(decision.decidedAt, "yyyy-MM-dd", timeZone))** \(decision.text)"
-        if let outcome = decision.outcome, !outcome.isEmpty { line += " → \(outcome)" }
+        if !decision.status.isOpen, let outcome = decision.outcome, !outcome.isEmpty { line += " → \(outcome)" }
         var details: [String] = []
         if let title = summary.sourceTitle {
             details.append(

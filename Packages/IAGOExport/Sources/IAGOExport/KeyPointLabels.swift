@@ -39,8 +39,11 @@ public enum KeyPointLabels {
         case .blocked: return mode == .manage ? word("Bloccata") : word("Aperta")
         case .done:
             switch decision.kind {
+            // As the app reads a work entry done without an outcome.
             case .openQuestion: return "Chiarito"
             case .action: return "Fatta"
+            case .risk: return "Risolto"
+            case .request: return "Accolta"
             default: return word("Chiusa")
             }
         case .cancelled: return word("Annullata")

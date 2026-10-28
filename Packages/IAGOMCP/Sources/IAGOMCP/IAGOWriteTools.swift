@@ -1181,6 +1181,11 @@ extension IAGOTools {
         if let ids = arguments["blocked_by_ids"]?.strings {
             var seen: Set<String> = []
             let blockers = try ids.filter { seen.insert($0).inserted }.map { try entry($0, "blocked_by_ids") }
+            for blocker in blockers where !blocker.decision.kind.isWork {
+                throw ToolError(
+                    "blocked_by_ids: «\(oneLine(blocker.decision.text, limit: 60))» è una decisione o una tappa: si dipende solo da lavoro aperto."
+                )
+            }
             if let current {
                 for blocker in blockers where try dependsOn(blocker.id, current.id) {
                     throw ToolError(

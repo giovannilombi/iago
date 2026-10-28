@@ -146,6 +146,7 @@ extension Archive {
             var decision = try Self.require(Decision.fetchOne(db, key: id), id)
             let legacyBefore = decision.supersedesId
             let statusBefore = decision.status
+            let kindBefore = decision.kind
             let previous = try olderIDs(of: id, db)
             try change(&decision)
             decision.text = decision.text.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -175,8 +176,17 @@ extension Archive {
                 try setOlder(targets, for: &decision, writer: writer, db)
                 touched.formUnion(targets)
             }
+            Self.tidyWork(&decision, kindBefore: kindBefore)
             Self.stampClosed(&decision, now: writer.now)
             try writer.save(&decision, db)
+            if kindBefore.isWork, !decision.kind.isWork {
+                // Memory does not depend on anything, nor block anything.
+                let dependents = try String.fetchAll(
+                    db, sql: "SELECT blocked_id FROM decision_dependency WHERE blocker_id = ?", arguments: [id])
+                try db.execute(
+                    sql: "DELETE FROM decision_dependency WHERE blocked_id = ? OR blocker_id = ?", arguments: [id, id])
+                try Self.recomputeBlocked(dependents, dependenciesRemoved: true, writer: writer, db)
+            }
             if let chainName { try giveChainName(chainName, from: id, writer: writer, db) }
             if wanted != nil || decision.status != statusBefore {
                 // A cancelled entry no longer supersedes; a reactivated one does again.
@@ -184,8 +194,10 @@ extension Archive {
                 try Self.recomputeBlocked([id], writer: writer, db)
                 for touchedID in touched { try Self.recomputeDependents(of: touchedID, writer: writer, db) }
             }
-            if decision.status == .done, statusBefore != .done {
-                try Self.repeatIfNeeded(decision, writer: writer, db)
+            if decision.status == .done, statusBefore != .done,
+                let next = try Self.repeatIfNeeded(decision, writer: writer, db)
+            {
+                try indexDecision(next, db)
             }
             if let people { try setPeople(people, decisionID: id, writer: writer, db) }
             if let tags { try setDecisionTags(tags, decisionID: id, writer: writer, db) }
@@ -237,7 +249,9 @@ extension Archive {
                 try setOlder(
                     link.supersedes ?? link.supersedesId.map { [$0] } ?? [], for: &decision, writer: writer, db)
                 decision.status = link.status
+                Self.stampClosed(&decision, now: writer.now)
                 try writer.save(&decision, db)
+                try Self.recomputeDependents(of: decision.id, writer: writer, db)
             }
         }
     }
@@ -256,6 +270,8 @@ extension Archive {
             let newers = try newerIDs(of: id, db)
             decision.text = ""
             decision.notes = nil
+            decision.outcome = nil
+            decision.estimate = nil
             decision.supersedesId = nil
             try writer.tombstone(&decision, db)
             try db.execute(
@@ -263,18 +279,7 @@ extension Archive {
             try db.execute(sql: "DELETE FROM decision_entity WHERE decision_id = ?", arguments: [id])
             try db.execute(sql: "DELETE FROM decision_tag WHERE decision_id = ?", arguments: [id])
             try db.execute(sql: "DELETE FROM decision_stream WHERE decision_id = ?", arguments: [id])
-            let dependents = try String.fetchAll(
-                db, sql: "SELECT blocked_id FROM decision_dependency WHERE blocker_id = ?", arguments: [id])
-            try db.execute(
-                sql: "DELETE FROM decision_dependency WHERE blocked_id = ? OR blocker_id = ?", arguments: [id, id])
-            try db.execute(sql: "DELETE FROM board_place WHERE decision_id = ?", arguments: [id])
-            for var item in try ChecklistItem.filter(Column("decision_id") == id && Column("deleted_at") == nil)
-                .fetchAll(db)
-            {
-                item.text = ""
-                try writer.tombstone(&item, db)
-            }
-            try Self.recomputeBlocked(dependents, dependenciesRemoved: true, writer: writer, db)
+            try Self.removeWork(decisionID: id, writer: writer, db)
             for newer in newers {
                 guard var later = try Decision.fetchOne(db, key: newer) else { continue }
                 try setOlder(try olderIDs(of: newer, db), for: &later, writer: writer, db)
@@ -406,7 +411,7 @@ extension Archive {
     public func relatedDecisions(of id: String) throws -> [DecisionSummary] {
         guard let summary = try decisionSummary(id), let projectID = summary.decision.projectId else { return [] }
         let chain = Set(try decisionChain(of: id).map(\.id))
-        var candidates = try decisions(DecisionQuery(scope: .project(projectID), statuses: [.active]))
+        var candidates = try decisions(DecisionQuery(scope: .project(projectID), statuses: DecisionQuery.current))
         if !summary.streamIDs.isEmpty {
             let streams = Set(summary.streamIDs)
             candidates = candidates.filter { !streams.isDisjoint(with: $0.streamIDs) }

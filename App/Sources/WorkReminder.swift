@@ -58,7 +58,9 @@ final class WorkReminder {
         guard let due = calendar.date(bySettingHour: time.hour, minute: time.minute, second: 0, of: now), now >= due,
             now < due.addingTimeInterval(4 * 3600)
         else { return }
-        let today = now.formatted(.iso8601.year().month().day())
+        // The local day, not UTC: a reminder just after midnight belongs to today.
+        let parts = Calendar.current.dateComponents([.year, .month, .day], from: now)
+        let today = String(format: "%04d-%02d-%02d", parts.year ?? 0, parts.month ?? 0, parts.day ?? 0)
         guard ((try? archive.setting(Self.lastKey)) ?? nil) != today else { return }
         try? archive.setSetting(Self.lastKey, today)
         guard let body = Self.message(archive, now: now) else { return }

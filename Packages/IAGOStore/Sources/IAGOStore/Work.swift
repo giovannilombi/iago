@@ -241,7 +241,8 @@ extension Archive {
         _ ids: [String], dependenciesRemoved: Bool = false, writer: SyncWriter, _ db: Database
     ) throws {
         for id in Set(ids) {
-            guard var decision = try Decision.fetchOne(db, key: id), decision.deletedAt == nil else { continue }
+            guard var decision = try Decision.fetchOne(db, key: id), decision.deletedAt == nil, decision.kind.isWork
+            else { continue }
             let blockers = try Decision.fetchAll(
                 db,
                 sql: """
@@ -249,7 +250,8 @@ extension Archive {
                     WHERE blocked_id = ? AND decision.deleted_at IS NULL
                     """, arguments: [id])
             guard !blockers.isEmpty || decision.status == .blocked else { continue }
-            let open = blockers.contains { $0.status.isOpen }
+            // A valid decision is "active" but is not work to wait for.
+            let open = blockers.contains { $0.kind.isWork && $0.status.isOpen }
             if open, decision.status == .active || decision.status == .inProgress {
                 decision.status = .blocked
                 try writer.save(&decision, db)
@@ -514,6 +516,50 @@ extension Archive {
 
     // MARK: Inside the register
 
+    /// An entry deleted for good: its dependencies, board places and checklist go; what it blocked is freed.
+    static func removeWork(decisionID id: String, writer: SyncWriter, _ db: Database) throws {
+        let dependents = try String.fetchAll(
+            db, sql: "SELECT blocked_id FROM decision_dependency WHERE blocker_id = ?", arguments: [id])
+        try db.execute(
+            sql: "DELETE FROM decision_dependency WHERE blocked_id = ? OR blocker_id = ?", arguments: [id, id])
+        try db.execute(sql: "DELETE FROM board_place WHERE decision_id = ?", arguments: [id])
+        for var item in try ChecklistItem.filter(Column("decision_id") == id && Column("deleted_at") == nil).fetchAll(
+            db)
+        {
+            item.text = ""
+            try writer.tombstone(&item, db)
+        }
+        try recomputeBlocked(dependents, dependenciesRemoved: true, writer: writer, db)
+    }
+
+    /// After an edit: an open entry has no outcome; one no longer waiting waits for nobody; a memory entry has no
+    /// work fields.
+    static func tidyWork(_ decision: inout Decision, kindBefore: Decision.Kind) {
+        if decision.status.isOpen {
+            decision.outcome = nil
+            decision.outcomeKind = nil
+        }
+        if decision.status != .waiting {
+            decision.waitingOnId = nil
+            decision.waitingUntil = nil
+        }
+        if !decision.kind.isWork {
+            if decision.status == .inProgress || decision.status == .waiting || decision.status == .blocked {
+                decision.status = .active
+            }
+            if kindBefore.isWork {
+                decision.ownerId = nil
+                decision.dueAt = nil
+                decision.priority = nil
+                decision.startsAt = nil
+                decision.estimate = nil
+                decision.recurrence = nil
+                decision.severity = nil
+                decision.happenedAt = nil
+            }
+        }
+    }
+
     /// Keeps `closedAt` in step with the state.
     static func stampClosed(_ decision: inout Decision, now: Date) {
         let closed =
@@ -523,9 +569,21 @@ extension Archive {
         if !closed { decision.closedAt = nil }
     }
 
-    /// A repeating entry just done: the next one, with the due date moved on and the checklist unticked.
-    static func repeatIfNeeded(_ done: Decision, writer: SyncWriter, _ db: Database) throws {
-        guard let recurrence = done.recurrence, done.status == .done else { return }
+    /// A repeating entry just done: the next one, with the due date moved on and the checklist unticked. Only once per
+    /// entry (done, reopened and done again does not make a second copy), and not when it was closed as rejected,
+    /// irrelevant or turned into something else.
+    @discardableResult
+    static func repeatIfNeeded(_ done: Decision, writer: SyncWriter, _ db: Database) throws -> Decision? {
+        guard let recurrence = done.recurrence, done.status == .done else { return nil }
+        if let outcome = done.outcomeKind, outcome == .rejected || outcome == .irrelevant || outcome == .converted {
+            return nil
+        }
+        let spawned =
+            try Int.fetchOne(
+                db,
+                sql: "SELECT count(*) FROM decision WHERE derived_from_id = ? AND recurrence IS NOT NULL",
+                arguments: [done.id]) ?? 0
+        guard spawned == 0 else { return nil }
         let base = done.dueAt ?? writer.now
         let calendar = Calendar(identifier: .gregorian)
         let component: Calendar.Component =
@@ -535,7 +593,7 @@ extension Archive {
             case .monthly: .month
             case .yearly: .year
             }
-        guard let nextDue = calendar.date(byAdding: component, value: 1, to: base) else { return }
+        guard let nextDue = calendar.date(byAdding: component, value: 1, to: base) else { return nil }
         var next = done
         next.id = newID(at: writer.now)
         next.status = .active
@@ -545,6 +603,9 @@ extension Archive {
         next.closedAt = nil
         next.outcome = nil
         next.outcomeKind = nil
+        next.waitingOnId = nil
+        next.waitingUntil = nil
+        next.happenedAt = nil
         next.supersedesId = nil
         next.chainName = nil
         next.derivedFromId = done.id
@@ -569,5 +630,6 @@ extension Archive {
             copy.version = 0
             try writer.save(&copy, db)
         }
+        return next
     }
 }
