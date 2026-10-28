@@ -159,7 +159,6 @@ private struct GeneralPane: View {
                 .onSubmit { save() }
                 .onChange(of: name) { save() }
         }
-        WorkModeGroup(model: model)
         WorkViewsSettings(model: model)
         SettingsGroup(title: String(localized: "Avvio")) {
             Toggle(String(localized: "Apri IAGO all'avvio del Mac"), isOn: $launchAtLogin)
@@ -187,33 +186,9 @@ private struct GeneralPane: View {
     }
 }
 
-/// Impostazioni › Generale › Modo di lavorare (ADR-0074): the same data, more or less management in view.
-private struct WorkModeGroup: View {
-    let model: AppModel
-
-    var body: some View {
-        SettingsGroup(
-            title: String(localized: "Modo di lavorare"),
-            footnote: String(
-                localized:
-                    "Si cambia quando vuoi, senza perdere nulla: in Traccia i campi di Gestisci già compilati restano salvati."
-            )
-        ) {
-            Picker(
-                "", selection: Binding(get: { model.workMode }, set: { model.setWorkMode($0) })
-            ) {
-                ForEach(WorkMode.allCases, id: \.self) { mode in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(Self.title(mode))
-                        Text(Self.explanation(mode)).font(.caption).foregroundStyle(.secondary)
-                    }
-                    .tag(mode)
-                }
-            }
-            .pickerStyle(.radioGroup).labelsHidden()
-        }
-    }
-
+/// Names and explanations of «Traccia» and «Gestisci» (ADR-0074), chosen per project: in the project's header and in
+/// Impostazioni › Progetti.
+enum WorkModeText {
     static func title(_ mode: WorkMode) -> String {
         switch mode {
         case .track: String(localized: "Traccia")
@@ -405,24 +380,20 @@ private struct ProjectsPane: View {
                     Button(String(localized: "Elimina…"), role: .destructive) { startDelete(project) }.buttonStyle(
                         .link)
                 }
-                if model.workMode == .manage {
-                    // ADR-0074: a project can stay simple while the app manages the others.
-                    Toggle(
-                        String(localized: "Tieni semplice (Traccia)"),
-                        isOn: Binding(
-                            get: { project.workMode == .track },
-                            set: { simple in
-                                model.setProjectWorkMode(project.id, simple ? .track : nil)
-                                reload()
-                            })
-                    )
-                    .toggleStyle(.checkbox).font(.callout).padding(.leading, 26)
-                    .help(
-                        String(
-                            localized:
-                                "La pagina del progetto si vede in Traccia; le voci assegnate a te restano nel tuo Da fare."
-                        ))
+                // ADR-0074: each project in «Gestisci» (the default) or kept simple in «Traccia».
+                Picker(
+                    String(localized: "Modo"),
+                    selection: Binding(
+                        get: { project.workMode ?? .manage },
+                        set: { mode in
+                            model.setProjectWorkMode(project.id, mode)
+                            reload()
+                        })
+                ) {
+                    ForEach(WorkMode.allCases, id: \.self) { Text(WorkModeText.title($0)).tag($0) }
                 }
+                .pickerStyle(.segmented).fixedSize().controlSize(.small).padding(.leading, 26)
+                .help(WorkModeText.explanation(project.workMode ?? .manage))
                 ProjectStreamsEditor(model: model, project: project).padding(.leading, 26)
             }
             if projects.isEmpty { Text(String(localized: "Nessun progetto creato.")).foregroundStyle(.secondary) }

@@ -13,11 +13,11 @@
 - **Tutti i tipi ci sono sempre.**
   - **Memoria:** decisione e tappa.
   - **Lavoro:** attività, con checklist; punto da chiarire; rischio, con gravità e «diventato problema»; richiesta.
-- **Due modalità sugli stessi dati**, scelte per persona, con eccezioni per progetto:
-  - **Traccia** (predefinita): stati Aperta, In attesa, Fatta, Annullata; campi base (responsabile, scadenza, in attesa di, checklist); viste Timeline, Punti chiave, Da fare, Riepilogo breve, Grafo;
-  - **Gestisci**: anche In corso e Bloccata, priorità, dipendenze, stima, inizio, ricorrenza, kanban di progetto e globale con colonne libere, riepilogo completo con sintesi di stato.
+- **Due modalità sugli stessi dati**, scelte **per progetto** (aggiornato il 2026-10-28, durante la prova: prima erano per persona con eccezioni per progetto):
+  - **Gestisci** (predefinita): tutti gli stati (anche In corso e Bloccata), priorità, dipendenze, stima, inizio, ricorrenza, kanban di progetto e globale con colonne libere, riepilogo completo con sintesi di stato;
+  - **Traccia**: stati Aperta, In attesa, Fatta, Annullata; campi base (responsabile, scadenza, in attesa di, checklist); riepilogo breve, niente kanban.
 
-  Passare da una modalità all'altra non perde dati.
+  Si sceglie dalla pillola «Gestisci ▾» accanto al nome del progetto o in Impostazioni › Progetti. Le viste globali (Da fare, Punti chiave) sono in Gestisci e ogni voce segue il modo del suo progetto; la kanban di tutti lascia fuori i progetti in Traccia. Passare da una modalità all'altra non perde dati. Come si mostrano le viste: ADR-0075.
 - **Tre legami:**
   - **supera / chiude:** quello di ADR-0052, letto con il verbo adatto: sostituisce, risponde a, accoglie, completa;
   - **nata da;**
@@ -33,6 +33,7 @@
 - **Fuori, per ora:** sincronizzazione con i calendari (in attesa, richiederà un ADR di rete), Pianifica la giornata, invio di attività ad altri prima della fase 4, sprint e calcolo delle stime.
 
 ## Conseguenze
-- Chi tiene solo traccia vede IAGO quasi com'è oggi, con in più l'inbox Da fare e il riepilogo breve. Chi gestisce ha gli strumenti senza un secondo programma.
+- Chi tiene solo traccia mette i suoi progetti in Traccia e vede IAGO quasi com'è oggi, con in più l'inbox Da fare e il riepilogo breve. Chi gestisce ha gli strumenti senza un secondo programma.
+- La notifica del mattino è spenta finché l'utente non la accende (prima seguiva la modalità).
 - ADR-0046 viene esteso (tipi e stati nuovi); ADR-0052 resta valido e il suo legame diventa «supera / chiude».
 - MCP, esportazioni, grafo, guida, tour e prove per i tester vanno aggiornati in ogni fase.

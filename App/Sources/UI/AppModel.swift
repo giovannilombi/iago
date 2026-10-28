@@ -317,19 +317,18 @@ final class AppModel {
                 summaries = []
             }
             people = try archive.people()
-            workMode = archive.workMode()
             if let scope = decisionScope {
                 var query = decisionQuery
                 query.scope = scope
                 decisions = try archive.decisions(query)
                 // The timeline shows every decision of the scope, whatever the register's filters.
                 timelineDecisions =
-                    showsTimeline ? try archive.decisions(DecisionQuery(scope: scope, statuses: [])) : []
+                    showsMixedHistory ? try archive.decisions(DecisionQuery(scope: scope, statuses: [])) : []
             } else {
                 decisions = []
                 timelineDecisions = []
             }
-            if showsTimeline {
+            if showsMixedHistory {
                 if case .library(.stream(let id)) = sidebar {
                     timelineNotes = try archive.notes(streamID: id, itemIDs: summaries.map(\.id))
                 } else {
@@ -347,13 +346,135 @@ final class AppModel {
         }
     }
 
-    /// List, timeline or decision register for the current scope; a project opens on its timeline. «Riepilogo» and
-    /// the kanban (ADR-0074) are for projects, clients and streams; the kanban also for «Da fare» and «Punti chiave».
-    enum ViewMode: Hashable { case list, timeline, decisions, graph, overview, board }
-    var viewMode = ViewMode.list { didSet { if viewMode != oldValue { reload() } } }
+    /// How the scope is looked at (ADR-0075): «Riepilogo», then the four forms, from the simplest to the richest.
+    /// «Riepilogo» and the kanban (ADR-0074) are for projects, clients and streams; the kanban also for «Da fare» and
+    /// «Punti chiave».
+    enum ViewMode: String, Hashable { case overview, list, timeline, board, map }
+    /// «Mostra»: what the list, the timeline and the map contain. The kanban shows open work only.
+    enum ViewContent: String, Hashable, CaseIterable { case all, materials, keyPoints }
+    var viewMode = ViewMode.list {
+        didSet {
+            guard viewMode != oldValue else { return }
+            // The kanban and the overview open with their inspector closed; the map keeps the selection as its centre.
+            if viewMode == .board || viewMode == .overview { clearSelection() }
+            rememberView()
+            if !restoringView { reload() }
+        }
+    }
+    var viewContent = ViewContent.all {
+        didSet {
+            guard viewContent != oldValue else { return }
+            rememberView()
+            if !restoringView { reload() }
+        }
+    }
     var showsTimeline: Bool { viewMode == .timeline }
-    var showsDecisions: Bool { viewMode == .decisions || sidebar == .decisions }
-    var showsGraph: Bool { viewMode == .graph && sidebar != .decisions }
+    var showsDecisions: Bool {
+        sidebar == .decisions ? viewMode != .board : viewMode == .list && viewContent == .keyPoints
+    }
+    var showsGraph: Bool { viewMode == .map && sidebar != .decisions && sidebar != .inbox }
+    /// «Elenco» with «Tutto»: items, key points and notes in one list by date.
+    var showsMixedList: Bool {
+        guard case .library = sidebar else { return false }
+        return viewMode == .list && viewContent == .all
+    }
+    /// The views that interleave items, key points and notes need the scope's whole history.
+    private var showsMixedHistory: Bool { showsTimeline || showsMixedList }
+
+    /// Kanban, «Riepilogo» and map take the space of the list and of the detail; what is opened from them shows in an
+    /// inspector on the right.
+    var isWide: Bool {
+        switch viewMode {
+        case .board: workScope != nil || sidebar == .inbox || sidebar == .decisions
+        case .overview: workScope != nil
+        case .map: showsGraph
+        case .list, .timeline: false
+        }
+    }
+
+    var hasSelection: Bool { selectedItemID != nil || selectedDecisionID != nil || selectedNoteID != nil }
+
+    func clearSelection() {
+        selectedItemID = nil
+        selectedDecisionID = nil
+        selectedNoteID = nil
+    }
+
+    // MARK: View remembered per scope
+
+    @ObservationIgnored private var restoringView = false
+    static let viewsKey = "views.byScope"
+
+    /// The scopes that remember their view: projects, clients, streams and the other places of the library.
+    private var viewKey: String? {
+        switch sidebar {
+        case .library(.project(let id)): "project:\(id)"
+        case .library(.client(let id)): "client:\(id)"
+        case .library(.stream(let id)): "stream:\(id)"
+        case .library(.category(let id)): "category:\(id)"
+        case .library(.tag(let id)): "tag:\(id)"
+        case .library(.unclassified): "unclassified"
+        case .library(.recent): "recent"
+        case .library(.undefinedProject): "undefined"
+        default: nil
+        }
+    }
+
+    private func rememberView() {
+        guard !restoringView, let key = viewKey else { return }
+        var views = UserDefaults.standard.dictionary(forKey: Self.viewsKey) as? [String: String] ?? [:]
+        views[key] = "\(viewMode.rawValue)/\(viewContent.rawValue)"
+        UserDefaults.standard.set(views, forKey: Self.viewsKey)
+    }
+
+    /// The last view of the scope, or where it opens the first time: a project, client or stream on its overview,
+    /// the project-less items on the timeline, the rest on the list of materials.
+    private func restoreView() {
+        restoringView = true
+        defer { restoringView = false }
+        let saved = viewKey.flatMap {
+            (UserDefaults.standard.dictionary(forKey: Self.viewsKey) as? [String: String])?[$0]
+        }?.split(separator: "/").map(String.init)
+        var mode: ViewMode
+        var content: ViewContent
+        switch sidebar {
+        case .decisions, .inbox:
+            mode = .list
+            content = viewContent
+        case .library(.project), .library(.client), .library(.stream):
+            mode = .overview
+            content = .all
+        case .library(.undefinedProject):
+            mode = .timeline
+            content = .all
+        default:
+            mode = .list
+            content = .materials
+        }
+        if let saved, saved.count == 2, let savedMode = ViewMode(rawValue: saved[0]),
+            let savedContent = ViewContent(rawValue: saved[1])
+        {
+            mode = savedMode
+            content = savedContent
+        }
+        viewMode = mode
+        viewContent = content
+        fixView()
+    }
+
+    /// A view the scope does not have (the kanban of a project kept in «Traccia», the overview outside a project)
+    /// falls back to the overview or the list.
+    func fixView() {
+        switch viewMode {
+        case .overview where workScope == nil:
+            viewMode = .list
+        case .board where !boardAvailable(for: decisionScope):
+            viewMode = workScope != nil ? .overview : .list
+        case .map where sidebar == .decisions || sidebar == .inbox:
+            viewMode = .list
+        default: break
+        }
+    }
 
     // MARK: Decisions (FR-150…157, ADR-0037)
 
@@ -587,23 +708,16 @@ final class AppModel {
 
     // MARK: Open work (ADR-0074)
 
-    /// "Traccia" or "Gestisci", as chosen in Impostazioni › Generale.
-    private(set) var workMode = WorkMode.track
-
-    func setWorkMode(_ mode: WorkMode) {
-        perform { try archive.setWorkMode(mode) }
-        reload()
-    }
-
-    /// The mode a project is shown in: the app's, unless the project is kept in "Traccia" ("Tieni semplice").
+    /// The mode of a project (ADR-0074): «Gestisci» unless it is kept in «Traccia». Without a project, «Gestisci».
     func workMode(for projectID: String?) -> WorkMode {
-        guard workMode == .manage else { return .track }
+        guard let projectID else { return .manage }
         return project(projectID)?.workMode ?? .manage
     }
 
-    func setProjectWorkMode(_ projectID: String, _ mode: WorkMode?) {
+    func setProjectWorkMode(_ projectID: String, _ mode: WorkMode) {
         perform { try archive.setProjectWorkMode(projectID, mode) }
         reload()
+        fixView()
     }
 
     /// The user's name ("Io" in the transcripts), first among the people of a key point.
@@ -734,18 +848,12 @@ final class AppModel {
 
     func select(_ selection: SidebarSelection?) {
         if case .library(.project(let id)) = selection { try? archive.touchProject(id) }
-        if selection != sidebar {
-            switch selection {
-            case .library(.project), .library(.undefinedProject), .library(.client), .library(.stream):
-                viewMode = .timeline
-            case .decisions: viewMode = .decisions
-            default: viewMode = .list
-            }
-            selectedItemID = nil
-            selectedDecisionID = nil
-            selectedNoteID = nil
-        }
+        let changed = selection != sidebar
         sidebar = selection
+        if changed {
+            restoreView()
+            clearSelection()
+        }
         showsSearch = false
         reload()
     }

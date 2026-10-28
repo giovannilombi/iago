@@ -32,5 +32,10 @@ La vista **Categorie e tag** mostra tutte le categorie con il numero di elementi
 
 ![Categorie e tag](img/categorie-tag.png)
 
-## Elenco, timeline, punti chiave, grafo
-Sopra l'elenco scegli la vista: **Elenco**, **Timeline** (giorno per giorno, con note e punti chiave), **Punti chiave**, **Grafo** (persone, elementi e decisioni collegati). La barra dei filtri restringe per categoria, tag, tipo, periodo.
+## Le viste: come guardare e cosa mostrare
+Un progetto ha una storia sola (call, email, documenti, note, punti chiave); in alto scegli come guardarla.
+- **Riepilogo**, il primo pulsante: la pagina del progetto, con il lavoro aperto, le scadenze e le checklist.
+- Poi la forma: **Elenco**, **Timeline** (giorno per giorno), **Kanban** (il lavoro aperto in colonne, nei progetti in Gestisci) e **Mappa** (persone, elementi e punti chiave collegati).
+- A destra **Mostra**: *Tutto*, solo i *Materiali* (call, email, documenti, note) o solo i *Punti chiave*. Per esempio Elenco con *Punti chiave* è il registro dei punti chiave del progetto.
+
+Riepilogo, Kanban e Mappa occupano tutta la finestra: ciò che apri compare nel pannello a destra, che chiudi con ✕ o Esc. IAGO ricorda per ogni progetto l'ultima vista scelta. La barra dei filtri restringe per categoria, tag, tipo, periodo.

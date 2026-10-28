@@ -88,7 +88,6 @@ public enum WorkError: Error, Equatable {
 
 /// Open work (ADR-0074): mode, people, dependencies, checklists, boards, repeating entries.
 extension Archive {
-    public static let workModeKey = "work.mode"
     /// The kanban is shown in "Gestisci" unless the user turns it off.
     public static let boardEnabledKey = "work.board"
     /// "Mostra tutte" on the archived column of the board, remembered.
@@ -98,27 +97,27 @@ extension Archive {
 
     // MARK: Mode
 
-    public func workMode() -> WorkMode {
-        ((try? setting(Self.workModeKey)) ?? nil).flatMap(WorkMode.init(rawValue:)) ?? .track
-    }
-
-    public func setWorkMode(_ mode: WorkMode) throws {
-        try setSetting(Self.workModeKey, mode == .track ? nil : mode.rawValue)
-    }
-
-    /// The mode a project is shown in: the app's, unless the project is kept in "Traccia".
+    /// The mode of a project: its own, "Gestisci" unless it is kept in "Traccia". What has no project (the
+    /// unclassified, the global views) is in "Gestisci"; there each entry follows its own project.
     public func workMode(projectID: String?) -> WorkMode {
-        let app = workMode()
-        guard app == .manage, let projectID,
+        guard let projectID,
             let mode = try? database.writer.read({ db in
                 try String.fetchOne(db, sql: "SELECT work_mode FROM project WHERE id = ?", arguments: [projectID])
             })
-        else { return app }
-        return WorkMode(rawValue: mode) ?? app
+        else { return .manage }
+        return WorkMode(rawValue: mode) ?? .manage
     }
 
-    public func setProjectWorkMode(_ projectID: String, _ mode: WorkMode?) throws {
-        try updateProject(projectID) { $0.workMode = mode }
+    /// "Gestisci" is the default, so it is stored as no value.
+    public func setProjectWorkMode(_ projectID: String, _ mode: WorkMode) throws {
+        try updateProject(projectID) { $0.workMode = mode == .manage ? nil : mode }
+    }
+
+    /// The projects kept in "Traccia": their entries stay off the global kanban.
+    public func trackedProjectIDs() throws -> Set<String> {
+        try database.writer.read { db in
+            Set(try String.fetchAll(db, sql: "SELECT id FROM project WHERE work_mode = ?", arguments: ["track"]))
+        }
     }
 
     // MARK: People

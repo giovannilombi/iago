@@ -3,7 +3,7 @@ import IAGOIntelligence
 import IAGOStore
 import SwiftUI
 
-/// "Grafo" (FR-160…165, ADR-0045): relations among projects, items, people, tags and decisions of the sidebar
+/// «Mappa», formerly "Grafo" (FR-160…165, ADR-0045, ADR-0075): relations among projects, items, people, tags and decisions of the sidebar
 /// scope. Centered on an item (depth 1, double click expands a node) or the whole scope; filters by type, a
 /// time slider, pan and zoom. A click opens items, decisions and notes in the detail pane.
 struct GraphView: View {
@@ -84,7 +84,9 @@ struct GraphView: View {
         var graph = full
         if let cutoff { graph = graph.asOf(cutoff) }
         graph = graph.restricted(
-            to: Set(graph.nodes.values.filter { kinds.contains($0.kind) || $0.id == focus }.map(\.id)))
+            to: Set(
+                graph.nodes.values.filter { (kinds.contains($0.kind) && shows($0.kind)) || $0.id == focus }.map(\.id)
+            ))
         if mode == .centered, let focus, graph.nodes[focus] != nil {
             var ids: Set<String> = [focus]
             ids.formUnion(graph.neighbors(of: focus))
@@ -97,8 +99,20 @@ struct GraphView: View {
         return graph.limited(to: Self.nodeLimit)
     }
 
+    /// «Mostra» (ADR-0075): materials leave out key points, key points leave out calls, emails, documents and notes.
+    private func shows(_ kind: GraphNode.Kind) -> Bool {
+        switch model.viewContent {
+        case .all: true
+        case .materials: !Self.keyPointKinds.contains(kind)
+        case .keyPoints: !Self.materialKinds.contains(kind)
+        }
+    }
+
+    static let keyPointKinds: Set<GraphNode.Kind> = [.decision, .activity, .milestone, .question, .risk, .request]
+    static let materialKinds: Set<GraphNode.Kind> = [.call, .email, .document, .note, .group]
+
     private var visibleKey: String {
-        "\(full.nodes.count)|\(mode)|\(focus ?? "")|\(expanded.sorted())|\(kinds.map(\.rawValue).sorted())|\(cutoff?.timeIntervalSince1970 ?? 0)"
+        "\(model.viewContent)|\(full.nodes.count)|\(mode)|\(focus ?? "")|\(expanded.sorted())|\(kinds.map(\.rawValue).sorted())|\(cutoff?.timeIntervalSince1970 ?? 0)"
     }
 
     private var dateRange: ClosedRange<Date>? {
@@ -265,7 +279,7 @@ struct GraphView: View {
         guard let id, let node = full.nodes[id], let record = node.recordID else { return }
         switch node.kind {
         case .call, .email, .document: model.selectedItemID = record
-        case .decision: model.selectedDecisionID = record
+        case .decision, .activity, .milestone, .question, .risk, .request: model.selectedDecisionID = record
         case .note: model.selectedNoteID = record
         default: break
         }
@@ -406,7 +420,7 @@ struct GraphView: View {
                     .font(.caption).monospacedDigit().foregroundStyle(.secondary).frame(
                         width: 110, alignment: .trailing)
                 }
-                .help(String(localized: "Il grafo com'era fino a una data"))
+                .help(String(localized: "La mappa com'era fino a una data"))
             }
         }
         .padding(.horizontal, 12).padding(.vertical, 8)

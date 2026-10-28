@@ -16,11 +16,11 @@ I punti chiave sono di sei tipi, in due famiglie.
 ![Punti chiave nella timeline](img/punti-chiave.png)
 
 ## Traccia e Gestisci
-In **Impostazioni › Generale › Modo di lavorare** scegli quanta gestione vedere. I dati sono gli stessi: passando dall'uno all'altro non perdi nulla.
-- **Traccia** (predefinito): tutti i tipi, con responsabile, scadenza, «in attesa di» e checklist. Gli stati sono *Aperta*, *In attesa*, *Fatta*, *Annullata*.
-- **Gestisci:** anche gli stati *In corso* e *Bloccata*, la priorità, le dipendenze («dipende da»), la stima, la data d'inizio, le ricorrenze, la **Kanban** e il **Riepilogo** completo.
+Ogni progetto ha il suo modo, scelto con la pillola **Gestisci ▾** accanto al nome del progetto (o in Impostazioni › Progetti). I dati sono gli stessi: passando dall'uno all'altro non perdi nulla.
+- **Gestisci** (predefinito): tutti i tipi e tutti gli stati, anche *In corso* e *Bloccata*; la priorità, le dipendenze («dipende da»), la stima, la data d'inizio, le ricorrenze, la **Kanban** e il **Riepilogo** completo.
+- **Traccia:** per i progetti semplici. Tutti i tipi, con responsabile, scadenza, «in attesa di» e checklist; gli stati sono *Aperta*, *In attesa*, *Fatta*, *Annullata*; niente Kanban.
 
-In Gestisci puoi tenere semplice un progetto: Impostazioni › Progetti › *Tieni semplice (Traccia)*.
+Da fare e Punti chiave raccolgono tutti i progetti: ogni voce si vede nel modo del suo progetto.
 
 ## Crearli
 Da un segnalibro, da una frase della trascrizione (tasto destro), da un documento, da una nota (*Promuovi*), a mano (*Aggiungi* nella timeline), oppure confermando una **proposta** del motore o di Claude. Ognuno ha titolo, descrizione, data, persone, tag, stream e la **fonte** (con il minuto della call).
@@ -56,17 +56,22 @@ Una voce può **chiuderne altre**, anche di tipo diverso: una tappa «Firmato il
 Se vuoi, una **notifica al mattino** (Impostazioni › Generale) ti dice quante voci scadono oggi, quante sono in ritardo e quante attese sono scadute; un clic apre Da fare.
 
 ## Riepilogo
-Ogni progetto, cliente e stream ha la vista **Riepilogo**:
+Ogni progetto, cliente e stream ha il **Riepilogo**, il primo pulsante in alto: la prima volta il progetto si apre lì. Occupa tutta la finestra: in alto i numeri (aperte e chiuse per tipo, in ritardo, bloccate); a sinistra ciò su cui agire (scadenze, bloccate, attese, rischi, punti da chiarire, prossime tappe); a destra cosa è cambiato, la sintesi di stato e le checklist. Un clic su una voce la apre nel pannello a destra.
+
+![Riepilogo di un progetto](img/riepilogo.png)
 - voci aperte per tipo, prossime scadenze, decisioni e tappe recenti, attese;
 - le **checklist del progetto** (per esempio «Consegna finale»): le crei, le fissi in alto e le spunti;
 - in Gestisci anche l'avanzamento, i bloccati, i rischi per gravità, *Cosa è cambiato* dall'ultima volta che l'hai aperto e la **Sintesi di stato**: un testo scritto dal motore locale a partire dai punti chiave, da copiare in una mail o da passare a Claude.
 
 ## Kanban
-In Gestisci, la vista **Kanban** di un progetto, cliente o stream (o di tutti, da Da fare) mette il lavoro aperto in colonne: *Da fare*, *In corso*, *In attesa*, *Bloccata*, *Fatta*. Trascinare una scheda in un'altra colonna ne cambia lo stato; in *In attesa* IAGO chiede da chi e fino a quando.
+In Gestisci, la **Kanban** di un progetto, cliente o stream (o di tutti, da Da fare e da Punti chiave) occupa tutta la finestra e mette il lavoro aperto in colonne: *Da fare*, *In corso*, *In attesa*, *Bloccata*, *Fatta*. Trascinare una scheda in un'altra colonna ne cambia lo stato; in *In attesa* IAGO chiede da chi e fino a quando.
 
-Puoi aggiungere **colonne tue** (per esempio «Da discutere venerdì»): servono a raggruppare e non cambiano lo stato. Nella colonna *Fatta* le voci chiuse da più di 14 giorni vengono archiviate: *Mostra tutte* le fa riapparire, *Archivia* le nasconde di nuovo, e IAGO ricorda la scelta. La Kanban si spegne in Impostazioni › Generale senza perdere colonne e posizioni.
+Puoi aggiungere **colonne tue** (per esempio «Da discutere venerdì»): servono a raggruppare e non cambiano lo stato. Nella colonna *Fatta* le voci chiuse da più di 14 giorni vengono archiviate: *Mostra tutte* le fa riapparire, *Archivia* le nasconde di nuovo, e IAGO ricorda la scelta. Un clic su una scheda la apre nel **pannello a destra**; ✕ o Esc lo chiudono. Per tornare alla lista scegli *Elenco* o *Timeline*. La Kanban di tutti lascia fuori i progetti in Traccia; si spegne in Impostazioni › Generale senza perdere colonne e posizioni.
+
+![Kanban di un progetto](img/kanban.png)
 
 ## Dove vederli
 - **Punti chiave** nella barra laterale: tutti, con filtri per tipo, stato, persona, responsabile, tag.
+- In un progetto, **Mostra: Punti chiave** con l'Elenco, la Timeline o la Mappa (vedi Organizzare).
 - **Da fare**, **Riepilogo** e **Kanban**, come sopra.
 - La **timeline**, insieme a call, email e note.

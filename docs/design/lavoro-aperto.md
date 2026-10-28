@@ -3,9 +3,11 @@
 Progetto del 28 ottobre 2026, realizzato nella 1.1.0-beta. Decisione collegata: [ADR-0074](../adr/0074-lavoro-aperto-traccia-gestisci.md).
 
 ## In una frase
-IAGO resta la memoria del lavoro, e tiene anche traccia di **ciò che è aperto**: attività, punti da chiarire, rischi, richieste. **Tutti i tipi ci sono sempre.** Cambia solo quanta gestione si vede:
-- **Traccia** (predefinita): semplice come oggi;
-- **Gestisci**: aggiunge stati fini, campi, kanban e riepilogo completo.
+IAGO resta la memoria del lavoro, e tiene anche traccia di **ciò che è aperto**: attività, punti da chiarire, rischi, richieste. **Tutti i tipi ci sono sempre.** Cambia solo quanta gestione si vede, progetto per progetto:
+- **Gestisci** (predefinita): stati fini, campi, kanban e riepilogo completo;
+- **Traccia**: semplice come la 1.0.
+
+Aggiornamento del 28 ottobre 2026, durante la prova: la modalità si sceglie per progetto e Gestisci è il default; le viste sono ridisegnate come «come guardare × cosa mostrare» (ADR-0075).
 
 Si passa dall'una all'altra senza perdere nulla.
 
@@ -93,17 +95,17 @@ Tutti facoltativi.
 In **Traccia** un campo di Gestisci già compilato non si perde: resta salvato e una piccola icona dice «ha dettagli in Gestisci».
 
 ## Le due modalità
-| | **Traccia** (predefinita) | **Gestisci** |
+| | **Traccia** | **Gestisci** (predefinita) |
 |---|---|---|
 | Tipi | tutti | tutti |
 | Stati di lavoro visibili | Aperta · In attesa · Fatta · Annullata | tutti e sei |
 | Scheda di una voce | titolo, tipo, responsabile, scadenza, in attesa di, checklist, descrizione | anche «Altri dettagli»: priorità, dipendenze, stima, inizio, ricorrenza |
-| Viste | Timeline, Punti chiave, **Da fare** (inbox), **Riepilogo** breve, Grafo | in più **Kanban** (progetto e globale), **Riepilogo** completo, filtri per persona e priorità |
-| Notifica del mattino | disponibile, spenta | disponibile, accesa |
+| Viste | Elenco, Timeline, Mappa, **Da fare** (inbox), **Riepilogo** breve | in più **Kanban** (progetto e globale), **Riepilogo** completo, filtri per persona e priorità |
+| Notifica del mattino | disponibile, spenta | disponibile, spenta |
 | Proposte del motore e di Claude | tutti i tipi | tutti i tipi |
 
-- **Dove si sceglie:** Impostazioni › Generale e nel tour di benvenuto («Come usi IAGO? *Tengo traccia* / *Gestisco i progetti*»).
-- **Per persona, con eccezioni per progetto:** in Gestisci un progetto può restare in Traccia. Nella sua pagina si vede Traccia, ma le voci assegnate a te restano nella tua inbox.
+- **Dove si sceglie:** la pillola «Gestisci ▾» accanto al nome del progetto, e Impostazioni › Progetti.
+- **Per progetto:** un progetto in Traccia si vede in Traccia, ma le voci assegnate a te restano nella tua inbox; la kanban di tutti lo lascia fuori.
 - **Kanban:** in Gestisci è accesa di default e ha un suo interruttore. Spenta, le colonne libere e le posizioni restano salvate.
 
 ## Le viste
@@ -187,7 +189,7 @@ Restano come oggi, con i tipi nuovi:
 - i legami «nata da» e «dipende da» sono tratteggiati.
 
 ## Notifica del mattino
-Un solo avviso, all'ora scelta, nei giorni lavorativi: «3 in scadenza oggi, 2 in ritardo, 1 attesa scaduta». Un clic apre Da fare. Si accende e si spegne in Impostazioni; di default è spenta in Traccia e accesa in Gestisci.
+Un solo avviso, all'ora scelta, nei giorni lavorativi: «3 in scadenza oggi, 2 in ritardo, 1 attesa scaduta». Un clic apre Da fare. Si accende e si spegne in Impostazioni; di default è spenta.
 
 ## Proposte del motore e di Claude
 - **Il motore** propone tutti i tipi in entrambe le modalità (ADR-0049), ciascuno con la frase da cui viene:
@@ -232,7 +234,7 @@ Una migrazione (`v21-work`) che **aggiunge** e non cambia nulla di ciò che c'è
 - `checklist (id, project_id, name, pinned, sort)`, per le liste di progetto;
 - `checklist_item (id, decision_id | checklist_id, text, done, sort)`;
 - `board_column (id, scope, name, sort)` e `board_place (scope, decision_id, column_id)`, per le colonne libere di ogni board;
-- `project.work_mode` (nullo = come l'app) e l'impostazione `work.mode` (`track` | `manage`).
+- `project.work_mode` (nullo = Gestisci, `track` = Traccia).
 
 `kind` e `status` sono testo: i valori nuovi (`risk`, `request`, `in_progress`, `waiting`, `blocked`) non richiedono di convertire i dati. Le attività di oggi restano `active` (Da fare) o `done`. Tutte le tabelle hanno le colonne di sincronizzazione e il change log (ADR-0008), pronte per la condivisione.
 

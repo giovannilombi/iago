@@ -27,34 +27,152 @@ struct WorkOverview: View {
     }
     private var spansProjects: Bool { if case .client = scope { true } else { false } }
 
+    /// Width of the page: two columns when there is room (ADR-0075), one below it.
+    @State private var width: CGFloat = 1000
+    private var twoColumns: Bool { width >= 860 }
+
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                if mode == .manage {
-                    progress
-                    changes
-                    risks
-                    list(
-                        String(localized: "Punti da chiarire"),
-                        open.filter { $0.decision.kind == .openQuestion && $0.decision.status != .waiting })
-                    list(String(localized: "Attese da altri"), waiting)
-                    list(String(localized: "Prossime scadenze"), nextDue)
-                    StatusReportBox(model: model, scope: scope, entries: entries)
+            VStack(alignment: .leading, spacing: 16) {
+                numbers
+                if twoColumns {
+                    HStack(alignment: .top, spacing: 16) {
+                        VStack(spacing: 16) { actionCards }.frame(maxWidth: .infinity)
+                        VStack(spacing: 16) { contextCards }.frame(width: min(440, width * 0.4))
+                    }
                 } else {
-                    openByKind
-                    list(String(localized: "Prossime scadenze"), nextDue)
-                    list(String(localized: "Attese da altri"), waiting)
-                    list(String(localized: "Decisioni e tappe recenti"), recentMemory)
+                    VStack(spacing: 16) {
+                        actionCards
+                        contextCards
+                    }
                 }
-                checklistSection
             }
-            .padding(.horizontal, 24).padding(.vertical, 16)
-            .frame(maxWidth: 900, alignment: .leading)
+            .padding(.horizontal, 24).padding(.vertical, 20)
+            .frame(maxWidth: 1400, alignment: .leading)
             .frame(maxWidth: .infinity)
+            .onGeometryChange(for: CGFloat.self) {
+                $0.size.width
+            } action: {
+                width = $0
+            }
         }
         .safeAreaInset(edge: .top, spacing: 0) { ViewModePicker(model: model).background(.bar) }
         .task(id: model.revision) { load() }
         .task(id: scope.key) { markSeen() }
+    }
+
+    /// Left: what to act on, most urgent first.
+    @ViewBuilder
+    private var actionCards: some View {
+        let overdue = open.filter { OpenWork.due($0.decision.dueAt) == .overdue && $0.decision.status != .waiting }
+        let blocked = open.filter { $0.decision.status == .blocked }
+        card(
+            String(localized: "Scadenze"), count: nextDue.count, icon: "calendar",
+            tint: overdue.isEmpty ? .accentColor : .red,
+            empty: String(localized: "Nessuna voce aperta con una scadenza.")
+        ) { rows(nextDue) }
+        if mode == .manage, !blocked.isEmpty {
+            card(String(localized: "Bloccate"), count: blocked.count, icon: "nosign", tint: .red) { rows(blocked) }
+        }
+        if !waiting.isEmpty {
+            card(String(localized: "Attese da altri"), count: waiting.count, icon: "hourglass", tint: .purple) {
+                rows(waiting)
+            }
+        }
+        let questions = open.filter { $0.decision.kind == .openQuestion && $0.decision.status != .waiting }
+        let risks = open.filter { $0.decision.kind == .risk }
+        HStack(alignment: .top, spacing: 16) {
+            card(
+                String(localized: "Rischi"), count: risks.count, icon: WorkStyle.icon(.risk),
+                tint: WorkStyle.tint(.risk),
+                empty: String(localized: "Nessun rischio aperto."), fills: true
+            ) { riskRows(risks) }
+            card(
+                String(localized: "Punti da chiarire"), count: questions.count, icon: WorkStyle.icon(.openQuestion),
+                tint: WorkStyle.tint(.openQuestion), empty: String(localized: "Nessuna domanda in sospeso."),
+                fills: true
+            ) { rows(questions) }
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        if mode == .manage, !nextMilestones.isEmpty {
+            card(String(localized: "Prossime tappe"), count: nextMilestones.count, icon: "flag", tint: .teal) {
+                rows(nextMilestones)
+            }
+        }
+    }
+
+    /// Right: what changed, the written status, the checklists.
+    @ViewBuilder
+    private var contextCards: some View {
+        if mode == .manage {
+            card(String(localized: "Cosa è cambiato"), icon: "clock.arrow.circlepath", tint: .secondary) { changes }
+            card(String(localized: "Sintesi di stato"), icon: "text.quote", tint: .indigo) {
+                StatusReportBox(model: model, scope: scope, entries: entries)
+            }
+        } else {
+            card(
+                String(localized: "Decisioni e tappe recenti"), count: recentMemory.count, icon: "checkmark.seal",
+                tint: .green, empty: String(localized: "Nessuna decisione o tappa recente.")
+            ) { rows(recentMemory) }
+        }
+        card(
+            String(localized: "Checklist"), count: checklists.isEmpty ? nil : checklists.count, icon: "checklist",
+            tint: .accentColor
+        ) {
+            checklistSection
+        } accessory: {
+            if let projectID { NewChecklistButton(model: model, projectID: projectID) }
+        }
+    }
+
+    /// A block of the page: title, count and action on one line, then its content.
+    private func card<Content: View, Accessory: View>(
+        _ title: String, count: Int? = nil, icon: String, tint: Color, empty: String? = nil, fills: Bool = false,
+        @ViewBuilder content: () -> Content, @ViewBuilder accessory: () -> Accessory = { EmptyView() }
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 6) {
+                Image(systemName: icon).foregroundStyle(tint)
+                Text(title).font(.headline)
+                if let count, count > 0 {
+                    Text("\(count)").font(.callout).monospacedDigit().foregroundStyle(.secondary)
+                }
+                Spacer(minLength: 8)
+                accessory()
+            }
+            if let empty, count == 0 {
+                Text(empty).font(.callout).foregroundStyle(.secondary)
+            } else {
+                content()
+            }
+        }
+        .padding(14)
+        // Side by side, two cards take the height of the taller one.
+        .frame(maxWidth: .infinity, maxHeight: fills ? .infinity : nil, alignment: .topLeading)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color(nsColor: .controlBackgroundColor)))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.15)))
+    }
+
+    private func rows(_ shown: [DecisionSummary]) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ForEach(shown) { summary in
+                WorkEntryRow(model: model, summary: summary, mode: mode, showsProject: spansProjects)
+                    .padding(.horizontal, -8)
+            }
+        }
+    }
+
+    /// Highest severity first; each row says its severity.
+    private func riskRows(_ risks: [DecisionSummary]) -> some View {
+        func rank(_ severity: Decision.Severity?) -> Int {
+            switch severity {
+            case .high: 0
+            case .medium: 1
+            case .low: 2
+            case nil: 3
+            }
+        }
+        return rows(risks.sorted { rank($0.decision.severity) < rank($1.decision.severity) })
     }
 
     // MARK: Data
@@ -111,98 +229,52 @@ struct WorkOverview: View {
         model.perform { try model.archive.setSetting(key, String(Date().timeIntervalSince1970)) }
     }
 
-    // MARK: Traccia
+    // MARK: Numbers
 
-    private var openByKind: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            WorkSectionTitle(title: String(localized: "Aperte"), count: open.count)
-            FlowLayout(spacing: 8, lineSpacing: 8) {
-                ForEach(Decision.Kind.work, id: \.self) { kind in
-                    countTile(
-                        WorkStyle.plural(kind), open.filter { $0.decision.kind == kind }.count,
-                        icon: WorkStyle.icon(kind), tint: WorkStyle.tint(kind))
-                }
-                let overdue = open.filter {
-                    OpenWork.due($0.decision.dueAt) == .overdue && $0.decision.status != .waiting
-                }
-                if !overdue.isEmpty {
-                    countTile(
-                        String(localized: "In ritardo"), overdue.count, icon: "clock.badge.exclamationmark", tint: .red)
-                }
+    /// One row across the page: open and closed per kind, then late and blocked.
+    private var numbers: some View {
+        let overdue = open.filter { OpenWork.due($0.decision.dueAt) == .overdue && $0.decision.status != .waiting }
+        return HStack(spacing: 10) {
+            ForEach(Decision.Kind.work, id: \.self) { kind in
+                let all = entries.filter { $0.decision.kind == kind && $0.decision.status != .cancelled }
+                let openCount = all.filter { $0.decision.status.isOpen }.count
+                tile(
+                    WorkStyle.plural(kind), openCount, icon: WorkStyle.icon(kind), tint: WorkStyle.tint(kind),
+                    detail: String(localized: "aperte · \(all.count - openCount) chiuse"),
+                    progress: mode == .manage && !all.isEmpty ? Double(all.count - openCount) / Double(all.count) : nil)
+            }
+            tile(
+                String(localized: "In ritardo"), overdue.count, icon: "clock.badge.exclamationmark",
+                tint: overdue.isEmpty ? .secondary : .red, detail: String(localized: "scadenze passate"))
+            if mode == .manage {
+                let blocked = open.filter { $0.decision.status == .blocked }.count
+                tile(
+                    String(localized: "Bloccate"), blocked, icon: "nosign", tint: blocked == 0 ? .secondary : .red,
+                    detail: String(localized: "aspettano altre voci"))
             }
         }
+        .fixedSize(horizontal: false, vertical: true)
     }
 
-    private func countTile(_ title: String, _ count: Int, icon: String, tint: Color, detail: String? = nil)
-        -> some View
-    {
-        VStack(alignment: .leading, spacing: 3) {
+    private func tile(
+        _ title: String, _ count: Int, icon: String, tint: Color, detail: String, progress: Double? = nil
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 5) {
                 Image(systemName: icon).foregroundStyle(tint)
-                Text(title).font(.caption).foregroundStyle(.secondary)
+                Text(title).font(.caption.weight(.medium)).foregroundStyle(.secondary).lineLimit(1)
             }
-            Text("\(count)").font(.title2.weight(.semibold)).monospacedDigit()
+            Text("\(count)").font(.title.weight(.semibold)).monospacedDigit()
                 .foregroundStyle(count == 0 ? .secondary : .primary)
-            if let detail { Text(detail).font(.caption2).foregroundStyle(.secondary) }
-        }
-        .frame(minWidth: 110, alignment: .leading)
-        .padding(.horizontal, 12).padding(.vertical, 8)
-        .background(RoundedRectangle(cornerRadius: 8).fill(Color(nsColor: .controlBackgroundColor)))
-        .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.secondary.opacity(0.15)))
-    }
-
-    @ViewBuilder
-    private func list(_ title: String, _ shown: [DecisionSummary]) -> some View {
-        if !shown.isEmpty {
-            VStack(alignment: .leading, spacing: 2) {
-                WorkSectionTitle(title: title, count: shown.count)
-                ForEach(shown) { summary in
-                    WorkEntryRow(model: model, summary: summary, mode: mode, showsProject: spansProjects)
-                }
+            Text(detail).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+            if let progress {
+                ProgressView(value: progress).tint(tint).controlSize(.small)
             }
         }
-    }
-
-    // MARK: Gestisci
-
-    private var progress: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            WorkSectionTitle(title: String(localized: "Stato e avanzamento"))
-            FlowLayout(spacing: 8, lineSpacing: 8) {
-                ForEach(Decision.Kind.work, id: \.self) { kind in
-                    let all = entries.filter { $0.decision.kind == kind && $0.decision.status != .cancelled }
-                    let openCount = all.filter { $0.decision.status.isOpen }.count
-                    let closedCount = all.count - openCount
-                    VStack(alignment: .leading, spacing: 4) {
-                        HStack(spacing: 5) {
-                            Image(systemName: WorkStyle.icon(kind)).foregroundStyle(WorkStyle.tint(kind))
-                            Text(WorkStyle.plural(kind)).font(.caption).foregroundStyle(.secondary)
-                        }
-                        Text(String(localized: "\(openCount) aperte · \(closedCount) chiuse")).font(.callout)
-                            .monospacedDigit()
-                        ProgressView(value: all.isEmpty ? 0 : Double(closedCount) / Double(all.count))
-                            .tint(WorkStyle.tint(kind)).frame(width: 130)
-                    }
-                    .padding(.horizontal, 12).padding(.vertical, 8)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(Color(nsColor: .controlBackgroundColor)))
-                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.secondary.opacity(0.15)))
-                }
-                let overdue = open.filter {
-                    OpenWork.due($0.decision.dueAt) == .overdue && $0.decision.status != .waiting
-                }
-                countTile(
-                    String(localized: "In ritardo"), overdue.count, icon: "clock.badge.exclamationmark", tint: .red)
-                countTile(
-                    String(localized: "Bloccate"), open.filter { $0.decision.status == .blocked }.count,
-                    icon: "nosign", tint: .red)
-            }
-            if !nextMilestones.isEmpty {
-                Text(String(localized: "Prossime tappe")).font(.subheadline.weight(.semibold)).padding(.top, 4)
-                ForEach(nextMilestones) { summary in
-                    WorkEntryRow(model: model, summary: summary, mode: mode, showsProject: spansProjects)
-                }
-            }
-        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(.horizontal, 12).padding(.vertical, 10)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color(nsColor: .controlBackgroundColor)))
+        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.15)))
     }
 
     @ViewBuilder
@@ -218,7 +290,6 @@ struct WorkOverview: View {
                         $0.decision.updatedAt > lastSeen && $0.decision.createdAt <= lastSeen
                             && ($0.decision.closedAt ?? .distantPast) <= lastSeen
                     }
-                    WorkSectionTitle(title: String(localized: "Cosa è cambiato"))
                     Text(
                         String(
                             localized:
@@ -234,7 +305,6 @@ struct WorkOverview: View {
                     changeGroup(String(localized: "Chiuse"), closed)
                     changeGroup(String(localized: "Aggiornate"), updated)
                 } else {
-                    WorkSectionTitle(title: String(localized: "Cosa è cambiato"))
                     Text(String(localized: "È la prima volta che apri questo riepilogo: da ora qui vedi cosa cambia."))
                         .font(.callout).foregroundStyle(.secondary)
                 }
@@ -245,47 +315,16 @@ struct WorkOverview: View {
     @ViewBuilder
     private func changeGroup(_ title: String, _ shown: [DecisionSummary]) -> some View {
         if !shown.isEmpty {
-            Text("\(title) (\(shown.count))").font(.subheadline.weight(.semibold)).padding(.top, 6)
-            ForEach(shown.prefix(10)) { summary in
-                WorkEntryRow(model: model, summary: summary, mode: mode, showsProject: spansProjects)
-            }
-        }
-    }
-
-    @ViewBuilder
-    private var risks: some View {
-        let risks = open.filter { $0.decision.kind == .risk }
-        if !risks.isEmpty {
-            VStack(alignment: .leading, spacing: 2) {
-                WorkSectionTitle(title: String(localized: "Rischi"), count: risks.count)
-                ForEach([Decision.Severity?.some(.high), .some(.medium), .some(.low), .none], id: \.self) { severity in
-                    let shown = risks.filter { $0.decision.severity == severity }
-                    if !shown.isEmpty {
-                        Text(
-                            severity.map { String(localized: "Gravità \(WorkStyle.severity($0))") }
-                                ?? String(localized: "Gravità non indicata")
-                        )
-                        .font(.subheadline.weight(.semibold)).foregroundStyle(severity == .high ? .red : .secondary)
-                        .padding(.top, 6)
-                        ForEach(shown) { summary in
-                            WorkEntryRow(model: model, summary: summary, mode: mode, showsProject: spansProjects)
-                        }
-                    }
-                }
-            }
+            Text("\(title) (\(shown.count))").font(.caption.weight(.semibold)).foregroundStyle(.secondary)
+                .padding(.top, 6)
+            rows(Array(shown.prefix(10)))
         }
     }
 
     // MARK: Checklists
 
     private var checklistSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                WorkSectionTitle(
-                    title: String(localized: "Checklist"), count: checklists.isEmpty ? nil : checklists.count)
-                Spacer()
-                if let projectID { NewChecklistButton(model: model, projectID: projectID).padding(.top, 14) }
-            }
+        VStack(alignment: .leading, spacing: 8) {
             if checklists.isEmpty {
                 Text(
                     projectID == nil
@@ -295,7 +334,7 @@ struct WorkOverview: View {
                                 "Liste da spuntare del progetto, per esempio «Consegna finale». Fissate, compaiono anche in «Da fare»."
                         )
                 )
-                .font(.callout).foregroundStyle(.secondary)
+                .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
             ForEach(checklists) { list in
                 ChecklistCard(model: model, checklist: list, showsProject: spansProjects)
@@ -332,10 +371,6 @@ private struct StatusReportBox: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                WorkSectionTitle(title: String(localized: "Sintesi di stato"))
-                Spacer()
-            }
             Text(
                 String(
                     localized:

@@ -14,7 +14,7 @@ Puoi chiedergli cosa si è deciso, chi deve fare cosa, com'è cambiata una scelt
 1. **Raccoglie.** Registra le call dall'icona di IAGO {{icona}} nella barra dei menu (il nostro pappagallo con la memoria di ferro). Importa email, PDF, documenti, immagini, audio e trascrizioni di Teams, anche da sola da una cartella.
 2. **Ordina.** Ogni cosa trova il suo cliente, progetto e stream. La categoria dice che tipo di riunione era e i tag la rendono trasversale.
 3. **Capisce.** Trascrive, scrive la **sintesi** nella forma giusta per il tipo di riunione, ed estrae **decisioni, tappe e lavoro aperto** (attività, punti da chiarire, rischi, richieste), collegati tra loro quando uno chiude l'altro.
-4. **Tiene il filo.** **Da fare** raccoglie cosa è aperto, di chi è e per quando; il **Riepilogo** dice a che punto è un progetto. Se gestisci progetti, scegli *Gestisci* per avere anche la Kanban (vedi Punti chiave e lavoro aperto).
+4. **Tiene il filo.** **Da fare** raccoglie cosa è aperto, di chi è e per quando; il **Riepilogo** dice a che punto è un progetto. Ogni progetto è in *Gestisci*, con anche la Kanban; uno semplice lo metti in *Traccia* (vedi Punti chiave e lavoro aperto).
 5. **Risponde.** Cerca per parole o per significato, oppure chiedi a IAGO (⌘K): risponde solo con i tuoi contenuti e cita le fonti.
 
 ## Dove si trova cosa

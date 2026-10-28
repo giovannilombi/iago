@@ -123,18 +123,20 @@ import Testing
         #expect(try archive.boardColumns(scope).isEmpty)
     }
 
-    @Test func modeIsPerAppWithProjectsKeptSimple() throws {
+    @Test func modeIsPerProjectAndManageByDefault() throws {
         let fixture = try ArchiveFixture()
         let archive = fixture.archive
         let project = try archive.createProject(name: "Piccolo")
-        #expect(archive.workMode() == .track)
-        try archive.setWorkMode(.manage)
+        let other = try archive.createProject(name: "Grande")
         #expect(archive.workMode(projectID: project.id) == .manage)
         try archive.setProjectWorkMode(project.id, .track)
         #expect(archive.workMode(projectID: project.id) == .track)
+        #expect(archive.workMode(projectID: other.id) == .manage)
         #expect(archive.workMode(projectID: nil) == .manage)
-        try archive.setWorkMode(.track)
-        #expect(archive.workMode(projectID: project.id) == .track)
+        #expect(try archive.trackedProjectIDs() == [project.id])
+        try archive.setProjectWorkMode(project.id, .manage)
+        #expect(try archive.projects().first { $0.id == project.id }?.workMode == nil)
+        #expect(try archive.trackedProjectIDs().isEmpty)
     }
 
     @Test func ownersAndSimilarNames() throws {

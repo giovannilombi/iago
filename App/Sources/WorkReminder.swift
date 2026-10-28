@@ -23,13 +23,9 @@ final class WorkReminder {
         self.archive = archive
     }
 
-    /// On, as chosen, or as the mode wants.
+    /// Off until the user turns it on (Impostazioni › Generale).
     static func isEnabled(_ archive: Archive) -> Bool {
-        switch (try? archive.setting(enabledKey)) ?? nil {
-        case "1": true
-        case "0": false
-        default: archive.workMode() == .manage
-        }
+        ((try? archive.setting(enabledKey)) ?? nil) == "1"
     }
 
     static func time(_ archive: Archive) -> (hour: Int, minute: Int) {

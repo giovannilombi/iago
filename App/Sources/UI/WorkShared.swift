@@ -6,19 +6,16 @@ import SwiftUI
 // MARK: - Mode and people
 
 extension AppModel {
-    /// The app's work mode, read through `revision` so the views follow the setting.
-    var workViewsMode: WorkMode {
-        _ = revision
-        return archive.workMode()
-    }
+    /// The mode of the global views («Da fare», «Punti chiave»): «Gestisci»; each entry follows its own project.
+    var workViewsMode: WorkMode { .manage }
 
-    /// The mode a scope is shown in: a project (or a stream's project) can stay in «Traccia».
+    /// The mode a scope is shown in: a project (or a stream's project) can be kept in «Traccia».
     func workViewsMode(for scope: DecisionQuery.Scope?) -> WorkMode {
         _ = revision
         switch scope {
         case .project(let id): return archive.workMode(projectID: id)
         case .stream(let id): return archive.workMode(projectID: stream(id)?.projectId)
-        default: return archive.workMode()
+        default: return .manage
         }
     }
 

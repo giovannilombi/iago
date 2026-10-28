@@ -52,7 +52,7 @@ struct WorkBoard: View {
                     Text(
                         String(
                             localized:
-                                "La kanban c'è nella modalità Gestisci, quando è accesa (Impostazioni › Generale). Un progetto tenuto in Traccia non ha la kanban."
+                                "La kanban c'è nei progetti in Gestisci, quando è accesa (Impostazioni › Generale). Un progetto tenuto in Traccia non ha la kanban."
                         ))
                 }
             }
@@ -80,7 +80,7 @@ struct WorkBoard: View {
             Spacer(minLength: 8)
             Picker(String(localized: "Vista"), selection: $model.viewMode) {
                 Label(String(localized: "Elenco"), systemImage: "list.bullet").tag(
-                    model.sidebar == .decisions ? AppModel.ViewMode.decisions : AppModel.ViewMode.list)
+                    AppModel.ViewMode.list)
                 Label(String(localized: "Kanban"), systemImage: "rectangle.split.3x1").tag(AppModel.ViewMode.board)
             }
             .pickerStyle(.segmented).labelsHidden().fixedSize()
@@ -148,6 +148,10 @@ struct WorkBoard: View {
                 DecisionQuery(
                     scope: scope.query, statuses: Set(Self.fixed + [.superseded]), kinds: Set(Decision.Kind.work))))
             ?? []
+        // Boards spanning projects leave out those kept in «Traccia» (ADR-0074).
+        if spansProjects, let tracked = try? archive.trackedProjectIDs(), !tracked.isEmpty {
+            entries.removeAll { $0.decision.projectId.map(tracked.contains) ?? false }
+        }
         columns = (try? archive.boardColumns(scope)) ?? []
         places = (try? archive.boardPlaces(scope)) ?? [:]
         showsArchived = ((try? archive.setting(Archive.boardShowArchivedKey)) ?? nil) == "1"

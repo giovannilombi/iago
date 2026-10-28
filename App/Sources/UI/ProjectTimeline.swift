@@ -35,7 +35,7 @@ struct ProjectTimeline: View {
                 .frame(maxWidth: .infinity)
             }
             .overlay {
-                if model.summaries.isEmpty && model.timelineDecisions.isEmpty {
+                if groups.isEmpty {
                     ContentUnavailableView(
                         String(localized: "Nessun elemento in questo progetto"), systemImage: "calendar")
                 }
@@ -43,21 +43,35 @@ struct ProjectTimeline: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 VStack(spacing: 0) {
                     ViewModePicker(model: model)
-                    FilterBar(model: model)
+                    if model.viewContent != .keyPoints { FilterBar(model: model) }
                 }
                 .background(.bar)
             }
         }
     }
 
-    /// Items and decisions (FR-154) interleaved by date, most recent first. Decisions are shown only when no
-    /// item filter is active, so filtering by tag or type shows just the matching items.
+    /// The history of «Mostra», grouped by month, most recent first.
     private var groups: [(month: Date, entries: [TimelineRow])] {
         let calendar = Calendar.current
-        var rows = model.summaries.map(TimelineRow.item)
+        let rows = TimelineRow.history(model)
+        let grouped = Dictionary(grouping: rows) {
+            calendar.date(from: calendar.dateComponents([.year, .month], from: $0.date))!
+        }
+        return grouped.keys.sorted(by: >).map { ($0, grouped[$0]!) }
+    }
+}
+
+enum TimelineRow: Identifiable {
+    /// Items, key points (FR-154) and notes (FR-175) interleaved by date, most recent first, as «Mostra» wants
+    /// (ADR-0075): materials are items and notes. Key points are shown only when no item filter is active, so
+    /// filtering by tag or type shows just the matching items.
+    @MainActor
+    static func history(_ model: AppModel) -> [TimelineRow] {
+        let content = model.viewContent
+        var rows = content == .keyPoints ? [] : model.summaries.map(TimelineRow.item)
         rows.sort { $0.date > $1.date }
-        if !model.filter.isActive {
-            // Decisions keep their own order (superseded under their successor on the same day) and are
+        if content != .materials, !model.filter.isActive || content == .keyPoints {
+            // Key points keep their own order (superseded under their successor on the same day) and are
             // merged in by date.
             var merged: [TimelineRow] = []
             var items = rows[...]
@@ -73,8 +87,7 @@ struct ProjectTimeline: View {
             }
             rows = merged + items
         }
-        if !model.filter.isActive, !model.timelineNotes.isEmpty {
-            // Notes at their own date (FR-175).
+        if content != .keyPoints, !model.filter.isActive, !model.timelineNotes.isEmpty {
             var merged: [TimelineRow] = []
             var notes = model.timelineNotes.sorted { $0.notedAt > $1.notedAt }[...]
             for row in rows {
@@ -86,14 +99,9 @@ struct ProjectTimeline: View {
             }
             rows = merged + notes.map(TimelineRow.note)
         }
-        let grouped = Dictionary(grouping: rows) {
-            calendar.date(from: calendar.dateComponents([.year, .month], from: $0.date))!
-        }
-        return grouped.keys.sorted(by: >).map { ($0, grouped[$0]!) }
+        return rows
     }
-}
 
-enum TimelineRow: Identifiable {
     case item(ItemSummary)
     case decision(DecisionSummary)
     case note(Note)
