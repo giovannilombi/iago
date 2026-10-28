@@ -18,6 +18,16 @@ enum DemoMode {
         #endif
     }
 
+    /// Debug only: `-IAGOTrialRoot <dir>` opens a copy of the user's archive there, to try a branch without touching
+    /// the real one (`scripts/try-branch.sh`). Unlike the demo root, nothing is seeded.
+    static var trialRoot: URL? {
+        #if DEBUG
+            UserDefaults.standard.string(forKey: "IAGOTrialRoot").map { URL(fileURLWithPath: $0, isDirectory: true) }
+        #else
+            nil
+        #endif
+    }
+
     #if DEBUG
         static let logger = Logger(subsystem: "com.giovannilombi.iago", category: "demo")
 

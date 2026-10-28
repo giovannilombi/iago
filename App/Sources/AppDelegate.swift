@@ -25,8 +25,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // never shows the generic one.
         if let icon = NSImage(named: "AppIcon") { NSApp.applicationIconImage = icon }
         do {
-            // DEBUG: a demo archive elsewhere, for the guide's screenshots (DemoMode).
-            let paths = try DemoMode.root.map { StoragePaths(root: $0) } ?? StoragePaths.applicationSupport()
+            // DEBUG: a demo archive elsewhere, for the guide's screenshots, or a copy of the archive to try a branch.
+            let paths =
+                try (DemoMode.root ?? DemoMode.trialRoot).map { StoragePaths(root: $0) } ?? StoragePaths.applicationSupport()
             try paths.createDirectories()
             try paths.clearScratch()
             self.paths = paths

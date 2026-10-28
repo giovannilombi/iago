@@ -105,8 +105,8 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 
 ## 6. Prove
 - Le prove manuali sono in [`docs/prove-tester.md`](docs/prove-tester.md), ordinate e scritte per chi non conosce l'app.
-- **Ogni tester ha una issue su GitHub**, "Prove 1.0.0-beta — Nome Cognome", con tutte le prove come caselle da spuntare. Si spunta la casella quando la prova funziona; per un problema si scrive un commento con il numero della prova (es. "3h.4"), cosa si è fatto e cosa si è visto. Tutti i collaboratori leggono le issue e i commenti.
-- Una nuova tornata di prove (nuova beta, nuovo tester) si apre con `scripts/new-test-round.sh "Nome Cognome" 1.0.0-beta.2`: la issue prende le prove dalla versione attuale di `docs/prove-tester.md`.
+- **Ogni tester ha una issue su GitHub**, "Prove 1.1.0-beta — Nome Cognome", con tutte le prove come caselle da spuntare. Si spunta la casella quando la prova funziona; per un problema si scrive un commento con il numero della prova (es. "3h.4"), cosa si è fatto e cosa si è visto. Tutti i collaboratori leggono le issue e i commenti.
+- Una nuova tornata di prove (nuova beta, nuovo tester) si apre con `scripts/new-test-round.sh "Nome Cognome" 1.1.0-beta`: la issue prende le prove dalla versione attuale di `docs/prove-tester.md`.
 - Un difetto trovato diventa una issue a parte, collegata alla prova; la correzione arriva con una PR che la chiude.
 - Per le prove non servono dati reali. Chi prova con le proprie call tiene quei contenuti per sé: nei commenti si descrive il comportamento, non il contenuto.
 
@@ -126,6 +126,7 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 - A ogni PR che tocca la documentazione la CI compila il sito; a ogni push su `main` lo ripubblica (quando il repository è pubblico).
 
 ## 9. Fare una release
-- La versione è in `project.yml`. Le beta si chiamano `1.0.0-beta.2`, `1.0.0-beta.3`…; la 1.0.0 sarà la prima distribuibile.
+- La versione è in `project.yml`, nella forma `x.y.z-beta`. Il terzo numero sale con una PR che cambia l'app (si chiede a Giovanni), il secondo con un gruppo grande di funzioni. Alla distribuzione si toglie `-beta`.
+- Ogni versione ha un **tag annotato** (`git tag -a v1.0.1-beta -m "…funzioni…"`) che fa da punto di ripristino per codice, guida e documentazione; vedi README › *Tornare a una versione precedente*. Il ramo `release/1.0.x` tiene la serie 1.0.
 - `scripts/release.sh <versione> --notes "…" --github` compila, firma l'archivio per Sparkle (la chiave è nel Portachiavi di Giovanni) e pubblica la release. Funziona solo con il repository pubblico, cioè quando si decide di distribuire.
 - A ogni release si aggiorna la tabella Versioni del README.

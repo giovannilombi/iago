@@ -5,7 +5,7 @@
 > Ultimo aggiornamento: **27 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.0.0-beta, non distribuita. La 1.0.0 sarà la prima versione distribuibile.
+- **Versione:** 1.0.1-beta, non distribuita (tag `v1.0.1-beta`, punto di ripristino prima della 1.1.0-beta; ramo `release/1.0.x`). La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
@@ -41,6 +41,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-28:** versione 1.0.1-beta e punto di ripristino (tag `v1.0.1-beta`, ramo `release/1.0.x`); regola delle versioni in `CLAUDE.md` e README-collaborators; README › Tornare a una versione precedente.
 - **2026-10-27:** riconoscere le stesse voci in call diverse (ADR-0073): Impostazioni › Voci, spento di default. Dare un nome a uno speaker insegna la sua voce; nelle call successive arriva la proposta «Speaker 2 diventa Marco» con «Riconosciuta dalla voce (somiglianza …%)», sempre da confermare. Impronte cifrate con la chiave della call, mai a Claude o negli export; voci eliminabili una per una o tutte (tre passi). Migrazione `v20-voices`.
 - **2026-10-27:** correzioni dopo la revisione del codice: una chat annullata mentre aspetta in coda esce subito; la ricerca mentre si scrive non interrompe il lavoro in sottofondo; i punti di Claude «dalla schermata» richiedono una schermata vera a quel minuto; la sintesi automatica non sovrascrive una sintesi di Claude o modificata a mano arrivata nel frattempo; annullare una sintesi di Claude riscritta dopo è rifiutato; schermate senza doppioni dopo un crash e senza testo rimasto dopo l'eliminazione; minuto della schermata preso alla richiesta; scorciatoie sempre con ⌃ o ⌥; `release.sh` non può impacchettare una build vecchia.
 - **2026-10-27:** Claude fa sintesi e proposte al posto del motore (ADR-0071): «Copia per Claude» nella scheda, strumenti MCP `recent_items`, `summary_template`, `set_summary`, `propose_suggestions` con le citazioni verificate da IAGO, annullabili. «Segna momento con screenshot» e scorciatoie in tutte le app ⌃⌥M, ⌃⌥S, ⌃⌥R (ADR-0072): schermate cifrate nella call, testo letto con l'OCR del Mac nella trascrizione, nella ricerca e nelle sintesi; immagini a Claude solo se l'utente lo sceglie; nuovo permesso Registrazione schermo. Distribuzione con DMG; le copie compilate da sorgente non cercano aggiornamenti (modifica di ADR-0059).
