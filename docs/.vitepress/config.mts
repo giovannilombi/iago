@@ -100,8 +100,14 @@ const tecnicoSidebar: DefaultTheme.SidebarItem[] = [
 // Repository giovannilombi/iago → site at https://giovannilombi.github.io/iago/
 const repo = 'iago'
 
+// The site shows the version of the app it documents (project.yml): going back to a version brings its docs back too.
+const appVersion =
+  readFileSync(new URL('../../project.yml', import.meta.url), 'utf8').match(/CFBundleShortVersionString: "([^"]+)"/)?.[1] ??
+  ''
+
 export default withMermaid(defineConfig({
   lang: 'it-IT',
+  vite: { define: { __IAGO_VERSION__: JSON.stringify(appVersion) } },
   title: 'IAGO',
   description: 'La memoria interrogabile del tuo lavoro, per macOS: call, email, documenti e decisioni, con le fonti.',
   base: `/${repo}/`,
@@ -137,7 +143,7 @@ export default withMermaid(defineConfig({
       provider: 'local',
       options: {
         translations: {
-          button: { buttonText: 'Cerca', buttonAriaLabel: 'Cerca' },
+          button: { buttonText: 'Cerca nella documentazione', buttonAriaLabel: 'Cerca nella documentazione' },
           modal: {
             noResultsText: 'Nessun risultato per',
             resetButtonTitle: 'Cancella',

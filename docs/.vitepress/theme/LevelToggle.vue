@@ -35,7 +35,7 @@ function go(level: 'uso' | 'tecnico') {
 <style scoped>
 .level-toggle {
   display: inline-flex;
-  margin-right: 12px;
+  flex: none;
   padding: 2px;
   border: 1px solid var(--vp-c-divider);
   border-radius: 8px;
