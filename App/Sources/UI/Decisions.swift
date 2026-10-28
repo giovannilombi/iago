@@ -379,7 +379,9 @@ private struct DecisionFilterBar: View {
         case .decision: String(localized: "Decisioni")
         case .action: String(localized: "Attività")
         case .milestone: String(localized: "Tappe")
-        case .openQuestion: String(localized: "Domande aperte")
+        case .openQuestion: String(localized: "Punti da chiarire")
+        case .risk: String(localized: "Rischi")
+        case .request: String(localized: "Richieste")
         }
     }
 
@@ -395,6 +397,9 @@ private struct DecisionFilterBar: View {
         case .done: String(localized: "Fatte")
         case .superseded: String(localized: "Superate")
         case .cancelled: String(localized: "Annullate")
+        case .inProgress: String(localized: "In corso")
+        case .waiting: String(localized: "In attesa")
+        case .blocked: String(localized: "Bloccate")
         }
     }
 
@@ -636,7 +641,9 @@ struct DecisionRow: View {
         case .decision: String(localized: "Decisione")
         case .action: String(localized: "Attività")
         case .milestone: String(localized: "Tappa")
-        case .openQuestion: String(localized: "Domanda aperta")
+        case .openQuestion: String(localized: "Punto da chiarire")
+        case .risk: String(localized: "Rischio")
+        case .request: String(localized: "Richiesta")
         }
     }
 

@@ -176,6 +176,7 @@ private struct GeneralPane: View {
                 }
         }
         .onAppear { name = (try? model.archive.setting(TranscriptionService.meLabelKey)) ?? "Io" }
+        WorkViewsSettings(model: model)
         if let shortcuts = model.shortcuts { ShortcutSettings(model: model, shortcuts: shortcuts) }
     }
 

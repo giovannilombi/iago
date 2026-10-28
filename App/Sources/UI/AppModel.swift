@@ -42,6 +42,8 @@ final class AppModel {
         case library(LibraryScope)
         /// The global decision register (FR-153).
         case decisions
+        /// «Da fare»: the open work of every project (ADR-0074).
+        case inbox
         /// "Importa": drop area and every way to bring material in (files, clipboard, text, emails).
         case importer
         /// "Attività" (ADR-0055).
@@ -344,8 +346,9 @@ final class AppModel {
         }
     }
 
-    /// List, timeline or decision register for the current scope; a project opens on its timeline.
-    enum ViewMode: Hashable { case list, timeline, decisions, graph }
+    /// List, timeline or decision register for the current scope; a project opens on its timeline. «Riepilogo» and
+    /// the kanban (ADR-0074) are for projects, clients and streams; the kanban also for «Da fare» and «Punti chiave».
+    enum ViewMode: Hashable { case list, timeline, decisions, graph, overview, board }
     var viewMode = ViewMode.list { didSet { if viewMode != oldValue { reload() } } }
     var showsTimeline: Bool { viewMode == .timeline }
     var showsDecisions: Bool { viewMode == .decisions || sidebar == .decisions }
@@ -382,7 +385,7 @@ final class AppModel {
         case .library(.stream(let id)): return .stream(id)
         case .library(.unclassified), .library(.undefinedProject): return .noProject
         case .library: return .all
-        case .importer, .activity, .labels, .trash, nil: return nil
+        case .importer, .activity, .labels, .trash, .inbox, nil: return nil
         }
     }
 
