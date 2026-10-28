@@ -100,11 +100,13 @@ public enum ProjectExporter {
             let decisions = try archive.decisions(DecisionQuery(scope: scope, statuses: []))
                 .sorted { $0.decision.decidedAt < $1.decision.decidedAt }
             if !decisions.isEmpty {
-                lines += ["", "## Punti chiave (decisioni, attività, tappe)", ""]
+                lines += ["", "## Punti chiave (decisioni, tappe e lavoro aperto)", ""]
                 for summary in decisions {
                     let inChain = summary.supersedes != nil || summary.supersededBy != nil
                     let chainName = inChain ? try archive.chainName(of: summary.id) : nil
-                    lines += decisionLines(summary, chainName: chainName, timeZone: timeZone)
+                    let checklist =
+                        summary.checklist.total > 0 ? try archive.checklistItems(decisionID: summary.id) : []
+                    lines += decisionLines(summary, chainName: chainName, checklist: checklist, timeZone: timeZone)
                 }
             }
         }
@@ -138,11 +140,13 @@ public enum ProjectExporter {
         return lines.joined(separator: "\n") + "\n"
     }
 
-    /// One decision as a Markdown list entry, with status, source, chain and description (FR-155).
+    /// One decision as a Markdown list entry, with status, source, chain, open work details, checklist and
+    /// description (FR-155, ADR-0074).
     public static func decisionMarkdown(
-        _ summary: DecisionSummary, chainName: String? = nil, timeZone: TimeZone = .current
+        _ summary: DecisionSummary, chainName: String? = nil, checklist: [ChecklistItem] = [],
+        timeZone: TimeZone = .current
     ) -> String {
-        decisionLines(summary, chainName: chainName, timeZone: timeZone).joined(separator: "\n")
+        decisionLines(summary, chainName: chainName, checklist: checklist, timeZone: timeZone).joined(separator: "\n")
     }
 
     static func itemEntry(_ id: String, archive: Archive, includeNotes: Bool) throws -> Entry {
@@ -248,12 +252,16 @@ public enum ProjectExporter {
         return lines
     }
 
-    /// One decision with status, date, source and its "supera" chain (FR-155).
-    static func decisionLines(_ summary: DecisionSummary, chainName: String? = nil, timeZone: TimeZone) -> [String] {
+    /// One decision with status, date, source and its "supera" chain (FR-155); for open work also owner, due date,
+    /// waiting for, outcome and checklist (ADR-0074): `[Punto da chiarire · Chiarito] … → answer`.
+    static func decisionLines(
+        _ summary: DecisionSummary, chainName: String? = nil, checklist: [ChecklistItem] = [], timeZone: TimeZone
+    ) -> [String] {
         let decision = summary.decision
-        let status = KeyPointLabels.tag(decision)
+        let status = KeyPointLabels.tag(decision, closedBy: summary.supersededByAll)
         var line =
             "- **[\(status)] \(TranscriptRenderer.format(decision.decidedAt, "yyyy-MM-dd", timeZone))** \(decision.text)"
+        if let outcome = decision.outcome, !outcome.isEmpty { line += " → \(outcome)" }
         var details: [String] = []
         if let title = summary.sourceTitle {
             details.append(
@@ -263,14 +271,17 @@ public enum ProjectExporter {
         }
         if let chainName { details.append("evoluzione: «\(chainName)»") }
         if !summary.people.isEmpty { details.append("persone: \(summary.people.joined(separator: ", "))") }
+        details += KeyPointLabels.workDetails(summary, timeZone: timeZone)
         if !summary.supersedesAll.isEmpty {
             details.append("supera: " + summary.supersedesAll.map { "«\($0.text)»" }.joined(separator: ", "))
         }
         if !summary.supersededByAll.isEmpty {
-            details.append("superata da: " + summary.supersededByAll.map { "«\($0.text)»" }.joined(separator: ", "))
+            let closedBy = decision.kind.isWork ? "chiusa da: " : "superata da: "
+            details.append(closedBy + summary.supersededByAll.map { "«\($0.text)»" }.joined(separator: ", "))
         }
         if !details.isEmpty { line += " — " + details.joined(separator: "; ") }
         var lines = [line]
+        lines += checklist.map { "  - \(KeyPointLabels.checklistLine($0))" }
         if let description = decision.notes, !description.isEmpty {
             lines += description.components(separatedBy: "\n").map { "  > \($0)" }
         }
