@@ -206,7 +206,8 @@ extension Archive {
                 if try blocker == id || Self.dependsOn(blocker, id, db) { throw WorkError.dependencyCycle }
             }
             let had =
-                try Int.fetchOne(db, sql: "SELECT count(*) FROM decision_dependency WHERE blocked_id = ?", arguments: [id])
+                try Int.fetchOne(
+                    db, sql: "SELECT count(*) FROM decision_dependency WHERE blocked_id = ?", arguments: [id])
                 ?? 0
             try db.execute(sql: "DELETE FROM decision_dependency WHERE blocked_id = ?", arguments: [id])
             for blocker in Set(blockers) {
@@ -329,6 +330,36 @@ extension Archive {
                 guard var item = try ChecklistItem.fetchOne(db, key: id), item.sortOrder != index else { continue }
                 item.sortOrder = index
                 try writer.save(&item, db)
+            }
+        }
+    }
+
+    /// Replaces the whole checklist of an entry (Claude, and undoing Claude's change): lines with the same text keep
+    /// their item, the others are added or removed.
+    public func replaceChecklist(_ lines: [MCPPrevious.ChecklistLine], decisionID: String) throws {
+        let writer = self.writer
+        try database.writer.write { db in
+            var existing = try ChecklistItem.filter(Column("decision_id") == decisionID && Column("deleted_at") == nil)
+                .order(Column("sort_order"), Column("created_at")).fetchAll(db)
+            for (index, line) in lines.enumerated() {
+                let text = line.text.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !text.isEmpty else { continue }
+                if let position = existing.firstIndex(where: { $0.text == text }) {
+                    var item = existing.remove(at: position)
+                    guard item.done != line.done || item.sortOrder != index else { continue }
+                    item.done = line.done
+                    item.sortOrder = index
+                    try writer.save(&item, db)
+                } else {
+                    var item = ChecklistItem(
+                        id: newID(at: writer.now), decisionId: decisionID, text: text, done: line.done,
+                        sortOrder: index)
+                    try writer.save(&item, db)
+                }
+            }
+            for var item in existing {
+                item.text = ""
+                try writer.tombstone(&item, db)
             }
         }
     }
@@ -485,7 +516,8 @@ extension Archive {
 
     /// Keeps `closedAt` in step with the state.
     static func stampClosed(_ decision: inout Decision, now: Date) {
-        let closed = !decision.status.isOpen && decision.kind.isWork
+        let closed =
+            !decision.status.isOpen && decision.kind.isWork
             || decision.status == .superseded || decision.status == .cancelled
         if closed, decision.closedAt == nil { decision.closedAt = now }
         if !closed { decision.closedAt = nil }
@@ -522,7 +554,8 @@ extension Archive {
         for table in ["decision_entity", "decision_tag", "decision_stream"] {
             let column = table == "decision_entity" ? "entity_id" : table == "decision_tag" ? "tag_id" : "stream_id"
             try db.execute(
-                sql: "INSERT INTO \(table) (decision_id, \(column)) SELECT ?, \(column) FROM \(table) WHERE decision_id = ?",
+                sql:
+                    "INSERT INTO \(table) (decision_id, \(column)) SELECT ?, \(column) FROM \(table) WHERE decision_id = ?",
                 arguments: [next.id, done.id])
         }
         for item in try ChecklistItem.filter(Column("decision_id") == done.id && Column("deleted_at") == nil)

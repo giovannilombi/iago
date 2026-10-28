@@ -8,7 +8,8 @@ import Testing
         _ archive: Archive, _ text: String, _ kind: Decision.Kind = .action, project: String? = nil,
         at date: Date = Date(timeIntervalSince1970: 1_800_000_000)
     ) throws -> Decision {
-        try archive.createDecision(Decision(text: text, decidedAt: date, projectId: project, origin: .manual, kind: kind))
+        try archive.createDecision(
+            Decision(text: text, decidedAt: date, projectId: project, origin: .manual, kind: kind))
     }
 
     @Test func newKindsAndOpenStatesAreCurrentByDefault() throws {
@@ -149,5 +150,48 @@ import Testing
         try archive.updateDecision(task.id) { $0.ownerId = marco.id }
         #expect(try archive.decisionSummary(task.id)?.ownerName == "Marco Rossi")
         #expect(try archive.decisions(DecisionQuery(ownerID: marco.id)).map(\.id) == [task.id])
+    }
+
+    @Test func replacingAChecklistKeepsTheSameLines() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let task = try entry(archive, "Consegna")
+        let kept = try archive.addChecklistItem("Raccogliere i file", decisionID: task.id)
+        try archive.addChecklistItem("Vecchia riga", decisionID: task.id)
+        try archive.replaceChecklist(
+            [.init(text: "Inviare il link", done: false), .init(text: "Raccogliere i file", done: true)],
+            decisionID: task.id)
+        let items = try archive.checklistItems(decisionID: task.id)
+        #expect(items.map(\.text) == ["Inviare il link", "Raccogliere i file"])
+        #expect(items.map(\.done) == [false, true])
+        #expect(items.last?.id == kept.id)
+    }
+
+    @Test func undoingClaudesChangeRestoresTheWorkFields() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let blocker = try entry(archive, "Firmare il contratto")
+        let task = try entry(archive, "Preventivo")
+        try archive.addChecklistItem("Bozza", decisionID: task.id)
+        let before = try #require(try archive.decision(task.id))
+        let change = try archive.recordMCPChange(
+            .decision, id: task.id, action: .update,
+            previous: MCPPrevious(
+                text: before.text, status: before.status, work: .init(before), blockerIDs: [],
+                checklist: [.init(text: "Bozza", done: false)]))
+        try archive.updateDecision(task.id) {
+            $0.kind = .risk
+            $0.severity = .high
+            $0.dueAt = Date(timeIntervalSince1970: 1_800_100_000)
+        }
+        try archive.setBlockers([blocker.id], of: task.id)
+        try archive.replaceChecklist([.init(text: "Altro", done: true)], decisionID: task.id)
+
+        try archive.undoMCPChange(try #require(change.id))
+        let after = try #require(try archive.decision(task.id))
+        #expect(after.kind == .action && after.severity == nil && after.dueAt == nil)
+        #expect(after.status == .active)
+        #expect(try archive.blockers(of: task.id).isEmpty)
+        #expect(try archive.checklistItems(decisionID: task.id).map(\.text) == ["Bozza"])
     }
 }
