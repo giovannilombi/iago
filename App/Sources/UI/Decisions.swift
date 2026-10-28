@@ -38,6 +38,14 @@ struct DecisionDraft: Identifiable {
     var sourceLabel: String?
     /// Placeholder of an empty title (first sentence); used as the title if the user leaves it empty.
     var titleHint: String?
+    // Open work (ADR-0074): people by name, resolved to person entities on saving.
+    var ownerName: String?
+    var dueAt: Date?
+    var waitingOnName: String?
+    var waitingUntil: Date?
+    var priority: Int?
+    var severity: Decision.Severity?
+    var status = Decision.Status.active
 
     init(projectID: String? = nil, kind: Decision.Kind = .decision) {
         self.projectID = projectID
