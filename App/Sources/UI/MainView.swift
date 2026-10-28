@@ -115,6 +115,9 @@ struct MainView: View {
         .sheet(item: $model.editingDecision) { draft in
             DecisionEditor(model: model, draft: draft)
         }
+        .sheet(item: $model.closingKeyPoint) { closing in
+            KeyPointClosingSheet(model: model, closing: closing)
+        }
         .sheet(
             item: Binding(
                 get: { model.pendingEmails.first },
@@ -505,7 +508,7 @@ struct ViewModePicker: View {
                     Label(String(localized: "Nota"), systemImage: "note.text")
                 }
                 Divider()
-                ForEach([Decision.Kind.action, .milestone, .decision], id: \.self) { kind in
+                ForEach(DecisionRow.allKinds, id: \.self) { kind in
                     Button {
                         model.newKeyPoint(kind, projectID: id)
                     } label: {

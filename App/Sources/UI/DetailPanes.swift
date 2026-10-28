@@ -33,45 +33,119 @@ struct DecisionDetailView: View {
             HStack(spacing: 8) {
                 Text(DecisionRow.kindLabel(decision.kind)).font(.callout.weight(.bold))
                     .foregroundStyle(DecisionRow.tint(decision.kind))
-                Label(DecisionRow.label(decision), systemImage: DecisionRow.icon(decision))
-                    .font(.callout.weight(.semibold)).foregroundStyle(DecisionRow.color(decision))
+                Label(DecisionRow.label(summary, mode: mode), systemImage: DecisionRow.icon(summary))
+                    .font(.callout.weight(.semibold)).foregroundStyle(DecisionRow.color(summary))
                 Text(decision.decidedAt.formatted(date: .long, time: .shortened)).foregroundStyle(.secondary)
                 Spacer()
-                if decision.kind == .action, decision.status == .active {
-                    Button(String(localized: "Segna come fatta")) { model.setDecisionStatus(decision.id, .done) }
-                    Button(String(localized: "Diventa decisione…")) {
-                        model.editingDecision = .superseding(summary, kind: .decision)
-                    }
-                } else if decision.kind == .action, decision.status == .done {
-                    Button(String(localized: "Riapri")) { model.setDecisionStatus(decision.id, .active) }
-                }
+                KeyPointPrimaryAction(model: model, summary: summary)
                 Button(String(localized: "Modifica…")) { model.editingDecision = DecisionDraft(summary) }
+                Menu {
+                    KeyPointActions(model: model, summary: summary)
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+                .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                .help(String(localized: "Altre azioni"))
             }
             ViaClaudeBadge(model: model, entity: .decision, id: decision.id)
             if let provenance = Provenance.decision(decision) {
                 ProvenanceLine(text: provenance, model: decision.model == Provenance.claude ? nil : decision.model)
             }
             Text(decision.text).font(.title2.weight(.semibold)).textSelection(.enabled)
-                .strikethrough(decision.status == .superseded || decision.status == .cancelled, color: .secondary)
+                .strikethrough(
+                    DecisionRow.look(decision, closedBy: summary.supersededBy?.kind) == .struck, color: .secondary
+                )
                 .fixedSize(horizontal: false, vertical: true)
+            if let outcome = outcomeLine(summary) {
+                Label(outcome, systemImage: "arrow.turn.down.right").font(.callout).foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+            }
             facts(summary)
             if let description = decision.notes, !description.isEmpty {
                 SectionBox(String(localized: "Descrizione"), systemImage: "text.alignleft", tint: .secondary) {
                     MarkdownText(markdown: description).textSelection(.enabled)
                 }
             }
+            if decision.kind.isWork { ChecklistSection(model: model, decisionID: decision.id) }
             source(summary)
             evolution(summary)
-            if chain.count <= 1, summary.decision.status == .active, !related.isEmpty { others(summary) }
+            if chain.count <= 1, summary.decision.status == .active, !summary.decision.kind.isWork, !related.isEmpty {
+                others(summary)
+            }
         }
     }
 
+    private var mode: WorkMode { model.workMode(for: summary?.decision.projectId) }
+
+    /// How a closed entry ended: the answer, the reason, the decision that answered it.
+    private func outcomeLine(_ summary: DecisionSummary) -> String? {
+        let decision = summary.decision
+        guard !decision.status.isOpen else { return nil }
+        if decision.status == .superseded, let newer = summary.supersededBy,
+            DecisionRow.link(newer: newer.kind, older: decision.kind).isPositive
+        {
+            return "\(DecisionRow.closedByLabel(older: decision.kind, by: newer.kind)): \(newer.text)"
+        }
+        guard let text = decision.outcome, !text.isEmpty else { return nil }
+        return "\(DecisionRow.outcomeLabel(decision)): \(text)"
+    }
+
     private func facts(_ summary: DecisionSummary) -> some View {
-        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
+        let decision = summary.decision
+        return Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
             GridRow {
                 Text(String(localized: "Progetto")).foregroundStyle(.secondary)
                 Text(summary.projectName ?? String(localized: "Da classificare"))
             }
+            if let owner = summary.ownerName {
+                GridRow {
+                    Text(String(localized: "Responsabile")).foregroundStyle(.secondary)
+                    Text(owner)
+                }
+            }
+            if let due = decision.dueAt, decision.kind.isWork {
+                GridRow {
+                    Text(String(localized: "Scadenza")).foregroundStyle(.secondary)
+                    Text(due.formatted(date: .long, time: .omitted))
+                        .foregroundStyle(DecisionRow.isOverdue(decision) ? Color.red : Color.primary)
+                }
+            }
+            if summary.waitingOnName != nil || decision.waitingUntil != nil {
+                GridRow {
+                    Text(String(localized: "In attesa di")).foregroundStyle(.secondary)
+                    Text(
+                        [
+                            summary.waitingOnName,
+                            decision.waitingUntil.map {
+                                String(localized: "entro \($0.formatted(date: .long, time: .omitted))")
+                            },
+                        ].compactMap { $0 }.joined(separator: " · "))
+                }
+            }
+            if let severity = decision.severity, decision.kind == .risk {
+                GridRow {
+                    Text(String(localized: "Gravità")).foregroundStyle(.secondary)
+                    Text(DecisionRow.severityLabel(severity))
+                }
+            }
+            if let happened = decision.happenedAt {
+                GridRow {
+                    Text(String(localized: "Diventato problema")).foregroundStyle(.secondary)
+                    Text(happened.formatted(date: .long, time: .omitted)).foregroundStyle(.red)
+                }
+            }
+            if let origin = summary.derivedFrom {
+                GridRow {
+                    Text(String(localized: "Nata da")).foregroundStyle(.secondary)
+                    Button {
+                        model.selectedDecisionID = origin.id
+                    } label: {
+                        Label(origin.text, systemImage: DecisionRow.icon(origin)).lineLimit(2)
+                    }
+                    .buttonStyle(.link)
+                }
+            }
+            if mode == .manage { manageFacts(summary) }
             if !summary.streamIDs.isEmpty {
                 GridRow {
                     Text(String(localized: "Stream")).foregroundStyle(.secondary)
@@ -92,6 +166,51 @@ struct DecisionDetailView: View {
             }
         }
         .font(.callout)
+    }
+
+    /// "Gestisci" only: priority, dependencies, estimate, start, recurrence.
+    @ViewBuilder
+    private func manageFacts(_ summary: DecisionSummary) -> some View {
+        let decision = summary.decision
+        if let priority = decision.priority {
+            GridRow {
+                Text(String(localized: "Priorità")).foregroundStyle(.secondary)
+                Text(DecisionRow.priorityLabel(priority))
+            }
+        }
+        if !summary.blockers.isEmpty {
+            GridRow(alignment: .top) {
+                Text(String(localized: "Dipende da")).foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(summary.blockers) { blocker in
+                        Button {
+                            model.selectedDecisionID = blocker.id
+                        } label: {
+                            Label(blocker.text, systemImage: DecisionRow.icon(blocker)).lineLimit(2)
+                        }
+                        .buttonStyle(.link)
+                    }
+                }
+            }
+        }
+        if let estimate = decision.estimate, !estimate.isEmpty {
+            GridRow {
+                Text(String(localized: "Stima")).foregroundStyle(.secondary)
+                Text(estimate)
+            }
+        }
+        if let start = decision.startsAt {
+            GridRow {
+                Text(String(localized: "Inizio")).foregroundStyle(.secondary)
+                Text(start.formatted(date: .long, time: .omitted))
+            }
+        }
+        if let recurrence = decision.recurrence {
+            GridRow {
+                Text(String(localized: "Ricorrenza")).foregroundStyle(.secondary)
+                Text(DecisionRow.recurrenceLabel(recurrence))
+            }
+        }
     }
 
     @ViewBuilder
@@ -129,7 +248,7 @@ struct DecisionDetailView: View {
                 Text(String(localized: "Per ora è l'unica versione: non ne supera altre e nessuna l'ha superata."))
                     .font(.callout).foregroundStyle(.secondary)
             }
-            if summary.decision.status == .active {
+            if summary.decision.status.isOpen {
                 Button {
                     var draft = DecisionDraft(projectID: summary.decision.projectId)
                     draft.supersedesID = summary.id
@@ -213,9 +332,16 @@ struct DecisionDetailView: View {
     /// ADR-0052: what the open entry supersedes and what supersedes it, each one openable.
     private func links(_ summary: DecisionSummary) -> some View {
         VStack(alignment: .leading, spacing: 4) {
-            if !summary.supersedesAll.isEmpty { linkGroup(String(localized: "Supera:"), summary.supersedesAll) }
-            if !summary.supersededByAll.isEmpty {
-                linkGroup(String(localized: "Superata da:"), summary.supersededByAll)
+            // Read with the verb of the two kinds (ADR-0074): "Risponde a:", "Accolta da:"…
+            if let older = summary.supersedesAll.first {
+                linkGroup(
+                    "\(DecisionRow.verb(newer: summary.decision.kind, older: older.kind).capitalizedFirst):",
+                    summary.supersedesAll)
+            }
+            if let newer = summary.supersededByAll.first {
+                linkGroup(
+                    "\(DecisionRow.closedByLabel(older: summary.decision.kind, by: newer.kind)):",
+                    summary.supersededByAll)
             }
         }
         .font(.callout)
@@ -276,8 +402,8 @@ struct DecisionDetailView: View {
                     let isCurrent = entry.id == decisionID
                     HStack(alignment: .top, spacing: 10) {
                         VStack(spacing: 0) {
-                            Image(systemName: DecisionRow.icon(entry.decision))
-                                .foregroundStyle(DecisionRow.color(entry.decision))
+                            Image(systemName: DecisionRow.icon(entry))
+                                .foregroundStyle(DecisionRow.color(entry))
                             if index < chain.count - 1 {
                                 Rectangle().fill(Color.secondary.opacity(0.3)).frame(width: 2).frame(minHeight: 18)
                             }
@@ -285,10 +411,13 @@ struct DecisionDetailView: View {
                         .frame(width: 20)
                         VStack(alignment: .leading, spacing: 2) {
                             Text(entry.decision.text).fontWeight(isCurrent ? .semibold : .regular)
-                                .strikethrough(entry.decision.status != .active, color: .secondary)
+                                .strikethrough(
+                                    DecisionRow.look(entry.decision, closedBy: entry.supersededBy?.kind) == .struck,
+                                    color: .secondary
+                                )
                                 .fixedSize(horizontal: false, vertical: true)
                             Text(
-                                "\(entry.decision.decidedAt.formatted(date: .abbreviated, time: .omitted)) · \(DecisionRow.label(entry.decision))"
+                                "\(entry.decision.decidedAt.formatted(date: .abbreviated, time: .omitted)) · \(DecisionRow.label(entry, mode: mode))"
                             )
                             .font(.caption).foregroundStyle(.secondary)
                         }

@@ -317,6 +317,7 @@ final class AppModel {
                 summaries = []
             }
             people = try archive.people()
+            workMode = archive.workMode()
             if let scope = decisionScope {
                 var query = decisionQuery
                 query.scope = scope
@@ -427,17 +428,27 @@ final class AppModel {
         return (try? archive.promotedDecisions(noteIDs: [noteID]))?[noteID]
     }
 
+    /// Writes the editor's draft: the entry, its owner and who it waits for (people created if new), what it depends
+    /// on and its checklist (ADR-0074).
     func saveDecision(_ draft: DecisionDraft) {
         var proposed = draft.decision
         // A confirmed proposal keeps the model that proposed it (ADR-0070).
         if let suggestionID = draft.suggestionID, let suggestion = try? archive.suggestion(suggestionID) {
             proposed.model = Provenance.decisionModel(of: suggestion)
         }
-        let decision = proposed
         perform {
-            if let id = draft.existingID {
+            if proposed.kind.isWork {
+                proposed.ownerId = try draft.ownerName.flatMap { try archive.person(named: $0)?.id }
+                proposed.waitingOnId = try draft.waitingOnName.flatMap { try archive.person(named: $0)?.id }
+            }
+            let decision = proposed
+            // The state only when the user changed it: "Bloccata" comes from the dependencies, and "Traccia" shows
+            // under way and blocked as "Aperta".
+            let status = draft.status != draft.loadedStatus ? draft.status : nil
+            let id: String
+            if let existing = draft.existingID {
                 try archive.updateDecision(
-                    id, people: draft.people, tags: draft.tags, streams: draft.streamIDs,
+                    existing, people: draft.people, tags: draft.tags, streams: draft.streamIDs,
                     supersedes: draft.supersedesIDs, reorderingChain: draft.reorderingChain
                 ) { current in
                     current.text = decision.text
@@ -445,16 +456,78 @@ final class AppModel {
                     current.decidedAt = decision.decidedAt
                     current.projectId = decision.projectId
                     current.notes = decision.notes
+                    current.ownerId = decision.ownerId
+                    current.dueAt = decision.dueAt
+                    current.waitingOnId = decision.waitingOnId
+                    current.waitingUntil = decision.waitingUntil
+                    current.priority = decision.priority
+                    current.severity = decision.severity
+                    current.startsAt = decision.startsAt
+                    current.estimate = decision.estimate
+                    current.recurrence = decision.recurrence
+                    current.derivedFromId = decision.derivedFromId
+                    if let status { current.status = status }
+                    if !current.kind.isWork, current.status != .superseded, current.status != .cancelled {
+                        current.status = .active
+                    }
+                    if current.status.isOpen {
+                        current.outcome = nil
+                        current.outcomeKind = nil
+                    }
                 }
+                id = existing
             } else {
                 if let suggestionID = draft.suggestionID { try archive.setSuggestionStatus(suggestionID, .accepted) }
-                try archive.createDecision(
+                id = try archive.createDecision(
                     decision, people: draft.people, tags: draft.tags, streams: draft.streamIDs,
                     markerID: draft.markerID,
-                    supersedes: draft.supersedesIDs)
+                    supersedes: draft.supersedesIDs
+                ).id
+            }
+            if decision.kind.isWork, draft.blockerIDs != draft.loadedBlockerIDs {
+                try archive.setBlockers(draft.blockerIDs, of: id)
+            } else if !decision.kind.isWork, !draft.loadedBlockerIDs.isEmpty {
+                try archive.setBlockers([], of: id)
+            }
+            if draft.existingID == nil || draft.checklistLoaded {
+                try saveChecklist(decision.kind.isWork ? draft.checklist : [], decisionID: id)
+            }
+            if let convertsID = draft.convertsID {
+                let into = DecisionRow.kindLabel(decision.kind).lowercased()
+                try archive.updateDecision(convertsID) { request in
+                    request.status = .done
+                    request.outcomeKind = .converted
+                    request.outcome = String(localized: "trasformata in \(into)")
+                }
             }
         }
         if let itemID = draft.sourceItemID { refreshTextAssets(itemID) }
+    }
+
+    /// The lines of an activity as edited: removed ones deleted, changed ones updated, new ones added, in order.
+    private func saveChecklist(_ lines: [ChecklistLine], decisionID: String) throws {
+        let current = try archive.checklistItems(decisionID: decisionID)
+        let kept = lines.filter { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        let keptIDs = Set(kept.compactMap(\.itemID))
+        for item in current where !keptIDs.contains(item.id) { try archive.deleteChecklistItem(item.id) }
+        var order: [String] = []
+        for line in kept {
+            let text = line.text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let itemID = line.itemID, let saved = current.first(where: { $0.id == itemID }) {
+                if saved.text != text || saved.done != line.done {
+                    try archive.updateChecklistItem(itemID) {
+                        $0.text = text
+                        $0.done = line.done
+                    }
+                }
+                order.append(itemID)
+            } else {
+                let item = try archive.addChecklistItem(text, decisionID: decisionID)
+                if line.done { try archive.updateChecklistItem(item.id) { $0.done = true } }
+                order.append(item.id)
+            }
+        }
+        if order != current.filter({ keptIDs.contains($0.id) }).map(\.id) { try archive.reorderChecklist(order) }
     }
 
     /// The stream being viewed, for new notes in it (ADR-0047).
@@ -499,12 +572,136 @@ final class AppModel {
         perform { try archive.deleteDecision(id) }
     }
 
-    /// Active decisions a new one can replace: same project first.
+    /// Current entries a new one can replace or close (valid decisions and milestones, open work): same project
+    /// first.
     func supersedableDecisions(projectID: String?, excluding id: String?) -> [DecisionSummary] {
-        let all = (try? archive.decisions(DecisionQuery(scope: .all, statuses: [.active]))) ?? []
+        let all = (try? archive.decisions(DecisionQuery(scope: .all, statuses: DecisionQuery.current))) ?? []
         let candidates = all.filter { $0.id != id }
         return candidates.filter { $0.decision.projectId == projectID }
             + candidates.filter { $0.decision.projectId != projectID }
+    }
+
+    // MARK: Open work (ADR-0074)
+
+    /// "Traccia" or "Gestisci", as chosen in Impostazioni › Generale.
+    private(set) var workMode = WorkMode.track
+
+    func setWorkMode(_ mode: WorkMode) {
+        perform { try archive.setWorkMode(mode) }
+        reload()
+    }
+
+    /// The mode a project is shown in: the app's, unless the project is kept in "Traccia" ("Tieni semplice").
+    func workMode(for projectID: String?) -> WorkMode {
+        guard workMode == .manage else { return .track }
+        return project(projectID)?.workMode ?? .manage
+    }
+
+    func setProjectWorkMode(_ projectID: String, _ mode: WorkMode?) {
+        perform { try archive.setProjectWorkMode(projectID, mode) }
+        reload()
+    }
+
+    /// The user's name ("Io" in the transcripts), first among the people of a key point.
+    var meName: String {
+        _ = revision
+        let name = ((try? archive.setting(TranscriptionService.meLabelKey)) ?? nil)?
+            .trimmingCharacters(in: .whitespaces)
+        return name?.isEmpty == false ? name! : "Io"
+    }
+
+    /// A closing that asks for a few words (answer, activities, reason), shown by the main window.
+    var closingKeyPoint: KeyPointClosing?
+
+    /// Closes a work entry with its outcome: resolved, not relevant, rejected (with the reason).
+    func closeKeyPoint(_ id: String, _ outcome: Decision.Outcome, text: String? = nil) {
+        let text = text?.isEmpty == false ? text : nil
+        perform {
+            try archive.updateDecision(id) {
+                $0.status = .done
+                $0.outcomeKind = outcome
+                $0.outcome = text
+            }
+        }
+    }
+
+    /// "Riapri": back to open, without the outcome.
+    func reopenKeyPoint(_ id: String) {
+        perform {
+            try archive.updateDecision(id) {
+                $0.status = .active
+                $0.outcomeKind = nil
+                $0.outcome = nil
+            }
+        }
+    }
+
+    /// «Diventato problema»: the risk happened today; it stays open, with its story, until it is closed.
+    func riskHappened(_ id: String) {
+        let now = Date()
+        perform { try archive.updateDecision(id) { $0.happenedAt = now } }
+    }
+
+    /// «Chiarisci…»: the answer closes the point. «Diventa decisione»: the answer becomes a decision that "risponde
+    /// a" the point (the point reads "chiarito" through the link).
+    func clarify(_ summary: DecisionSummary, answer: String, becomesDecision: Bool) {
+        perform {
+            try archive.updateDecision(summary.id) {
+                $0.outcome = answer
+                $0.outcomeKind = .answered
+                if !becomesDecision { $0.status = .done }
+            }
+            guard becomesDecision else { return }
+            try archive.createDecision(
+                Decision(
+                    text: answer, decidedAt: Date(), projectId: summary.decision.projectId, origin: .manual,
+                    kind: .decision),
+                people: summary.people, tags: summary.tags, streams: summary.streamIDs, supersedes: [summary.id])
+        }
+    }
+
+    /// «Accogli»: the request is accepted; each line becomes an activity born from it.
+    func accept(_ summary: DecisionSummary, activities: [String]) {
+        perform {
+            for text in activities {
+                var activity = Decision(
+                    text: text, decidedAt: Date(), projectId: summary.decision.projectId, origin: .manual,
+                    kind: .action)
+                activity.derivedFromId = summary.id
+                try archive.createDecision(
+                    activity, people: summary.people, tags: summary.tags, streams: summary.streamIDs)
+            }
+            let count = activities.count
+            try archive.updateDecision(summary.id) {
+                $0.status = .done
+                $0.outcomeKind = .accepted
+                $0.outcome = count == 0 ? nil : String(localized: "\(count) attività")
+            }
+        }
+    }
+
+    /// Open work an entry can depend on: same project first.
+    func dependableEntries(projectID: String?, excluding id: String?) -> [DecisionSummary] {
+        let open = Set(DecisionQuery.current)
+        let all =
+            (try? archive.decisions(DecisionQuery(scope: .all, statuses: open, kinds: Set(Decision.Kind.work)))) ?? []
+        let candidates = all.filter { $0.id != id }
+        return candidates.filter { $0.decision.projectId == projectID }
+            + candidates.filter { $0.decision.projectId != projectID }
+    }
+
+    /// True if `blocker` already depends on `id`, directly or through others: it cannot also block it.
+    func dependsOn(_ blocker: String, _ id: String) -> Bool {
+        if blocker == id { return true }
+        var stack = [blocker]
+        var seen: Set<String> = []
+        while let current = stack.popLast() {
+            for next in (try? archive.blockers(of: current)) ?? [] {
+                if next.id == id { return true }
+                if seen.insert(next.id).inserted { stack.append(next.id) }
+            }
+        }
+        return false
     }
 
     // MARK: Categories and tags in "In evidenza"

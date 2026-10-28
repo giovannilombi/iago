@@ -159,6 +159,7 @@ private struct GeneralPane: View {
                 .onSubmit { save() }
                 .onChange(of: name) { save() }
         }
+        WorkModeGroup(model: model)
         SettingsGroup(title: String(localized: "Avvio")) {
             Toggle(String(localized: "Apri IAGO all'avvio del Mac"), isOn: $launchAtLogin)
                 .onChange(of: launchAtLogin) { _, enabled in
@@ -183,6 +184,55 @@ private struct GeneralPane: View {
     private func save() {
         let value = name.trimmingCharacters(in: .whitespaces)
         model.perform { try model.archive.setSetting(TranscriptionService.meLabelKey, value.isEmpty ? nil : value) }
+    }
+}
+
+/// Impostazioni › Generale › Modo di lavorare (ADR-0074): the same data, more or less management in view.
+private struct WorkModeGroup: View {
+    let model: AppModel
+
+    var body: some View {
+        SettingsGroup(
+            title: String(localized: "Modo di lavorare"),
+            footnote: String(
+                localized:
+                    "Si cambia quando vuoi, senza perdere nulla: in Traccia i campi di Gestisci già compilati restano salvati."
+            )
+        ) {
+            Picker(
+                "", selection: Binding(get: { model.workMode }, set: { model.setWorkMode($0) })
+            ) {
+                ForEach(WorkMode.allCases, id: \.self) { mode in
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(Self.title(mode))
+                        Text(Self.explanation(mode)).font(.caption).foregroundStyle(.secondary)
+                    }
+                    .tag(mode)
+                }
+            }
+            .pickerStyle(.radioGroup).labelsHidden()
+        }
+    }
+
+    static func title(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track: String(localized: "Traccia")
+        case .manage: String(localized: "Gestisci")
+        }
+    }
+
+    static func explanation(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track:
+            String(
+                localized:
+                    "Tieni traccia del lavoro: attività aperte, in attesa, fatte, con responsabile, scadenza e checklist."
+            )
+        case .manage:
+            String(
+                localized:
+                    "Gestisci i progetti: anche in corso e bloccata, priorità, dipendenze, stima, inizio, ricorrenza.")
+        }
     }
 }
 
@@ -354,6 +404,24 @@ private struct ProjectsPane: View {
                     .buttonStyle(.link)
                     Button(String(localized: "Elimina…"), role: .destructive) { startDelete(project) }.buttonStyle(
                         .link)
+                }
+                if model.workMode == .manage {
+                    // ADR-0074: a project can stay simple while the app manages the others.
+                    Toggle(
+                        String(localized: "Tieni semplice (Traccia)"),
+                        isOn: Binding(
+                            get: { project.workMode == .track },
+                            set: { simple in
+                                model.setProjectWorkMode(project.id, simple ? .track : nil)
+                                reload()
+                            })
+                    )
+                    .toggleStyle(.checkbox).font(.callout).padding(.leading, 26)
+                    .help(
+                        String(
+                            localized:
+                                "La pagina del progetto si vede in Traccia; le voci assegnate a te restano nel tuo Da fare."
+                        ))
                 }
                 ProjectStreamsEditor(model: model, project: project).padding(.leading, 26)
             }

@@ -1,6 +1,7 @@
 import AVFoundation
 import IAGOCapture
 import IAGOCore
+import IAGOStore
 import IAGOTranscription
 import SwiftUI
 import UserNotifications
@@ -12,7 +13,7 @@ struct OnboardingView: View {
     let finish: () -> Void
 
     enum Step: Int, CaseIterable {
-        case welcome, requirements, name, microphone, systemAudio, notifications, models, done
+        case welcome, requirements, name, workMode, microphone, systemAudio, notifications, models, done
     }
     @State private var step = Step.welcome
 
@@ -30,6 +31,7 @@ struct OnboardingView: View {
                 case .welcome: WelcomeStep(model: model)
                 case .requirements: RequirementsStep(model: model)
                 case .name: NameStep(model: model)
+                case .workMode: WorkModeStep(model: model)
                 case .microphone: MicrophoneStep()
                 case .systemAudio: SystemAudioStep(model: model)
                 case .notifications: NotificationsStep()
@@ -177,6 +179,59 @@ private struct NameStep: View {
                 }
         }
         .onAppear { name = (try? model.archive.setting(TranscriptionService.meLabelKey)) ?? "Io" }
+    }
+}
+
+/// «Come usi IAGO?» (ADR-0074): "Traccia" or "Gestisci", changeable later in Impostazioni › Generale.
+private struct WorkModeStep: View {
+    let model: AppModel
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            StepHeader(
+                icon: "checklist.checked", title: String(localized: "Come usi IAGO?"),
+                subtitle: String(
+                    localized:
+                        "IAGO tiene anche traccia di ciò che è aperto: attività, punti da chiarire, rischi, richieste. Scegli quanta gestione vedere; puoi cambiare idea nelle Impostazioni senza perdere nulla."
+                ))
+            choice(
+                .track, title: String(localized: "Tengo traccia del lavoro"),
+                detail: String(localized: "Semplice: aperto, in attesa, fatto, con responsabile, scadenza e checklist.")
+            )
+            choice(
+                .manage, title: String(localized: "Gestisco i progetti"),
+                detail: String(
+                    localized: "Anche stati fini, priorità, dipendenze, stime, ricorrenze, kanban e riepilogo completo."
+                ))
+        }
+    }
+
+    private func choice(_ mode: WorkMode, title: String, detail: String) -> some View {
+        let selected = model.workMode == mode
+        return Button {
+            model.setWorkMode(mode)
+        } label: {
+            HStack(alignment: .top, spacing: 10) {
+                Image(systemName: selected ? "largecircle.fill.circle" : "circle")
+                    .foregroundStyle(selected ? Color.accentColor : Color.secondary)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title).font(.headline)
+                    Text(detail).font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(12)
+            .background(
+                RoundedRectangle(cornerRadius: 10).fill(
+                    selected ? Color.accentColor.opacity(0.12) : Color(nsColor: .controlBackgroundColor))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10).stroke(
+                    selected ? Color.accentColor.opacity(0.6) : Color.secondary.opacity(0.2))
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 }
 
