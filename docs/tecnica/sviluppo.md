@@ -16,6 +16,7 @@ Le regole complete del team sono in [`README-collaborators.md`](https://github.c
 | `scripts/test-packages.sh` | `swift test` su tutti i pacchetti |
 | `scripts/test-engine.sh` | build dell'app con MLX e shader Metal (prima delle PR sul motore) |
 | `scripts/install-app.sh` | Release firmata installata in `/Applications` |
+| `scripts/try-branch.sh [--fresh]` | prova il branch attuale su una **copia** dell'archivio (`~/IAGO-prova`, opzione Debug `-IAGOTrialRoot`): l'archivio vero non si tocca |
 | `scripts/check-network-apis.sh` | nessuna API di rete fuori da quelle ammesse |
 | `scripts/check-private-data.sh --all` | nessun dato reale nei file |
 | `scripts/check-commit-emails.sh main..HEAD` | nessun indirizzo email personale nei commit |

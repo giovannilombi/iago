@@ -321,7 +321,13 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
+| **1.0.1-beta** | 28 ottobre 2026 | Punto di ripristino prima della 1.1.0-beta. JSON e altri file di testo importabili, menu Modifica (⌘C, ⌘V…); coda unica del motore e gestione della memoria, impostazioni automatiche sotto i 32 GB; chi ha prodotto sintesi e proposte (modello o Claude); sintesi e proposte fatte da Claude con «Copia per Claude»; «Segna momento con screenshot» e scorciatoie in tutte le app; distribuzione con DMG; riconoscimento delle stesse voci tra call diverse |
 | **1.0.0-beta** | 24 ottobre 2026 | Beta, non ancora distribuita: tutto quello che è descritto qui (fasi 0-3). La 1.0.0 sarà la prima versione distribuibile |
+
+### Tornare a una versione precedente
+Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
+- **Codice e documentazione:** `git checkout v1.0.1-beta`, poi `xcodegen generate` e una build; `npm run docs:dev` mostra il sito di quella versione. Se si abbandona una versione, lo sviluppo riprende dal ramo della versione precedente (per esempio `release/1.0.x`) con i numeri di quella serie (1.0.2-beta…).
+- **Archivio:** le migrazioni del database vanno solo avanti. Una versione più vecchia potrebbe non leggere un archivio già aperto da una più nuova. Per tornare indietro si ripristina il **backup** fatto prima dell'aggiornamento (Impostazioni › Backup e trasferimento), oppure si prova la versione nuova su una **copia** dell'archivio (`scripts/try-branch.sh`).
 
 <details>
 <summary>Storia dello sviluppo prima della 1.0.0-beta</summary>
