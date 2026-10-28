@@ -18,7 +18,7 @@ App macOS nativa in menu bar: registra le call su due tracce (sistema + mic), tr
 - **L'app non contiene contenuti** (ADR-0066): un archivio nuovo ha solo l'esempio di struttura (Cliente Test, Pj. Test 1 e 2). Test ed esempi usano nomi neutri inventati.
 - **Mai dati reali nei commit** (ADR-0065): niente audio, archivi, trascrizioni, email, nomi di persone, clienti o domini reali. L'hook `pre-commit` (`scripts/check-private-data.sh`) controlla file e parole di `Config/private-terms.local` (locale): aggiungerci ogni nome reale nuovo che emerge.
 - **Mai indirizzi email personali** (ADR-0065), né nei file né nei commit: autori e `Config/team.txt` solo con l'indirizzo anonimo di GitHub (`…@users.noreply.github.com`). Lo bloccano `pre-commit`, `commit-msg`, `pre-push` (`scripts/check-commit-emails.sh`) e il workflow `privacy.yml`. I merge si fanno con `gh pr merge`, con "Keep my email addresses private" attivo sull'account.
-- Versione: **1.0.0-beta** finché l'utente non decide di distribuire; poi 1.0.0. Repository `giovannilombi/iago` privato fino ad allora; la storia completa è in `giovannilombi/iago-archivio`.
+- Versione `x.y.z-beta` in `project.yml` finché l'utente non decide di distribuire (poi senza `-beta`). `z` sale con una PR che cambia l'app, dopo averlo chiesto all'utente; `y` con un gruppo grande di funzioni (1.1.0-beta: lavoro aperto). Ogni versione: riga nella tabella *Versioni* del README, `docs/stato.md` e un **tag annotato** `vx.y.z-beta` con l'elenco delle funzioni, che è anche il punto di ripristino (README › Tornare a una versione precedente). Il ramo `release/1.0.x` tiene la serie 1.0 se la 1.1 viene abbandonata. Repository `giovannilombi/iago` privato fino ad allora; la storia completa è in `giovannilombi/iago-archivio`.
 - Nessun servizio a pagamento (GitHub Free, Apple ID gratuito).
 - **README.md**: si aggiorna a ogni nuova versione (tabella *Versioni*, numeri, funzioni, motori) e a ogni modifica che cambia ciò che descrive. Anche `docs/licenses.md` a ogni dipendenza o modello nuovo.
 - **Documentazione a ogni commit** (ADR-0068), nello stesso commit del codice:
@@ -83,6 +83,7 @@ Rispettare il grafo: nessuna dipendenza fuori da quelle elencate.
 - `scripts/test-packages.sh` — `swift test` su tutti i package.
 - `npm install` poi `npm run docs:dev` / `npm run docs:build` — sito di documentazione VitePress (ADR-0068); la build fallisce sui link rotti.
 - `scripts/release.sh x.y.z --notes "…" --github` — release firmata, appcast Sparkle e pubblicazione su GitHub (ADR-0056).
+- `scripts/try-branch.sh [--fresh]` — prova il branch attuale su una copia dell'archivio (`~/IAGO-prova`): per le versioni con migrazioni nuove, prima dell'approvazione.
 - `scripts/test-engine.sh` — build con MLX (shader Metal, fuori dalla CI automatica): prima di ogni PR che tocca il motore.
 - `xcodebuild -project IAGO.xcodeproj -scheme IAGO build` — build dell'app (richiede Xcode e firma).
 - `swift-format format -i -r App Packages` — formattazione.

@@ -17,7 +17,7 @@
 ```sh
 scripts/release.sh 1.0.0 --notes "Novità…" --github
 ```
-1. Aggiorna versione e build in `project.yml` (`1.0.0`, oppure `1.0.0-beta.2` per una beta).
+1. Aggiorna versione e build in `project.yml` (`1.1.0`, oppure `1.1.1-beta` per una beta).
 2. Compila la Release firmata e la verifica con `codesign`.
 3. Crea lo zip, lo firma per Sparkle, scrive `appcast.xml`; crea il **DMG** e lo firma con la stessa identità dell'app.
 4. Con `--github` pubblica la release con DMG, zip e appcast, e le istruzioni di installazione nelle note.
@@ -27,6 +27,6 @@ scripts/release.sh 1.0.0 --notes "Novità…" --github
 Dopo ogni release si aggiorna la tabella **Versioni** del README.
 
 ## Repository e versioni (ADR-0060, ADR-0065)
-- **1.0.0-beta** finché non si decide di distribuire; poi 1.0.0.
+- `x.y.z-beta` finché non si decide di distribuire, poi senza `-beta`: il terzo numero sale a ogni PR che cambia l'app, il secondo con un gruppo grande di funzioni. Ogni versione ha un tag annotato con le funzioni, che fa da punto di ripristino (README › Tornare a una versione precedente).
 - `giovannilombi/iago` è privato e nato con un solo commit; la storia precedente è in un archivio privato separato.
 - Il sito di documentazione va online con il repository pubblico (ADR-0068).
