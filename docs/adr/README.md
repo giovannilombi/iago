@@ -95,3 +95,4 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0071 | Sintesi e proposte fatte da Claude | accettato |
 | 0072 | Segna momento con screenshot e scorciatoie in tutte le app | accettato |
 | 0073 | Riconoscere le stesse voci in call diverse | accettato |
+| 0074 | Lavoro aperto e due modalità: Traccia e Gestisci | proposto |
