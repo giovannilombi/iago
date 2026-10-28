@@ -8,7 +8,7 @@ import SwiftUI
 struct DecisionDraft: Identifiable {
     let id = UUID()
     var existingID: String?
-    /// Decision, activity or milestone (ADR-0046).
+    /// Decision, milestone, activity, point to clear up, risk or request (ADR-0046, ADR-0074).
     var kind = Decision.Kind.decision
     var text = ""
     var decidedAt = Date()
@@ -38,6 +38,32 @@ struct DecisionDraft: Identifiable {
     var sourceLabel: String?
     /// Placeholder of an empty title (first sentence); used as the title if the user leaves it empty.
     var titleHint: String?
+    // Open work (ADR-0074). People by name: they become person entities when saved.
+    var ownerName: String?
+    var dueAt: Date?
+    var waitingOnName: String?
+    var waitingUntil: Date?
+    /// 1 high, 2 medium, 3 low.
+    var priority: Int?
+    var severity: Decision.Severity?
+    var status = Decision.Status.active
+    var startsAt: Date?
+    var estimate: String?
+    var recurrence: Decision.Recurrence?
+    var outcome: String?
+    var outcomeKind: Decision.Outcome?
+    var derivedFromID: String?
+    /// "Dipende da": open entries this one waits for.
+    var blockerIDs: [String] = []
+    var checklist: [ChecklistLine] = []
+    /// The state and dependencies as loaded: saving writes them only when the user changed them, so a state set
+    /// by the dependencies ("Bloccata") or hidden by "Traccia" is never overwritten by chance.
+    var loadedStatus: Decision.Status?
+    var loadedBlockerIDs: [String] = []
+    /// An existing entry's checklist is read when the editor opens; until then saving leaves it alone.
+    var checklistLoaded = false
+    /// «Trasforma in…» (ADR-0074): the request this new entry replaces, closed as converted once it is saved.
+    var convertsID: String?
 
     init(projectID: String? = nil, kind: Decision.Kind = .decision) {
         self.projectID = projectID
@@ -61,6 +87,22 @@ struct DecisionDraft: Identifiable {
         streamIDs = summary.streamIDs
         supersedesIDs = summary.supersedesAll.map(\.id)
         notes = decision.notes ?? ""
+        ownerName = summary.ownerName
+        dueAt = decision.dueAt
+        waitingOnName = summary.waitingOnName
+        waitingUntil = decision.waitingUntil
+        priority = decision.priority
+        severity = decision.severity
+        status = decision.status
+        loadedStatus = decision.status
+        startsAt = decision.startsAt
+        estimate = decision.estimate
+        recurrence = decision.recurrence
+        outcome = decision.outcome
+        outcomeKind = decision.outcomeKind
+        derivedFromID = decision.derivedFromId
+        blockerIDs = summary.blockers.map(\.id)
+        loadedBlockerIDs = blockerIDs
         if let title = summary.sourceTitle {
             sourceLabel = decision.sourceAtSec.map { "\(title) · \(Format.clock($0))" } ?? title
         }
@@ -104,6 +146,28 @@ struct DecisionDraft: Identifiable {
         return draft
     }
 
+    /// "Nuova attività da questo": an activity born from `summary`, in its project and streams (ADR-0074).
+    static func derived(from summary: DecisionSummary, kind: Decision.Kind = .action) -> DecisionDraft {
+        var draft = DecisionDraft(projectID: summary.decision.projectId, kind: kind)
+        draft.derivedFromID = summary.id
+        draft.streamIDs = summary.streamIDs
+        draft.tags = summary.tags
+        return draft
+    }
+
+    /// «Trasforma in…»: the request becomes an entry of another kind, born from it; the request is closed as
+    /// converted when this one is saved.
+    static func converting(_ summary: DecisionSummary, to kind: Decision.Kind) -> DecisionDraft {
+        var draft = derived(from: summary, kind: kind)
+        draft.text = summary.decision.text
+        draft.notes = summary.decision.notes ?? ""
+        draft.people = summary.people
+        draft.ownerName = summary.ownerName
+        draft.dueAt = summary.decision.dueAt
+        draft.convertsID = summary.id
+        return draft
+    }
+
     /// A short passage becomes the title; a long one goes in the description, with its first sentence (clipped)
     /// as a title to refine.
     /// A short passage is the title itself. A longer one goes whole into the description: the title is proposed
@@ -127,11 +191,26 @@ struct DecisionDraft: Identifiable {
         return !generic.contains { label == $0 || label.hasPrefix("\($0) ") }
     }
 
+    /// The entry to write. Owner and who it waits for are resolved to people when saving (`AppModel.saveDecision`).
     var decision: Decision {
-        Decision(
+        var decision = Decision(
             text: text, decidedAt: decidedAt, projectId: projectID, sourceItemId: sourceItemID,
             sourceAtSec: sourceAtSec, sourceNoteId: sourceNoteID, origin: origin,
             notes: notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : notes, kind: kind)
+        let work = kind.isWork
+        decision.status = status
+        decision.dueAt = work ? dueAt : nil
+        decision.waitingUntil = work ? waitingUntil : nil
+        decision.priority = work ? priority : nil
+        decision.severity = kind == .risk ? severity : nil
+        decision.startsAt = work ? startsAt : nil
+        let estimate = estimate?.trimmingCharacters(in: .whitespacesAndNewlines)
+        decision.estimate = work && estimate?.isEmpty == false ? estimate : nil
+        decision.recurrence = work ? recurrence : nil
+        decision.outcome = outcome
+        decision.outcomeKind = outcomeKind
+        decision.derivedFromId = derivedFromID
+        return decision
     }
 }
 
@@ -250,9 +329,9 @@ private struct DecisionTimelineEntry: View {
             .opacity(nested ? 0.6 : 1)
             ZStack(alignment: .top) {
                 Rectangle().fill(Color.secondary.opacity(0.3)).frame(width: 2)
-                Image(systemName: DecisionRow.icon(decision))
+                Image(systemName: DecisionRow.icon(summary))
                     .font(.system(size: 15))
-                    .foregroundStyle(DecisionRow.color(decision))
+                    .foregroundStyle(DecisionRow.color(summary))
                     .background(Circle().fill(Color(nsColor: .windowBackgroundColor)).padding(-2))
                     .padding(.top, 13)
             }
@@ -268,12 +347,13 @@ private struct DecisionTimelineEntry: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .background(
                     RoundedRectangle(cornerRadius: 10).fill(
-                        decision.status == .active
-                            ? Color.green.opacity(0.07) : Color(nsColor: .controlBackgroundColor))
+                        decision.status.isOpen
+                            ? DecisionRow.tint(decision.kind).opacity(0.07) : Color(nsColor: .controlBackgroundColor))
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10).stroke(
-                        decision.status == .active ? Color.green.opacity(0.35) : Color.secondary.opacity(0.2)))
+                        decision.status.isOpen
+                            ? DecisionRow.tint(decision.kind).opacity(0.35) : Color.secondary.opacity(0.2)))
             }
             .padding(.leading, nested ? 18 : 0)
             .padding(.vertical, 5)
@@ -289,28 +369,41 @@ private struct DecisionFilterBar: View {
             FilterChip(title: kindTitle, systemImage: "square.stack", active: !model.decisionQuery.kinds.isEmpty) {
                 OptionList(
                     options: [(Decision.Kind?.none, String(localized: "Tutti i tipi"))]
-                        + [Decision.Kind.decision, .action, .milestone].map {
-                            (Optional($0), Self.kindPlural($0))
-                        },
+                        + DecisionRow.allKinds.map { (Optional($0), DecisionRow.kindPlural($0)) },
                     selection: Binding(
                         get: { model.decisionQuery.kinds.first },
                         set: { model.decisionQuery.kinds = $0.map { [$0] } ?? [] }))
             }
             FilterChip(title: statusTitle, systemImage: "line.3.horizontal.decrease", active: !onlyActive) {
                 VStack(alignment: .leading, spacing: 2) {
-                    ForEach(Decision.Status.allCases, id: \.self) { status in
+                    OptionCheckRow(label: String(localized: "Attivi"), checked: onlyActive) {
+                        model.decisionQuery.statuses = DecisionQuery.current
+                    }
+                    Divider()
+                    ForEach(statusGroups.indices, id: \.self) { index in
+                        let group = statusGroups[index]
                         OptionCheckRow(
-                            label: Self.plural(status), checked: model.decisionQuery.statuses.contains(status)
+                            label: group.label, checked: group.statuses.isSubset(of: model.decisionQuery.statuses)
                         ) {
-                            if model.decisionQuery.statuses.contains(status) {
-                                if model.decisionQuery.statuses.count > 1 {
-                                    model.decisionQuery.statuses.remove(status)
-                                }
+                            if group.statuses.isSubset(of: model.decisionQuery.statuses) {
+                                let rest = model.decisionQuery.statuses.subtracting(group.statuses)
+                                if !rest.isEmpty { model.decisionQuery.statuses = rest }
                             } else {
-                                model.decisionQuery.statuses.insert(status)
+                                model.decisionQuery.statuses.formUnion(group.statuses)
                             }
                         }
                     }
+                }
+            }
+            FilterChip(title: ownerTitle, systemImage: "person.crop.circle", active: model.decisionQuery.ownerID != nil)
+            {
+                if model.people.isEmpty {
+                    Text(String(localized: "Nessuna persona")).foregroundStyle(.secondary)
+                } else {
+                    OptionList(
+                        options: [(String?.none, String(localized: "Tutti"))]
+                            + model.people.map { (Optional($0.id), $0.name) },
+                        selection: $model.decisionQuery.ownerID)
                 }
             }
             FilterChip(title: personTitle, systemImage: "person", active: model.decisionQuery.personID != nil) {
@@ -360,34 +453,43 @@ private struct DecisionFilterBar: View {
         .padding(.horizontal, 12).padding(.top, 2).padding(.bottom, 10)
     }
 
-    private var onlyActive: Bool { model.decisionQuery.statuses == [.active] }
+    /// "Attivi" (ADR-0074): valid decisions and milestones, and work still open.
+    private var onlyActive: Bool { model.decisionQuery.statuses == DecisionQuery.current }
 
     private var kindTitle: String {
-        model.decisionQuery.kinds.first.map(Self.kindPlural) ?? String(localized: "Tutti i tipi")
+        model.decisionQuery.kinds.first.map(DecisionRow.kindPlural) ?? String(localized: "Tutti i tipi")
     }
 
-    static func kindPlural(_ kind: Decision.Kind) -> String {
-        switch kind {
-        case .decision: String(localized: "Decisioni")
-        case .action: String(localized: "Attività")
-        case .milestone: String(localized: "Tappe")
-        case .openQuestion: String(localized: "Domande aperte")
+    /// The states of the filter as the mode shows them: in "Traccia" under way and blocked are "Aperte".
+    private var statusGroups: [(label: String, statuses: Set<Decision.Status>)] {
+        typealias Group = (label: String, statuses: Set<Decision.Status>)
+        let track = model.workMode(for: model.scopeProjectID) == .track
+        var groups: [Group] = []
+        if track {
+            groups.append((String(localized: "Attive / aperte"), [.active, .inProgress, .blocked]))
+        } else {
+            groups.append((String(localized: "Attive / da fare"), [.active]))
+            groups.append((String(localized: "In corso"), [.inProgress]))
         }
+        groups.append((String(localized: "In attesa"), [.waiting]))
+        if !track { groups.append((String(localized: "Bloccate"), [.blocked])) }
+        groups.append((String(localized: "Fatte / chiuse con esito"), [.done]))
+        groups.append((String(localized: "Superate"), [.superseded]))
+        groups.append((String(localized: "Annullate"), [.cancelled]))
+        return groups
     }
 
     private var statusTitle: String {
-        let statuses = Decision.Status.allCases.filter { model.decisionQuery.statuses.contains($0) }
-        if statuses.count == Decision.Status.allCases.count { return String(localized: "Tutti gli stati") }
-        return statuses.map { Self.plural($0) }.joined(separator: ", ")
+        let statuses = model.decisionQuery.statuses
+        if onlyActive { return String(localized: "Attivi") }
+        if statuses == Set(Decision.Status.allCases) { return String(localized: "Tutti gli stati") }
+        return statusGroups.filter { $0.statuses.isSubset(of: statuses) }.map(\.label).joined(separator: ", ")
     }
 
-    static func plural(_ status: Decision.Status) -> String {
-        switch status {
-        case .active: String(localized: "Attive / aperte")
-        case .done: String(localized: "Fatte")
-        case .superseded: String(localized: "Superate")
-        case .cancelled: String(localized: "Annullate")
-        }
+    private var ownerTitle: String {
+        model.people.first { $0.id == model.decisionQuery.ownerID }.map {
+            String(localized: "Responsabile: \($0.name)")
+        } ?? String(localized: "Responsabile")
     }
 
     private var personTitle: String {
@@ -420,20 +522,22 @@ struct DecisionRow: View {
         let decision = summary.decision
         HStack(alignment: .top, spacing: 10) {
             if showsIcon {
-                Image(systemName: Self.icon(decision))
-                    .foregroundStyle(Self.color(decision)).font(.title3)
-                    .help(Self.label(decision))
+                Image(systemName: Self.icon(summary))
+                    .foregroundStyle(Self.color(summary)).font(.title3)
+                    .help("\(Self.kindLabel(decision.kind)) · \(Self.label(summary, mode: mode))")
             }
             VStack(alignment: .leading, spacing: 5) {
                 if showsProject { projectBadge }
                 if let name = summary.chainName { ChainNameBadge(name: name) }
+                // Done work is a good end: grey, not struck (ADR-0074).
                 Text(decision.text)
                     .font(.headline)
-                    .strikethrough(decision.status != .active, color: .secondary)
-                    .foregroundStyle(decision.status == .active ? .primary : .secondary)
+                    .strikethrough(Self.look(decision, closedBy: closedBy) == .struck, color: .secondary)
+                    .foregroundStyle(decision.status.isOpen ? .primary : .secondary)
                     .lineLimit(compact ? 2 : 3)
                 if let description = decision.notes, !description.isEmpty { descriptionView(description) }
                 metaLine
+                KeyPointWorkLine(model: model, summary: summary)
                 ViaClaudeBadge(model: model, entity: .decision, id: decision.id)
                 StreamDots(model: model, streamIDs: summary.streamIDs)
                 sourceLine
@@ -452,13 +556,15 @@ struct DecisionRow: View {
         .contentShape(Rectangle())
         .onTapGesture { model.selectedDecisionID = decision.id }
         .contextMenu { menu }
-        .confirmationDialog(String(localized: "Eliminare la decisione?"), isPresented: $deleting) {
+        .confirmationDialog(
+            String(localized: "Eliminare «\(Self.clip(decision.text, 60))»?"), isPresented: $deleting
+        ) {
             Button(String(localized: "Elimina"), role: .destructive) { model.deleteDecision(decision.id) }
         } message: {
             Text(
                 String(
                     localized:
-                        "Non si può annullare. Se superava un'altra decisione, quella torna attiva. Per tenerne traccia usa \"Annulla decisione\"."
+                        "Non si può annullare. Se superava un'altra voce, quella torna attiva. Per tenerne traccia usa \"Annulla\"."
                 ))
         }
     }
@@ -510,7 +616,7 @@ struct DecisionRow: View {
     private var metaLine: some View {
         let decision = summary.decision
         var parts = [decision.decidedAt.formatted(.dateTime.day().month(.abbreviated).year())]
-        if decision.status != .active { parts.append(Self.label(decision)) }
+        if decision.status != .active || decision.kind.isWork { parts.append(Self.label(summary, mode: mode)) }
         if !summary.people.isEmpty { parts.append(summary.people.joined(separator: ", ")) }
         return Text(parts.joined(separator: " · ")).font(.caption).foregroundStyle(.secondary)
     }
@@ -553,10 +659,10 @@ struct DecisionRow: View {
                 HStack(spacing: 4) {
                     Image(systemName: "chevron.right").font(.system(size: 8, weight: .bold))
                         .rotationEffect(.degrees(showsChain ? 90 : 0))
-                    if let later = summary.supersededBy {
-                        Text(Self.linkLine(String(localized: "Superata da"), summary.supersededByAll)).lineLimit(1)
+                    if summary.supersededBy != nil {
+                        Text(Self.linkLine(closedByPrefix, summary.supersededByAll)).lineLimit(1)
                     } else if summary.supersedes != nil {
-                        Text(Self.linkLine(String(localized: "Supera"), summary.supersedesAll)).lineLimit(1)
+                        Text(Self.linkLine(supersedesPrefix, summary.supersedesAll)).lineLimit(1)
                     }
                 }
                 .font(.caption).foregroundStyle(.secondary)
@@ -565,11 +671,11 @@ struct DecisionRow: View {
             if showsChain {
                 VStack(alignment: .leading, spacing: 3) {
                     if summary.supersededBy != nil, !summary.supersedesAll.isEmpty {
-                        Text(Self.linkLine(String(localized: "Supera"), summary.supersedesAll))
+                        Text(Self.linkLine(supersedesPrefix, summary.supersedesAll))
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     if summary.supersededByAll.count > 1 || (summary.supersededBy != nil && summary.supersedes != nil) {
-                        Text(Self.linkLine(String(localized: "Superata da"), summary.supersededByAll))
+                        Text(Self.linkLine(closedByPrefix, summary.supersededByAll))
                             .font(.caption).foregroundStyle(.secondary)
                     }
                     ForEach(Array(chain.enumerated()), id: \.element.id) { index, step in
@@ -578,7 +684,7 @@ struct DecisionRow: View {
                             Text(step.decidedAt.formatted(.dateTime.day().month(.abbreviated).year()))
                                 .foregroundStyle(.secondary)
                             Text(step.text).fontWeight(step.id == summary.id ? .semibold : .regular)
-                                .foregroundStyle(step.status == .active ? .primary : .secondary)
+                                .foregroundStyle(step.status.isOpen ? .primary : .secondary)
                         }
                         .font(.caption)
                     }
@@ -591,29 +697,25 @@ struct DecisionRow: View {
 
     @ViewBuilder
     private var menu: some View {
-        let decision = summary.decision
         Button(String(localized: "Modifica…")) { model.editingDecision = DecisionDraft(summary) }
-        if decision.kind == .action, decision.status == .active {
-            Button(String(localized: "Segna come fatta")) { model.setDecisionStatus(decision.id, .done) }
-            Button(String(localized: "Diventa decisione…")) {
-                model.editingDecision = .superseding(summary, kind: .decision)
-            }
-        } else if decision.kind == .action, decision.status == .done {
-            Button(String(localized: "Riapri")) { model.setDecisionStatus(decision.id, .active) }
-        }
-        if decision.status == .active {
-            Button(String(localized: "Supera con una nuova decisione…")) {
-                model.editingDecision = .superseding(summary)
-            }
-            Button(String(localized: "Annulla")) { model.setDecisionStatus(decision.id, .cancelled) }
-        } else if decision.status == .cancelled {
-            Button(String(localized: "Riattiva")) { model.setDecisionStatus(decision.id, .active) }
-        }
+        KeyPointActions(model: model, summary: summary)
         Divider()
         Button(String(localized: "Elimina…"), role: .destructive) { deleting = true }
     }
 
-    static func label(_ decision: Decision) -> String { KeyPointLabels.status(decision) }
+    private var mode: WorkMode { model.workMode(for: summary.decision.projectId) }
+    private var closedBy: Decision.Kind? { summary.supersededBy?.kind }
+
+    /// "Sostituisce", "Risponde a", "Accoglie", "Completa", "Supera": the verb of the most recent closed entry.
+    private var supersedesPrefix: String {
+        guard let older = summary.supersedesAll.first else { return String(localized: "Supera") }
+        return Self.verb(newer: summary.decision.kind, older: older.kind).capitalizedFirst
+    }
+
+    private var closedByPrefix: String {
+        guard let newer = summary.supersededBy else { return String(localized: "Superata da") }
+        return Self.closedByLabel(older: summary.decision.kind, by: newer.kind)
+    }
 
     /// "Supera: A" or "Supera: A e altre 2" (ADR-0052).
     static func linkLine(_ prefix: String, _ entries: [Decision]) -> String {
@@ -622,59 +724,9 @@ struct DecisionRow: View {
             ? "\(prefix): \(first.text)"
             : String(localized: "\(prefix): \(first.text) e altre \(entries.count - 1)")
     }
-
-    static func kindLabel(_ kind: Decision.Kind) -> String {
-        switch kind {
-        case .decision: String(localized: "Decisione")
-        case .action: String(localized: "Attività")
-        case .milestone: String(localized: "Tappa")
-        case .openQuestion: String(localized: "Domanda aperta")
-        }
-    }
-
-    static func icon(_ decision: Decision) -> String {
-        switch (decision.kind, decision.status) {
-        case (_, .superseded): "arrow.triangle.2.circlepath"
-        case (.action, .active): "circle.dashed"
-        case (.action, .done): "checkmark.circle.fill"
-        case (.action, .cancelled): "xmark.circle"
-        case (.milestone, .cancelled): "flag.slash"
-        case (.milestone, _): "flag.fill"
-        case (_, .cancelled): "xmark.seal"
-        default: "checkmark.seal.fill"
-        }
-    }
-
-    static func color(_ decision: Decision) -> Color {
-        switch (decision.kind, decision.status) {
-        case (_, .superseded): .secondary
-        case (_, .cancelled): .red
-        case (.action, .done): .secondary
-        case (.action, _): .orange
-        case (.milestone, _): .blue
-        default: .green
-        }
-    }
-
-    /// The kind's own colour, for labels and new-item menus.
-    static func tint(_ kind: Decision.Kind) -> Color {
-        switch kind {
-        case .action: .orange
-        case .milestone: .blue
-        default: .green
-        }
-    }
-
-    static func kindIcon(_ kind: Decision.Kind) -> String {
-        switch kind {
-        case .action: "circle.dashed"
-        case .milestone: "flag.fill"
-        default: "checkmark.seal.fill"
-        }
-    }
 }
 
-/// "+ Nuovo…": decision, activity or milestone (ADR-0046).
+/// "+ Nuovo…": any of the six kinds (ADR-0046, ADR-0074).
 struct NewKeyPointMenu: View {
     let model: AppModel
     var projectID: String?
@@ -682,7 +734,7 @@ struct NewKeyPointMenu: View {
 
     var body: some View {
         Menu {
-            ForEach([Decision.Kind.action, .milestone, .decision], id: \.self) { kind in
+            ForEach(DecisionRow.allKinds, id: \.self) { kind in
                 Button {
                     model.newKeyPoint(kind, projectID: projectID)
                 } label: {
@@ -709,6 +761,12 @@ struct DecisionEditor: View {
     @State private var suggesting = false
     /// The title the model wrote, while the user has not changed it.
     @State private var suggestedTitle: String?
+    /// Open entries this one can depend on ("Dipende da").
+    @State private var blockerCandidates: [DecisionSummary] = []
+    @State private var showsDetails = false
+    /// Set when the chosen dependencies would make a circle: the message to show, nothing is saved.
+    @State private var cycleError: String?
+    @State private var derivedFrom: Decision?
     @Environment(\.dismiss) private var dismiss
 
     init(model: AppModel, draft: DecisionDraft) {
@@ -718,13 +776,23 @@ struct DecisionEditor: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Label(
-                Self.title(draft), systemImage: DecisionRow.kindIcon(draft.kind)
-            )
-            .font(.title2).bold()
-            .foregroundStyle(DecisionRow.tint(draft.kind))
+            HStack(spacing: 8) {
+                Label(
+                    Self.title(draft), systemImage: DecisionRow.kindIcon(draft.kind)
+                )
+                .font(.title2).bold()
+                .foregroundStyle(DecisionRow.tint(draft.kind))
+                if mode == .track, draft.kind.isWork, hasManageDetails {
+                    Image(systemName: "slider.horizontal.3").foregroundStyle(.secondary)
+                        .help(
+                            String(
+                                localized:
+                                    "Ha dettagli in Gestisci (priorità, dipendenze, stima, inizio, ricorrenza o «in corso»): restano salvati."
+                            ))
+                }
+            }
             Picker("", selection: $draft.kind) {
-                ForEach([Decision.Kind.action, .milestone, .decision], id: \.self) { kind in
+                ForEach(DecisionRow.allKinds, id: \.self) { kind in
                     Text(DecisionRow.kindLabel(kind)).tag(kind)
                 }
             }
@@ -815,6 +883,12 @@ struct DecisionEditor: View {
                     supersedeChooser
                 }
             }
+            if draft.kind.isWork { workFields }
+            if draft.kind.isWork, mode == .manage {
+                DisclosureGroup(String(localized: "Altri dettagli"), isExpanded: $showsDetails) {
+                    manageFields.padding(.top, 6)
+                }
+            }
             HStack {
                 Spacer()
                 Button(String(localized: "Annulla"), role: .cancel) { dismiss() }
@@ -827,10 +901,30 @@ struct DecisionEditor: View {
             }
         }
         .padding(20)
-        .frame(width: 560)
+        .frame(width: 640)
         .onChange(of: draft.projectID) { _, projectID in
             let valid = Set(model.streams(of: projectID).map(\.id))
             draft.streamIDs.removeAll { !valid.contains($0) }
+        }
+        // Waiting for someone is a state: naming the person sets it, removing the person ends it.
+        .onChange(of: draft.waitingOnName) { before, after in
+            if before == nil, after != nil, draft.status == .active || draft.status == .inProgress {
+                draft.status = .waiting
+            } else if after == nil, draft.status == .waiting {
+                draft.status = .active
+            }
+        }
+        .onChange(of: draft.kind) { _, kind in
+            // Memory has no work states.
+            if !kind.isWork, draft.status != .superseded, draft.status != .cancelled { draft.status = .active }
+        }
+        .alert(
+            String(localized: "Dipendenza circolare"),
+            isPresented: Binding(get: { cycleError != nil }, set: { if !$0 { cycleError = nil } })
+        ) {
+            Button(String(localized: "OK"), role: .cancel) {}
+        } message: {
+            Text(cycleError ?? "")
         }
         .alert(
             String(localized: "La data è precedente alla decisione che superi"),
@@ -886,7 +980,203 @@ struct DecisionEditor: View {
                 if let summary = try? model.archive.decisionSummary(target) { list.insert(summary, at: 0) }
             }
             candidates = list
+            blockerCandidates = model.dependableEntries(projectID: draft.projectID, excluding: draft.existingID)
+            for target in draft.blockerIDs.reversed() where !blockerCandidates.contains(where: { $0.id == target }) {
+                if let summary = try? model.archive.decisionSummary(target) {
+                    blockerCandidates.insert(summary, at: 0)
+                }
+            }
+            if let id = draft.existingID, !draft.checklistLoaded {
+                draft.checklist = ((try? model.archive.checklistItems(decisionID: id)) ?? []).map {
+                    ChecklistLine(itemID: $0.id, text: $0.text, done: $0.done)
+                }
+                draft.checklistLoaded = true
+            }
+            if let id = draft.derivedFromID { derivedFrom = try? model.archive.decision(id) }
+            showsDetails = hasManageDetails
         }
+    }
+
+    /// The mode of the entry's project (ADR-0074).
+    private var mode: WorkMode { model.workMode(for: draft.projectID) }
+
+    private var hasManageDetails: Bool {
+        draft.priority != nil || !draft.blockerIDs.isEmpty || !(draft.estimate ?? "").isEmpty
+            || draft.startsAt != nil || draft.recurrence != nil || draft.status == .inProgress
+    }
+
+    /// Owner, due date, waiting for, severity, checklist: in both modes (design, «Campi»).
+    private var workFields: some View {
+        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+            GridRow {
+                Text(String(localized: "Stato")).foregroundStyle(.secondary).fixedSize()
+                statusPicker
+            }
+            GridRow(alignment: .top) {
+                Text(String(localized: "Responsabile")).foregroundStyle(.secondary).fixedSize()
+                PersonField(model: model, name: $draft.ownerName, placeholder: String(localized: "Chi se ne occupa"))
+            }
+            GridRow {
+                Text(String(localized: "Scadenza")).foregroundStyle(.secondary).fixedSize()
+                OptionalDateField(
+                    date: $draft.dueAt, late: draft.status.isOpen && (draft.dueAt.map(isPast) ?? false))
+            }
+            GridRow(alignment: .top) {
+                Text(String(localized: "In attesa di")).foregroundStyle(.secondary).fixedSize()
+                HStack(alignment: .top, spacing: 8) {
+                    PersonField(model: model, name: $draft.waitingOnName, placeholder: String(localized: "Persona"))
+                    if draft.waitingOnName != nil {
+                        Text(String(localized: "entro")).foregroundStyle(.secondary).padding(.top, 3)
+                        OptionalDateField(date: $draft.waitingUntil)
+                    }
+                }
+            }
+            if draft.kind == .risk {
+                GridRow {
+                    Text(String(localized: "Gravità")).foregroundStyle(.secondary).fixedSize()
+                    Picker("", selection: $draft.severity) {
+                        Text(String(localized: "—")).tag(Decision.Severity?.none)
+                        ForEach(Decision.Severity.allCases, id: \.self) {
+                            Text(DecisionRow.severityLabel($0)).tag(Optional($0))
+                        }
+                    }
+                    .pickerStyle(.segmented).labelsHidden().fixedSize()
+                }
+            }
+            GridRow(alignment: .top) {
+                Text(String(localized: "Checklist")).foregroundStyle(.secondary).fixedSize()
+                ChecklistEditor(lines: $draft.checklist)
+            }
+            if let derivedFrom {
+                GridRow {
+                    Text(String(localized: "Nata da")).foregroundStyle(.secondary).fixedSize()
+                    HStack(spacing: 4) {
+                        Image(systemName: DecisionRow.icon(derivedFrom)).foregroundStyle(.secondary)
+                        Text(DecisionRow.clip(derivedFrom.text, 60)).lineLimit(1)
+                        Button {
+                            draft.derivedFromID = nil
+                            self.derivedFrom = nil
+                        } label: {
+                            Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                        }
+                        .buttonStyle(.plain)
+                        .help(String(localized: "Non ricordare più da dove nasce"))
+                    }
+                    .font(.callout)
+                }
+            }
+        }
+    }
+
+    /// "Traccia": Aperta, In attesa, Fatta, Annullata; under way and blocked show as "Aperta" and are kept unless
+    /// the user picks another state. "Gestisci": all six. A new entry starts open.
+    private var statusPicker: some View {
+        let statuses = DecisionRow.workStatuses(mode).filter { draft.existingID != nil || $0.isOpen }
+        let binding = Binding<Decision.Status>(
+            get: { mode == .track ? DecisionRow.trackStatus(draft.status) : draft.status },
+            set: { status in
+                let shown = mode == .track ? DecisionRow.trackStatus(draft.status) : draft.status
+                if status != shown { draft.status = status }
+            })
+        return HStack(spacing: 8) {
+            Picker("", selection: binding) {
+                ForEach(statuses, id: \.self) { Text(DecisionRow.statusName($0, mode: mode)).tag($0) }
+                // A state the picker does not offer (closed by another entry): shown, not choosable.
+                if !statuses.contains(binding.wrappedValue) {
+                    Text(DecisionRow.statusName(binding.wrappedValue, mode: mode)).tag(binding.wrappedValue)
+                }
+            }
+            .labelsHidden().fixedSize()
+            if mode == .track, draft.status == .blocked {
+                Label(String(localized: "bloccata"), systemImage: "nosign").font(.caption).foregroundStyle(.red)
+            }
+        }
+    }
+
+    /// "Altri dettagli", only in "Gestisci": priority, dependencies, estimate, start, recurrence.
+    private var manageFields: some View {
+        Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
+            GridRow {
+                Text(String(localized: "Priorità")).foregroundStyle(.secondary).fixedSize()
+                Picker("", selection: $draft.priority) {
+                    Text(String(localized: "—")).tag(Int?.none)
+                    ForEach([1, 2, 3], id: \.self) { Text(DecisionRow.priorityLabel($0)).tag(Optional($0)) }
+                }
+                .pickerStyle(.segmented).labelsHidden().fixedSize()
+            }
+            GridRow(alignment: .top) {
+                Text(String(localized: "Dipende da")).foregroundStyle(.secondary).fixedSize()
+                dependencyChooser
+            }
+            GridRow {
+                Text(String(localized: "Stima")).foregroundStyle(.secondary).fixedSize()
+                TextField(
+                    String(localized: "Es. 3 giorni"),
+                    text: Binding(get: { draft.estimate ?? "" }, set: { draft.estimate = $0.isEmpty ? nil : $0 })
+                )
+                .textFieldStyle(.roundedBorder).frame(width: 160)
+            }
+            GridRow {
+                Text(String(localized: "Inizio")).foregroundStyle(.secondary).fixedSize()
+                OptionalDateField(date: $draft.startsAt)
+            }
+            GridRow {
+                Text(String(localized: "Ricorrenza")).foregroundStyle(.secondary).fixedSize()
+                Picker("", selection: $draft.recurrence) {
+                    Text(String(localized: "Nessuna")).tag(Decision.Recurrence?.none)
+                    ForEach(Decision.Recurrence.allCases, id: \.self) {
+                        Text(DecisionRow.recurrenceLabel($0)).tag(Optional($0))
+                    }
+                }
+                .labelsHidden().fixedSize()
+                .help(String(localized: "Quando la segni fatta, IAGO crea la successiva con la scadenza spostata"))
+            }
+        }
+    }
+
+    /// "Dipende da": open entries, as removable chips plus "Aggiungi…" (like «Supera»).
+    private var dependencyChooser: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(draft.blockerIDs, id: \.self) { id in
+                let blocker = blockerCandidates.first { $0.id == id }
+                HStack(spacing: 4) {
+                    Image(systemName: blocker.map { DecisionRow.icon($0) } ?? "circle").foregroundStyle(.secondary)
+                    Text(blocker.map(Self.short) ?? id).lineLimit(1).truncationMode(.tail)
+                    Button {
+                        draft.blockerIDs.removeAll { $0 == id }
+                    } label: {
+                        Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.plain)
+                    .help(String(localized: "Non dipende più da questa voce"))
+                }
+                .font(.callout)
+                .padding(.horizontal, 8).padding(.vertical, 3)
+                .background(Capsule().fill(Color.secondary.opacity(0.12)))
+            }
+            Menu(
+                draft.blockerIDs.isEmpty
+                    ? String(localized: "Nessuna voce · Aggiungi…") : String(localized: "Aggiungi…")
+            ) {
+                let available = blockerCandidates.filter {
+                    !draft.blockerIDs.contains($0.id) && $0.decision.status.isOpen
+                }
+                if available.isEmpty { Text(String(localized: "Nessun'altra voce aperta")) }
+                ForEach(available) { candidate in
+                    Button {
+                        draft.blockerIDs.append(candidate.id)
+                    } label: {
+                        Label(Self.short(candidate), systemImage: DecisionRow.icon(candidate))
+                    }
+                }
+            }
+            .menuStyle(.borderlessButton).fixedSize()
+            .help(String(localized: "Finché una di queste voci è aperta, questa resta «bloccata»"))
+        }
+    }
+
+    private func isPast(_ date: Date) -> Bool {
+        Calendar.current.startOfDay(for: date) < Calendar.current.startOfDay(for: Date())
     }
 
     /// ADR-0052: any number of entries of any kind, as removable chips, plus "Aggiungi…".
@@ -956,10 +1246,16 @@ struct DecisionEditor: View {
         switch (draft.existingID == nil, draft.kind) {
         case (true, .action): String(localized: "Nuova attività")
         case (true, .milestone): String(localized: "Nuova tappa")
-        case (true, _): String(localized: "Nuova decisione")
+        case (true, .openQuestion): String(localized: "Nuovo punto da chiarire")
+        case (true, .risk): String(localized: "Nuovo rischio")
+        case (true, .request): String(localized: "Nuova richiesta")
+        case (true, .decision): String(localized: "Nuova decisione")
         case (false, .action): String(localized: "Modifica attività")
         case (false, .milestone): String(localized: "Modifica tappa")
-        case (false, _): String(localized: "Modifica decisione")
+        case (false, .openQuestion): String(localized: "Modifica punto da chiarire")
+        case (false, .risk): String(localized: "Modifica rischio")
+        case (false, .request): String(localized: "Modifica richiesta")
+        case (false, .decision): String(localized: "Modifica decisione")
         }
     }
 
@@ -967,7 +1263,10 @@ struct DecisionEditor: View {
         switch kind {
         case .action: String(localized: "Titolo: cosa c'è da fare")
         case .milestone: String(localized: "Titolo: cosa è successo")
-        default: String(localized: "Titolo: cosa è stato deciso")
+        case .openQuestion: String(localized: "Titolo: la domanda che aspetta risposta")
+        case .risk: String(localized: "Titolo: cosa può andare storto")
+        case .request: String(localized: "Titolo: cosa chiede il cliente")
+        case .decision: String(localized: "Titolo: cosa è stato deciso")
         }
     }
 
@@ -980,12 +1279,36 @@ struct DecisionEditor: View {
             )
         case .milestone:
             String(localized: "Un fatto importante da ricordare: firma, consegna, kickoff, cambio di referente.")
-        default:
+        case .openQuestion:
+            String(
+                localized:
+                    "Una domanda che aspetta risposta: resta aperta finché non la chiarisci, anche con una decisione.")
+        case .risk:
+            String(
+                localized:
+                    "Cosa può andare storto, con la sua gravità: se accade diventa un problema, poi si chiude come risolto o non più rilevante."
+            )
+        case .request:
+            String(
+                localized:
+                    "Cosa chiede il cliente: si accoglie (anche con le attività che ne nascono), si rifiuta o si trasforma."
+            )
+        case .decision:
             String(localized: "Qualcosa di deciso: vale finché un'altra decisione non la supera.")
         }
     }
 
     private func save() {
+        if draft.kind.isWork, let id = draft.existingID,
+            let blocker = draft.blockerIDs.first(where: { model.dependsOn($0, id) })
+        {
+            let title = blockerCandidates.first { $0.id == blocker }.map { Self.clip($0.decision.text) } ?? ""
+            cycleError = String(
+                localized:
+                    "«\(title)» dipende già da questa voce, direttamente o tramite altre: non può anche bloccarla. Togli «\(title)» da «Dipende da»."
+            )
+            return
+        }
         if let id = draft.existingID, !draft.reorderingChain,
             let target = draft.supersedesIDs.first(where: { (try? model.archive.comesLater($0, than: id)) == true })
         {
@@ -1150,7 +1473,10 @@ struct PromoteNoteButton: View {
         switch kind {
         case .action: String(localized: "Diventata attività")
         case .milestone: String(localized: "Diventata tappa")
-        default: String(localized: "Diventata decisione")
+        case .openQuestion: String(localized: "Diventata punto da chiarire")
+        case .risk: String(localized: "Diventata rischio")
+        case .request: String(localized: "Diventata richiesta")
+        case .decision: String(localized: "Diventata decisione")
         }
     }
 
@@ -1170,7 +1496,7 @@ struct PromoteNoteButton: View {
             .help(String(localized: "Apri il punto chiave nato da questa nota"))
         } else {
             Menu(String(localized: "Promuovi a…")) {
-                ForEach([Decision.Kind.decision, .action, .milestone], id: \.self) { kind in
+                ForEach(DecisionRow.allKinds, id: \.self) { kind in
                     Button(DecisionRow.kindLabel(kind)) {
                         model.editingDecision = DecisionDraft(
                             note: note, item: item ?? model.item(note.itemId ?? ""), kind: kind)

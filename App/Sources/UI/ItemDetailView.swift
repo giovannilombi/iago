@@ -376,7 +376,7 @@ struct ItemDetailView: View {
                 .font(.caption).foregroundStyle(.secondary)
             }
             Menu {
-                ForEach([Decision.Kind.decision, .action, .milestone], id: \.self) { kind in
+                ForEach(DecisionRow.allKinds, id: \.self) { kind in
                     Button {
                         var draft = DecisionDraft(item: item, atSec: nil, text: "", origin: .manual)
                         draft.kind = kind

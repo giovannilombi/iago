@@ -806,7 +806,9 @@ extension IAGOTools {
         case .decision: "Decisione"
         case .action: "Attività"
         case .milestone: "Tappa"
-        case .openQuestion: "Domanda aperta"
+        case .openQuestion: "Punto da chiarire"
+        case .risk: "Rischio"
+        case .request: "Richiesta"
         }
     }
 

@@ -10,12 +10,20 @@ extension AppModel {
         let content = suggestion.content
         perform {
             switch suggestion.kind {
-            case .decision, .activity:
+            case .decision, .activity, .question, .risk, .request:
+                let kind: Decision.Kind =
+                    switch suggestion.kind {
+                    case .activity: .action
+                    case .question: .openQuestion
+                    case .risk: .risk
+                    case .request: .request
+                    default: .decision
+                    }
                 var decision = Decision(
                     text: content.text,
                     decidedAt: item.occurredAt.addingTimeInterval(content.atSec ?? 0), projectId: item.projectId,
                     sourceItemId: item.id, sourceAtSec: content.atSec, supersedesId: content.supersedesID,
-                    origin: .extraction, kind: suggestion.kind == .activity ? .action : .decision)
+                    origin: .extraction, kind: kind)
                 decision.model = Provenance.decisionModel(of: suggestion)
                 try archive.createDecision(
                     decision, people: content.owner.map { DecisionDraft.isPersonName($0) ? [$0] : [] } ?? [])
@@ -165,6 +173,9 @@ struct SuggestionRow: View {
         case .tag: content.isNew == true ? String(localized: "Tag nuovo") : String(localized: "Tag")
         case .project: String(localized: "Progetto")
         case .link: String(localized: "Collegamento")
+        case .question: String(localized: "Punto da chiarire")
+        case .risk: String(localized: "Rischio")
+        case .request: String(localized: "Richiesta")
         }
     }
 
