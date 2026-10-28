@@ -437,6 +437,9 @@ extension IAGOTools {
         case .person: "Nome"
         case .project: "Progetto"
         case .link: "Collegamento"
+        case .question: "Punto da chiarire"
+        case .risk: "Rischio"
+        case .request: "Richiesta"
         }
     }
 

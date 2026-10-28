@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import IAGOCore
 import IAGOExport
 import IAGOStore
 import Synchronization
@@ -87,9 +88,12 @@ public struct IAGOTools: ToolProvider {
             - Gli elementi sono di tre tipi: call (trascrizione con minuti e speaker), email (con direzione: \
             inviata o ricevuta), documenti (testo estratto, anche con OCR: può contenere errori di riconoscimento).
             - Le note sono scritte dall'utente, con data: valgono come sue annotazioni, non come parole dette in call.
-            - I punti chiave sono decisioni (Attiva, Superata da una più recente della stessa catena, Annullata), \
-            attività (Aperta, Fatta, Annullata; possono diventare decisioni) e tappe (fatti importanti avvenuti). \
-            Per "cosa vale oggi" usa solo le decisioni Attive.
+            - I punti chiave sono di due nature. Memoria: decisioni (Attiva, Superata da una più recente della \
+            stessa catena, Annullata) e tappe (fatti importanti avvenuti). Lavoro aperto: attività (con checklist), \
+            punti da chiarire, rischi (con gravità) e richieste del cliente, con responsabile, scadenza, "in attesa \
+            di" e stati Da fare, In corso, In attesa, Bloccata, Fatta, Annullata; si chiudono anche con un esito \
+            (Chiarito con la risposta, Accolta, Rifiutata, Risolto…). Per "cosa vale oggi" usa solo le decisioni \
+            Attive; per "cosa è aperto" il lavoro con status=open.
             - Le informazioni si susseguono nel tempo: in caso di conflitto prevale la più recente, e il conflitto va \
             segnalato.
             - Cita sempre la fonte: titolo dell'elemento, data e, per le call, il minuto [mm:ss].
@@ -102,12 +106,16 @@ public struct IAGOTools: ToolProvider {
     static let writingGuide = """
 
         Scrivere in IAGO (solo nei progetti «scrivibili» di list_projects, solo quando l'utente te lo chiede):
-        1. Prima leggi il contesto del progetto: list_projects (stream), list_decisions con status=active (e query \
+        1. Prima leggi il contesto del progetto: list_projects (stream), list_decisions con status=open (e query \
         sul tema), la parte recente di project_timeline, list_notes se serve.
         2. Scegli il tipo giusto:
            - nota (add_note): un'informazione da ricordare;
            - decisione (add_decision): qualcosa di deciso, che vale finché un'altra decisione non la supera;
-           - attività (add_decision, kind activity): qualcosa da fare;
+           - attività (add_decision, kind action): qualcosa da fare, con responsabile (owner), scadenza (due), \
+        "in attesa di" (waiting_on, waiting_until) e checklist se l'utente li dice;
+           - punto da chiarire (kind open_question): una domanda che aspetta risposta;
+           - rischio (kind risk, con severity): cosa può andare storto;
+           - richiesta (kind request): cosa chiede il cliente;
            - tappa (add_decision, kind milestone): un fatto importante avvenuto (firma, consegna, kickoff);
            - documento (create_document): un testo lungo e strutturato, come un verbale o un riepilogo;
            - file (import_file): un PDF, un'immagine o un documento che è sul Mac. IAGO non riceve i file caricati \
@@ -221,10 +229,12 @@ public struct IAGOTools: ToolProvider {
             ToolDefinition(
                 name: "list_decisions",
                 description: """
-                    Punti chiave di un progetto: decisioni, attività (da fare o in corso) e tappe (fatti importanti), \
-                    con stato, data, fonte (call al minuto, email, nota), \
-                    catena "supera" e descrizione. Di default tutte; status=active per quelle valide oggi. Con \
-                    query trova quelle su un tema (es. "è cambiata la decisione sul contributo").
+                    Punti chiave di un progetto: decisioni e tappe (memoria), attività, punti da chiarire, rischi e \
+                    richieste (lavoro aperto), con decision_id, stato, data, fonte (call al minuto, email, nota), \
+                    catena "supera", responsabile, scadenza, in attesa di, priorità, gravità, esito, dipendenze, \
+                    "nata da", checklist e descrizione. Di default tutte; status=active per le decisioni valide oggi, \
+                    status=open per il lavoro ancora aperto. Con query trova quelle su un tema (es. "è cambiata la \
+                    decisione sul contributo"); con owner quelle di una persona.
                     """,
                 inputSchema: [
                     "type": "object",
@@ -234,10 +244,25 @@ public struct IAGOTools: ToolProvider {
                             "type": "string",
                             "description": "Facoltativo: parole del titolo o della descrizione, dalla più pertinente.",
                         ],
-                        "status": ["type": "string", "enum": ["active", "done", "superseded", "cancelled", "all"]],
+                        "status": [
+                            "type": "string",
+                            "enum": [
+                                "active", "in_progress", "waiting", "blocked", "open", "done", "superseded",
+                                "cancelled", "all",
+                            ],
+                            "description":
+                                "Facoltativo: open = da fare, in corso, in attesa o bloccata (e decisioni attive).",
+                        ],
                         "kind": [
-                            "type": "string", "enum": ["decision", "activity", "milestone", "all"],
-                            "description": "Facoltativo: solo decisioni, attività o tappe (default tutti).",
+                            "type": "string",
+                            "enum": [
+                                "decision", "action", "milestone", "open_question", "risk", "request", "work", "all",
+                            ],
+                            "description":
+                                "Facoltativo: un tipo solo, oppure work per tutto il lavoro aperto (default tutti).",
+                        ],
+                        "owner": [
+                            "type": "string", "description": "Facoltativo: nome del responsabile.",
                         ],
                         "from": Self.fromArgument, "to": Self.toArgument,
                     ],
@@ -553,8 +578,7 @@ public struct IAGOTools: ToolProvider {
         if !decisions.isEmpty {
             text += "\n### Decisioni nate da questo elemento\n\n"
             text +=
-                decisions.map { ProjectExporter.decisionMarkdown($0, chainName: $0.chainName, timeZone: timeZone) }
-                .joined(separator: "\n") + "\n"
+                (try decisions.map(decisionEntry)).joined(separator: "\n") + "\n"
         }
         let links = try archive.links(itemID: item.id).filter { scope.visible($0.item) }
         if !links.isEmpty {
@@ -627,22 +651,27 @@ public struct IAGOTools: ToolProvider {
         let range = try dateRange(arguments)
         let statuses: Set<Decision.Status> =
             switch arguments["status"]?.string {
-            case "active": [.active]
-            case "superseded": [.superseded]
-            case "cancelled": [.cancelled]
-            case "done": [.done]
-            default: []
+            case "open": DecisionQuery.current
+            case let value?: Decision.Status(rawValue: value).map { [$0] } ?? []
+            case nil: []
             }
         let kinds: Set<Decision.Kind> =
             switch arguments["kind"]?.string {
-            case "decision": [.decision]
-            case "activity": [.action]
-            case "milestone": [.milestone]
-            default: []
+            case "work": Set(Decision.Kind.work)
+            case let value?: Self.decisionKind(value).map { [$0] } ?? []
+            case nil: []
             }
+        var ownerID: String?
+        if let owner = arguments["owner"]?.string?.trimmingCharacters(in: .whitespaces), !owner.isEmpty {
+            guard let person = try knownPerson(owner) else {
+                return "Nessuna persona «\(owner)» in IAGO: prova con list_decisions senza owner."
+            }
+            ownerID = person.id
+        }
         let decisions = try archive.decisions(
             DecisionQuery(
-                scope: stream.map { .stream($0.id) } ?? project.decisions, statuses: statuses, kinds: kinds)
+                scope: stream.map { .stream($0.id) } ?? project.decisions, statuses: statuses, kinds: kinds,
+                ownerID: ownerID)
         )
         .filter { range.contains($0.decision.decidedAt) }
         .sorted { $0.decision.decidedAt < $1.decision.decidedAt }
@@ -650,9 +679,30 @@ public struct IAGOTools: ToolProvider {
         guard !decisions.isEmpty else { return "Nessun punto chiave in «\(project.name)» con questi filtri." }
         returned = decisions.map(\.id)
         return
-            (["# Punti chiave di «\(project.name)»", ""]
-            + decisions.map { ProjectExporter.decisionMarkdown($0, chainName: $0.chainName, timeZone: timeZone) })
+            (["# Punti chiave di «\(project.name)»", ""] + (try decisions.map(decisionEntry)))
             .joined(separator: "\n")
+    }
+
+    /// One key point as in the exports, with its checklist and its id (to update it, or to link to it).
+    func decisionEntry(_ summary: DecisionSummary) throws -> String {
+        let checklist = summary.checklist.total > 0 ? try archive.checklistItems(decisionID: summary.id) : []
+        var lines = ProjectExporter.decisionMarkdown(
+            summary, chainName: summary.chainName, checklist: checklist, timeZone: timeZone
+        )
+        .components(separatedBy: "\n")
+        lines[0] += " · decision_id `\(summary.id)`"
+        return lines.joined(separator: "\n")
+    }
+
+    /// `decision`, `action` (or `activity`, as before ADR-0074), `milestone`, `open_question`, `risk`, `request`.
+    static func decisionKind(_ value: String) -> Decision.Kind? {
+        value == "activity" ? .action : Decision.Kind(rawValue: value)
+    }
+
+    /// A person IAGO already knows, by name; nil if there is none (nothing is created).
+    func knownPerson(_ name: String) throws -> Entity? {
+        let normalized = TagNormalizer.normalize(name)
+        return try archive.people().first { $0.normalized == normalized }
     }
 
     func listNotes(_ scope: Scope, _ arguments: JSON, _ returned: inout [String]) throws -> String {
