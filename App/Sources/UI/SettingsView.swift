@@ -160,6 +160,7 @@ private struct GeneralPane: View {
                 .onChange(of: name) { save() }
         }
         WorkModeGroup(model: model)
+        WorkViewsSettings(model: model)
         SettingsGroup(title: String(localized: "Avvio")) {
             Toggle(String(localized: "Apri IAGO all'avvio del Mac"), isOn: $launchAtLogin)
                 .onChange(of: launchAtLogin) { _, enabled in
@@ -177,7 +178,6 @@ private struct GeneralPane: View {
                 }
         }
         .onAppear { name = (try? model.archive.setting(TranscriptionService.meLabelKey)) ?? "Io" }
-        WorkViewsSettings(model: model)
         if let shortcuts = model.shortcuts { ShortcutSettings(model: model, shortcuts: shortcuts) }
     }
 

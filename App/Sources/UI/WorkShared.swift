@@ -63,76 +63,18 @@ extension AppModel {
 
 // MARK: - Kinds and states
 
-/// Sign, colour and names of the six kinds and of the work states (ADR-0074). Kept here until the key point rows
-/// have their own helpers for every kind; then these can call them.
+/// Sign, colour and names of the six kinds and of the work states (ADR-0074), for the inbox, the overview and the
+/// board: the same as the key point rows (`DecisionRow`), plus what only these views need.
 enum WorkStyle {
-    static func icon(_ kind: Decision.Kind) -> String {
-        switch kind {
-        case .decision: "checkmark.seal.fill"
-        case .milestone: "flag.fill"
-        case .action: "circle"
-        case .openQuestion: "questionmark.circle.fill"
-        case .risk: "exclamationmark.triangle.fill"
-        case .request: "envelope.fill"
-        }
-    }
-
-    static func tint(_ kind: Decision.Kind) -> Color {
-        switch kind {
-        case .decision: .green
-        case .milestone: .blue
-        case .action: .orange
-        case .openQuestion: .purple
-        case .risk: .red
-        case .request: .cyan
-        }
-    }
-
-    /// The sign of an entry: a done activity gets its tick, closed entries go grey.
-    static func icon(_ decision: Decision) -> String {
-        if decision.kind == .action, decision.status == .done { return "checkmark.circle.fill" }
-        return icon(decision.kind)
-    }
-
-    static func color(_ decision: Decision) -> Color {
-        if decision.status == .done { return .green }
-        if decision.kind.isWork, !decision.status.isOpen { return .secondary }
-        return tint(decision.kind)
-    }
-
-    static func label(_ kind: Decision.Kind) -> String {
-        switch kind {
-        case .decision: String(localized: "Decisione")
-        case .milestone: String(localized: "Tappa")
-        case .action: String(localized: "Attività")
-        case .openQuestion: String(localized: "Punto da chiarire")
-        case .risk: String(localized: "Rischio")
-        case .request: String(localized: "Richiesta")
-        }
-    }
-
-    static func plural(_ kind: Decision.Kind) -> String {
-        switch kind {
-        case .decision: String(localized: "Decisioni")
-        case .milestone: String(localized: "Tappe")
-        case .action: String(localized: "Attività")
-        case .openQuestion: String(localized: "Punti da chiarire")
-        case .risk: String(localized: "Rischi")
-        case .request: String(localized: "Richieste")
-        }
-    }
-
+    static func icon(_ kind: Decision.Kind) -> String { DecisionRow.kindIcon(kind) }
+    static func tint(_ kind: Decision.Kind) -> Color { DecisionRow.tint(kind) }
+    static func icon(_ decision: Decision) -> String { DecisionRow.icon(decision) }
+    static func color(_ decision: Decision) -> Color { DecisionRow.color(decision) }
+    static func label(_ kind: Decision.Kind) -> String { DecisionRow.kindLabel(kind) }
+    static func plural(_ kind: Decision.Kind) -> String { DecisionRow.kindPlural(kind) }
     /// The state as each mode shows it: «Traccia» folds «In corso» and «Bloccata» into «Aperta».
     static func state(_ status: Decision.Status, mode: WorkMode) -> String {
-        switch status {
-        case .active: mode == .manage ? String(localized: "Da fare") : String(localized: "Aperta")
-        case .inProgress: mode == .manage ? String(localized: "In corso") : String(localized: "Aperta")
-        case .waiting: String(localized: "In attesa")
-        case .blocked: mode == .manage ? String(localized: "Bloccata") : String(localized: "Aperta")
-        case .done: String(localized: "Fatta")
-        case .superseded: String(localized: "Chiusa")
-        case .cancelled: String(localized: "Annullata")
-        }
+        DecisionRow.statusName(mode == .track ? DecisionRow.trackStatus(status) : status, mode: mode)
     }
 
     static func severity(_ severity: Decision.Severity) -> String {
