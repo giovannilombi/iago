@@ -1,13 +1,13 @@
 <!-- icona: gearshape -->
 # Impostazioni
 
-- **Generale:** nome ("Io"), avvio al login, aggiornamenti, scorciatoie in tutte le app, schermate (uno o tutti gli schermi).
+- **Generale:** nome ("Io"), **modo di lavorare** (Traccia o Gestisci), Kanban, notifica del mattino, avvio al login, aggiornamenti, scorciatoie in tutte le app, schermate (uno o tutti gli schermi).
 - **Permessi:** cosa è attivo e cosa manca, con l'attivazione guidata.
 - **Audio:** microfono, riunioni (proposte, calendario, mute di Teams).
 - **Trascrizione:** motore, lingua, glossario, cosa fare dopo lo Stop, solo con alimentazione, modelli.
 - **Voci:** riconoscimento delle stesse voci tra una call e l'altra (spento di default) e voci conosciute, da eliminare una per una o tutte.
 - **Motore:** modello locale, ricerca per significato, lavori automatici (proposte e sintesi; spenti di default sotto i 32 GB di memoria).
-- **Progetti:** rinomina, archivia, elimina (in tre passi).
+- **Progetti:** rinomina, archivia, elimina (in tre passi); in Gestisci, *Tieni semplice (Traccia)* per singolo progetto.
 - **Email e persone:** i tuoi indirizzi, contatti, cartelle sorvegliate, regole.
 - **Categorie:** principali e famiglie, colori, ordine, modelli di sintesi.
 - **Claude:** progetti abilitati, scrittura, immagini delle schermate, registro delle modifiche.

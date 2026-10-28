@@ -1,6 +1,6 @@
 # ADR-0074 — Lavoro aperto e due modalità: Traccia e Gestisci
 
-- Stato: proposto
+- Stato: accettato (1.1.0-beta, in prova; punto di ripristino `v1.0.1-beta`)
 - Data: 2026-10-28
 - Riferimenti: ADR-0014 (modello `decision` con `kind`), ADR-0046 (punti chiave), ADR-0049 (proposte), ADR-0052 (superamenti multipli), ADR-0071 (Claude); progetto [`docs/design/lavoro-aperto.md`](../design/lavoro-aperto.md); discussione con l'utente del 2026-10-27 e 2026-10-28
 

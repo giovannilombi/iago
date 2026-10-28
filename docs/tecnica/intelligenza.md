@@ -8,13 +8,18 @@
 - **Ricerca ibrida:** i due elenchi vengono uniti con *reciprocal rank fusion*. Senza il modello di embedding resta la ricerca per parole.
 - **Ambito:** tutta la memoria, un cliente, un progetto o uno stream.
 
-## Punti chiave (ADR-0046, ADR-0052)
-- Tipi: decisione, attività, tappa e altri (`kind`), con fonte (elemento e minuto, oppure nota), persone, data.
-- **Superamenti:** una voce può superarne una o più, anche di tipo diverso; la catena resta consultabile ("Supera", "Superata da").
-- Registro globale dei punti chiave e timeline di progetto (ADR-0037).
+## Punti chiave (ADR-0046, ADR-0052, ADR-0074)
+- **Sei tipi** (`Decision.Kind`): memoria (`decision`, `milestone`) e lavoro aperto (`action`, `open_question`, `risk`, `request`, `Kind.isWork`). Tutti con fonte (elemento e minuto, oppure nota), persone, data.
+- **Stati:** `active`, `in_progress`, `waiting`, `blocked`, `done`, `superseded`, `cancelled` (`Status.isOpen` per i primi quattro). Le chiusure con esito usano `done` più `outcome_kind` (`answered`, `accepted`, `rejected`, `converted`, `resolved`, `irrelevant`) e il testo in `outcome`. `closed_at` segue lo stato (`Archive.stampClosed`).
+- **Tre legami:** *supera / chiude* (`decision_supersede`, ADR-0052; la UI lo legge con il verbo della coppia: sostituisce, risponde a, accoglie, completa), *nata da* (`derived_from_id`), *dipende da* (`decision_dependency`: una voce con un blocco aperto diventa `blocked` e torna `active` quando tutti sono chiusi, `Archive.recomputeBlocked`; niente cerchi, `WorkError.dependencyCycle`).
+- **Ricorrenze:** una voce `done` con `recurrence` crea la successiva con la scadenza spostata e la checklist da rifare (`Archive.repeatIfNeeded`).
+- **Modalità** (`WorkMode`): `track` o `manage` nell'impostazione `work.mode`, con eccezione per progetto (`project.work_mode`). Cambia solo la UI.
+- Registro globale dei punti chiave, timeline di progetto (ADR-0037), **Da fare**, **Riepilogo** e **Kanban** (`App/Sources/UI/Work*.swift`).
+- **Sintesi di stato** (`StatusReport`): il motore scrive lo stato di un progetto solo dai punti chiave, nella corsia interattiva del motore; le righe che non citano un punto chiave esistente vengono tolte.
+- **Notifica del mattino** (`WorkReminder`): una notifica locale nei giorni lavorativi con i conteggi di scadenze, ritardi e attese scadute.
 
 ## Proposte (ADR-0009, ADR-0049)
-Dopo ogni nuovo contenuto il motore propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti. Ogni proposta porta **la frase da cui viene**; IAGO la cerca nel testo e scarta quelle che non trova. Niente viene applicato senza conferma.
+Dopo ogni nuovo contenuto il motore propone decisioni, attività, punti da chiarire, rischi, richieste, nomi degli speaker, tag, progetto e collegamenti. Le attività portano chi le fa, entro quando e chi si aspetta; le scadenze dette a parole («venerdì», «fine mese», «fra 3 giorni») si calcolano dalla data dell'elemento (`DueDates`), non dal modello. Una proposta può chiudere una voce aperta del progetto (risponde a un punto da chiarire, accoglie una richiesta): `KeyPointExtractor` riceve le ultime voci aperte come candidati, nella stessa passata di estrazione. Ogni proposta porta **la frase da cui viene**; IAGO la cerca nel testo e scarta quelle che non trova. Niente viene applicato senza conferma.
 - **Automatiche o a mano** (ADR-0069): proposte e sintesi automatiche (`intelligence.autoSuggest`, `summaries.auto`) sono accese di default solo da 32 GB (`EnginePolicy.automaticWorkByDefault`); il default si calcola su ogni Mac e non si salva. «Cerca proposte» e «Genera sintesi» funzionano sempre.
 - **Provenienza** (ADR-0070): `suggestion.origin` e `summary.origin` (`engine` o `claude`) e `model`; un punto chiave confermato tiene `decision.model`. La UI usa `Provenance` per la stessa riga ovunque, con «modello piccolo» sotto i 9B.
 

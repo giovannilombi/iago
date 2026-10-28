@@ -84,7 +84,7 @@ const tecnicoSidebar: DefaultTheme.SidebarItem[] = [
     text: 'Progetti e misure',
     collapsed: true,
     items: [
-      { text: 'Lavoro aperto: Traccia e Gestisci (proposta)', link: '/design/lavoro-aperto' },
+      { text: 'Lavoro aperto: Traccia e Gestisci', link: '/design/lavoro-aperto' },
       { text: 'Progetti condivisi (proposta)', link: '/design/sync-cartella-condivisa' },
       { text: 'Benchmark trascrizione', link: '/benchmarks/2026-10-phase0' },
       { text: 'Prova sintesi e glossario', link: '/benchmarks/2026-10-21-sintesi-e-glossario' }

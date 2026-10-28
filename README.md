@@ -59,10 +59,11 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **Accesso trasversale:** ogni categoria e ogni tag attraversa tutti i progetti; `#tag` e `categoria:` direttamente dalla ricerca.
 
 ### Ricorda ciò che conta
-- **Punti chiave:** decisioni, attività e tappe, ognuno con la fonte (fino al minuto della call), le persone e la data.
+- **Punti chiave:** decisioni e tappe (la memoria) e lavoro aperto (attività con checklist, punti da chiarire, rischi, richieste), ognuno con la fonte (fino al minuto della call), le persone e la data; il lavoro con responsabile, scadenza e «in attesa di».
+- **Il lavoro aperto sotto controllo:** **Da fare** raccoglie cosa è aperto, di chi è e per quando; il **Riepilogo** dice a che punto è un progetto, con una sintesi di stato da copiare. Due modi di lavorare sugli stessi dati: **Traccia**, semplice, e **Gestisci**, con stati fini, priorità, dipendenze, ricorrenze e **Kanban** con colonne tue.
 - **L'evoluzione delle decisioni:** una voce può superarne altre, anche di tipo diverso, e IAGO tiene la storia di come ci si è arrivati.
 - **Momenti segnati** durante una call, anche **con lo screenshot** della slide condivisa (il testo letto entra nella trascrizione, nella ricerca e nelle sintesi), e **note** datate sul progetto o sull'elemento, anche dettate a voce. Le scorciatoie (⌃⌥M, ⌃⌥S, ⌃⌥R) funzionano in qualsiasi app.
-- **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
+- **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività (con chi, entro quando, chi si aspetta), punti da chiarire, rischi, richieste, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
 - **Riconosce le voci** (se lo attivi): dai un nome a uno speaker e nelle call successive IAGO propone quel nome quando sente la stessa voce. Le impronte restano cifrate sul Mac, non vanno mai a Claude e si eliminano quando vuoi.
 
 ### Capisce
@@ -275,6 +276,7 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0071](docs/adr/0071-claude-sintesi-e-proposte.md) | Sintesi e proposte anche da Claude, con le stesse verifiche | qualità alta sui Mac piccoli, sempre controllabile |
 | [0072](docs/adr/0072-segna-momento-con-screenshot.md) | Screenshot solo su richiesta, letti sul Mac | le slide entrano nella memoria senza catture automatiche |
 | [0073](docs/adr/0073-riconoscere-le-voci.md) | Voci riconosciute tra le call, solo se attivo e solo come proposta | meno nomi da scrivere, dati biometrici sotto controllo |
+| [0074](docs/adr/0074-lavoro-aperto-traccia-gestisci.md) | Lavoro aperto con due modi, Traccia e Gestisci, sugli stessi dati | semplice per chi tiene traccia, completo per chi gestisce |
 | [0056](docs/adr/0056-aggiornamenti.md) | Aggiornamenti Sparkle firmati, maggiori obbligatori | tutti sulla stessa versione sicura |
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
 
@@ -321,6 +323,7 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
+| **1.1.0-beta** | 28 ottobre 2026 | In prova, sul ramo `feat/lavoro` (si torna alla 1.0.1-beta: vedi sotto). Lavoro aperto: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, checklist; modi di lavorare Traccia e Gestisci; Da fare, Riepilogo con sintesi di stato, Kanban con colonne libere; dipendenze e ricorrenze; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP per il lavoro aperto. Sito della documentazione con la versione nell'header |
 | **1.0.1-beta** | 28 ottobre 2026 | Punto di ripristino prima della 1.1.0-beta. JSON e altri file di testo importabili, menu Modifica (⌘C, ⌘V…); coda unica del motore e gestione della memoria, impostazioni automatiche sotto i 32 GB; chi ha prodotto sintesi e proposte (modello o Claude); sintesi e proposte fatte da Claude con «Copia per Claude»; «Segna momento con screenshot» e scorciatoie in tutte le app; distribuzione con DMG; riconoscimento delle stesse voci tra call diverse |
 | **1.0.0-beta** | 24 ottobre 2026 | Beta, non ancora distribuita: tutto quello che è descritto qui (fasi 0-3). La 1.0.0 sarà la prima versione distribuibile |
 

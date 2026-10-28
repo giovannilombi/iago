@@ -5,7 +5,7 @@
 > Ultimo aggiornamento: **27 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.0.1-beta, non distribuita (tag `v1.0.1-beta`, punto di ripristino prima della 1.1.0-beta; ramo `release/1.0.x`). La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.1.0-beta **in prova** sul ramo `feat/lavoro` (si prova con `scripts/try-branch.sh` su una copia dell'archivio); su `main` c'è la 1.0.1-beta, punto di ripristino (tag `v1.0.1-beta`, ramo `release/1.0.x`). Se la 1.1 viene approvata si unisce su `main` con il tag `v1.1.0-beta`; se no si riprende dalla 1.0.x. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
@@ -24,6 +24,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
 - barra di registrazione e barra di ascolto, Attività, guida integrata, tour, aggiornamenti con Sparkle.
 
 ## Aperto, in ordine di priorità
+0. **Prova della 1.1.0-beta** (lavoro aperto, ADR-0074, [`docs/design/lavoro-aperto.md`](design/lavoro-aperto.md)): prove 10i di [`docs/prove-tester.md`](prove-tester.md) con `scripts/try-branch.sh`, poi decisione: unire su `main` o tornare alla 1.0.x. In attesa, da riaprire: sincronizzazione con i calendari (Mac, Google, Microsoft, servirà un ADR di rete), Pianifica la giornata, invio di attività ad altri prima della fase 4, taratura delle proposte del lavoro aperto su call vere.
 1. **Revisione tecnica** del collega e decisione sulla distribuzione.
 2. **Prove di accettazione** con [`docs/prove-tester.md`](prove-tester.md), una issue "Prove" per tester (vedi [README-collaborators](../README-collaborators.md#6-prove)).
 3. **Verifiche dal vivo ancora da fare:**
@@ -31,7 +32,6 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - l'icona di IAGO nelle notifiche di macOS;
    - le novità del 27 ottobre, sezioni 10b-10h di [`docs/prove-tester.md`](prove-tester.md), con la taratura della soglia delle voci su call vere (10h): coda del motore e memoria su un Mac da 16 GB, schermate e scorciatoie nell'app vera (con il permesso Registrazione schermo dato a IAGO), sintesi e proposte fatte da Claude Desktop, DMG e aggiornamenti.
 4. **ADR proposti, da decidere:**
-   - ADR-0074, lavoro aperto con due modalità, Traccia e Gestisci (progetto in [`docs/design/lavoro-aperto.md`](design/lavoro-aperto.md)): tipi nuovi (punto da chiarire, rischio, richiesta), stati, responsabile e scadenza, checklist, inbox Da fare, riepilogo di progetto, kanban. Si sviluppa sul branch `feat/lavoro` e si prova su una copia dell'archivio; su `main` solo dopo l'approvazione. In attesa, da riaprire: sincronizzazione con i calendari (Mac, Google, Microsoft), Pianifica la giornata, invio di attività ad altri prima della fase 4.
    - ADR-0057, progetti condivisi tramite una cartella cloud (progetto in [`docs/design/sync-cartella-condivisa.md`](design/sync-cartella-condivisa.md)); quando accettato supera il backend di ADR-0012 e si apre la fase 4;
    - ADR-0067, MiniCPM al posto di Qwen 3.5 4B o in aggiunta: servono prove. Un modello visivo locale (MiniCPM-V) si valuta solo se l'OCR delle schermate non basta (ADR-0072).
    - Estrazione unica per proposte e sintesi (oggi la stessa call si legge due volte): solo se il banco di prova su call vere mostra la stessa qualità.
@@ -42,6 +42,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-28:** **1.1.0-beta, lavoro aperto** (ADR-0074), sul ramo `feat/lavoro`: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, priorità, dipendenze, ricorrenze, checklist; modi Traccia e Gestisci; Da fare, Riepilogo con sintesi di stato, Kanban con colonne libere e archivio a 14 giorni; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP; esportazioni e grafo. Migrazione `v21-work` (solo aggiunte), provata su una copia di un archivio reale. Header del sito con il selettore Uso/Tecnico fisso, ricerca larga e versione dell'app.
 - **2026-10-28:** progetto del lavoro aperto (ADR-0074 proposto, [`docs/design/lavoro-aperto.md`](design/lavoro-aperto.md)), sul branch `feat/lavoro`: nessun codice finché non è approvato.
 - **2026-10-28:** versione 1.0.1-beta e punto di ripristino (tag `v1.0.1-beta`, ramo `release/1.0.x`); regola delle versioni in `CLAUDE.md` e README-collaborators; README › Tornare a una versione precedente.
 - **2026-10-27:** riconoscere le stesse voci in call diverse (ADR-0073): Impostazioni › Voci, spento di default. Dare un nome a uno speaker insegna la sua voce; nelle call successive arriva la proposta «Speaker 2 diventa Marco» con «Riconosciuta dalla voce (somiglianza …%)», sempre da confermare. Impronte cifrate con la chiave della call, mai a Claude o negli export; voci eliminabili una per una o tutte (tre passi). Migrazione `v20-voices`.

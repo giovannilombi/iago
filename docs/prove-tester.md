@@ -202,6 +202,26 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 10h.5 Elimina la voce: un solo avviso, poi sparisce dalla lista. *Elimina tutte le voci…* chiede tre passaggi (avviso, DELETE, ultima conferma).
 - [ ] 10h.6 Spegni l'interruttore: una nuova trascrizione non propone più nomi dalla voce.
 
+## 10i. Lavoro aperto (1.1.0-beta)
+Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-branch.sh` la apre su una copia dell'archivio. Per tornare indietro chiudi la prova e riapri IAGO.
+- [ ] 10i.1 Impostazioni › Generale › Modo di lavorare è su *Traccia*. In un progetto, *Aggiungi* offre i sei tipi: Decisione, Tappa, Attività, Punto da chiarire, Rischio, Richiesta.
+- [ ] 10i.2 Crea un'attività con responsabile (prova un nome simile a uno esistente: deve chiedere «Intendi …?»), scadenza di ieri e due righe di checklist: in timeline la scadenza è rossa e si vede 0/2.
+- [ ] 10i.3 Scrivi qualcuno in *In attesa di* con una data: la voce passa *In attesa* e in **Da fare** compare sotto *Aspetto da altri*.
+- [ ] 10i.4 *Segna come fatta*: ✓ verde, testo grigio non barrato; esce da Da fare e torna con *Mostra chiuse*.
+- [ ] 10i.5 Punto da chiarire › *Chiarisci…* con *Diventa decisione*: nasce la decisione e il punto le sta sotto come «chiarito». Togli il legame dalla decisione: il punto torna aperto.
+- [ ] 10i.6 Richiesta › *Accogli…* con due attività: nascono due attività «nate da» la richiesta, che risulta accolta. Un'altra richiesta › *Rifiuta…* con un motivo.
+- [ ] 10i.7 Rischio con gravità alta › *Diventato problema*, poi *Risolto*.
+- [ ] 10i.8 Passa a *Gestisci*: compaiono gli stati In corso e Bloccata, *Altri dettagli* (priorità, dipendenze, stima, inizio, ricorrenza) e le viste **Riepilogo** e **Kanban**. Torna a *Traccia*: nessun dato perso, e un'icona segnala le voci con dettagli di Gestisci.
+- [ ] 10i.9 In Gestisci: un'attività che *dipende da* un'altra aperta diventa Bloccata e si sblocca quando l'altra è fatta. Una dipendenza circolare è rifiutata con un messaggio chiaro.
+- [ ] 10i.10 Attività ricorrente settimanale con scadenza: segnandola fatta nasce la successiva, una settimana dopo, con la checklist da rifare.
+- [ ] 10i.11 Kanban di un progetto: trascina una scheda da Da fare a In corso (cambia lo stato) e in In attesa (chiede da chi e fino a quando). Aggiungi la colonna «Da discutere» e trascinaci una scheda: lo stato non cambia.
+- [ ] 10i.12 Colonna Fatta: con voci chiuse da più di 14 giorni compare «Attività chiuse 14+ giorni archiviate» con *Mostra tutte*; dopo il clic la riga diventa «Archivia attività chiuse 14+ giorni». Chiudi e riapri IAGO: la scelta è ricordata.
+- [ ] 10i.13 Riepilogo in Gestisci: crea una checklist di progetto e fissala (compare in Da fare); *Sintesi di stato* scrive un testo dai punti chiave (compare in Attività) e si copia.
+- [ ] 10i.14 Impostazioni › Progetti › *Tieni semplice (Traccia)* su un progetto: il progetto torna semplice, ma le tue voci restano in Da fare.
+- [ ] 10i.15 Notifica del mattino accesa con l'ora tra due minuti e una voce che scade oggi: arriva la notifica con i conteggi e il clic apre Da fare.
+- [ ] 10i.16 Trascrivi o importa una call in cui si fa una domanda senza risposta, si nomina un rischio, il cliente chiede qualcosa e qualcuno promette un invio «entro venerdì»: arrivano le proposte dei quattro tipi, con la frase d'origine, e la data di venerdì giusta.
+- [ ] 10i.17 Con Claude Desktop: «elenca il lavoro aperto del progetto», «crea un'attività per Anna entro il 10 novembre con checklist…», poi annulla da Impostazioni › Claude.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

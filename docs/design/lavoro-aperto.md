@@ -1,6 +1,6 @@
 # IAGO — Lavoro aperto: due modalità, Traccia e Gestisci
 
-Progetto da rileggere prima di scrivere codice. 28 ottobre 2026. Decisione collegata: [ADR-0074](../adr/0074-lavoro-aperto-traccia-gestisci.md) (proposto).
+Progetto del 28 ottobre 2026, realizzato nella 1.1.0-beta. Decisione collegata: [ADR-0074](../adr/0074-lavoro-aperto-traccia-gestisci.md).
 
 ## In una frase
 IAGO resta la memoria del lavoro, e tiene anche traccia di **ciò che è aperto**: attività, punti da chiarire, rischi, richieste. **Tutti i tipi ci sono sempre.** Cambia solo quanta gestione si vede:

@@ -15,7 +15,7 @@ export const technicalPageFor: Record<string, { link: string; text: string }> = 
   organizzare: { link: '/tecnica/dati', text: 'Dati e archivio' },
   scheda: { link: '/tecnica/dati', text: 'Dati e archivio' },
   sintesi: { link: '/tecnica/intelligenza#sintesi-per-categoria-adr-0054', text: 'Come si costruisce una sintesi' },
-  'punti-chiave': { link: '/tecnica/intelligenza#punti-chiave-adr-0046-adr-0052', text: 'Punti chiave' },
+  'punti-chiave': { link: '/tecnica/intelligenza#punti-chiave-adr-0046-adr-0052-adr-0074', text: 'Punti chiave e lavoro aperto' },
   proposte: { link: '/tecnica/intelligenza#proposte-adr-0009-adr-0049', text: 'Proposte' },
   'cercare-chiedere': { link: '/tecnica/intelligenza#ricerca', text: 'Ricerca e Chiedi' },
   'email-documenti': { link: '/tecnica/importazione', text: 'Importazione' },
