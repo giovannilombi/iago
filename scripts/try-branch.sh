@@ -18,11 +18,11 @@ fi
 [[ "${1:-}" == "--fresh" ]] && rm -rf "$TRIAL"
 if [[ ! -d "$TRIAL" ]]; then
   [[ -d "$ARCHIVE" ]] || { echo "No archive at $ARCHIVE" >&2; exit 1; }
-  echo "Copying the archive to $TRIAL…"
+  echo "Copying the archive to ${TRIAL}..."
   ditto "$ARCHIVE" "$TRIAL"
 fi
 
-echo "Building $(git rev-parse --abbrev-ref HEAD) ($(git describe --tags --always))…"
+echo "Building $(git rev-parse --abbrev-ref HEAD) ($(git describe --tags --always))..."
 scripts/bootstrap.sh >/dev/null
 rm -rf "$PRODUCT"
 xcodebuild -project IAGO.xcodeproj -scheme IAGO -configuration Debug -derivedDataPath build/TrialData build \
