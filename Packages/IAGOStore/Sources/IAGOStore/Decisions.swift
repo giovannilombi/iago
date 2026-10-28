@@ -27,8 +27,25 @@ public struct DecisionSummary: Sendable, Hashable, Identifiable {
     public var streamIDs: [String] = []
     /// Name the user gave to the chain this decision belongs to, if any.
     public var chainName: String?
+    /// ADR-0074: owner and who it waits for, by name; what it depends on; its checklist (done, total).
+    public var ownerName: String?
+    public var waitingOnName: String?
+    public var blockers: [Decision] = []
+    public var checklist: (done: Int, total: Int) = (0, 0)
+    /// The entry it was born from.
+    public var derivedFrom: Decision?
 
     public var id: String { decision.id }
+
+    public static func == (a: DecisionSummary, b: DecisionSummary) -> Bool {
+        a.decision == b.decision && a.people == b.people && a.tags == b.tags && a.projectName == b.projectName
+            && a.sourceTitle == b.sourceTitle && a.sourceState == b.sourceState && a.supersedesAll == b.supersedesAll
+            && a.supersededByAll == b.supersededByAll && a.streamIDs == b.streamIDs && a.chainName == b.chainName
+            && a.ownerName == b.ownerName && a.waitingOnName == b.waitingOnName && a.blockers == b.blockers
+            && a.checklist == b.checklist && a.derivedFrom == b.derivedFrom
+    }
+
+    public func hash(into hasher: inout Hasher) { hasher.combine(decision) }
 }
 
 /// What the "Decisioni" view lists (FR-153).
@@ -47,18 +64,24 @@ public struct DecisionQuery: Sendable, Hashable {
     public var personID: String?
     /// Normalized tag names; every one must be present.
     public var tags: Set<String>
-    /// Kinds of key points (ADR-0046); empty: decisions, activities and milestones.
+    /// Kinds of key points (ADR-0046, ADR-0074); empty: every kind.
     public var kinds: Set<Decision.Kind>
+    /// ADR-0074: only entries of this owner (a person entity).
+    public var ownerID: String?
+
+    /// What "attivi" means: valid decisions and milestones, and work still open.
+    public static let current: Set<Decision.Status> = [.active, .inProgress, .waiting, .blocked]
 
     public init(
-        scope: Scope = .all, statuses: Set<Decision.Status> = [.active], personID: String? = nil,
-        tags: Set<String> = [], kinds: Set<Decision.Kind> = []
+        scope: Scope = .all, statuses: Set<Decision.Status> = DecisionQuery.current, personID: String? = nil,
+        tags: Set<String> = [], kinds: Set<Decision.Kind> = [], ownerID: String? = nil
     ) {
         self.scope = scope
         self.statuses = statuses
         self.personID = personID
         self.tags = tags
         self.kinds = kinds
+        self.ownerID = ownerID
     }
 }
 
@@ -86,7 +109,8 @@ extension Archive {
             var decision = draft
             decision.id = newID(at: writer.now)
             decision.text = text
-            decision.status = .active
+            if !decision.status.isOpen || !decision.kind.isWork { decision.status = .active }
+            Self.stampClosed(&decision, now: writer.now)
             try writer.save(&decision, db)
             try setPeople(people, decisionID: decision.id, writer: writer, db)
             try setDecisionTags(tags, decisionID: decision.id, writer: writer, db)
@@ -151,11 +175,17 @@ extension Archive {
                 try setOlder(targets, for: &decision, writer: writer, db)
                 touched.formUnion(targets)
             }
+            Self.stampClosed(&decision, now: writer.now)
             try writer.save(&decision, db)
             if let chainName { try giveChainName(chainName, from: id, writer: writer, db) }
             if wanted != nil || decision.status != statusBefore {
                 // A cancelled entry no longer supersedes; a reactivated one does again.
                 try recomputeStatus(Array(touched.union(try olderIDs(of: id, db))), writer: writer, db)
+                try Self.recomputeBlocked([id], writer: writer, db)
+                for touchedID in touched { try Self.recomputeDependents(of: touchedID, writer: writer, db) }
+            }
+            if decision.status == .done, statusBefore != .done {
+                try Self.repeatIfNeeded(decision, writer: writer, db)
             }
             if let people { try setPeople(people, decisionID: id, writer: writer, db) }
             if let tags { try setDecisionTags(tags, decisionID: id, writer: writer, db) }
@@ -233,6 +263,18 @@ extension Archive {
             try db.execute(sql: "DELETE FROM decision_entity WHERE decision_id = ?", arguments: [id])
             try db.execute(sql: "DELETE FROM decision_tag WHERE decision_id = ?", arguments: [id])
             try db.execute(sql: "DELETE FROM decision_stream WHERE decision_id = ?", arguments: [id])
+            let dependents = try String.fetchAll(
+                db, sql: "SELECT blocked_id FROM decision_dependency WHERE blocker_id = ?", arguments: [id])
+            try db.execute(
+                sql: "DELETE FROM decision_dependency WHERE blocked_id = ? OR blocker_id = ?", arguments: [id, id])
+            try db.execute(sql: "DELETE FROM board_place WHERE decision_id = ?", arguments: [id])
+            for var item in try ChecklistItem.filter(Column("decision_id") == id && Column("deleted_at") == nil)
+                .fetchAll(db)
+            {
+                item.text = ""
+                try writer.tombstone(&item, db)
+            }
+            try Self.recomputeBlocked(dependents, dependenciesRemoved: true, writer: writer, db)
             for newer in newers {
                 guard var later = try Decision.fetchOne(db, key: newer) else { continue }
                 try setOlder(try olderIDs(of: newer, db), for: &later, writer: writer, db)
@@ -253,7 +295,7 @@ extension Archive {
     /// The register, most recent first (FR-153).
     public func decisions(_ query: DecisionQuery = DecisionQuery()) throws -> [DecisionSummary] {
         try database.writer.read { db in
-            let kinds = query.kinds.isEmpty ? [.decision, .action, .milestone] : query.kinds
+            let kinds = query.kinds.isEmpty ? Set(Decision.Kind.allCases) : query.kinds
             var request = Decision.filter(Column("deleted_at") == nil)
                 .filter(kinds.map(\.rawValue).contains(Column("kind")))
             switch query.scope {
@@ -271,6 +313,7 @@ extension Archive {
             if !query.statuses.isEmpty {
                 request = request.filter(query.statuses.map(\.rawValue).contains(Column("status")))
             }
+            if let owner = query.ownerID { request = request.filter(Column("owner_id") == owner) }
             let decisions = try request.order(Column("decided_at").desc).fetchAll(db)
             return try decisions.compactMap { decision in
                 let summary = try summarize(decision, db)
@@ -421,11 +464,35 @@ extension Archive {
         let root =
             supersedesAll.isEmpty && supersededByAll.isEmpty ? decision : try component(of: decision.id, db).first
         let chainName = root?.chainName?.isEmpty == false ? root?.chainName : nil
-        return DecisionSummary(
+        var summary = DecisionSummary(
             decision: decision, people: people, tags: tags, projectName: projectName, sourceTitle: sourceTitle,
             sourceState: state, supersedes: supersedesAll.first, supersededBy: supersededByAll.first,
             supersedesAll: supersedesAll, supersededByAll: supersededByAll, streamIDs: streamIDs,
             chainName: chainName)
+        func name(_ id: String?) throws -> String? {
+            try id.flatMap { try String.fetchOne(db, sql: "SELECT name FROM entity WHERE id = ?", arguments: [$0]) }
+        }
+        summary.ownerName = try name(decision.ownerId)
+        summary.waitingOnName = try name(decision.waitingOnId)
+        summary.blockers = try Decision.fetchAll(
+            db,
+            sql: """
+                SELECT decision.* FROM decision JOIN decision_dependency ON decision.id = blocker_id
+                WHERE blocked_id = ? AND decision.deleted_at IS NULL ORDER BY decision.decided_at
+                """, arguments: [decision.id])
+        if let row = try Row.fetchOne(
+            db,
+            sql: """
+                SELECT coalesce(sum(done), 0) AS done, count(*) AS total FROM checklist_item
+                WHERE decision_id = ? AND deleted_at IS NULL
+                """, arguments: [decision.id])
+        {
+            summary.checklist = (row["done"], row["total"])
+        }
+        summary.derivedFrom = try decision.derivedFromId.flatMap {
+            try Decision.filter(key: $0).filter(Column("deleted_at") == nil).fetchOne(db)
+        }
+        return summary
     }
 
     // MARK: Links (ADR-0052)
@@ -488,7 +555,9 @@ extension Archive {
             }
             if decision.status != wanted {
                 decision.status = wanted
+                Self.stampClosed(&decision, now: writer.now)
                 try writer.save(&decision, db)
+                try Self.recomputeDependents(of: id, writer: writer, db)
             }
         }
     }

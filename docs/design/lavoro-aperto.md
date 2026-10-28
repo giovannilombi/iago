@@ -172,7 +172,7 @@ Una pagina per progetto (e per cliente e stream):
 - **Una board per progetto, cliente e stream, e una globale** con filtri per progetto, persona e tipo.
 - **Colonne fisse:** Da fare, In corso, In attesa, Bloccata, Fatta. Spostare una voce da una colonna fissa all'altra **cambia il suo stato**.
 - **Colonne libere** dell'utente, aggiunte dopo quelle fisse (per esempio «Da discutere venerdì», «Idee»). Mettere una voce in una colonna libera **non cambia il suo stato**: serve a raggrupparla. Ogni board ha le sue colonne libere.
-- La colonna Fatta mostra solo le voci chiuse di recente (14 giorni); il resto si vede con «Mostra chiuse».
+- **La colonna Fatta mostra le voci completate.** Quelle chiuse da più di 14 giorni vengono archiviate: in fondo alla colonna una riga piccola dice «Attività chiuse 14+ giorni archiviate» con **Mostra tutte**. Dopo il clic le mostra e la riga diventa «Archivia attività chiuse 14+ giorni». La scelta viene ricordata.
 
 ```
 Da fare │ In corso         │ In attesa         │ Bloccata │ Fatta ║ Da discutere
@@ -201,7 +201,7 @@ Un solo avviso, all'ora scelta, nei giorni lavorativi: «3 in scadenza oggi, 2 i
   - `propose_suggestions` accetta i tipi nuovi (ADR-0071).
 
   L'anteprima e l'annullamento funzionano come oggi.
-- Le proposte dei tipi nuovi vanno provate con il banco di prova su call vere prima di essere attive di default.
+- Le proposte dei tipi nuovi sono attive subito; il banco di prova su call vere serve poi a migliorarle.
 
 ## Esportazioni
 - **Markdown di progetto e Obsidian:** i tipi e gli stati nuovi, con responsabile, scadenza, esito e checklist (`[Rischio · alta · Aperto]`, `[Punto da chiarire · Chiarito] → risposta`).
@@ -247,20 +247,10 @@ Una migrazione (`v21-work`) che **aggiunge** e non cambia nulla di ciò che c'è
 - **Tornare alla versione di oggi** vuol dire chiudere la build di prova e riaprire IAGO normale: l'archivio è com'era. La copia si butta o si rifà quando si vuole.
 - **Attenzione:** mentre si prova, le registrazioni nuove vanno nella copia. Per il lavoro vero si usa IAGO normale.
 
-## Fasi
-Una PR per fase verso `feat/lavoro`, ciascuna provabile da sola sulla copia.
-
-1. **Modello e scheda**
-   - tipi, stati, campi, legami, checklist, migrazione `v21`;
-   - le due modalità e la scelta per progetto;
-   - scheda e timeline come descritte sopra;
-   - MCP, esportazioni, grafo;
-   - script di prova.
-2. **Da fare e Riepilogo:** inbox, «Mostra chiuse», riepilogo breve e completo, sintesi di stato, notifica del mattino.
-3. **Kanban:** board di progetto e globale, colonne libere, dipendenze nella scheda, ricorrenze.
-4. **Proposte:** motore e Claude per i tipi nuovi, con il banco di prova su call vere.
-
-Dopo l'approvazione: unione su `main`, guida, tour e prove per i tester.
+## Versione e ripristino
+- Tutto entra insieme nella **1.1.0-beta**, sul branch `feat/lavoro`, con la documentazione aggiornata.
+- **Punto di ripristino:** il tag `v1.0.1-beta` (codice, guida e documentazione) e il ramo `release/1.0.x`. Se la 1.1 viene abbandonata, si riprende da lì con la serie 1.0.x.
+- La 1.1.0-beta va su `main` solo dopo l'approvazione; fino ad allora si prova con `scripts/try-branch.sh` su una copia dell'archivio.
 
 ## In attesa (obiettivi da riaprire)
 - **Calendari:** Calendario del Mac, Google e Microsoft nei due sensi. Per Google e Microsoft serve un ADR con un'eccezione di rete (login, token nel Portachiavi, registro accessi); gli account aziendali possono richiedere l'approvazione dell'IT, Google la verifica dell'app.

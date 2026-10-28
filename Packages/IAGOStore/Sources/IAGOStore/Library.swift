@@ -145,7 +145,7 @@ extension Archive {
         try updateProject(id) { $0.archived = archived }
     }
 
-    private func updateProject(_ id: String, _ change: @Sendable (inout Project) -> Void) throws {
+    func updateProject(_ id: String, _ change: @Sendable (inout Project) -> Void) throws {
         let writer = self.writer
         try database.writer.write { db in
             var project = try Self.require(Project.fetchOne(db, key: id), id)

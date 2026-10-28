@@ -354,6 +354,73 @@ enum Migrations {
             }
             try db.create(index: "item_voice_voice", on: "item_voice", columns: ["voice_id"])
         }
+        migrator.registerMigration("v21-work") { db in
+            // ADR-0074: open work. Only additions: kinds and states are text, today's entries stay as they are.
+            try db.alter(table: "decision") { t in
+                t.add(column: "owner_id", .text)
+                t.add(column: "due_at", .datetime)
+                t.add(column: "waiting_on_id", .text)
+                t.add(column: "waiting_until", .datetime)
+                t.add(column: "priority", .integer)
+                t.add(column: "starts_at", .datetime)
+                t.add(column: "estimate", .text)
+                t.add(column: "severity", .text)
+                t.add(column: "happened_at", .datetime)
+                t.add(column: "outcome", .text)
+                t.add(column: "outcome_kind", .text)
+                t.add(column: "derived_from_id", .text)
+                t.add(column: "recurrence", .text)
+                t.add(column: "closed_at", .datetime)
+            }
+            try db.execute(
+                sql: "UPDATE decision SET closed_at = updated_at WHERE status IN ('done', 'superseded', 'cancelled')")
+            try db.create(index: "decision_due", on: "decision", columns: ["due_at"])
+            try db.create(index: "decision_owner", on: "decision", columns: ["owner_id"])
+            // "Dipende da": blocked until the blocker is closed.
+            try db.create(table: "decision_dependency") { t in
+                t.column("blocked_id", .text).notNull().references("decision")
+                t.column("blocker_id", .text).notNull().references("decision")
+                t.column("created_at", .datetime).notNull()
+                t.primaryKey(["blocked_id", "blocker_id"])
+            }
+            // Checklists: the sub-items of an activity, or named lists of a project.
+            try db.create(table: "checklist") { t in
+                t.primaryKey("id", .text)
+                t.column("project_id", .text).notNull().references("project")
+                t.column("name", .text).notNull()
+                t.column("pinned", .boolean).notNull().defaults(to: true)
+                t.column("sort_order", .integer).notNull().defaults(to: 0)
+                syncColumns(t)
+            }
+            try db.create(table: "checklist_item") { t in
+                t.primaryKey("id", .text)
+                t.column("decision_id", .text).references("decision")
+                t.column("checklist_id", .text).references("checklist")
+                t.column("text", .text).notNull()
+                t.column("done", .boolean).notNull().defaults(to: false)
+                t.column("sort_order", .integer).notNull().defaults(to: 0)
+                syncColumns(t)
+                t.check(sql: "decision_id IS NOT NULL OR checklist_id IS NOT NULL")
+            }
+            try db.create(index: "checklist_item_decision", on: "checklist_item", columns: ["decision_id"])
+            try db.create(index: "checklist_item_list", on: "checklist_item", columns: ["checklist_id"])
+            // Free columns of a board (a project, a client, a stream, or every project), after the fixed ones.
+            try db.create(table: "board_column") { t in
+                t.primaryKey("id", .text)
+                t.column("scope", .text).notNull()
+                t.column("name", .text).notNull()
+                t.column("sort_order", .integer).notNull().defaults(to: 0)
+                syncColumns(t)
+            }
+            try db.create(table: "board_place") { t in
+                t.column("scope", .text).notNull()
+                t.column("decision_id", .text).notNull().references("decision")
+                t.column("column_id", .text).notNull().references("board_column")
+                t.primaryKey(["scope", "decision_id"])
+            }
+            // A project kept in "Traccia" while the app is in "Gestisci".
+            try db.alter(table: "project") { t in t.add(column: "work_mode", .text) }
+        }
         return migrator
     }
 
