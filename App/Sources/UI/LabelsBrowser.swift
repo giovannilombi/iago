@@ -42,7 +42,7 @@ struct LabelsBrowser: View {
             header(String(localized: "Categorie"))
             tiles(main)
             ForEach(families, id: \.self) { family in
-                Text(family).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary).padding(.top, 4)
+                Text(CategoryFamilyName.display(family)).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary).padding(.top, 4)
                 tiles(categories.filter { $0.family == family })
             }
         }

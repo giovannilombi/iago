@@ -5,13 +5,13 @@
 > Ultimo aggiornamento: **29 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.1-beta su `main` (tag `v1.2.1-beta`), con il lavoro aperto rivisto dopo la prova (ADR-0074, ADR-0075, ADR-0076) e le correzioni del controllo delle schermate. Punti di ripristino: `v1.2.0-beta`, `v1.1.0-beta` (prima versione del lavoro aperto) e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.2-beta su `main` (tag `v1.2.2-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 300 nei pacchetti, tutti verdi (1.2.1-beta).
+- **Test automatici:** 303 nei pacchetti, tutti verdi (1.2.2-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -42,6 +42,18 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-29:** versione **1.2.2-beta**, **italiano e inglese** (ADR-0077):
+  - lingua scelta al primo avvio e in Impostazioni › Generale, con riavvio;
+  - circa 1.700 testi dell'interfaccia tradotti nel String Catalog;
+  - guida inglese con le sue schermate;
+  - sito con l'inglese sotto `/en/`;
+  - tutti i documenti tradotti (`docs/en/`, `*.en.md`, ADR compresi);
+  - sintesi, proposte, sintesi di stato e risposte nella lingua dell'app (modelli di sintesi inglesi);
+  - esempio iniziale e categorie predefinite rinominati con la lingua;
+  - glossario `i18n/glossary.tsv`;
+  - controllo `scripts/i18n.py check` nell'hook `pre-commit` e nella CI.
+
+  Ricostruiti ADR-0054 e ADR-0059, rimasti troncati da un commit precedente.
 - **2026-10-29:** versione **1.2.1-beta** (tag `v1.2.1-beta`): la 1.2.0-beta con le correzioni della barra laterale, del pannello della Kanban e della guida.
 - **2026-10-29:** dopo un controllo di tutte le schermate: con «Chiedi a IAGO» aperto su una vista larga (Riepilogo, Kanban, Grafo) la barra laterale saliva sotto i pulsanti della finestra, perché l'animazione del pannello toccava tutta la finestra (ora anima solo il pulsante flottante); nel pannello a destra della Kanban i pulsanti non si tagliano più (data sotto). Guida: import dal progetto nel capitolo Email e documenti, finestra principale nei Primi passi. Schermate rifatte e controllate tutte; il tour prende `-IAGODemoShots` per rifare solo alcune schermate.
 - **2026-10-29:** **1.2.0-beta** unita su `main` con il tag `v1.2.0-beta` (PR #11) e installata sul Mac dell'utente. La modalità di un cliente e i progetti con una modalità scelta a mano stanno nell'archivio (impostazioni), così passano con il backup; in `UserDefaults` restano solo Grafo spento e finestre chiuse per sempre. README: in cima il rimando alla documentazione ufficiale (sito VitePress).

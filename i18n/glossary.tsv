@@ -1,0 +1,187 @@
+# Italian → English names of IAGO (ADR-0077). Use these exact English terms in the app and in every translated document.
+italiano	english
+Modalità Traccia	Track mode
+Modalità Gestisci	Manage mode
+Traccia	Track
+Gestisci	Manage
+semplice e veloce	simple and quick
+completa	complete
+Inbox	Inbox
+Elementi	Items
+Elemento	Item
+Elementi da classificare	Unfiled items
+Da classificare	Unfiled
+Recenti	Recent
+Punti chiave	Key points
+Punto chiave	Key point
+Importa	Import
+Importa file ed elementi…	Import files and items…
+Attività (vista della barra laterale, lavori in corso)	Activity
+Attività (tipo di punto chiave)	Task
+Categorie e tag	Categories and tags
+Chiedi a IAGO	Ask IAGO
+Cestino	Trash
+In evidenza	Pinned
+Senza cliente	No client
+Non definito	Undefined
+Cliente	Client
+Progetto	Project
+Stream	Stream
+Categoria	Category
+Tag	Tag
+Riepilogo	Overview
+Riepilogo breve	Short overview
+Timeline	Timeline
+Kanban	Kanban
+Grafo	Graph
+Mostra	Show
+Tutto	Everything
+Lavoro aperto	Open work
+Decisione	Decision
+Tappa	Milestone
+Punto da chiarire	Open question
+Rischio	Risk
+Richiesta	Request
+Nota	Note
+Nota di progetto	Project note
+Checklist	Checklist
+Da fare (stato e colonna)	To do
+In corso	In progress
+In attesa	Waiting
+In attesa di	Waiting for
+Bloccata	Blocked
+Fatta	Done
+Annullata	Cancelled
+Superata	Superseded
+Chiarito	Answered
+Accolta	Accepted
+Rifiutata	Rejected
+Risolto	Resolved
+Diventato problema	Became an issue
+Nata da	Derived from
+Dipende da	Depends on
+Responsabile	Owner
+Scadenza	Due date
+Gravità	Severity
+Priorità	Priority
+Ricorrenza	Recurrence
+Da tenere d'occhio	Keep an eye on
+Ultime decisioni e tappe	Latest decisions and milestones
+Cosa è cambiato	What changed
+Sintesi	Summary
+Sintesi di stato	Status report
+In breve	In brief
+Proposte	Suggestions
+Segna momento	Mark moment
+Segnalibro	Bookmark
+Nota vocale	Voice note
+Trascrizione	Transcript (the text) / Transcription (the process)
+Motore locale	Local engine
+Impostazioni	Settings
+Generale	General
+Permessi	Permissions
+Guida	Guide
+Aggiungi	Add
+Non mostrare più	Don't show again
+Archivio	Archive
+Backup e trasferimento	Backup and transfer
+Esporta	Export
+Cartelle sorvegliate	Watched folders
+Voci (riconoscimento)	Voices
+Prove per i tester	Tester checklist
+Stato del progetto	Project status
+Uso / Tecnico (livelli del sito)	Usage / Technical
+Fase	Phase
+Cliente Test	Test Client
+Pj. Test 1	Test Pj. 1
+Pj. Test 2	Test Pj. 2
+1to1	1to1
+Kickoff	Kickoff
+SAL	Progress review
+Workshop	Workshop
+Review/Demo	Review/Demo
+Client/Sales	Client/Sales
+Customer discovery	Customer discovery
+Interna	Internal
+Altro	Other
+Direzione	Management
+Persone	People
+Operazioni	Operations
+Non emerso	Not mentioned
+Io (chi parla)	Me
+Avvia registrazione	Start recording
+Importa file…	Import files…
+Pausa	Pause
+Scarta (registrazione)	Discard
+Segna momento con screenshot	Mark moment with screenshot
+Schermate	Screenshots
+Segnalibri	Bookmarks
+Audio	Audio
+Voci	Voices
+Motore	Engine
+Progetti	Projects
+Email e persone	Email and people
+Categorie	Categories
+Spazio	Storage
+Aiuto	Help
+Riunioni	Meetings
+Scorciatoie in tutte le app	Shortcuts in all apps
+Aggiornamenti	Updates
+Lavori automatici	Automatic jobs
+Aggiungi cartella	Add folder
+Esporta backup cifrato	Export encrypted backup
+Ripristina da backup	Restore from backup
+Registro accessi	Access log
+Registro delle modifiche	Change log
+Attiva quelli che mancano	Turn on the missing ones
+Avvio al login	Open at login
+Audio di sistema	System audio
+Registra / Ignora / Ferma	Record / Ignore / Stop
+Più persone nella stanza	Several people in the room
+Ritrascrivi	Transcribe again
+Riconosciuta dalla voce	Recognized by voice
+Genera sintesi	Generate summary
+Modifica…	Edit…
+Rigenera	Regenerate
+Modello (di sintesi)	Template
+Riordina testo	Tidy up text
+Cerca proposte	Find suggestions
+Conferma	Confirm
+Scarta (proposta)	Dismiss
+Da confermare	To confirm
+Proposte da confermare	Suggestions to confirm
+Segna come fatta	Mark as done
+Chiarisci…	Answer…
+Diventa decisione	Make it a decision
+Accogli… / Rifiuta… / Trasforma in…	Accept… / Reject… / Convert to…
+Non più rilevante	No longer relevant
+Riapri	Reopen
+Nuova attività da questo	New task from this
+Promuovi	Promote
+Evoluzione	Evolution
+Senza responsabile	No owner
+Aspetto da altri	Waiting on others
+Mostra chiuse	Show closed
+Mostra tutte	Show all
+Archivia	Archive
+Notifica del mattino	Morning notification
+Filtra progetti	Filter projects
+Scegli dal Mac…	Choose from Mac…
+Dagli appunti	From clipboard
+Da testo	From text
+Email senza file	Email without files
+Vanno in	Goes to
+Aggiungi a IAGO	Add to IAGO
+Scheda (di un elemento)	Item card
+Copia per Claude…	Copy for Claude…
+Barra di ascolto	Listening bar
+Contesto	Context
+Tutta la memoria	Whole memory
+Allarga contesto	Widen context
+In coda	Queued
+Annulla	Cancel
+Riprova	Retry
+Lingua	Language
+Riavvia IAGO	Restart IAGO
+Mostra il Grafo	Show the graph
+In questo progetto	In this project

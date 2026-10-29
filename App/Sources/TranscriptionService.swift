@@ -84,7 +84,7 @@ final class TranscriptionService: Sendable {
             try FileManager.default.createDirectory(at: workspace, withIntermediateDirectories: true)
             let input = try decryptInput(itemID: itemID, into: workspace, roomMode: payload.roomMode ?? false)
             var pipeline = try await pipeline.get(models, engine: engine)
-            pipeline.meLabel = (try archive.setting(Self.meLabelKey)) ?? "Io"
+            pipeline.meLabel = (try archive.setting(Self.meLabelKey)) ?? MeLabel.defaultName
             let language = (try archive.setting(Self.languageKey)) ?? "it"
             let output = try await pipeline.run(
                 itemId: itemID, input: input,

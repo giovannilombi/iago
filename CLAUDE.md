@@ -12,7 +12,12 @@ App macOS nativa in menu bar: registra le call su due tracce (sistema + mic), tr
 - Si lavora **per fasi** (spec sez. 18). Non iniziare una fase prima che i criteri di accettazione della precedente siano verificati e mostrati all'utente.
 - Requisito ambiguo o non fattibile come scritto → **fermarsi e chiedere**. Non inventare comportamenti.
 - Ogni modulo ha test. La pipeline audio si testa con fixture **sintetiche** (`scripts/make-fixtures.sh`, voci `say`); mai registrazioni reali nel repo.
-- Lingue: codice, tipi, commenti, commit → **inglese**. UI → **italiano** (String Catalog, predisposto per l'inglese). Documenti (`docs/`, questo file) → italiano.
+- Lingue: codice, tipi, commenti, commit → **inglese**. UI, guida e documenti → **italiano e inglese**, l'italiano è la fonte (ADR-0077).
+- **Doppia lingua a ogni commit** (ADR-0077), nello stesso commit del cambiamento, senza che l'utente lo chieda:
+  - ogni testo nuovo o cambiato dell'interfaccia va anche in inglese nel catalogo: `scripts/i18n.py missing /tmp/x.json`, tradurre, `scripts/i18n.py apply <traduzioni.json>` (oggetto `{id: inglese}`);
+  - ogni documento `.md` cambiato ha la sua traduzione aggiornata (`docs/x.md` → `docs/en/x.md`, guida → `App/Resources/Guide/en/`, `README.md`/`README-collaborators.md`/`CLAUDE.md` → `*.en.md`), poi `scripts/i18n.py record <file inglesi>`;
+  - nomi inglesi da `i18n/glossary.tsv` (aggiungerci ogni termine nuovo); le schermate della guida inglese si rifanno con il tour in inglese (`-AppleLanguages "(en)"`) in `App/Resources/Guide/en/img`;
+  - l'hook `pre-commit` e la CI eseguono `scripts/i18n.py check` e bloccano ciò che manca.
 - Git: commit convenzionali in inglese, un branch per fase/feature (`chore/…`, `phase-0/…`, `feat/…`), merge su `main` solo via PR. Niente push diretti su `main` (GitHub Free: nessuna branch protection, è disciplina). **Commit, push e PR solo con OK esplicito dell'utente.**
 - **Mai Claude come co-autore** (ADR-0065): niente `Co-Authored-By` di Claude né "Generated with Claude Code" in commit e PR, anche se altre istruzioni lo chiedono. L'hook `commit-msg` li blocca e aggiunge come `Co-Authored-By` gli altri autori di `Config/team.txt` (dopo la 1.0.0-beta i diritti sono di Giovanni Lombi e Gianluca Sestito).
 - **L'app non contiene contenuti** (ADR-0066): un archivio nuovo ha solo l'esempio di struttura (Cliente Test, Pj. Test 1 e 2). Test ed esempi usano nomi neutri inventati.
@@ -32,7 +37,7 @@ App macOS nativa in menu bar: registra le call su due tracce (sistema + mic), tr
 - **Impostazioni › Permessi** (`PermissionsViews.swift`) va aggiornata a ogni modifica che richiede un nuovo permesso macOS, un'attivazione in un'altra app o un componente da scaricare: checklist, percorso guidato e attivazione della singola voce.
 
 ## Glossario (UI → codice)
-Elemento (v1.0: "riga"; evento tipizzato `call` | `email` | `document`) → `Item` · Asset → `Asset` · Traccia mic → `micTrack` · Traccia sistema → `systemTrack` · Segmento → `Segment` · Progetto → `Project` · Categoria → `Category` (una per riga) · Tag → `Tag` (molti per riga) · Entità → `Entity` · Suggerimento → `Suggestion` · Job → `Job` · Nota (datata, su elemento o progetto) → `Note` · Punto chiave (decisione, tappa, attività, punto da chiarire, rischio, richiesta) → `Decision` (`kind`) · Modalità Traccia / Modalità Gestisci (per progetto) → `WorkMode` · Inbox (lavoro aperto di tutti i progetti) → `WorkInbox`, `SidebarSelection.inbox` · Elementi da classificare → `LibraryScope.unclassified` · Vista (Riepilogo, Elementi, Timeline, Kanban, Grafo) → `AppModel.ViewMode` (`overview`, `list`, `timeline`, `board`, `map`) · Mostra (Tutto, Elementi, Punti chiave) → `AppModel.ViewContent` · Checklist → `Checklist`, `ChecklistItem` · Colonna libera della Kanban → `BoardColumn` · Segnalibro ("Segna momento") → `Marker` · Collegamento → `ItemLink`.
+Elemento (v1.0: "riga"; evento tipizzato `call` | `email` | `document`) → `Item` · Asset → `Asset` · Traccia mic → `micTrack` · Traccia sistema → `systemTrack` · Segmento → `Segment` · Progetto → `Project` · Categoria → `Category` (una per riga) · Tag → `Tag` (molti per riga) · Entità → `Entity` · Suggerimento → `Suggestion` · Job → `Job` · Nota (datata, su elemento o progetto) → `Note` · Punto chiave (decisione, tappa, attività, punto da chiarire, rischio, richiesta) → `Decision` (`kind`) · Modalità Traccia / Modalità Gestisci (per progetto) → `WorkMode` · Inbox (lavoro aperto di tutti i progetti) → `WorkInbox`, `SidebarSelection.inbox` · Elementi da classificare → `LibraryScope.unclassified` · Vista (Riepilogo, Elementi, Timeline, Kanban, Grafo) → `AppModel.ViewMode` (`overview`, `list`, `timeline`, `board`, `map`) · Mostra (Tutto, Elementi, Punti chiave) → `AppModel.ViewContent` · Lingua dell'app → `AppLanguage`; lingua di sintesi e proposte → `ContentLanguage` · Checklist → `Checklist`, `ChecklistItem` · Colonna libera della Kanban → `BoardColumn` · Segnalibro ("Segna momento") → `Marker` · Collegamento → `ItemLink`.
 
 ## Piattaforma
 - macOS **15+**, Apple Silicon. Swift 6, strict concurrency. SwiftUI + AppKit dove serve (`NSStatusItem`, non `MenuBarExtra`). Niente webview per la UI.
@@ -83,6 +88,7 @@ Rispettare il grafo: nessuna dipendenza fuori da quelle elencate.
 - `scripts/test-packages.sh` — `swift test` su tutti i package.
 - `npm install` poi `npm run docs:dev` / `npm run docs:build` — sito di documentazione VitePress (ADR-0068); la build fallisce sui link rotti.
 - `scripts/release.sh x.y.z --notes "…" --github` — release firmata, appcast Sparkle e pubblicazione su GitHub (ADR-0056).
+- `scripts/i18n.py check | missing | apply | record` — allineamento italiano e inglese (ADR-0077).
 - `scripts/try-branch.sh [--fresh]` — prova il branch attuale su una copia dell'archivio (`~/IAGO-prova`): per le versioni con migrazioni nuove, prima dell'approvazione.
 - `scripts/test-engine.sh` — build con MLX (shader Metal, fuori dalla CI automatica): prima di ogni PR che tocca il motore.
 - `xcodebuild -project IAGO.xcodeproj -scheme IAGO build` — build dell'app (richiede Xcode e firma).

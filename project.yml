@@ -101,11 +101,14 @@ targets:
     settings:
       base:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        # Italian and English (ADR-0077): strings are extracted into Localizable.xcstrings at build time.
+        SWIFT_EMIT_LOC_STRINGS: YES
+        LOCALIZATION_PREFERS_STRING_CATALOGS: YES
     info:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: IAGO
-        CFBundleShortVersionString: "1.2.1-beta"
+        CFBundleShortVersionString: "1.2.2-beta"
         CFBundleVersion: "1"
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity

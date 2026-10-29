@@ -98,3 +98,4 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0074 | Lavoro aperto e due modalità: Traccia e Gestisci | accettato (1.1.0-beta; modalità ridefinite da 0076) |
 | 0075 | Viste di progetto: come guardare e cosa mostrare | accettato (1.1.0-beta; in parte sostituito da 0076) |
 | 0076 | Modalità Traccia semplice, Inbox ed Elementi | accettato (1.2.0-beta) |
+| 0077 | Italiano e inglese, sempre allineati | accettato (1.2.2-beta) |

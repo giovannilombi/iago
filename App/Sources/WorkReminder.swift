@@ -68,8 +68,8 @@ final class WorkReminder {
         let open =
             (try? archive.decisions(
                 DecisionQuery(scope: .all, statuses: DecisionQuery.current, kinds: Set(Decision.Kind.work)))) ?? []
-        let label = ((try? archive.setting(TranscriptionService.meLabelKey)) ?? nil) ?? "Io"
-        let names = Set([TagNormalizer.normalize(label), TagNormalizer.normalize("Io")])
+        let label = ((try? archive.setting(TranscriptionService.meLabelKey)) ?? nil) ?? MeLabel.defaultName
+        let names = Set([TagNormalizer.normalize(label)] + MeLabel.aliases.map(TagNormalizer.normalize))
         let me = Set(((try? archive.people()) ?? []).filter { names.contains($0.normalized) }.map(\.id))
         let counts = OpenWork.counts(open.map(\.decision), me: me, now: now)
         guard !counts.isEmpty else { return nil }

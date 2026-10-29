@@ -2,10 +2,16 @@
 // The version of the app these docs describe, read from project.yml at build time.
 declare const __IAGO_VERSION__: string
 const version = __IAGO_VERSION__
+import { computed } from 'vue'
+import { useRoute } from 'vitepress'
+const route = useRoute()
+const title = computed(() =>
+  route.path.includes('/en/') ? 'IAGO version described by these docs' : 'Versione di IAGO descritta da questa documentazione'
+)
 </script>
 
 <template>
-  <span v-if="version" class="version-badge" title="Versione di IAGO descritta da questa documentazione">{{ version }}</span>
+  <span v-if="version" class="version-badge" :title="title">{{ version }}</span>
 </template>
 
 <style scoped>

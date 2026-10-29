@@ -14,7 +14,7 @@ IAGO non è distribuito tramite l'App Store e non è notarizzato da Apple. Al pr
 3. Conferma con password o Touch ID, poi **Apri**.
 
 ## Configurazione guidata
-Al primo avvio IAGO chiede il tuo nome (diventa "Io" nelle trascrizioni), prova microfono e audio del Mac, chiede le notifiche e scarica i modelli di trascrizione. Poi parte il tour di benvenuto.
+Al primo avvio IAGO chiede prima di tutto la **lingua**, italiano o inglese (la cambi quando vuoi in Impostazioni › Generale), poi il tuo nome (diventa "Io" nelle trascrizioni), prova microfono e audio del Mac, chiede le notifiche e scarica i modelli di trascrizione. Poi parte il tour di benvenuto.
 
 ## Permessi
 In **Impostazioni › Permessi** vedi cosa è attivo; **Attiva quelli che mancano** ti accompagna una voce alla volta.

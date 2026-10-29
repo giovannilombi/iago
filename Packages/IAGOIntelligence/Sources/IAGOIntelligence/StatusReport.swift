@@ -117,16 +117,22 @@ public enum StatusReport {
         }
     }
 
+    /// The headings of the report in each language (ADR-0077).
+    static func headings(_ language: ContentLanguage) -> [String] {
+        switch language {
+        case .it: ["In breve", "Avanzamento", "Rischi e punti aperti", "Prossimi passi"]
+        case .en: ["In brief", "Progress", "Risks and open points", "Next steps"]
+        }
+    }
+
     public static func request(scopeName: String, facts: [Fact], today: Date) -> LLMRequest {
+        let language = ContentLanguage.current
         let system = """
-            Sei l'assistente di un project manager. Scrivi in italiano una sintesi di stato di «\(scopeName)» da \
+            Sei l'assistente di un project manager. Scrivi \(language.inLanguage) una sintesi di stato di «\(scopeName)» da \
             incollare in una mail, usando SOLO i fatti numerati che ricevi. Non inventare nulla: niente nomi, date o \
             numeri che non siano nei fatti.
             Struttura, con questi titoli su righe proprie:
-            In breve
-            Avanzamento
-            Rischi e punti aperti
-            Prossimi passi
+            \(headings(language).joined(separator: "\n"))
             Sotto ogni titolo righe che iniziano con "- ", brevi e concrete. Ogni riga termina con i numeri dei fatti \
             da cui viene, tra parentesi quadre, per esempio [3] o [2, 5]. Ometti un titolo se non ha righe. Niente \
             altro testo prima o dopo.
@@ -139,7 +145,7 @@ public enum StatusReport {
     /// Keeps the lines that cite existing facts, and the headings that still have lines under them.
     public static func verify(_ answer: String, facts: [Fact]) -> Result {
         let known = Set(facts.map(\.number))
-        let headings = ["In breve", "Avanzamento", "Rischi e punti aperti", "Prossimi passi"]
+        let headings = ContentLanguage.allCases.flatMap(Self.headings)
         var blocks: [(heading: String?, lines: [String])] = [(nil, [])]
         var dropped: [String] = []
         for raw in TextTidier.clean(answer).split(whereSeparator: \.isNewline) {

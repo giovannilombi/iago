@@ -823,7 +823,7 @@ final class AppModel {
         _ = revision
         let name = ((try? archive.setting(TranscriptionService.meLabelKey)) ?? nil)?
             .trimmingCharacters(in: .whitespaces)
-        return name?.isEmpty == false ? name! : "Io"
+        return name?.isEmpty == false ? name! : MeLabel.defaultName
     }
 
     /// A closing that asks for a few words (answer, activities, reason), shown by the main window.

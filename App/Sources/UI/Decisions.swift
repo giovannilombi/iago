@@ -187,7 +187,7 @@ struct DecisionDraft: Identifiable {
 
     /// Generic speaker labels ("Speaker 2", "Io") are not people to record.
     static func isPersonName(_ label: String) -> Bool {
-        let generic = ["Io", "Speaker", "Stanza"]
+        let generic = MeLabel.aliases + ["Speaker", "Stanza", "Room"]
         return !generic.contains { label == $0 || label.hasPrefix("\($0) ") }
     }
 

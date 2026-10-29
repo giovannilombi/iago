@@ -42,8 +42,8 @@ extension AppModel {
 
     /// The user as a person: the name of «Il tuo nome» (Impostazioni › Generale), and «Io».
     var meIDs: Set<String> {
-        let label = ((try? archive.setting(TranscriptionService.meLabelKey)) ?? nil) ?? "Io"
-        let names = Set([TagNormalizer.normalize(label), TagNormalizer.normalize("Io")])
+        let label = ((try? archive.setting(TranscriptionService.meLabelKey)) ?? nil) ?? MeLabel.defaultName
+        let names = Set([TagNormalizer.normalize(label)] + MeLabel.aliases.map(TagNormalizer.normalize))
         return Set(people.filter { names.contains($0.normalized) }.map(\.id))
     }
 

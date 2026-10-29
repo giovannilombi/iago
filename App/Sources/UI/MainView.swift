@@ -20,7 +20,10 @@ struct MainView: View {
         }
         .searchable(
             text: $model.searchText, placement: .toolbar,
-            prompt: Text(String(localized: "Cerca nell'archivio  ·  #tag  ·  categoria:"))
+            prompt: Text(
+                String(
+                    localized: "Cerca nell'archivio  ·  #tag  ·  categoria:",
+                    comment: "In English the prefix is «category:»"))
         )
         .searchSuggestions { LabelSuggestions(model: model) }
         .toolbar {
@@ -990,7 +993,9 @@ private struct LabelSuggestions: View {
                     Label("#\(tag.name)", systemImage: "tag")
                 }
             }
-        } else if let range = text.range(of: "categoria:", options: [.caseInsensitive, .anchored]) {
+        } else if let range = text.range(of: "categoria:", options: [.caseInsensitive, .anchored])
+            ?? text.range(of: "category:", options: [.caseInsensitive, .anchored])
+        {
             let needle = text[range.upperBound...].trimmingCharacters(in: .whitespaces)
             ForEach(model.categories.filter { needle.isEmpty || $0.name.localizedCaseInsensitiveContains(needle) }) {
                 category in

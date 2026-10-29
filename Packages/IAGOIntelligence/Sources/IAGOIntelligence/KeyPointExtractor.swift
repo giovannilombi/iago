@@ -114,7 +114,16 @@ public enum KeyPointExtractor {
     /// Open entries listed in each request, the most recent ones: enough for a project, short for a small model.
     static let maxOpenEntries = 12
 
-    static let system = """
+    /// The texts in the language of the app (ADR-0077); the quotes stay as they were said.
+    static var system: String {
+        systemItalian.replacingOccurrences(of: "in italiano", with: ContentLanguage.current.inLanguage)
+            .replacingOccurrences(
+                of: "Rispondi solo con JSON valido",
+                with: "Scrivi i \"testo\" \(ContentLanguage.current.inLanguage); la \"citazione\" resta come è detta.\n"
+                    + "Rispondi solo con JSON valido")
+    }
+
+    static let systemItalian = """
         Leggi un pezzo del testo di una call o di una mail di lavoro ed estrai solo queste voci: DECISIONI, \
         ATTIVITÀ, DOMANDE rimaste aperte, RISCHI e RICHIESTE del cliente.
 

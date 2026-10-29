@@ -26,7 +26,12 @@ public enum ChatAnswerer {
     static let maxSources = 12
     static let sourceLength = 1_200
 
-    static let system = """
+    /// In the language of the app (ADR-0077).
+    static var system: String {
+        systemItalian.replacingOccurrences(of: "in italiano", with: ContentLanguage.current.inLanguage)
+    }
+
+    static let systemItalian = """
         Sei l'assistente di IAGO, l'archivio di lavoro dell'utente: call trascritte, email, documenti, note e decisioni. \
         Rispondi in italiano, in modo breve e per punti, usando SOLO le FONTI numerate qui sotto.
         - Dopo ogni affermazione indica la fonte tra parentesi quadre, per esempio [2] o [1][3].
@@ -89,11 +94,13 @@ public enum ChatAnswerer {
                     atSec: chunk?.startSec ?? hit.atSec, text: text))
         }
         let words = Set(KeyPointExtractor.words(question).filter { $0.count > 3 })
-        let decisions = try archive.decisions(DecisionQuery(scope: decisionScope(scope), statuses: DecisionQuery.current))
-            .filter { summary in
-                let own = Set(KeyPointExtractor.words(summary.decision.text + " " + (summary.decision.notes ?? "")))
-                return !words.isDisjoint(with: own)
-            }
+        let decisions = try archive.decisions(
+            DecisionQuery(scope: decisionScope(scope), statuses: DecisionQuery.current)
+        )
+        .filter { summary in
+            let own = Set(KeyPointExtractor.words(summary.decision.text + " " + (summary.decision.notes ?? "")))
+            return !words.isDisjoint(with: own)
+        }
         for summary in decisions.prefix(maxSources - sources.count) {
             let decision = summary.decision
             sources.append(
