@@ -85,6 +85,18 @@ import Testing
         #expect(first.count == 2)
         #expect(try archive.pendingSuggestionCounts() == [call.id: 2])
         #expect(try archive.pendingKeyPointSuggestions(.project(project.id)).count == 2)
+        // ADR-0074: the open work kinds wait in "Da confermare" too; tags do not.
+        let other = try fixture.makeItem()
+        try archive.updateItem(other.id) { $0.projectId = project.id }
+        try archive.replacePendingSuggestions(
+            itemID: other.id, model: "m",
+            [
+                (.question, SuggestionPayload(text: "Quale provider?")),
+                (.risk, SuggestionPayload(text: "Ritardo del fornitore", severity: "high")),
+                (.request, SuggestionPayload(text: "Export in Excel")), (.tag, SuggestionPayload(text: "sso")),
+            ])
+        #expect(try archive.pendingKeyPointSuggestions(.project(project.id)).count == 5)
+        try archive.purgeItem(other.id)
         #expect(first[0].content.atSec == 75)
 
         try archive.setSuggestionStatus(first[0].id, .rejected)

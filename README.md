@@ -12,9 +12,11 @@ Call, email, documenti, note e decisioni di ogni progetto in un'unica memoria. C
 </p>
 
 <p align="center">
-  📖 <strong><a href="https://giovannilombi.github.io/iago/">Documentazione</a></strong>: come si usa e come è fatto.<br>
-  <sub>Online quando il repository sarà pubblico; fino ad allora in locale con <code>npm install && npm run docs:dev</code>.</sub>
+  📖 <strong><a href="https://giovannilombi.github.io/iago/">Documentazione ufficiale</a></strong>: come si usa (livello <em>Uso</em>) e come è fatto (livello <em>Tecnico</em>).<br>
+  <sub>È il riferimento: questo README ne è solo il riassunto. Online quando il repository sarà pubblico; fino ad allora in locale con <code>npm install && npm run docs:dev</code> (sito VitePress in <code>docs/</code>).</sub>
 </p>
+
+> **Per usare o capire IAGO parti dalla [documentazione ufficiale](https://giovannilombi.github.io/iago/)** (in locale: `npm run docs:dev`). Guida d'uso, installazione, scorciatoie e il livello tecnico sono lì, sempre aggiornati a ogni versione.
 
 ![La finestra di IAGO: progetti, timeline e una scheda con la sintesi](App/Resources/Guide/img/finestra.png)
 
@@ -59,10 +61,11 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **Accesso trasversale:** ogni categoria e ogni tag attraversa tutti i progetti; `#tag` e `categoria:` direttamente dalla ricerca.
 
 ### Ricorda ciò che conta
-- **Punti chiave:** decisioni, attività e tappe, ognuno con la fonte (fino al minuto della call), le persone e la data.
+- **Punti chiave:** decisioni e tappe (la memoria) e lavoro aperto (attività con checklist, punti da chiarire, rischi, richieste), ognuno con la fonte (fino al minuto della call), le persone e la data; il lavoro con responsabile, scadenza e «in attesa di».
+- **Il lavoro aperto sotto controllo:** l'**Inbox**, in cima alla barra laterale, raccoglie cosa è aperto in tutti i progetti, di chi è e per quando; il **Riepilogo** dice a che punto è un progetto, con una sintesi di stato da copiare. Due modalità sugli stessi dati, scelte per progetto: **Modalità Gestisci**, la completa e predefinita, con stati fini, priorità, dipendenze, ricorrenze e **Kanban** a tutta finestra con colonne tue, e **Modalità Traccia**, semplice e veloce: Riepilogo breve, attività da spuntare, tutti i tipi di punto chiave.
 - **L'evoluzione delle decisioni:** una voce può superarne altre, anche di tipo diverso, e IAGO tiene la storia di come ci si è arrivati.
 - **Momenti segnati** durante una call, anche **con lo screenshot** della slide condivisa (il testo letto entra nella trascrizione, nella ricerca e nelle sintesi), e **note** datate sul progetto o sull'elemento, anche dettate a voce. Le scorciatoie (⌃⌥M, ⌃⌥S, ⌃⌥R) funzionano in qualsiasi app.
-- **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
+- **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività (con chi, entro quando, chi si aspetta), punti da chiarire, rischi, richieste, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
 - **Riconosce le voci** (se lo attivi): dai un nome a uno speaker e nelle call successive IAGO propone quel nome quando sente la stessa voce. Le impronte restano cifrate sul Mac, non vanno mai a Claude e si eliminano quando vuoi.
 
 ### Capisce
@@ -70,7 +73,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
   - Ogni punto porta il minuto da cui viene, verificato sulla trascrizione.
   - I modelli di sintesi vengono da Meetily e Hyprnote (MIT) e sono modificabili.
 - **Trascrizione** con chi parla: la tua voce è "Io", gli altri vengono separati per persona e si possono rinominare; un glossario aiuta con i nomi difficili.
-- **Timeline** e **grafo** di progetto: call, email, documenti, note e punti chiave nel tempo, persone e decisioni collegate.
+- **Viste di progetto:** il **Riepilogo**, gli **Elementi** del progetto, e le forme della storia (**Timeline**, **Kanban**, **Grafo** delle persone e delle decisioni collegate) con cosa mostrare (tutto, solo gli elementi o solo i punti chiave). IAGO ricorda l'ultima vista di ogni progetto. Da un progetto **Importa file ed elementi…** porta dentro audio, documenti, email e testo direttamente lì.
 
 ### Raccoglie da ogni fonte
 - **Call:**
@@ -275,11 +278,14 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0071](docs/adr/0071-claude-sintesi-e-proposte.md) | Sintesi e proposte anche da Claude, con le stesse verifiche | qualità alta sui Mac piccoli, sempre controllabile |
 | [0072](docs/adr/0072-segna-momento-con-screenshot.md) | Screenshot solo su richiesta, letti sul Mac | le slide entrano nella memoria senza catture automatiche |
 | [0073](docs/adr/0073-riconoscere-le-voci.md) | Voci riconosciute tra le call, solo se attivo e solo come proposta | meno nomi da scrivere, dati biometrici sotto controllo |
+| [0074](docs/adr/0074-lavoro-aperto-traccia-gestisci.md) | Lavoro aperto con due modi per progetto, Traccia e Gestisci, sugli stessi dati | semplice dove basta, completo dove si gestisce |
+| [0075](docs/adr/0075-viste-come-e-cosa.md) | Viste come «come guardare × cosa mostrare», Riepilogo a parte, Kanban a tutta finestra | una barra con una gerarchia chiara |
+| [0076](docs/adr/0076-modalita-inbox-elementi.md) | Modalità Traccia davvero semplice, Inbox in cima, Elementi e Grafo, import dal progetto | due modalità che si distinguono, il lavoro di tutti in un posto |
 | [0056](docs/adr/0056-aggiornamenti.md) | Aggiornamenti Sparkle firmati, maggiori obbligatori | tutti sulla stessa versione sicura |
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
 
 ## Qualità e test
-- **271 test automatici** nei pacchetti: Store 94, Capture 48, Transcription 29, Intelligence 23, Ingest 22, MCP 17, Core 15, Engine 15, Export 7, Sync 1.
+- **301 test automatici** nei pacchetti: Store 109, Capture 48, Intelligence 32, Transcription 29, Ingest 22, MCP 20, Core 15, Engine 15, Export 10, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
 - **CI** su ogni pull request (GitHub Actions, macOS): tutti i test e il controllo delle API di rete. Su Ubuntu, a ogni PR e push su `main`, il controllo che nessun indirizzo email personale entri nel repository. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
@@ -321,11 +327,13 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
+| **1.2.0-beta** | 29 ottobre 2026 | Su `main` (tag `v1.2.0-beta`; si torna alla 1.0.1-beta o alla 1.1.0-beta: vedi sotto). Lavoro aperto rivisto dopo la prova (ADR-0076): **Modalità Traccia** semplice e veloce (Riepilogo breve, attività da spuntare, tutti i tipi, niente Kanban) e **Modalità Gestisci** completa e predefinita, con nome, icona e colore, finestra alla prima visita di un progetto o cliente e modalità del cliente per i progetti nuovi; **Inbox** in cima alla barra laterale con il bollino rosso; «Elementi da classificare»; barra delle viste Riepilogo · Elementi · Timeline, Kanban, Grafo; «Importa file ed elementi…» da dentro un progetto; Kanban di tutti con tutti i progetti |
+| **1.1.0-beta** | 28 ottobre 2026 | Prima versione del lavoro aperto (tag `v1.1.0-beta`), rivista dopo la prova nella 1.2.0-beta. Lavoro aperto: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, checklist; Modalità Traccia (semplice e veloce, Riepilogo breve, attività da spuntare) e Modalità Gestisci (completa, predefinita) per progetto, con la finestra alla prima visita; barra delle viste con Riepilogo, Elementi, Timeline, Kanban e Grafo, a tutta finestra Riepilogo, Kanban e Grafo; Inbox in cima alla barra laterale con il lavoro di tutti i progetti; import da dentro un progetto; Riepilogo con sintesi di stato, Kanban con colonne libere; dipendenze e ricorrenze; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP per il lavoro aperto. Sito della documentazione con la versione nell'header |
 | **1.0.1-beta** | 28 ottobre 2026 | Punto di ripristino prima della 1.1.0-beta. JSON e altri file di testo importabili, menu Modifica (⌘C, ⌘V…); coda unica del motore e gestione della memoria, impostazioni automatiche sotto i 32 GB; chi ha prodotto sintesi e proposte (modello o Claude); sintesi e proposte fatte da Claude con «Copia per Claude»; «Segna momento con screenshot» e scorciatoie in tutte le app; distribuzione con DMG; riconoscimento delle stesse voci tra call diverse |
 | **1.0.0-beta** | 24 ottobre 2026 | Beta, non ancora distribuita: tutto quello che è descritto qui (fasi 0-3). La 1.0.0 sarà la prima versione distribuibile |
 
 ### Tornare a una versione precedente
-Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
+Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
 - **Codice e documentazione:** `git checkout v1.0.1-beta`, poi `xcodegen generate` e una build; `npm run docs:dev` mostra il sito di quella versione. Se si abbandona una versione, lo sviluppo riprende dal ramo della versione precedente (per esempio `release/1.0.x`) con i numeri di quella serie (1.0.2-beta…).
 - **Archivio:** le migrazioni del database vanno solo avanti. Una versione più vecchia potrebbe non leggere un archivio già aperto da una più nuova. Per tornare indietro si ripristina il **backup** fatto prima dell'aggiornamento (Impostazioni › Backup e trasferimento), oppure si prova la versione nuova su una **copia** dell'archivio (`scripts/try-branch.sh`).
 

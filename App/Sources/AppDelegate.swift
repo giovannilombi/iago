@@ -19,6 +19,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var updates: UpdateService?
     private var shortcuts: GlobalShortcuts?
     private var pausedForSleep = false
+    private var reminder: WorkReminder?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // The Dock shows the icon while a window is open: set it explicitly, so a stale icon cache
@@ -27,7 +28,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             // DEBUG: a demo archive elsewhere, for the guide's screenshots, or a copy of the archive to try a branch.
             let paths =
-                try (DemoMode.root ?? DemoMode.trialRoot).map { StoragePaths(root: $0) } ?? StoragePaths.applicationSupport()
+                try (DemoMode.root ?? DemoMode.trialRoot).map { StoragePaths(root: $0) }
+                ?? StoragePaths.applicationSupport()
             try paths.createDirectories()
             try paths.clearScratch()
             self.paths = paths
@@ -68,6 +70,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 intelligence: intelligence, folderImporter: folderImporter, calls: calls, activity: activity)
             model.updates = updates
             calls.start()
+            // ADR-0074: the morning notification, and «Inbox» when it is clicked.
+            let reminder = WorkReminder(archive: archive.archive)
+            reminder.start()
+            self.reminder = reminder
             intelligence.start()
             folderImporter.start()
             model.requestModelDownload = { [weak statusItemController] in statusItemController?.offerModelDownload() }
@@ -79,6 +85,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             NSApp.servicesProvider = services
             NSUpdateDynamicServices()
             statusItemController.windows = windows
+            calls.openInbox = { [weak windows, weak model] in
+                model?.select(.inbox)
+                windows?.showMain()
+            }
             NSApp.mainMenu = MainMenu.make { [weak windows] in windows?.showSettings() }
             // ADR-0072: mark a moment, with a screenshot, start or stop, from any app.
             let shortcuts = GlobalShortcuts(archive: archive.archive) { [weak statusItemController] action in

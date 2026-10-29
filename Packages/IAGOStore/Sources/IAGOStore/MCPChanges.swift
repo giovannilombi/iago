@@ -37,6 +37,74 @@ public struct MCPPrevious: Codable, Sendable, Equatable {
     public var summary: ItemSummaryText?
     /// The proposals Claude added (ADR-0071).
     public var suggestionIDs: [String]?
+    /// ADR-0074: the open work fields before the change; what the entry depended on and its checklist, when the
+    /// change replaced them.
+    public var work: Work?
+    public var blockerIDs: [String]?
+    public var checklist: [ChecklistLine]?
+
+    /// Kind and open work fields of a decision (ADR-0074).
+    public struct Work: Codable, Sendable, Equatable {
+        public var kind: Decision.Kind
+        public var ownerId: String?
+        public var dueAt: Date?
+        public var waitingOnId: String?
+        public var waitingUntil: Date?
+        public var priority: Int?
+        public var startsAt: Date?
+        public var estimate: String?
+        public var severity: Decision.Severity?
+        public var happenedAt: Date?
+        public var outcome: String?
+        public var outcomeKind: Decision.Outcome?
+        public var derivedFromId: String?
+        public var recurrence: Decision.Recurrence?
+
+        public init(_ decision: Decision) {
+            kind = decision.kind
+            ownerId = decision.ownerId
+            dueAt = decision.dueAt
+            waitingOnId = decision.waitingOnId
+            waitingUntil = decision.waitingUntil
+            priority = decision.priority
+            startsAt = decision.startsAt
+            estimate = decision.estimate
+            severity = decision.severity
+            happenedAt = decision.happenedAt
+            outcome = decision.outcome
+            outcomeKind = decision.outcomeKind
+            derivedFromId = decision.derivedFromId
+            recurrence = decision.recurrence
+        }
+
+        public func apply(to decision: inout Decision) {
+            decision.kind = kind
+            decision.ownerId = ownerId
+            decision.dueAt = dueAt
+            decision.waitingOnId = waitingOnId
+            decision.waitingUntil = waitingUntil
+            decision.priority = priority
+            decision.startsAt = startsAt
+            decision.estimate = estimate
+            decision.severity = severity
+            decision.happenedAt = happenedAt
+            decision.outcome = outcome
+            decision.outcomeKind = outcomeKind
+            decision.derivedFromId = derivedFromId
+            decision.recurrence = recurrence
+        }
+    }
+
+    /// One line of an activity's checklist.
+    public struct ChecklistLine: Codable, Sendable, Equatable {
+        public var text: String
+        public var done: Bool
+
+        public init(text: String, done: Bool) {
+            self.text = text
+            self.done = done
+        }
+    }
 
     public struct ChainLink: Codable, Sendable, Equatable {
         public var id: String
@@ -57,8 +125,12 @@ public struct MCPPrevious: Codable, Sendable, Equatable {
     public init(
         body: String? = nil, text: String? = nil, notes: String? = nil, status: Decision.Status? = nil,
         chainName: String? = nil, streamIDs: [String]? = nil, chain: [ChainLink]? = nil,
-        summary: ItemSummaryText? = nil, suggestionIDs: [String]? = nil
+        summary: ItemSummaryText? = nil, suggestionIDs: [String]? = nil, work: Work? = nil,
+        blockerIDs: [String]? = nil, checklist: [ChecklistLine]? = nil
     ) {
+        self.work = work
+        self.blockerIDs = blockerIDs
+        self.checklist = checklist
         self.summary = summary
         self.suggestionIDs = suggestionIDs
         self.body = body
@@ -132,8 +204,11 @@ extension Archive {
                     if let text = previous.text { decision.text = text }
                     decision.notes = previous.notes
                     if let status = previous.status, decision.status != .superseded { decision.status = status }
+                    previous.work?.apply(to: &decision)
                 }
                 try setChainName(previous.chainName, decisionID: change.entityId)
+                if let blockers = previous.blockerIDs { try setBlockers(blockers, of: change.entityId) }
+                if let lines = previous.checklist { try replaceChecklist(lines, decisionID: change.entityId) }
             }
         case (.item, .update): break
         case (.summary, .create), (.summary, .update):

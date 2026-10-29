@@ -2,9 +2,10 @@ import Foundation
 import IAGOCore
 import IAGOStore
 
-/// What the engine proposes for one item (ADR-0049, FR-110/111): decisions and activities, what they may supersede,
-/// names for generic speakers, tags, a project for unclassified items and related items. Only proposals: the app
-/// stores them as `Suggestion` and applies one only when the user confirms it.
+/// What the engine proposes for one item (ADR-0049, FR-110/111, ADR-0074): decisions, activities (with owner,
+/// deadline, who we wait for), points to clear up, risks and requests; what they may supersede or close; names for
+/// generic speakers, tags, a project for unclassified items and related items. Only proposals: the app stores them
+/// as `Suggestion` and applies one only when the user confirms it.
 public enum SuggestionEngine {
     public struct Input: Sendable {
         public var itemID: String
@@ -14,16 +15,19 @@ public enum SuggestionEngine {
         public var isCall: Bool
         /// Speaker id → label, for calls: generic labels ("Speaker 2") may get a name.
         public var speakers: [String: String]
+        /// When the call took place or the email arrived: "venerdì" counts from here (ADR-0074).
+        public var date: Date?
 
         public init(
             itemID: String, projectID: String?, lines: [KeyPointExtractor.Line], isCall: Bool,
-            speakers: [String: String] = [:]
+            speakers: [String: String] = [:], date: Date? = nil
         ) {
             self.itemID = itemID
             self.projectID = projectID
             self.lines = lines
             self.isCall = isCall
             self.speakers = speakers
+            self.date = date
         }
     }
 
@@ -33,7 +37,9 @@ public enum SuggestionEngine {
         _ input: Input, engine: any LLMProvider, embedder: (any TextEmbedder)?, archive: Archive
     ) async throws -> [Proposal] {
         var proposals: [Proposal] = []
-        let points = try await KeyPointExtractor.extract(input.lines, with: engine)
+        let points = try await KeyPointExtractor.extract(
+            input.lines, context: .init(date: input.date, openEntries: try openEntries(input.projectID, archive)),
+            with: engine)
         let active =
             try input.projectID.map {
                 try archive.decisions(DecisionQuery(scope: .project($0), statuses: [.active], kinds: [.decision]))
@@ -41,11 +47,14 @@ public enum SuggestionEngine {
         for point in points.items {
             var payload = SuggestionPayload(
                 text: point.text, quote: point.quote, atSec: input.isCall ? point.atSec : nil, owner: point.owner,
-                confidence: point.confidence == .high ? "high" : "medium")
-            if point.kind == .decision, let previous = try await supersedable(point.text, active, embedder) {
+                confidence: point.confidence == .high ? "high" : "medium", supersedesID: point.closesID,
+                due: point.due, waitingOn: point.waitingOn, severity: point.severity)
+            if point.kind == .decision, payload.supersedesID == nil,
+                let previous = try await supersedable(point.text, active, embedder)
+            {
                 payload.supersedesID = previous.id
             }
-            proposals.append((point.kind == .decision ? .decision : .activity, payload))
+            proposals.append((kind(point.kind), payload))
         }
         if input.isCall { proposals += try await speakerNames(input, engine: engine) }
         proposals += try await tags(input, engine: engine, archive: archive)
@@ -55,7 +64,32 @@ public enum SuggestionEngine {
         return proposals
     }
 
+    static func kind(_ kind: ProposedKeyPoint.Kind) -> Suggestion.Kind {
+        switch kind {
+        case .decision: .decision
+        case .activity: .activity
+        case .question: .question
+        case .risk: .risk
+        case .request: .request
+        }
+    }
+
     // MARK: Supersede
+
+    /// The open points to clear up and requests of the project, the most recent first: a decision of this item may
+    /// answer one, a decision or an activity may accept one (ADR-0074).
+    static func openEntries(_ projectID: String?, _ archive: Archive) throws -> [KeyPointExtractor.OpenEntry] {
+        guard let projectID else { return [] }
+        return try archive.decisions(
+            DecisionQuery(
+                scope: .project(projectID), statuses: DecisionQuery.current, kinds: [.openQuestion, .request])
+        )
+        .sorted { $0.decision.decidedAt > $1.decision.decidedAt }
+        .prefix(KeyPointExtractor.maxOpenEntries)
+        .map {
+            .init(id: $0.decision.id, kind: $0.decision.kind == .request ? .request : .question, text: $0.decision.text)
+        }
+    }
 
     /// An active decision of the project that the proposal probably replaces: the same topic, by meaning when an
     /// embedder is there, by words otherwise.

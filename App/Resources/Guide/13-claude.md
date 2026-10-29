@@ -11,7 +11,9 @@ Puoi collegare **Claude Desktop** (o Claude Code) ai progetti che scegli. Claude
 Puoi chiedere a Claude la sintesi o le proposte di un elemento, al posto del motore del Mac.
 1. Nella scheda dell'elemento premi **Copia per Claude…** e scegli *Per la sintesi*, *Per le proposte* o *Solo il riferimento*. Se il progetto non è ancora consultabile (o scrivibile) da Claude, IAGO te lo dice e lo attiva con un clic.
 2. Incolla in Claude: lavora proprio su quell'elemento, senza cercarlo.
-3. Claude ti mostra un'anteprima; dopo il tuo OK la sintesi compare come **Sintetizzata da Claude** e le proposte come **Consigliata da Claude**, da confermare come quelle del motore.
+3. Claude ti mostra un'anteprima; dopo il tuo OK la sintesi compare come **Sintetizzata da Claude** e le proposte come **Consigliata da Claude**, da confermare come quelle del motore. Claude propone anche punti da chiarire, rischi e richieste, con responsabile, scadenza e attese.
+
+Con **Può scrivere** Claude gestisce anche il lavoro aperto: crea e aggiorna attività, punti da chiarire, rischi e richieste con responsabile, scadenza, priorità, dipendenze e checklist, e li chiude con l'esito. Come sempre passa dall'anteprima e si può annullare.
 
 Puoi anche chiedere a Claude «la call di ieri con …»: trova da solo gli ultimi elementi. Se ce n'è più d'uno, ti chiede quale.
 

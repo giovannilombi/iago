@@ -27,7 +27,7 @@ struct ExportScope {
             if let stream = model.stream(id) {
                 title = "\(model.project(stream.projectId)?.name ?? "") · \(stream.name)"
             }
-        case .library(.unclassified): title = String(localized: "Da classificare")
+        case .library(.unclassified): title = String(localized: "Elementi da classificare")
         case .library(.undefinedProject): title = String(localized: "Non definito")
         case .library(.category(let id)): title = model.categories.first { $0.id == id }?.name ?? title
         case .library(.tag(let id)): title = "#" + (model.tags.first { $0.id == id }?.name ?? "")

@@ -2,8 +2,9 @@
 # Proposte del motore
 
 Dopo ogni trascrizione o importazione, con il motore locale IAGO propone:
-- decisioni e attività, ognuna con la frase da cui viene;
-- voci che una nuova decisione potrebbe superare;
+- decisioni e attività, ognuna con la frase da cui viene; per un'attività anche chi la fa, entro quando e, se è qualcun altro a doverla mandare («Anna ci manda i file entro venerdì»), chi aspetti;
+- punti da chiarire (domande rimaste senza risposta), rischi con la gravità e richieste del cliente;
+- voci che una nuova decisione potrebbe superare, o un punto da chiarire a cui risponde, o una richiesta che accoglie;
 - nomi per gli speaker generici;
 - tag, progetto (per ciò che è da classificare) e collegamenti ad altri elementi.
 

@@ -202,6 +202,31 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 10h.5 Elimina la voce: un solo avviso, poi sparisce dalla lista. *Elimina tutte le voci…* chiede tre passaggi (avviso, DELETE, ultima conferma).
 - [ ] 10h.6 Spegni l'interruttore: una nuova trascrizione non propone più nomi dalla voce.
 
+## 10i. Lavoro aperto (1.1.0-beta e 1.2.0-beta)
+Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-branch.sh` la apre su una copia dell'archivio. Per tornare indietro chiudi la prova e riapri IAGO.
+- [ ] 10i.1 Apri un progetto per la prima volta: compare la finestra «… è in Modalità Gestisci» con le due modalità spiegate. *OK* la chiude e torna alla visita successiva; *Non mostrare più* la toglie per quel progetto. Il progetto si apre sul **Riepilogo**; accanto al nome c'è la pillola *Modalità Gestisci ▾* (blu, icona a colonne) e la stessa icona è accanto al progetto nella barra laterale. Dalla pillola scegli *Modalità Traccia* (verde, quaderno): spariscono la Kanban e il menu *Mostra*, il Riepilogo diventa breve. *Aggiungi* offre sempre la nota, i sei tipi e, in fondo, *Importa file ed elementi…*.
+- [ ] 10i.2 Crea un'attività con responsabile (prova un nome simile a uno esistente: deve chiedere «Intendi …?»), scadenza di ieri e due righe di checklist: in timeline la scadenza è rossa e si vede 0/2.
+- [ ] 10i.3 Scrivi qualcuno in *In attesa di* con una data: la voce passa *In attesa* e nell'**Inbox** compare sotto *Aspetto da altri*.
+- [ ] 10i.4 In Gestisci *Segna come fatta*: ✓ verde, testo grigio non barrato; esce dall'Inbox e torna con *Mostra chiuse*. In Traccia l'attività ha una casella: spuntala dalla timeline, dal Riepilogo breve o dall'Inbox, poi togli la spunta (torna aperta).
+- [ ] 10i.5 Punto da chiarire › *Chiarisci…* con *Diventa decisione*: nasce la decisione e il punto le sta sotto come «chiarito». Togli il legame dalla decisione: il punto torna aperto.
+- [ ] 10i.6 Richiesta › *Accogli…* con due attività: nascono due attività «nate da» la richiesta, che risulta accolta. Un'altra richiesta › *Rifiuta…* con un motivo.
+- [ ] 10i.7 In Gestisci: rischio con gravità alta › *Diventato problema*, poi *Risolto*. In Traccia lo stesso rischio non mostra gravità né *Diventato problema* (c'è l'icona dei dettagli di Gestisci) e si chiude con *Risolto*.
+- [ ] 10i.8 Nella scheda di un'attività in Traccia c'è la casella *Fatta* al posto dello stato, con responsabile, scadenza, *In attesa di* e checklist; niente gravità né «nata da». Rimetti il progetto in *Gestisci*: compaiono gli stati, *Altri dettagli* (priorità, dipendenze, stima, inizio, ricorrenza) e la **Kanban**. Torna a *Traccia*: nessun dato perso, e un'icona segnala le voci con dettagli di Gestisci.
+- [ ] 10i.9 In Gestisci: un'attività che *dipende da* un'altra aperta diventa Bloccata e si sblocca quando l'altra è fatta. Una dipendenza circolare è rifiutata con un messaggio chiaro.
+- [ ] 10i.10 Attività ricorrente settimanale con scadenza: segnandola fatta nasce la successiva, una settimana dopo, con la checklist da rifare.
+- [ ] 10i.11 Kanban di un progetto: occupa tutta la finestra, un clic su una scheda apre il pannello a destra (✕ o Esc lo chiudono). Trascina una scheda dalla colonna Da fare a In corso (cambia lo stato) e in In attesa (chiede da chi e fino a quando). Aggiungi la colonna «Da discutere» e trascinaci una scheda: lo stato non cambia.
+- [ ] 10i.12 Colonna Fatta: con voci chiuse da più di 14 giorni compare «Attività chiuse 14+ giorni archiviate» con *Mostra tutte*; dopo il clic la riga diventa «Archivia attività chiuse 14+ giorni». Chiudi e riapri IAGO: la scelta è ricordata.
+- [ ] 10i.13 Riepilogo in Gestisci: crea una checklist di progetto e fissala (compare nell'Inbox); *Sintesi di stato* scrive un testo dai punti chiave (compare in Attività) e si copia.
+- [ ] 10i.14 Impostazioni › Progetti: la modalità di un progetto si cambia anche qui. Le attività di un progetto in *Traccia* sono nell'Inbox e nella **Kanban di tutti**, con l'icona del quaderno accanto al nome del progetto; spostane una in *In corso*: nel progetto resta da spuntare.
+- [ ] 10i.15 Notifica del mattino accesa con l'ora tra due minuti e una voce che scade oggi: arriva la notifica con i conteggi e il clic apre l'Inbox.
+- [ ] 10i.16 Trascrivi o importa una call in cui si fa una domanda senza risposta, si nomina un rischio, il cliente chiede qualcosa e qualcuno promette un invio «entro venerdì»: arrivano le proposte dei quattro tipi, con la frase d'origine, e la data di venerdì giusta.
+- [ ] 10i.17 Con Claude Desktop: «elenca il lavoro aperto del progetto», «crea un'attività per Anna entro il 10 novembre con checklist…», poi annulla da Impostazioni › Claude.
+- [ ] 10i.18 Barra delle viste: *Riepilogo* ed *Elementi*, ognuno a sé, poi Timeline · Kanban · Grafo, tutti con un'icona. *Elementi* mostra le call, le email e i documenti del progetto. *Mostra* (Tutto, Elementi, Punti chiave) compare solo con Timeline e Grafo; con la Kanban si legge «Mostra: Lavoro aperto». In Traccia la pillola ha *Mostra il Grafo*: spento, il Grafo sparisce dalla barra.
+- [ ] 10i.19 Scegli Grafo in un progetto e Kanban in un altro, cambia progetto e torna: ognuno riapre l'ultima vista.
+- [ ] 10i.20 Barra laterale: in cima **Inbox** in grassetto, con l'icona del vassoio e, se hai voci in ritardo o di oggi o proposte da confermare, il bollino rosso con il loro numero; sotto una linea e **Elementi da classificare**.
+- [ ] 10i.21 *Aggiungi › Importa file ed elementi…* in un progetto: trascina un PDF nell'area, poi *Da testo* (si apre il campo) con un testo breve. Entrambi finiscono nel progetto, non in Elementi da classificare. *Email senza file* apre la finestra dell'email con il progetto già scelto.
+- [ ] 10i.22 Apri un cliente per la prima volta: la finestra chiede la modalità dei suoi progetti. Scegli Traccia: i progetti a cui non avevi scelto una modalità passano in Traccia, e un progetto nuovo del cliente nasce in Traccia.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

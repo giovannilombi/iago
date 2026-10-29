@@ -42,6 +42,8 @@ final class AppModel {
         case library(LibraryScope)
         /// The global decision register (FR-153).
         case decisions
+        /// «Inbox»: the open work of every project (ADR-0074, ADR-0076).
+        case inbox
         /// "Importa": drop area and every way to bring material in (files, clipboard, text, emails).
         case importer
         /// "Attività" (ADR-0055).
@@ -344,12 +346,132 @@ final class AppModel {
         }
     }
 
-    /// List, timeline or decision register for the current scope; a project opens on its timeline.
-    enum ViewMode: Hashable { case list, timeline, decisions, graph }
-    var viewMode = ViewMode.list { didSet { if viewMode != oldValue { reload() } } }
+    /// How the scope is looked at (ADR-0075, ADR-0076): «Riepilogo», «Elementi» (the items, with a place of their own),
+    /// then the forms of the history: timeline, kanban and graph. «Riepilogo» and the kanban (ADR-0074) are for
+    /// projects, clients and streams; the kanban also for «Inbox» and «Punti chiave», where `list` is their «Elenco».
+    enum ViewMode: String, Hashable { case overview, list, timeline, board, map }
+    /// «Mostra»: what the timeline and the graph contain. «Elementi» shows the items only, the kanban open work only.
+    enum ViewContent: String, Hashable, CaseIterable { case all, materials, keyPoints }
+    var viewMode = ViewMode.list {
+        didSet {
+            guard viewMode != oldValue else { return }
+            // The kanban and the overview open with their inspector closed; the graph keeps the selection as its centre.
+            if viewMode == .board || viewMode == .overview { clearSelection() }
+            rememberView()
+            if !restoringView { reload() }
+        }
+    }
+    var viewContent = ViewContent.all {
+        didSet {
+            guard viewContent != oldValue else { return }
+            rememberView()
+            if !restoringView { reload() }
+        }
+    }
+    /// «Mostra» as the view uses it: a project in «Traccia» has no «Mostra» and shows everything.
+    var shownContent: ViewContent {
+        workViewsMode(for: decisionScope) == .track && workScope != nil ? .all : viewContent
+    }
     var showsTimeline: Bool { viewMode == .timeline }
-    var showsDecisions: Bool { viewMode == .decisions || sidebar == .decisions }
-    var showsGraph: Bool { viewMode == .graph && sidebar != .decisions }
+    var showsDecisions: Bool { sidebar == .decisions && viewMode != .board }
+    var showsGraph: Bool { viewMode == .map && sidebar != .decisions && sidebar != .inbox }
+
+    /// Kanban, «Riepilogo» and graph take the space of the list and of the detail; what is opened from them shows in
+    /// an inspector on the right.
+    var isWide: Bool {
+        switch viewMode {
+        case .board: workScope != nil || sidebar == .inbox || sidebar == .decisions
+        case .overview: workScope != nil
+        case .map: showsGraph
+        case .list, .timeline: false
+        }
+    }
+
+    var hasSelection: Bool { selectedItemID != nil || selectedDecisionID != nil || selectedNoteID != nil }
+
+    func clearSelection() {
+        selectedItemID = nil
+        selectedDecisionID = nil
+        selectedNoteID = nil
+    }
+
+    // MARK: View remembered per scope
+
+    @ObservationIgnored private var restoringView = false
+    static let viewsKey = "views.byScope"
+
+    /// The scopes that remember their view: projects, clients, streams and the other places of the library.
+    private var viewKey: String? {
+        switch sidebar {
+        case .library(.project(let id)): "project:\(id)"
+        case .library(.client(let id)): "client:\(id)"
+        case .library(.stream(let id)): "stream:\(id)"
+        case .library(.category(let id)): "category:\(id)"
+        case .library(.tag(let id)): "tag:\(id)"
+        case .library(.unclassified): "unclassified"
+        case .library(.recent): "recent"
+        case .library(.undefinedProject): "undefined"
+        default: nil
+        }
+    }
+
+    private func rememberView() {
+        guard !restoringView, let key = viewKey else { return }
+        var views = UserDefaults.standard.dictionary(forKey: Self.viewsKey) as? [String: String] ?? [:]
+        views[key] = "\(viewMode.rawValue)/\(viewContent.rawValue)"
+        UserDefaults.standard.set(views, forKey: Self.viewsKey)
+    }
+
+    /// The last view of the scope, or where it opens the first time: a project, client or stream on its overview,
+    /// the project-less items on the timeline, the rest on «Elementi».
+    private func restoreView() {
+        restoringView = true
+        defer { restoringView = false }
+        let saved = viewKey.flatMap {
+            (UserDefaults.standard.dictionary(forKey: Self.viewsKey) as? [String: String])?[$0]
+        }?.split(separator: "/").map(String.init)
+        var mode: ViewMode
+        var content: ViewContent
+        switch sidebar {
+        case .decisions, .inbox:
+            mode = .list
+            content = viewContent
+        case .library(.project), .library(.client), .library(.stream):
+            mode = .overview
+            content = .all
+        case .library(.undefinedProject):
+            mode = .timeline
+            content = .all
+        default:
+            mode = .list
+            content = .materials
+        }
+        if let saved, saved.count == 2, let savedMode = ViewMode(rawValue: saved[0]),
+            let savedContent = ViewContent(rawValue: saved[1])
+        {
+            mode = savedMode
+            content = savedContent
+        }
+        viewMode = mode
+        viewContent = content
+        fixView()
+    }
+
+    /// A view the scope does not have (the kanban of a project kept in «Traccia», the overview outside a project, the
+    /// graph turned off in a project) falls back to the overview or the list.
+    func fixView() {
+        switch viewMode {
+        case .overview where workScope == nil:
+            viewMode = .list
+        case .board where !boardAvailable(for: decisionScope):
+            viewMode = workScope != nil ? .overview : .list
+        case .map where sidebar == .decisions || sidebar == .inbox:
+            viewMode = .list
+        case .map where !graphAvailable:
+            viewMode = .timeline
+        default: break
+        }
+    }
 
     // MARK: Decisions (FR-150…157, ADR-0037)
 
@@ -382,7 +504,7 @@ final class AppModel {
         case .library(.stream(let id)): return .stream(id)
         case .library(.unclassified), .library(.undefinedProject): return .noProject
         case .library: return .all
-        case .importer, .activity, .labels, .trash, nil: return nil
+        case .importer, .activity, .labels, .trash, .inbox, nil: return nil
         }
     }
 
@@ -424,17 +546,30 @@ final class AppModel {
         return (try? archive.promotedDecisions(noteIDs: [noteID]))?[noteID]
     }
 
+    /// Writes the editor's draft: the entry, its owner and who it waits for (people created if new), what it depends
+    /// on and its checklist (ADR-0074).
     func saveDecision(_ draft: DecisionDraft) {
         var proposed = draft.decision
         // A confirmed proposal keeps the model that proposed it (ADR-0070).
         if let suggestionID = draft.suggestionID, let suggestion = try? archive.suggestion(suggestionID) {
             proposed.model = Provenance.decisionModel(of: suggestion)
         }
-        let decision = proposed
         perform {
-            if let id = draft.existingID {
+            if proposed.kind.isWork {
+                proposed.ownerId = try draft.ownerName.flatMap { try archive.person(named: $0)?.id }
+                proposed.waitingOnId = try draft.waitingOnName.flatMap { try archive.person(named: $0)?.id }
+            }
+            let decision = proposed
+            // The state only when the user changed it: "Bloccata" comes from the dependencies, and "Traccia" shows
+            // under way and blocked as "Aperta".
+            let changed = draft.status != draft.loadedStatus ? draft.status : nil
+            // Marked done here: the checklist is saved first, so a repeating entry copies the checklist as edited.
+            let closing = draft.existingID != nil && changed == .done
+            let status = closing ? nil : changed
+            let id: String
+            if let existing = draft.existingID {
                 try archive.updateDecision(
-                    id, people: draft.people, tags: draft.tags, streams: draft.streamIDs,
+                    existing, people: draft.people, tags: draft.tags, streams: draft.streamIDs,
                     supersedes: draft.supersedesIDs, reorderingChain: draft.reorderingChain
                 ) { current in
                     current.text = decision.text
@@ -442,16 +577,79 @@ final class AppModel {
                     current.decidedAt = decision.decidedAt
                     current.projectId = decision.projectId
                     current.notes = decision.notes
+                    current.ownerId = decision.ownerId
+                    current.dueAt = decision.dueAt
+                    current.waitingOnId = decision.waitingOnId
+                    current.waitingUntil = decision.waitingUntil
+                    current.priority = decision.priority
+                    current.severity = decision.severity
+                    current.startsAt = decision.startsAt
+                    current.estimate = decision.estimate
+                    current.recurrence = decision.recurrence
+                    current.derivedFromId = decision.derivedFromId
+                    if let status { current.status = status }
+                    if !current.kind.isWork, current.status != .superseded, current.status != .cancelled {
+                        current.status = .active
+                    }
+                    if current.status.isOpen {
+                        current.outcome = nil
+                        current.outcomeKind = nil
+                    }
                 }
+                id = existing
             } else {
                 if let suggestionID = draft.suggestionID { try archive.setSuggestionStatus(suggestionID, .accepted) }
-                try archive.createDecision(
+                id = try archive.createDecision(
                     decision, people: draft.people, tags: draft.tags, streams: draft.streamIDs,
                     markerID: draft.markerID,
-                    supersedes: draft.supersedesIDs)
+                    supersedes: draft.supersedesIDs
+                ).id
+            }
+            if decision.kind.isWork, draft.blockerIDs != draft.loadedBlockerIDs {
+                try archive.setBlockers(draft.blockerIDs, of: id)
+            } else if !decision.kind.isWork, !draft.loadedBlockerIDs.isEmpty {
+                try archive.setBlockers([], of: id)
+            }
+            if draft.existingID == nil || draft.checklistLoaded {
+                try saveChecklist(decision.kind.isWork ? draft.checklist : [], decisionID: id)
+            }
+            if closing { try archive.updateDecision(id) { $0.status = .done } }
+            if let convertsID = draft.convertsID {
+                let into = DecisionRow.kindLabel(decision.kind).lowercased()
+                try archive.updateDecision(convertsID) { request in
+                    request.status = .done
+                    request.outcomeKind = .converted
+                    request.outcome = String(localized: "trasformata in \(into)")
+                }
             }
         }
         if let itemID = draft.sourceItemID { refreshTextAssets(itemID) }
+    }
+
+    /// The lines of an activity as edited: removed ones deleted, changed ones updated, new ones added, in order.
+    private func saveChecklist(_ lines: [ChecklistLine], decisionID: String) throws {
+        let current = try archive.checklistItems(decisionID: decisionID)
+        let kept = lines.filter { !$0.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        let keptIDs = Set(kept.compactMap(\.itemID))
+        for item in current where !keptIDs.contains(item.id) { try archive.deleteChecklistItem(item.id) }
+        var order: [String] = []
+        for line in kept {
+            let text = line.text.trimmingCharacters(in: .whitespacesAndNewlines)
+            if let itemID = line.itemID, let saved = current.first(where: { $0.id == itemID }) {
+                if saved.text != text || saved.done != line.done {
+                    try archive.updateChecklistItem(itemID) {
+                        $0.text = text
+                        $0.done = line.done
+                    }
+                }
+                order.append(itemID)
+            } else {
+                let item = try archive.addChecklistItem(text, decisionID: decisionID)
+                if line.done { try archive.updateChecklistItem(item.id) { $0.done = true } }
+                order.append(item.id)
+            }
+        }
+        if order != current.filter({ keptIDs.contains($0.id) }).map(\.id) { try archive.reorderChecklist(order) }
     }
 
     /// The stream being viewed, for new notes in it (ADR-0047).
@@ -496,12 +694,230 @@ final class AppModel {
         perform { try archive.deleteDecision(id) }
     }
 
-    /// Active decisions a new one can replace: same project first.
+    /// Current entries a new one can replace or close (valid decisions and milestones, open work): same project
+    /// first.
     func supersedableDecisions(projectID: String?, excluding id: String?) -> [DecisionSummary] {
-        let all = (try? archive.decisions(DecisionQuery(scope: .all, statuses: [.active]))) ?? []
+        let all = (try? archive.decisions(DecisionQuery(scope: .all, statuses: DecisionQuery.current))) ?? []
         let candidates = all.filter { $0.id != id }
         return candidates.filter { $0.decision.projectId == projectID }
             + candidates.filter { $0.decision.projectId != projectID }
+    }
+
+    // MARK: Open work (ADR-0074)
+
+    /// The mode of a project (ADR-0074): «Gestisci» unless it is kept in «Traccia». Without a project, «Gestisci».
+    func workMode(for projectID: String?) -> WorkMode {
+        guard let projectID else { return .manage }
+        return project(projectID)?.workMode ?? .manage
+    }
+
+    func setProjectWorkMode(_ projectID: String, _ mode: WorkMode) {
+        perform { try archive.setProjectWorkMode(projectID, mode) }
+        reload()
+        fixView()
+    }
+
+    // MARK: Mode of a project: graph switch, first-visit sheet, client default (ADR-0076)
+
+    static let hiddenGraphsKey = "work.graphHidden"
+    static let introDismissedKey = "work.modeIntro.dismissed"
+    /// In the archive (settings), so they travel with backups: the mode of a client's new projects, and the projects
+    /// whose mode the user chose on their own.
+    static func clientModeKey(_ clientID: String) -> String { "work.clientMode.\(clientID)" }
+    static let modeChosenKey = "work.modeChosen"
+
+    /// «Mostra il Grafo» of a project in «Traccia»: on unless turned off. In «Gestisci» the graph is always there.
+    func graphShown(projectID: String) -> Bool {
+        _ = revision
+        guard workMode(for: projectID) == .track else { return true }
+        return !(UserDefaults.standard.stringArray(forKey: Self.hiddenGraphsKey) ?? []).contains(projectID)
+    }
+
+    func setGraphShown(_ shown: Bool, projectID: String) {
+        var hidden = Set(UserDefaults.standard.stringArray(forKey: Self.hiddenGraphsKey) ?? [])
+        if shown { hidden.remove(projectID) } else { hidden.insert(projectID) }
+        UserDefaults.standard.set(hidden.sorted(), forKey: Self.hiddenGraphsKey)
+        revision += 1
+        fixView()
+    }
+
+    /// The graph exists everywhere but in a project (or its stream) in «Traccia» that turned it off.
+    var graphAvailable: Bool {
+        switch sidebar {
+        case .library(.project(let id)): graphShown(projectID: id)
+        case .library(.stream(let id)): stream(id).map { graphShown(projectID: $0.projectId) } ?? true
+        default: true
+        }
+    }
+
+    /// What the first-visit sheet is about: a project, or a client and the projects in it.
+    enum ModeIntro: Identifiable, Hashable {
+        case project(String)
+        case client(String)
+        var id: String {
+            switch self {
+            case .project(let id): "project:\(id)"
+            case .client(let id): "client:\(id)"
+            }
+        }
+    }
+
+    /// The sheet that says which mode a project (or a client) is in, shown on every visit until «Non mostrare più».
+    var modeIntro: ModeIntro?
+
+    func dismissModeIntroForever(_ intro: ModeIntro) {
+        var dismissed = Set(UserDefaults.standard.stringArray(forKey: Self.introDismissedKey) ?? [])
+        dismissed.insert(intro.id)
+        UserDefaults.standard.set(dismissed.sorted(), forKey: Self.introDismissedKey)
+    }
+
+    private func showModeIntro(for selection: SidebarSelection?) {
+        guard !DemoMode.isActive else { return }
+        let intro: ModeIntro? =
+            switch selection {
+            case .library(.project(let id)): .project(id)
+            case .library(.client(let id)): .client(id)
+            default: nil
+            }
+        guard let intro,
+            !(UserDefaults.standard.stringArray(forKey: Self.introDismissedKey) ?? []).contains(intro.id)
+        else { return }
+        modeIntro = intro
+    }
+
+    /// The mode new projects of a client start in, chosen on the client's first-visit sheet («Gestisci» if never).
+    func clientWorkMode(_ clientID: String) -> WorkMode {
+        _ = revision
+        return ((try? archive.setting(Self.clientModeKey(clientID))) ?? nil).flatMap(WorkMode.init(rawValue:))
+            ?? .manage
+    }
+
+    /// A client's mode: for its new projects, and for the ones that never had one of their own.
+    func setClientWorkMode(_ clientID: String, _ mode: WorkMode) {
+        let chosen = modeChosen
+        perform {
+            try archive.setSetting(Self.clientModeKey(clientID), mode == .manage ? nil : mode.rawValue)
+            for project in try archive.projects() where project.clientId == clientID && !chosen.contains(project.id) {
+                try archive.setProjectWorkMode(project.id, mode)
+            }
+        }
+        reload()
+        fixView()
+    }
+
+    /// Projects whose mode the user chose on their own (pill, sheet, Settings): a client's choice leaves them alone.
+    var modeChosen: Set<String> {
+        Set(((try? archive.setting(Self.modeChosenKey)) ?? nil)?.split(separator: ",").map(String.init) ?? [])
+    }
+
+    /// The mode chosen for one project by the user.
+    func chooseProjectWorkMode(_ projectID: String, _ mode: WorkMode) {
+        var chosen = modeChosen
+        chosen.insert(projectID)
+        perform { try archive.setSetting(Self.modeChosenKey, chosen.sorted().joined(separator: ",")) }
+        setProjectWorkMode(projectID, mode)
+    }
+
+    /// The user's name ("Io" in the transcripts), first among the people of a key point.
+    var meName: String {
+        _ = revision
+        let name = ((try? archive.setting(TranscriptionService.meLabelKey)) ?? nil)?
+            .trimmingCharacters(in: .whitespaces)
+        return name?.isEmpty == false ? name! : "Io"
+    }
+
+    /// A closing that asks for a few words (answer, activities, reason), shown by the main window.
+    var closingKeyPoint: KeyPointClosing?
+
+    /// Closes a work entry with its outcome: resolved, not relevant, rejected (with the reason).
+    func closeKeyPoint(_ id: String, _ outcome: Decision.Outcome, text: String? = nil) {
+        let text = text?.isEmpty == false ? text : nil
+        perform {
+            try archive.updateDecision(id) {
+                $0.status = .done
+                $0.outcomeKind = outcome
+                $0.outcome = text
+            }
+        }
+    }
+
+    /// "Riapri": back to open, without the outcome.
+    func reopenKeyPoint(_ id: String) {
+        perform {
+            try archive.updateDecision(id) {
+                $0.status = .active
+                $0.outcomeKind = nil
+                $0.outcome = nil
+            }
+        }
+    }
+
+    /// «Diventato problema»: the risk happened today; it stays open, with its story, until it is closed.
+    func riskHappened(_ id: String) {
+        let now = Date()
+        perform { try archive.updateDecision(id) { $0.happenedAt = now } }
+    }
+
+    /// «Chiarisci…»: the answer closes the point. «Diventa decisione»: the answer becomes a decision that "risponde
+    /// a" the point (the point reads "chiarito" through the link).
+    func clarify(_ summary: DecisionSummary, answer: String, becomesDecision: Bool) {
+        perform {
+            try archive.updateDecision(summary.id) {
+                $0.outcome = answer
+                $0.outcomeKind = .answered
+                if !becomesDecision { $0.status = .done }
+            }
+            guard becomesDecision else { return }
+            try archive.createDecision(
+                Decision(
+                    text: answer, decidedAt: Date(), projectId: summary.decision.projectId, origin: .manual,
+                    kind: .decision),
+                people: summary.people, tags: summary.tags, streams: summary.streamIDs, supersedes: [summary.id])
+        }
+    }
+
+    /// «Accogli»: the request is accepted; each line becomes an activity born from it.
+    func accept(_ summary: DecisionSummary, activities: [String]) {
+        perform {
+            for text in activities {
+                var activity = Decision(
+                    text: text, decidedAt: Date(), projectId: summary.decision.projectId, origin: .manual,
+                    kind: .action)
+                activity.derivedFromId = summary.id
+                try archive.createDecision(
+                    activity, people: summary.people, tags: summary.tags, streams: summary.streamIDs)
+            }
+            let count = activities.count
+            try archive.updateDecision(summary.id) {
+                $0.status = .done
+                $0.outcomeKind = .accepted
+                $0.outcome = count == 0 ? nil : String(localized: "\(count) attività")
+            }
+        }
+    }
+
+    /// Open work an entry can depend on: same project first.
+    func dependableEntries(projectID: String?, excluding id: String?) -> [DecisionSummary] {
+        let open = Set(DecisionQuery.current)
+        let all =
+            (try? archive.decisions(DecisionQuery(scope: .all, statuses: open, kinds: Set(Decision.Kind.work)))) ?? []
+        let candidates = all.filter { $0.id != id }
+        return candidates.filter { $0.decision.projectId == projectID }
+            + candidates.filter { $0.decision.projectId != projectID }
+    }
+
+    /// True if `blocker` already depends on `id`, directly or through others: it cannot also block it.
+    func dependsOn(_ blocker: String, _ id: String) -> Bool {
+        if blocker == id { return true }
+        var stack = [blocker]
+        var seen: Set<String> = []
+        while let current = stack.popLast() {
+            for next in (try? archive.blockers(of: current)) ?? [] {
+                if next.id == id { return true }
+                if seen.insert(next.id).inserted { stack.append(next.id) }
+            }
+        }
+        return false
     }
 
     // MARK: Categories and tags in "In evidenza"
@@ -530,18 +946,13 @@ final class AppModel {
 
     func select(_ selection: SidebarSelection?) {
         if case .library(.project(let id)) = selection { try? archive.touchProject(id) }
-        if selection != sidebar {
-            switch selection {
-            case .library(.project), .library(.undefinedProject), .library(.client), .library(.stream):
-                viewMode = .timeline
-            case .decisions: viewMode = .decisions
-            default: viewMode = .list
-            }
-            selectedItemID = nil
-            selectedDecisionID = nil
-            selectedNoteID = nil
-        }
+        let changed = selection != sidebar
         sidebar = selection
+        if changed {
+            restoreView()
+            clearSelection()
+            showModeIntro(for: selection)
+        }
         showsSearch = false
         reload()
     }
@@ -680,6 +1091,11 @@ final class AppModel {
             if let clientID, let id = project?.id {
                 try archive.setProjectClient(id, clientID)
                 project?.clientId = clientID
+                // ADR-0076: a new project starts in the mode chosen for its client.
+                if clientWorkMode(clientID) == .track {
+                    try archive.setProjectWorkMode(id, .track)
+                    project?.workMode = .track
+                }
             }
         }
         reload()
@@ -978,8 +1394,19 @@ final class AppModel {
         reload()
         return count
     }
-    /// "Nuova email" sheet.
+    /// "Nuova email" sheet, and the project it starts in when opened from a project's import (ADR-0076).
     var composingEmail = false
+    var composingEmailProject: String?
+
+    /// Where «Importa file ed elementi…» puts what it brings in: the project it was opened from, and its streams.
+    struct ImportTarget: Identifiable, Hashable {
+        var projectID: String
+        var streamIDs: [String] = []
+        var id: String { projectID }
+    }
+
+    /// The import sheet of a project (ADR-0076).
+    var importing: ImportTarget?
 
     enum ExportKind: String, Identifiable {
         case llm, audio
@@ -1010,7 +1437,7 @@ final class AppModel {
     }
 
     /// "Importa › Da file…" (and "Email .eml…" with `emailsOnly`): the system panel, then the usual import.
-    func chooseFilesToImport(emailsOnly: Bool = false) {
+    func chooseFilesToImport(emailsOnly: Bool = false, into target: ImportTarget? = nil) {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = !emailsOnly
@@ -1019,7 +1446,7 @@ final class AppModel {
         }
         panel.prompt = String(localized: "Importa")
         guard panel.runModal() == .OK else { return }
-        importFiles(panel.urls)
+        importFiles(panel.urls, into: target)
     }
 
     /// What the clipboard holds, shown in "Importa › Dagli appunti" before anything is imported.
@@ -1054,23 +1481,25 @@ final class AppModel {
     }
 
     /// An image from the clipboard becomes a document read with OCR, like a dropped image.
-    func importClipboardImage(_ png: Data) {
+    func importClipboardImage(_ png: Data, into target: ImportTarget? = nil) {
         let folder = archiveService.paths.scratch.appendingPathComponent(UUID().uuidString, isDirectory: true)
         let file = folder.appendingPathComponent(
             String(localized: "Immagine dagli appunti") + " \(Date().formatted(.iso8601.year().month().day())).png")
         do {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             try png.write(to: file)
-            importFiles([file])
+            importFiles([file], into: target)
         } catch {
             lastError = ErrorText.describe(error)
         }
     }
 
-    /// "Importa › Da testo": the text becomes a document to classify, like an imported file.
-    func importText(_ text: String, title: String) async -> Bool {
+    /// "Importa › Da testo": the text becomes a document to classify, like an imported file; from a project, a
+    /// document of that project.
+    func importText(_ text: String, title: String, into target: ImportTarget? = nil) async -> Bool {
         do {
             let item = try await archiveService.importText(text, title: title)
+            if let target { file(item.id, in: target) }
             reload()
             selectedItemID = item.id
             return true
@@ -1095,14 +1524,30 @@ final class AppModel {
         }
     }
 
-    func importFiles(_ dropped: [URL]) {
+    /// An imported item put in the project (and streams) the import was opened from.
+    private func file(_ itemID: String, in target: ImportTarget) {
+        let projectID = target.projectID
+        perform {
+            _ = try archive.updateItem(itemID) { $0.projectId = projectID }
+            if !target.streamIDs.isEmpty { try archive.setStreams(target.streamIDs, itemID: itemID) }
+        }
+        refreshTextAssets(itemID)
+    }
+
+    func importFiles(_ dropped: [URL], into target: ImportTarget? = nil) {
         let urls = Self.expandFolders(dropped)
         // Emails go through their confirmation sheet; everything else is imported at once.
         let emails = urls.filter(ArchiveService.isEmail)
         var drafts: [EmailImportDraft] = []
         for url in emails {
             do {
-                drafts.append(try archiveService.readEmail(url))
+                var draft = try archiveService.readEmail(url)
+                if let target {
+                    draft.projectID = target.projectID
+                    draft.streamIDs = target.streamIDs
+                    draft.include = !draft.alreadyImported
+                }
+                drafts.append(draft)
             } catch {
                 lastError = String(
                     localized: "\(url.lastPathComponent) non sembra un'email leggibile: \(ErrorText.describe(error))")
@@ -1133,8 +1578,13 @@ final class AppModel {
                 }
             }
             if !failures.isEmpty { lastError = failures.joined(separator: "\n") }
+            if let target {
+                for case .success(let item) in results.map(\.result) { file(item.id, in: target) }
+                reload()
+            }
             if case .success(let item)? = results.last?.result {
-                select(.library(.unclassified))
+                // From a project the items stay where the user is; otherwise they wait in «Elementi da classificare».
+                if target == nil { select(.library(.unclassified)) }
                 selectedItemID = item.id
             }
         }

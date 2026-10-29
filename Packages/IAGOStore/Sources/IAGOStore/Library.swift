@@ -145,7 +145,7 @@ extension Archive {
         try updateProject(id) { $0.archived = archived }
     }
 
-    private func updateProject(_ id: String, _ change: @Sendable (inout Project) -> Void) throws {
+    func updateProject(_ id: String, _ change: @Sendable (inout Project) -> Void) throws {
         let writer = self.writer
         try database.writer.write { db in
             var project = try Self.require(Project.fetchOne(db, key: id), id)
@@ -215,10 +215,26 @@ extension Archive {
             {
                 decision.text = ""
                 decision.notes = nil
+                decision.outcome = nil
+                decision.estimate = nil
                 try writer.tombstone(&decision, db)
                 try db.execute(sql: "DELETE FROM decision_entity WHERE decision_id = ?", arguments: [decision.id])
                 try db.execute(sql: "DELETE FROM decision_tag WHERE decision_id = ?", arguments: [decision.id])
+                try Self.removeWork(decisionID: decision.id, writer: writer, db)
                 try indexDecision(decision, db)
+            }
+            // The project's checklists go with it (ADR-0074).
+            for var list in try Checklist.filter(Column("project_id") == id && Column("deleted_at") == nil).fetchAll(db)
+            {
+                for var line in try ChecklistItem.filter(
+                    Column("checklist_id") == list.id && Column("deleted_at") == nil
+                )
+                .fetchAll(db) {
+                    line.text = ""
+                    try writer.tombstone(&line, db)
+                }
+                list.name = ""
+                try writer.tombstone(&list, db)
             }
             for stream in try ProjectStream.filter(Column("project_id") == id && Column("deleted_at") == nil)
                 .fetchAll(db)

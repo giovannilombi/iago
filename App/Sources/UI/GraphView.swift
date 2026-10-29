@@ -3,7 +3,7 @@ import IAGOIntelligence
 import IAGOStore
 import SwiftUI
 
-/// "Grafo" (FR-160…165, ADR-0045): relations among projects, items, people, tags and decisions of the sidebar
+/// «Mappa», formerly "Grafo" (FR-160…165, ADR-0045, ADR-0075): relations among projects, items, people, tags and decisions of the sidebar
 /// scope. Centered on an item (depth 1, double click expands a node) or the whole scope; filters by type, a
 /// time slider, pan and zoom. A click opens items, decisions and notes in the detail pane.
 struct GraphView: View {
@@ -84,7 +84,9 @@ struct GraphView: View {
         var graph = full
         if let cutoff { graph = graph.asOf(cutoff) }
         graph = graph.restricted(
-            to: Set(graph.nodes.values.filter { kinds.contains($0.kind) || $0.id == focus }.map(\.id)))
+            to: Set(
+                graph.nodes.values.filter { (kinds.contains($0.kind) && shows($0.kind)) || $0.id == focus }.map(\.id)
+            ))
         if mode == .centered, let focus, graph.nodes[focus] != nil {
             var ids: Set<String> = [focus]
             ids.formUnion(graph.neighbors(of: focus))
@@ -97,8 +99,20 @@ struct GraphView: View {
         return graph.limited(to: Self.nodeLimit)
     }
 
+    /// «Mostra» (ADR-0075): materials leave out key points, key points leave out calls, emails, documents and notes.
+    private func shows(_ kind: GraphNode.Kind) -> Bool {
+        switch model.shownContent {
+        case .all: true
+        case .materials: !Self.keyPointKinds.contains(kind)
+        case .keyPoints: !Self.materialKinds.contains(kind)
+        }
+    }
+
+    static let keyPointKinds: Set<GraphNode.Kind> = [.decision, .activity, .milestone, .question, .risk, .request]
+    static let materialKinds: Set<GraphNode.Kind> = [.call, .email, .document, .note, .group]
+
     private var visibleKey: String {
-        "\(full.nodes.count)|\(mode)|\(focus ?? "")|\(expanded.sorted())|\(kinds.map(\.rawValue).sorted())|\(cutoff?.timeIntervalSince1970 ?? 0)"
+        "\(model.shownContent)|\(full.nodes.count)|\(mode)|\(focus ?? "")|\(expanded.sorted())|\(kinds.map(\.rawValue).sorted())|\(cutoff?.timeIntervalSince1970 ?? 0)"
     }
 
     private var dateRange: ClosedRange<Date>? {
@@ -157,7 +171,9 @@ struct GraphView: View {
                         edge.kind == .supersedes
                             ? Color.green.opacity(faded ? 0.15 : 0.7)
                             : Color.secondary.opacity(faded ? 0.08 : highlighted ? 0.7 : 0.3)),
-                    style: StrokeStyle(lineWidth: highlighted ? 1.6 : 1, dash: edge.kind == .supersedes ? [4, 3] : []))
+                    style: StrokeStyle(
+                        lineWidth: highlighted ? 1.6 : 1,
+                        dash: [.supersedes, .derivedFrom, .dependsOn].contains(edge.kind) ? [4, 3] : []))
             }
             for node in graph.nodes.values {
                 guard let p = point(node.id) else { continue }
@@ -263,7 +279,7 @@ struct GraphView: View {
         guard let id, let node = full.nodes[id], let record = node.recordID else { return }
         switch node.kind {
         case .call, .email, .document: model.selectedItemID = record
-        case .decision: model.selectedDecisionID = record
+        case .decision, .activity, .milestone, .question, .risk, .request: model.selectedDecisionID = record
         case .note: model.selectedNoteID = record
         default: break
         }
@@ -441,6 +457,9 @@ enum GraphStyle {
         case .decision: String(localized: "Decisioni")
         case .activity: String(localized: "Attività")
         case .milestone: String(localized: "Tappe")
+        case .question: String(localized: "Punti da chiarire")
+        case .risk: String(localized: "Rischi")
+        case .request: String(localized: "Richieste")
         case .note: String(localized: "Note")
         case .group: String(localized: "Gruppi")
         }
@@ -458,6 +477,9 @@ enum GraphStyle {
         case .decision: .green
         case .activity: .pink
         case .milestone: .blue.opacity(0.75)
+        case .question: .mint
+        case .risk: .red
+        case .request: .brown
         case .note: .yellow
         case .group: .secondary
         }
@@ -468,7 +490,7 @@ enum GraphStyle {
         case .client: 11
         case .project: 10
         case .group: 10
-        case .call, .email, .document, .decision, .activity, .milestone: 7
+        case .call, .email, .document, .decision, .activity, .milestone, .question, .risk, .request: 7
         case .person: 6
         case .tag: 5.5
         case .note: 4.5
@@ -494,6 +516,9 @@ enum GraphStyle {
         case .decision: return star(p, r)
         case .activity: return polygon(p, r, sides: 5, rotation: -.pi / 2)
         case .milestone: return polygon(p, r * 1.15, sides: 3, rotation: -.pi / 2)
+        case .question: return polygon(p, r, sides: 8, rotation: .pi / 8)
+        case .risk: return polygon(p, r * 1.15, sides: 3, rotation: .pi / 2)
+        case .request: return Path(CGRect(x: p.x - r, y: p.y - r * 0.7, width: 2 * r, height: r * 1.4))
         case .group: return Path(roundedRect: rect.insetBy(dx: -r * 0.4, dy: 0), cornerRadius: r)
         }
     }

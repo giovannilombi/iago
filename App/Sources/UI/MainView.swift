@@ -15,53 +15,8 @@ struct MainView: View {
     @AppStorage("chatWidth") private var chatWidth = 400.0
 
     var body: some View {
-        // One three-column layout for both views: the inspector-based timeline layout looped in AppKit's
-        // constraint pass and crashed the window.
-        NavigationSplitView {
-            sidebar
-        } content: {
-            Group {
-                if model.showsSearch, !model.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
-                    SearchResultsView(model: model)
-                } else if model.sidebar == .importer {
-                    ImportView(model: model)
-                } else if model.sidebar == .trash {
-                    TrashView(model: model)
-                } else if model.sidebar == .activity {
-                    ActivityView(model: model)
-                } else if model.sidebar == .labels {
-                    LabelsBrowser(model: model)
-                } else if model.showsGraph {
-                    GraphView(model: model)
-                } else if model.showsDecisions {
-                    DecisionsView(model: model)
-                } else if model.showsTimeline {
-                    ProjectTimeline(model: model)
-                } else {
-                    ItemList(model: model)
-                }
-            }
-            .safeAreaInset(edge: .top, spacing: 0) {
-                if !model.showsSearch, !model.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
-                    BackToSearchBar(model: model).background(.bar)
-                }
-            }
-            .navigationSplitViewColumnWidth(min: contentWidth.min, ideal: contentWidth.ideal)
-        } detail: {
-            // "Chiedi a IAGO" sits next to the detail as a plain pane: the system inspector looped AppKit's
-            // constraint pass in this three-column window and crashed it.
-            // Both get an exact width, so the detail wraps its text instead of pushing the panel out.
-            GeometryReader { geometry in
-                let chat = model.showsChat ? ChatPane.width(stored: chatWidth, available: geometry.size.width) : 0
-                HStack(spacing: 0) {
-                    detail.frame(width: geometry.size.width - chat).clipped()
-                    if model.showsChat {
-                        ChatPane(model: model, width: $chatWidth, available: geometry.size.width)
-                            .frame(width: chat)
-                            .transition(.move(edge: .trailing))
-                    }
-                }
-            }
+        Group {
+            if model.isWide, !isSearching { wideLayout } else { columnsLayout }
         }
         .searchable(
             text: $model.searchText, placement: .toolbar,
@@ -105,6 +60,9 @@ struct MainView: View {
         .sheet(item: $model.editingDecision) { draft in
             DecisionEditor(model: model, draft: draft)
         }
+        .sheet(item: $model.closingKeyPoint) { closing in
+            KeyPointClosingSheet(model: model, closing: closing)
+        }
         .sheet(
             item: Binding(
                 get: { model.pendingEmails.first },
@@ -114,7 +72,11 @@ struct MainView: View {
                 if !model.pendingEmails.isEmpty { model.pendingEmails.removeFirst() }
             }
         }
-        .sheet(isPresented: $model.composingEmail) { NewEmailSheet(model: model) }
+        .sheet(isPresented: $model.composingEmail) {
+            NewEmailSheet(model: model, projectID: model.composingEmailProject)
+        }
+        .sheet(item: $model.importing) { target in ImportSheet(model: model, target: target) }
+        .sheet(item: $model.modeIntro) { intro in WorkModeIntroSheet(model: model, intro: intro) }
         .sheet(item: $model.exporting) { kind in
             switch kind {
             case .llm: LLMExportSheet(model: model, scope: .current(model))
@@ -157,6 +119,128 @@ struct MainView: View {
             Text(message)
         }
         .frame(minWidth: 900, minHeight: 560)
+    }
+
+    private var isSearching: Bool {
+        model.showsSearch && !model.searchText.trimmingCharacters(in: .whitespaces).isEmpty
+    }
+
+    /// Sidebar, list and detail: the layout of the library's list and timeline, and of the other places.
+    private var columnsLayout: some View {
+        // One three-column layout for both views: the inspector-based timeline layout looped in AppKit's
+        // constraint pass and crashed the window.
+        NavigationSplitView {
+            sidebar
+        } content: {
+            Group {
+                if isSearching {
+                    SearchResultsView(model: model)
+                } else if model.sidebar == .importer {
+                    ImportView(model: model)
+                } else if model.sidebar == .trash {
+                    TrashView(model: model)
+                } else if model.sidebar == .activity {
+                    ActivityView(model: model)
+                } else if model.sidebar == .labels {
+                    LabelsBrowser(model: model)
+                } else if model.sidebar == .inbox {
+                    WorkInbox(model: model)
+                } else if model.showsDecisions {
+                    DecisionsView(model: model)
+                } else if model.showsTimeline {
+                    ProjectTimeline(model: model)
+                } else {
+                    ItemList(model: model)
+                }
+            }
+            .safeAreaInset(edge: .top, spacing: 0) { backToSearch }
+            .navigationSplitViewColumnWidth(min: contentWidth.min, ideal: contentWidth.ideal)
+        } detail: {
+            // "Chiedi a IAGO" sits next to the detail as a plain pane: the system inspector looped AppKit's
+            // constraint pass in this three-column window and crashed it.
+            // Both get an exact width, so the detail wraps its text instead of pushing the panel out.
+            GeometryReader { geometry in
+                let chat = model.showsChat ? ChatPane.width(stored: chatWidth, available: geometry.size.width) : 0
+                HStack(spacing: 0) {
+                    detail.frame(width: geometry.size.width - chat).clipped()
+                    if model.showsChat { chatPane(chat, available: geometry.size.width) }
+                }
+            }
+        }
+    }
+
+    /// Sidebar and one wide view (kanban, «Riepilogo», map, ADR-0075): what is opened from it shows in an inspector
+    /// on the right, closed with ✕ or Esc.
+    private var wideLayout: some View {
+        NavigationSplitView {
+            sidebar
+        } detail: {
+            GeometryReader { geometry in
+                let chat = model.showsChat ? ChatPane.width(stored: chatWidth, available: geometry.size.width) : 0
+                let inspector = model.hasSelection ? min(480, (geometry.size.width - chat) * 0.45) : 0
+                HStack(spacing: 0) {
+                    wideContent.safeAreaInset(edge: .top, spacing: 0) { backToSearch }
+                        .frame(width: geometry.size.width - chat - inspector).clipped()
+                    if model.hasSelection {
+                        inspectorPane.frame(width: inspector)
+                            .transition(.move(edge: .trailing))
+                    }
+                    if model.showsChat { chatPane(chat, available: geometry.size.width) }
+                }
+            }
+            .animation(.easeOut(duration: 0.15), value: model.hasSelection)
+        }
+    }
+
+    @ViewBuilder
+    private var wideContent: some View {
+        switch model.viewMode {
+        case .board:
+            if model.sidebar == .inbox || model.sidebar == .decisions {
+                WorkBoard(model: model, scope: .all)
+            } else if let scope = model.workScope {
+                WorkBoard(model: model, scope: scope)
+            }
+        case .overview:
+            if let scope = model.workScope { WorkOverview(model: model, scope: scope) }
+        case .map, .list, .timeline:
+            GraphView(model: model)
+        }
+    }
+
+    private var inspectorPane: some View {
+        HStack(spacing: 0) {
+            Divider()
+            VStack(spacing: 0) {
+                HStack {
+                    Spacer()
+                    Button {
+                        model.clearSelection()
+                    } label: {
+                        Image(systemName: "xmark").font(.system(size: 11, weight: .semibold))
+                    }
+                    .buttonStyle(.borderless).keyboardShortcut(.cancelAction)
+                    .help(String(localized: "Chiudi il pannello (Esc)"))
+                }
+                .padding(.horizontal, 10).padding(.vertical, 6)
+                Divider()
+                detail
+            }
+        }
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    private func chatPane(_ width: CGFloat, available: CGFloat) -> some View {
+        ChatPane(model: model, width: $chatWidth, available: available)
+            .frame(width: width)
+            .transition(.move(edge: .trailing))
+    }
+
+    @ViewBuilder
+    private var backToSearch: some View {
+        if !model.showsSearch, !model.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+            BackToSearchBar(model: model).background(.bar)
+        }
     }
 
     /// "Nuovo progetto" while viewing a client creates it in that client.
@@ -270,7 +354,7 @@ extension MainView {
         case .importer: return (560, 730)
         case .activity, .labels: return (420, 560)
         default:
-            if model.showsGraph { return (420, 730) }
+            if model.sidebar == .inbox { return (360, 620) }
             if model.showsTimeline || model.showsDecisions { return (280, 560) }
             return (280, 320)
         }
@@ -333,18 +417,21 @@ private struct Sidebar: View {
         }
     }
 
+    /// «Inbox» first and set apart (ADR-0076), then the items waiting for a project and the other places.
     @ViewBuilder
     private var views: some View {
+        WorkInboxSidebarLabel(model: model).tag(AppModel.SidebarSelection.inbox)
+        Divider().selectionDisabled().padding(.vertical, 1)
         Label {
             HStack {
-                Text(String(localized: "Da classificare"))
+                Text(String(localized: "Elementi da classificare"))
                 Spacer()
                 if model.unclassifiedCount > 0 {
                     Text("\(model.unclassifiedCount)").foregroundStyle(.secondary).monospacedDigit()
                 }
             }
         } icon: {
-            Image(systemName: "tray")
+            Image(systemName: "questionmark.folder")
         }
         .tag(AppModel.SidebarSelection.library(.unclassified))
         Label(String(localized: "Recenti"), systemImage: "clock").tag(AppModel.SidebarSelection.library(.recent))
@@ -443,8 +530,10 @@ private struct SidebarMaterial: NSViewRepresentable {
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
-/// Elenco / Timeline / Decisioni, always at the top left of the content. The global register (sidebar
-/// "Decisioni") has no list or timeline, so it shows no picker.
+/// The bar on top of every view of the library (ADR-0075, ADR-0076): where the view is, then «Riepilogo» and
+/// «Elementi» each on its own, the forms of the history (Timeline, Kanban, Grafo) and on the right «Mostra», what the
+/// timeline and the graph contain. A project in «Traccia» has no kanban and no «Mostra». «Punti chiave» in the sidebar
+/// has only the list and the kanban.
 struct ViewModePicker: View {
     @Bindable var model: AppModel
 
@@ -480,8 +569,8 @@ struct ViewModePicker: View {
                     Text(project.name).font(.headline)
                 }
                 .layoutPriority(1)
+                WorkModePill(model: model, project: project)
             }
-            Spacer(minLength: 8)
             // FR-172/173 and ADR-0046: a project note, an activity, a milestone or a decision on the timeline.
             Menu {
                 Button {
@@ -492,12 +581,18 @@ struct ViewModePicker: View {
                     Label(String(localized: "Nota"), systemImage: "note.text")
                 }
                 Divider()
-                ForEach([Decision.Kind.action, .milestone, .decision], id: \.self) { kind in
+                ForEach(DecisionRow.allKinds, id: \.self) { kind in
                     Button {
                         model.newKeyPoint(kind, projectID: id)
                     } label: {
                         Label(DecisionRow.kindLabel(kind), systemImage: DecisionRow.kindIcon(kind))
                     }
+                }
+                Divider()
+                Button {
+                    model.importing = AppModel.ImportTarget(projectID: id, streamIDs: model.scopeStreamIDs)
+                } label: {
+                    Label(String(localized: "Importa file ed elementi…"), systemImage: "square.and.arrow.down")
                 }
             } label: {
                 Label(String(localized: "Aggiungi"), systemImage: "plus.circle")
@@ -505,7 +600,9 @@ struct ViewModePicker: View {
             .menuStyle(.borderlessButton).fixedSize()
             .help(
                 String(
-                    localized: "Aggiungi alla timeline del progetto una nota, un'attività, una tappa o una decisione"))
+                    localized:
+                        "Aggiungi al progetto una nota o un punto chiave, oppure importa audio, documenti, email e trascrizioni"
+                ))
         case .library(.category(let id)):
             if let category = model.categories.first(where: { $0.id == id }) {
                 labelTitle(category.name, systemImage: "square.grid.2x2", key: "category:\(id)")
@@ -547,43 +644,216 @@ struct ViewModePicker: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                if model.sidebar != .decisions {
-                    Picker(String(localized: "Vista"), selection: $model.viewMode) {
-                        Label(String(localized: "Elenco"), systemImage: "list.bullet").tag(AppModel.ViewMode.list)
-                        Label(String(localized: "Timeline"), systemImage: "calendar.day.timeline.left").tag(
-                            AppModel.ViewMode.timeline)
-                        Label(String(localized: "Punti chiave"), systemImage: "checkmark.seal").tag(
-                            AppModel.ViewMode.decisions)
-                        Label(String(localized: "Grafo"), systemImage: "point.3.connected.trianglepath.dotted").tag(
-                            AppModel.ViewMode.graph)
-                    }
-                    .pickerStyle(.segmented).labelsHidden().fixedSize()
-                } else {
-                    Label(String(localized: "Tutti i punti chiave"), systemImage: "checkmark.seal").font(.headline)
-                }
-                Spacer(minLength: 8)
-                if case .library = model.sidebar {
-                    Menu {
-                        Button(String(localized: "Per LLM (Markdown)…")) { model.exporting = .llm }
-                        Button(String(localized: "Audio…")) { model.exporting = .audio }
-                    } label: {
-                        Image(systemName: "square.and.arrow.up")
-                    }
-                    .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
-                    .help(String(localized: "Esporta gli elementi di questa vista"))
-                }
-            }
             if hasScopeTitle {
-                // Second line: where the view is (client, stream) and its actions, never squeezed next to the picker.
+                // First line: where the view is (client › project, stream) and its actions.
                 HStack(spacing: 10) {
                     scopeTitle
                     Spacer(minLength: 0)
+                    exportMenu
                 }
                 .lineLimit(1)
             }
+            HStack(spacing: 8) {
+                if model.sidebar == .decisions {
+                    Label(String(localized: "Tutti i punti chiave"), systemImage: "checkmark.seal").font(.headline)
+                    Spacer(minLength: 8)
+                    if model.boardAvailable(for: .all) {
+                        Picker(String(localized: "Vista"), selection: $model.viewMode) {
+                            Label(String(localized: "Elenco"), systemImage: "list.bullet").tag(AppModel.ViewMode.list)
+                            Label(String(localized: "Kanban"), systemImage: "rectangle.split.3x1").tag(
+                                AppModel.ViewMode.board)
+                        }
+                        .pickerStyle(.segmented).labelsHidden().fixedSize()
+                    }
+                } else {
+                    forms
+                    Spacer(minLength: 8)
+                    contentMenu
+                    if !hasScopeTitle, case .library = model.sidebar { exportMenu }
+                }
+            }
         }
         .padding(.horizontal, 12).padding(.top, 10).padding(.bottom, 10)
+    }
+
+    private var trackMode: Bool {
+        model.workScope != nil && model.workViewsMode(for: model.decisionScope) == .track
+    }
+
+    /// «Riepilogo» and «Elementi», each on its own: the page the project opens on and its items; then how to look at
+    /// the history. With «Riepilogo» or «Elementi» chosen no form is selected; a click on one goes to it.
+    @ViewBuilder
+    private var forms: some View {
+        if model.workScope != nil {
+            single(.overview, String(localized: "Riepilogo"), "list.bullet.clipboard")
+                .help(
+                    trackMode
+                        ? String(localized: "Cosa c'è da fare, cosa tenere d'occhio, le ultime decisioni")
+                        : String(localized: "La pagina del progetto: lavoro aperto, scadenze, attese, checklist"))
+        }
+        single(.list, String(localized: "Elementi"), "doc.on.doc")
+            .help(String(localized: "Call, email, documenti e trascrizioni"))
+        Divider().frame(height: 18)
+        Picker(String(localized: "Vista"), selection: $model.viewMode) {
+            Label(String(localized: "Timeline"), systemImage: "calendar.day.timeline.left").tag(
+                AppModel.ViewMode.timeline)
+            if model.workScope != nil, model.boardAvailable(for: model.decisionScope) {
+                Label(String(localized: "Kanban"), systemImage: "rectangle.split.3x1").tag(AppModel.ViewMode.board)
+            }
+            if model.graphAvailable {
+                Label(String(localized: "Grafo"), systemImage: "point.3.connected.trianglepath.dotted").tag(
+                    AppModel.ViewMode.map)
+            }
+        }
+        .pickerStyle(.segmented).labelsHidden().fixedSize()
+    }
+
+    /// One view as a segmented control of its own, selected when it is the current one.
+    private func single(_ mode: AppModel.ViewMode, _ title: String, _ icon: String) -> some View {
+        Picker(title, selection: $model.viewMode) {
+            Label(title, systemImage: icon).labelStyle(.titleAndIcon).tag(mode)
+        }
+        .pickerStyle(.segmented).labelsHidden().fixedSize()
+    }
+
+    /// «Mostra»: what the timeline and the graph contain. The kanban holds open work only; «Riepilogo» and «Elementi»
+    /// are what they are; a project in «Traccia» shows everything.
+    @ViewBuilder
+    private var contentMenu: some View {
+        switch model.viewMode {
+        case .board:
+            Text(String(localized: "Mostra: Lavoro aperto")).font(.callout).foregroundStyle(.secondary)
+                .help(String(localized: "La kanban mostra solo attività, punti da chiarire, rischi e richieste"))
+        case .timeline where !trackMode, .map where !trackMode:
+            Menu {
+                Picker(String(localized: "Mostra"), selection: $model.viewContent) {
+                    ForEach(AppModel.ViewContent.allCases, id: \.self) { content in
+                        Text(Self.contentName(content)).tag(content)
+                    }
+                }
+                .pickerStyle(.inline).labelsHidden()
+            } label: {
+                Text(String(localized: "Mostra: \(Self.contentName(model.viewContent))"))
+            }
+            .menuStyle(.borderlessButton).fixedSize()
+            .help(String(localized: "Tutto, solo gli elementi (call, email, documenti, note) o solo i punti chiave"))
+        default:
+            EmptyView()
+        }
+    }
+
+    static func contentName(_ content: AppModel.ViewContent) -> String {
+        switch content {
+        case .all: String(localized: "Tutto")
+        case .materials: String(localized: "Elementi")
+        case .keyPoints: String(localized: "Punti chiave")
+        }
+    }
+
+    private var exportMenu: some View {
+        Menu {
+            Button(String(localized: "Per LLM (Markdown)…")) { model.exporting = .llm }
+            Button(String(localized: "Audio…")) { model.exporting = .audio }
+        } label: {
+            Image(systemName: "square.and.arrow.up")
+        }
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+        .help(String(localized: "Esporta gli elementi di questa vista"))
+    }
+}
+
+/// «Modalità Gestisci ▾» next to the project's name (ADR-0074, ADR-0076): the mode, with its sign and colour; a click
+/// opens the two modes explained and, in «Traccia», the switch of the graph.
+struct WorkModePill: View {
+    let model: AppModel
+    let project: Project
+    @State private var open = false
+
+    var body: some View {
+        let mode = project.workMode ?? .manage
+        Button {
+            open.toggle()
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: WorkModeText.icon(mode))
+                Text(WorkModeText.fullTitle(mode))
+                Image(systemName: "chevron.down").font(.system(size: 8, weight: .bold))
+            }
+            .font(.caption.weight(.semibold)).foregroundStyle(WorkModeText.color(mode))
+            .padding(.horizontal, 8).padding(.vertical, 2)
+            .background(Capsule().fill(WorkModeText.color(mode).opacity(0.14)))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain).fixedSize()
+        .help(String(localized: "Modalità del progetto: cambiala quando vuoi, non si perde nulla"))
+        .popover(isPresented: $open, arrowEdge: .bottom) {
+            WorkModeMenu(model: model, project: project) { open = false }
+        }
+    }
+}
+
+/// The pill's popover: the two modes with what each one is, then the switches of the project.
+struct WorkModeMenu: View {
+    let model: AppModel
+    let project: Project
+    let done: () -> Void
+
+    var body: some View {
+        let mode = project.workMode ?? .manage
+        VStack(alignment: .leading, spacing: 4) {
+            ForEach(WorkMode.allCases, id: \.self) { option in
+                Button {
+                    model.chooseProjectWorkMode(project.id, option)
+                    done()
+                } label: {
+                    WorkModeChoice(mode: option, selected: option == mode)
+                }
+                .buttonStyle(.plain)
+            }
+            if mode == .track {
+                Divider().padding(.vertical, 4)
+                Text(String(localized: "In questo progetto")).font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary).textCase(.uppercase).padding(.horizontal, 8)
+                Toggle(
+                    String(localized: "Mostra il Grafo"),
+                    isOn: Binding(
+                        get: { model.graphShown(projectID: project.id) },
+                        set: { model.setGraphShown($0, projectID: project.id) })
+                )
+                .toggleStyle(.switch).controlSize(.small).padding(.horizontal, 8)
+            }
+        }
+        .padding(8)
+        .frame(width: 380)
+    }
+}
+
+/// One mode as a choice: sign, name, «semplice e veloce» or «completa», and what it gives.
+struct WorkModeChoice: View {
+    let mode: WorkMode
+    let selected: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: WorkModeText.icon(mode)).foregroundStyle(WorkModeText.color(mode))
+                .font(.system(size: 15)).frame(width: 20)
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text(WorkModeText.fullTitle(mode)).font(.body.weight(.semibold))
+                    Text(WorkModeText.level(mode)).font(.caption.weight(.medium))
+                        .foregroundStyle(WorkModeText.color(mode))
+                        .padding(.horizontal, 6).padding(.vertical, 1)
+                        .background(Capsule().fill(WorkModeText.color(mode).opacity(0.14)))
+                    Spacer(minLength: 0)
+                    if selected { Image(systemName: "checkmark").foregroundStyle(.secondary) }
+                }
+                Text(WorkModeText.explanation(mode)).font(.callout).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(8)
+        .background(RoundedRectangle(cornerRadius: 7).fill(selected ? Color.primary.opacity(0.06) : .clear))
+        .contentShape(Rectangle())
     }
 }
 

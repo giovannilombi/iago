@@ -1,6 +1,7 @@
 import AVFoundation
 import IAGOCapture
 import IAGOCore
+import IAGOStore
 import IAGOTranscription
 import SwiftUI
 import UserNotifications

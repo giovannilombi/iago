@@ -2,16 +2,16 @@
 
 > Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
 > **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
-> Ultimo aggiornamento: **27 ottobre 2026**.
+> Ultimo aggiornamento: **29 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.0.1-beta, non distribuita (tag `v1.0.1-beta`, punto di ripristino prima della 1.1.0-beta; ramo `release/1.0.x`). La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.0-beta su `main` (tag `v1.2.0-beta`), con il lavoro aperto rivisto dopo la prova (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.1.0-beta` (prima versione del lavoro aperto) e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 271 nei pacchetti, tutti verdi.
+- **Test automatici:** 300 nei pacchetti, tutti verdi (1.2.0-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -24,6 +24,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
 - barra di registrazione e barra di ascolto, Attività, guida integrata, tour, aggiornamenti con Sparkle.
 
 ## Aperto, in ordine di priorità
+0. **Prova della 1.2.0-beta** (lavoro aperto, ADR-0074 e ADR-0076, [`docs/design/lavoro-aperto.md`](design/lavoro-aperto.md)): prove 10i di [`docs/prove-tester.md`](prove-tester.md) sul Mac dell'utente (installata il 29 ottobre), poi rifiniture. In attesa, da riaprire: sincronizzazione con i calendari (Mac, Google, Microsoft, servirà un ADR di rete), Pianifica la giornata, invio di attività ad altri prima della fase 4, taratura delle proposte del lavoro aperto su call vere.
 1. **Revisione tecnica** del collega e decisione sulla distribuzione.
 2. **Prove di accettazione** con [`docs/prove-tester.md`](prove-tester.md), una issue "Prove" per tester (vedi [README-collaborators](../README-collaborators.md#6-prove)).
 3. **Verifiche dal vivo ancora da fare:**
@@ -41,6 +42,11 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-29:** **1.2.0-beta** unita su `main` con il tag `v1.2.0-beta` (PR #11) e installata sul Mac dell'utente. La modalità di un cliente e i progetti con una modalità scelta a mano stanno nell'archivio (impostazioni), così passano con il backup; in `UserDefaults` restano solo Grafo spento e finestre chiuse per sempre. README: in cima il rimando alla documentazione ufficiale (sito VitePress).
+- **2026-10-29:** 1.1.0-beta, seconda revisione dopo la prova (ADR-0076, decisa su una proposta con le finestre di esempio): **Modalità Traccia** davvero semplice (Riepilogo breve con Da fare, Da tenere d'occhio, Ultime decisioni e tappe; attività da spuntare; niente Kanban né «Mostra»; Grafo spegnibile; tutti i tipi) e **Modalità Gestisci** completa; nome, icona e colore delle modalità nella pillola e nella barra laterale; finestra alla prima visita di un progetto o cliente («OK» / «Non mostrare più»). **Inbox** al posto di «Da fare», in cima con il bollino rosso; «Elementi da classificare»; barra delle viste `[Riepilogo] [Elementi] │ [Timeline · Kanban · Grafo]`; «Importa file ed elementi…» in fondo ad «Aggiungi», con import diretto nel progetto. La Kanban di tutti comprende i progetti in Traccia. Il tour dimostrativo si chiude da solo; schermate della guida rifatte, nuove `inbox.png`, `modalita.png`, `importa.png`, `riepilogo-breve.png`.
+- **2026-10-28:** 1.1.0-beta, dopo la prima prova dell'utente: Traccia / Gestisci per progetto, Gestisci predefinito (pillola «Gestisci ▾» accanto al nome e Impostazioni › Progetti; tolti la scelta in Generale e il passo del tour di benvenuto). Barra delle viste ridisegnata (ADR-0075): Riepilogo a parte, poi Elenco · Timeline · Kanban · Mappa, e «Mostra: Tutto / Materiali / Punti chiave»; Kanban, Riepilogo e Mappa a tutta finestra con il pannello a destra (✕ o Esc); Riepilogo ridisegnato per la finestra larga (fascia di numeri, a sinistra cosa fare, a destra contesto, sintesi e checklist); ultima vista ricordata per progetto. Notifica del mattino spenta finché non la si accende. Schermate della guida rifatte dall'archivio dimostrativo, nuova `kanban.png`.
+- **2026-10-28:** **1.1.0-beta, lavoro aperto** (ADR-0074), sul ramo `feat/lavoro`: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, priorità, dipendenze, ricorrenze, checklist; modi Traccia e Gestisci; Da fare, Riepilogo con sintesi di stato, Kanban con colonne libere e archivio a 14 giorni; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP; esportazioni e grafo. Migrazione `v21-work` (solo aggiunte), provata su una copia di un archivio reale. Header del sito con il selettore Uso/Tecnico fisso, ricerca larga e versione dell'app.
+- **2026-10-28:** progetto del lavoro aperto (ADR-0074 proposto, [`docs/design/lavoro-aperto.md`](design/lavoro-aperto.md)), sul branch `feat/lavoro`: nessun codice finché non è approvato.
 - **2026-10-28:** versione 1.0.1-beta e punto di ripristino (tag `v1.0.1-beta`, ramo `release/1.0.x`); regola delle versioni in `CLAUDE.md` e README-collaborators; README › Tornare a una versione precedente.
 - **2026-10-27:** riconoscere le stesse voci in call diverse (ADR-0073): Impostazioni › Voci, spento di default. Dare un nome a uno speaker insegna la sua voce; nelle call successive arriva la proposta «Speaker 2 diventa Marco» con «Riconosciuta dalla voce (somiglianza …%)», sempre da confermare. Impronte cifrate con la chiave della call, mai a Claude o negli export; voci eliminabili una per una o tutte (tre passi). Migrazione `v20-voices`.
 - **2026-10-27:** correzioni dopo la revisione del codice: una chat annullata mentre aspetta in coda esce subito; la ricerca mentre si scrive non interrompe il lavoro in sottofondo; i punti di Claude «dalla schermata» richiedono una schermata vera a quel minuto; la sintesi automatica non sovrascrive una sintesi di Claude o modificata a mano arrivata nel frattempo; annullare una sintesi di Claude riscritta dopo è rifiutato; schermate senza doppioni dopo un crash e senza testo rimasto dopo l'eliminazione; minuto della schermata preso alla richiesta; scorciatoie sempre con ⌃ o ⌥; `release.sh` non può impacchettare una build vecchia.

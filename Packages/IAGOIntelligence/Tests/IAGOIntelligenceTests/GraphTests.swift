@@ -86,4 +86,36 @@ import Testing
         #expect(small.nodes.values.contains { $0.kind == .group })
         #expect(small.edges.allSatisfy { small.nodes[$0.from] != nil && small.nodes[$0.to] != nil })
     }
+
+    @Test func openWorkHasItsShapesAndDashedLinks() throws {
+        let archive = try archive()
+        let project = try archive.createProject(name: "Portale")
+        let t0 = Date(timeIntervalSince1970: 1_791_000_000)
+        func entry(_ text: String, _ kind: Decision.Kind) throws -> Decision {
+            try archive.createDecision(
+                Decision(text: text, decidedAt: t0, projectId: project.id, origin: .manual, kind: kind))
+        }
+        let request = try entry("Login SSO", .request)
+        let question = try entry("Quale provider?", .openQuestion)
+        let risk = try entry("Ritardo fornitore", .risk)
+        var draft = Decision(
+            text: "Preventivo SSO", decidedAt: t0, projectId: project.id, origin: .manual, kind: .action)
+        draft.derivedFromId = request.id
+        let task = try archive.createDecision(draft)
+        try archive.setBlockers([risk.id], of: task.id)
+        try archive.updateDecision(question.id) { $0.status = .done }
+
+        let graph = try GraphBuilder.build(.project(project.id), archive: archive)
+        #expect(graph.nodes["decision:\(request.id)"]?.kind == .request)
+        #expect(graph.nodes["decision:\(question.id)"]?.kind == .question)
+        #expect(graph.nodes["decision:\(risk.id)"]?.kind == .risk)
+        // Open work (blocked too) is drawn in full; closed work is faded.
+        #expect(graph.nodes["decision:\(task.id)"]?.inactive == false)
+        #expect(graph.nodes["decision:\(question.id)"]?.inactive == true)
+        #expect(
+            graph.edges.contains(
+                GraphEdge(from: "decision:\(task.id)", to: "decision:\(request.id)", kind: .derivedFrom)))
+        #expect(
+            graph.edges.contains(GraphEdge(from: "decision:\(task.id)", to: "decision:\(risk.id)", kind: .dependsOn)))
+    }
 }

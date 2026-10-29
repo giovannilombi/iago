@@ -11,6 +11,11 @@ enum ErrorText {
     static func describe(_ error: Error) -> String {
         switch error {
         case let error as DecisionError: decision(error)
+        case WorkError.dependencyCycle:
+            String(
+                localized:
+                    "Una voce non può dipendere da sé stessa né da una voce che dipende già da lei. Togli quella voce da «Dipende da»."
+            )
         case MCPChangeError.alreadyUndone: String(localized: "Questa modifica è già stata annullata.")
         case MCPChangeError.changedSince:
             String(

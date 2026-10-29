@@ -18,6 +18,9 @@ enum DemoMode {
         #endif
     }
 
+    /// A demo archive is open: no first-visit sheets, the tour shows them itself.
+    static var isActive: Bool { root != nil }
+
     /// Debug only: `-IAGOTrialRoot <dir>` opens a copy of the user's archive there, to try a branch without touching
     /// the real one (`scripts/try-branch.sh`). Unlike the demo root, nothing is seeded.
     static var trialRoot: URL? {
@@ -126,6 +129,27 @@ enum DemoMode {
                     Decision(
                         text: "Kickoff con Acme", decidedAt: day(-12, 10), projectId: portal.id,
                         sourceItemId: kickoff?.id, origin: .manual, kind: .milestone))
+                // Open work for the kanban and the overview (ADR-0074).
+                var sso = Decision(
+                    text: "Configurare l'accesso SSO", decidedAt: day(-5, 9), projectId: portal.id, origin: .manual,
+                    kind: .action)
+                sso.status = .inProgress
+                sso.dueAt = day(6, 18)
+                sso.ownerId = try archive.person(named: "Luca Bianchi")?.id
+                _ = try archive.createDecision(sso, people: ["Luca Bianchi"])
+                _ = try archive.createDecision(
+                    Decision(
+                        text: "Quale provider SSO usa Acme?", decidedAt: day(-4, 15), projectId: portal.id,
+                        origin: .manual, kind: .openQuestion), people: ["Marta Rossi"])
+                var late = Decision(
+                    text: "I testi definitivi arrivano tardi", decidedAt: day(-3, 9), projectId: portal.id,
+                    origin: .manual, kind: .risk)
+                late.severity = .high
+                _ = try archive.createDecision(late)
+                _ = try archive.createDecision(
+                    Decision(
+                        text: "Aggiungere la pagina FAQ", decidedAt: day(-1, 16), projectId: portal.id,
+                        origin: .manual, kind: .request), people: ["Marta Rossi"])
                 _ = try archive.addNote(
                     itemID: nil, projectID: portal.id,
                     body: "Ricordarsi di chiedere ad Acme i testi definitivi delle pagine prodotto.",
@@ -163,6 +187,8 @@ enum DemoMode {
             let main = NSApp.windows.first { $0.frameAutosaveName == "IAGOMainWindow" } ?? NSApp.keyWindow
             main?.setFrame(NSRect(x: 80, y: 80, width: 1440, height: 900), display: true)
             if let portal { model.select(.library(.project(portal.id))) }
+            model.viewMode = .timeline
+            model.viewContent = .all
             model.selectedItemID = item("Kickoff portale clienti")
             await shot("finestra", main)
             model.selectedItemID = item("SAL settimanale portale")
@@ -177,8 +203,36 @@ enum DemoMode {
                 await shot("ascolto", main)
                 model.player.close()
             }
+            if let portal { model.select(.library(.project(portal.id))) }
             model.viewMode = .timeline
             await shot("punti-chiave", main)
+            // ADR-0075: the wide views, with the inspector open on a card.
+            model.viewMode = .board
+            model.selectedDecisionID =
+                (try? model.archive.decisions(DecisionQuery(scope: .all)))?.first {
+                    $0.decision.text == "Configurare l'accesso SSO"
+                }?.id
+            await shot("kanban", main)
+            model.viewMode = .overview
+            await shot("riepilogo", main)
+            // ADR-0076: the same project in «Modalità Traccia», its short «Riepilogo», and the two sheets.
+            if let portal {
+                model.setProjectWorkMode(portal.id, .track)
+                model.viewMode = .overview
+                await shot("riepilogo-breve", main)
+                model.setProjectWorkMode(portal.id, .manage)
+                model.modeIntro = .project(portal.id)
+                try? await Task.sleep(for: .seconds(0.5))
+                await shot("modalita", main?.attachedSheet)
+                model.modeIntro = nil
+                model.importing = AppModel.ImportTarget(projectID: portal.id)
+                try? await Task.sleep(for: .seconds(0.5))
+                await shot("importa", main?.attachedSheet)
+                model.importing = nil
+            }
+            model.select(.inbox)
+            model.viewMode = .list
+            await shot("inbox", main)
             model.viewMode = .list
             model.select(.labels)
             await shot("categorie-tag", main)
@@ -202,7 +256,8 @@ enum DemoMode {
             await shot(
                 "tour", NSApp.windows.first { $0.title == String(localized: "Benvenuto in IAGO") && $0.isVisible })
             try? "".write(to: out.appendingPathComponent("done"), atomically: true, encoding: .utf8)
-            NSApp.terminate(nil)
+            // `terminate` waited on open sheets and left the demo running: the tour has nothing to save.
+            exit(0)
         }
 
         // MARK: Content (invented)

@@ -159,6 +159,7 @@ private struct GeneralPane: View {
                 .onSubmit { save() }
                 .onChange(of: name) { save() }
         }
+        WorkViewsSettings(model: model)
         SettingsGroup(title: String(localized: "Avvio")) {
             Toggle(String(localized: "Apri IAGO all'avvio del Mac"), isOn: $launchAtLogin)
                 .onChange(of: launchAtLogin) { _, enabled in
@@ -182,6 +183,59 @@ private struct GeneralPane: View {
     private func save() {
         let value = name.trimmingCharacters(in: .whitespaces)
         model.perform { try model.archive.setSetting(TranscriptionService.meLabelKey, value.isEmpty ? nil : value) }
+    }
+}
+
+/// Names, signs and explanations of «Modalità Traccia» and «Modalità Gestisci» (ADR-0074, ADR-0076), chosen per
+/// project: in the project's header, on its first-visit sheet and in Impostazioni › Progetti.
+enum WorkModeText {
+    static func title(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track: String(localized: "Traccia")
+        case .manage: String(localized: "Gestisci")
+        }
+    }
+
+    static func fullTitle(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track: String(localized: "Modalità Traccia")
+        case .manage: String(localized: "Modalità Gestisci")
+        }
+    }
+
+    /// Which one is the simple one and which one the complete one.
+    static func level(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track: String(localized: "semplice e veloce")
+        case .manage: String(localized: "completa")
+        }
+    }
+
+    static func explanation(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track:
+            String(localized: "Tieni il filo del progetto: elementi, decisioni e attività da spuntare.")
+        case .manage:
+            String(
+                localized:
+                    "Tutti gli strumenti per guidarlo: stati, priorità, scadenze, dipendenze, Kanban e Riepilogo completo."
+            )
+        }
+    }
+
+    /// A notebook for «Traccia», the columns of a kanban for «Gestisci».
+    static func icon(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track: "book.closed"
+        case .manage: "rectangle.split.3x1"
+        }
+    }
+
+    static func color(_ mode: WorkMode) -> Color {
+        switch mode {
+        case .track: .green
+        case .manage: .blue
+        }
     }
 }
 
@@ -354,6 +408,22 @@ private struct ProjectsPane: View {
                     Button(String(localized: "Elimina…"), role: .destructive) { startDelete(project) }.buttonStyle(
                         .link)
                 }
+                // ADR-0074, ADR-0076: each project in «Gestisci» (the default) or kept simple in «Traccia».
+                Picker(
+                    String(localized: "Modalità"),
+                    selection: Binding(
+                        get: { project.workMode ?? .manage },
+                        set: { mode in
+                            model.chooseProjectWorkMode(project.id, mode)
+                            reload()
+                        })
+                ) {
+                    ForEach(WorkMode.allCases, id: \.self) {
+                        Label(WorkModeText.fullTitle($0), systemImage: WorkModeText.icon($0)).tag($0)
+                    }
+                }
+                .pickerStyle(.segmented).fixedSize().controlSize(.small).padding(.leading, 26)
+                .help(WorkModeText.explanation(project.workMode ?? .manage))
                 ProjectStreamsEditor(model: model, project: project).padding(.leading, 26)
             }
             if projects.isEmpty { Text(String(localized: "Nessun progetto creato.")).foregroundStyle(.secondary) }

@@ -19,6 +19,8 @@ public struct Project: SyncRecord, Identifiable, Hashable {
     public var lastUsedAt: Date?
     /// ADR-0038: the client the project belongs to, if any.
     public var clientId: String?
+    /// ADR-0074: `track` keeps this project simple while the app is in "Gestisci"; nil follows the app.
+    public var workMode: WorkMode?
     public var createdAt = Date.distantPast
     public var updatedAt = Date.distantPast
     public var deletedAt: Date?
@@ -261,14 +263,37 @@ public struct Entity: SyncRecord, Identifiable, Hashable {
 /// Decision register entry (FR-150…157). Survives its source: if the item or note is deleted the
 /// decision keeps text, date and people and only loses the link (FR-156).
 public struct Decision: SyncRecord, Identifiable, Hashable {
-    /// FR-157: actions and open questions share the model; the UI exposes only `decision` for now.
-    /// "Punti chiave" (ADR-0046): a decision, an activity (`action`: to do or under way, may become a decision)
-    /// or a milestone (something important that happened). `openQuestion` is reserved (ADR-0014).
+    /// "Punti chiave" (ADR-0046, ADR-0074). Memory: a decision, a milestone (something important that happened).
+    /// Work, open until someone closes it: an activity (`action`), a point to clear up (`openQuestion`), a risk, a
+    /// request of the client.
     public enum Kind: String, Codable, Sendable, CaseIterable {
-        case decision, action, milestone, openQuestion = "open_question"
+        case decision, action, milestone, openQuestion = "open_question", risk, request
+
+        /// Work kinds have an owner, a due date and the work states; memory kinds do not.
+        public var isWork: Bool { self != .decision && self != .milestone }
+        public static let work: [Kind] = [.action, .openQuestion, .risk, .request]
+        public static let memory: [Kind] = [.decision, .milestone]
     }
-    /// `active`: valid (decision), open (activity), standing (milestone). `done`: an activity carried out.
-    public enum Status: String, Codable, Sendable, CaseIterable { case active, done, superseded, cancelled }
+    /// `active`: valid (decision), standing (milestone), to do (work). `inProgress`, `waiting`, `blocked`: work under
+    /// way, waiting for someone, blocked by another entry (ADR-0074). `done`: work carried out. `superseded`: replaced
+    /// or closed by a newer entry.
+    public enum Status: String, Codable, Sendable, CaseIterable {
+        case active, inProgress = "in_progress", waiting, blocked, done, superseded, cancelled
+
+        /// Still to be dealt with (for work): to do, under way, waiting or blocked.
+        public var isOpen: Bool { self == .active || self == .inProgress || self == .waiting || self == .blocked }
+    }
+    /// How a work entry was closed (ADR-0074).
+    public enum Outcome: String, Codable, Sendable, CaseIterable {
+        /// A point cleared up, with the answer.
+        case answered
+        /// A request accepted, rejected (with the reason) or turned into another kind.
+        case accepted, rejected, converted
+        /// A risk resolved, or no longer relevant.
+        case resolved, irrelevant
+    }
+    public enum Severity: String, Codable, Sendable, CaseIterable { case high, medium, low }
+    public enum Recurrence: String, Codable, Sendable, CaseIterable { case daily, weekly, monthly, yearly }
     /// `mcp`: added by the user through Claude (ADR-0044).
     public enum Origin: String, Codable, Sendable { case marker, selection, note, extraction, manual, mcp }
 
@@ -289,6 +314,29 @@ public struct Decision: SyncRecord, Identifiable, Hashable {
     public var chainName: String?
     /// The model that proposed it, when it comes from a confirmed proposal: a catalog id, or `claude` (ADR-0070).
     public var model: String?
+    // Open work (ADR-0074), all optional.
+    /// Who does it: a person `entity`.
+    public var ownerId: String?
+    public var dueAt: Date?
+    /// Waiting for whom (a person `entity`) and until when.
+    public var waitingOnId: String?
+    public var waitingUntil: Date?
+    /// 1 high, 2 medium, 3 low.
+    public var priority: Int?
+    public var startsAt: Date?
+    /// Only reported, never computed ("3 giorni").
+    public var estimate: String?
+    public var severity: Severity?
+    /// A risk that happened: it became a problem.
+    public var happenedAt: Date?
+    /// The answer, the reason of a rejection, how it ended.
+    public var outcome: String?
+    public var outcomeKind: Outcome?
+    /// The entry it was born from ("nata da").
+    public var derivedFromId: String?
+    public var recurrence: Recurrence?
+    /// When it was closed (done, cancelled, superseded); nil while open.
+    public var closedAt: Date?
     public var shared = false
     public var createdAt = Date.distantPast
     public var updatedAt = Date.distantPast

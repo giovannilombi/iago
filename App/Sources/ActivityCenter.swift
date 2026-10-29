@@ -9,6 +9,8 @@ import Observation
 final class ActivityCenter {
     enum Kind: String {
         case importFiles, backup, restore, exportAudio, modelDownload, tidy
+        /// «Sintesi di stato» of a project, client or stream (ADR-0074).
+        case statusReport
 
         var label: String {
             switch self {
@@ -18,6 +20,7 @@ final class ActivityCenter {
             case .exportAudio: String(localized: "Esportazione audio")
             case .modelDownload: String(localized: "Download dei modelli di trascrizione")
             case .tidy: String(localized: "Riordino del testo")
+            case .statusReport: String(localized: "Sintesi di stato")
             }
         }
 
@@ -28,6 +31,7 @@ final class ActivityCenter {
             case .exportAudio: "square.and.arrow.up"
             case .modelDownload: "arrow.down.circle"
             case .tidy: "text.badge.checkmark"
+            case .statusReport: "doc.text.magnifyingglass"
             }
         }
     }

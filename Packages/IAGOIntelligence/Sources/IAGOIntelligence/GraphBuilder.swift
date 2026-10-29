@@ -192,8 +192,8 @@ public enum GraphBuilder {
             // Decisions.
             let projectPlaceholders = projectIDs.map { _ in "?" }.joined(separator: ",").ifEmpty("NULL")
             var decisionSQL = """
-                SELECT id, kind, text, decided_at, project_id, source_item_id, status FROM decision
-                WHERE deleted_at IS NULL AND kind IN ('decision', 'action', 'milestone')
+                SELECT id, kind, text, decided_at, project_id, source_item_id, status, derived_from_id FROM decision
+                WHERE deleted_at IS NULL
                 """
             var decisionArgs: StatementArguments = []
             if scope != .all {
@@ -210,11 +210,16 @@ public enum GraphBuilder {
                     switch row["kind"] as String {
                     case "action": .activity
                     case "milestone": .milestone
+                    case "open_question": .question
+                    case "risk": .risk
+                    case "request": .request
                     default: .decision
                     }
+                // Valid decisions and milestones, and work still open, are drawn in full.
+                let open = Decision.Status(rawValue: row["status"] as String).map { $0.isOpen } ?? false
                 nodes[node] = GraphNode(
                     id: node, kind: kind, label: row["text"], date: row["decided_at"], recordID: id,
-                    inactive: (row["status"] as String) != "active")
+                    inactive: !open)
                 if let projectID: String = row["project_id"], nodes["project:\(projectID)"] != nil {
                     edges.append(GraphEdge(from: node, to: "project:\(projectID)", kind: .inProject))
                 }
@@ -228,6 +233,18 @@ public enum GraphBuilder {
                 let older: String = row["older_id"]
                 guard decisionIDs.contains(newer), decisionIDs.contains(older) else { continue }
                 edges.append(GraphEdge(from: "decision:\(newer)", to: "decision:\(older)", kind: .supersedes))
+            }
+            // ADR-0074: "nata da" and "dipende da".
+            for row in decisions {
+                guard let origin: String = row["derived_from_id"], decisionIDs.contains(origin) else { continue }
+                edges.append(
+                    GraphEdge(from: "decision:\(row["id"] as String)", to: "decision:\(origin)", kind: .derivedFrom))
+            }
+            for row in try Row.fetchAll(db, sql: "SELECT blocked_id, blocker_id FROM decision_dependency") {
+                let blocked: String = row["blocked_id"]
+                let blocker: String = row["blocker_id"]
+                guard decisionIDs.contains(blocked), decisionIDs.contains(blocker) else { continue }
+                edges.append(GraphEdge(from: "decision:\(blocked)", to: "decision:\(blocker)", kind: .dependsOn))
             }
             let decisionList = Array(decisionIDs)
             let decisionPlaceholders = decisionList.map { _ in "?" }.joined(separator: ",").ifEmpty("NULL")

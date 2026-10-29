@@ -49,7 +49,10 @@ public struct Chunk: Codable, FetchableRecord, PersistableRecord, Sendable, Hash
 
 /// A proposal of the local engine waiting for the user (ADR-0049, FR-111): never applied without confirmation.
 public struct Suggestion: Codable, FetchableRecord, PersistableRecord, Sendable, Hashable, Identifiable {
-    public enum Kind: String, Codable, Sendable, CaseIterable { case decision, activity, person, tag, project, link }
+    /// ADR-0074 adds the open work kinds: a point to clear up, a risk, a request of the client.
+    public enum Kind: String, Codable, Sendable, CaseIterable {
+        case decision, activity, person, tag, project, link, question, risk, request
+    }
     public enum Status: String, Codable, Sendable { case pending, accepted, rejected, merged }
 
     public static let databaseTableName = "suggestion"
@@ -95,10 +98,15 @@ public struct SuggestionPayload: Codable, Sendable, Hashable {
     public var reason: String?
     /// A tag that does not exist yet.
     public var isNew: Bool?
+    /// ADR-0074: due date ("yyyy-MM-dd"), who it waits for, and a risk's severity ("high", "medium", "low").
+    public var due: String?
+    public var waitingOn: String?
+    public var severity: String?
 
     public init(
         text: String, quote: String? = nil, atSec: Double? = nil, owner: String? = nil, confidence: String? = nil,
-        supersedesID: String? = nil, targetID: String? = nil, reason: String? = nil, isNew: Bool? = nil
+        supersedesID: String? = nil, targetID: String? = nil, reason: String? = nil, isNew: Bool? = nil,
+        due: String? = nil, waitingOn: String? = nil, severity: String? = nil
     ) {
         self.text = text
         self.quote = quote
@@ -109,6 +117,19 @@ public struct SuggestionPayload: Codable, Sendable, Hashable {
         self.targetID = targetID
         self.reason = reason
         self.isNew = isNew
+        self.due = due
+        self.waitingOn = waitingOn
+        self.severity = severity
+    }
+
+    /// `due` as a date, at noon so the day does not change with the time zone.
+    public var dueDate: Date? {
+        guard let due else { return nil }
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        return formatter.date(from: due + " 12:00")
     }
 }
 
@@ -303,12 +324,14 @@ extension Archive {
         }
     }
 
-    /// Pending decisions and activities of a scope ("Da confermare" in Punti chiave), most recent item first.
+    /// Pending key points of a scope ("Da confermare" in Punti chiave): decisions, activities, points to clear up,
+    /// risks and requests (ADR-0074), most recent item first.
     public func pendingKeyPointSuggestions(_ scope: DecisionQuery.Scope) throws -> [Suggestion] {
         try database.writer.read { db in
             var sql = """
                 SELECT suggestion.* FROM suggestion JOIN item ON item.id = suggestion.item_id
-                WHERE suggestion.status = 'pending' AND suggestion.kind IN ('decision', 'activity')
+                WHERE suggestion.status = 'pending'
+                  AND suggestion.kind IN ('decision', 'activity', 'question', 'risk', 'request')
                   AND item.deleted_at IS NULL AND item.trashed_at IS NULL
                 """
             var arguments: StatementArguments = []

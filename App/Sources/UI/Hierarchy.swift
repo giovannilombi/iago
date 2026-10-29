@@ -390,6 +390,11 @@ private struct ProjectRow: View {
             }
             AccessMark(model: model, project: project)
             Spacer(minLength: 4)
+            // The project's mode at a glance (ADR-0076): a notebook for «Traccia», kanban columns for «Gestisci».
+            let mode = project.workMode ?? .manage
+            Image(systemName: WorkModeText.icon(mode)).font(.system(size: 10))
+                .foregroundStyle(mode == .track ? WorkModeText.color(mode) : Color.secondary.opacity(0.7))
+                .help(WorkModeText.fullTitle(mode))
             Button {
                 model.setPinned(project, !project.pinned)
             } label: {

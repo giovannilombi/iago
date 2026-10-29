@@ -67,7 +67,7 @@ struct WatchedFoldersSettings: View {
             title: String(localized: "Regole di importazione"),
             footnote: String(
                 localized:
-                    "Prima si applicano le esclusioni, poi le assegnazioni, nell'ordine. Senza una regola che assegna, l'email va nel progetto proposto da IAGO solo se la proposta è sicura (stessa conversazione o persone già note); altrimenti resta in «Da classificare»."
+                    "Prima si applicano le esclusioni, poi le assegnazioni, nell'ordine. Senza una regola che assegna, l'email va nel progetto proposto da IAGO solo se la proposta è sicura (stessa conversazione o persone già note); altrimenti resta in «Elementi da classificare»."
             )
         ) {
             Toggle(

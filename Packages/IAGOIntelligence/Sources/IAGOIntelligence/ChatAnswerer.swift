@@ -89,7 +89,7 @@ public enum ChatAnswerer {
                     atSec: chunk?.startSec ?? hit.atSec, text: text))
         }
         let words = Set(KeyPointExtractor.words(question).filter { $0.count > 3 })
-        let decisions = try archive.decisions(DecisionQuery(scope: decisionScope(scope), statuses: [.active]))
+        let decisions = try archive.decisions(DecisionQuery(scope: decisionScope(scope), statuses: DecisionQuery.current))
             .filter { summary in
                 let own = Set(KeyPointExtractor.words(summary.decision.text + " " + (summary.decision.notes ?? "")))
                 return !words.isDisjoint(with: own)

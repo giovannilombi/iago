@@ -58,7 +58,9 @@ extension IAGOTools {
                 description: """
                     Aggiunge una nota dell'utente: un'informazione da ricordare. Su un elemento (item_id: call, \
                     email, documento, file) o sul progetto, eventualmente in uno stream. Se il testo è una scelta \
-                    presa usa add_decision; se è qualcosa da fare, add_decision con kind activity.
+                    presa usa add_decision; se è qualcosa da fare, add_decision con kind action; una domanda \
+                    che aspetta risposta, un rischio o una richiesta del cliente sono anch'essi punti chiave \
+                    (kind open_question, risk, request).
                     """ + preview,
                 inputSchema: [
                     "type": "object",
@@ -82,67 +84,96 @@ extension IAGOTools {
             ToolDefinition(
                 name: "add_decision",
                 description: """
-                    Registra un punto chiave: una decisione presa dall'utente o dal suo gruppo, un'attività (da \
-                    fare) o una tappa (fatto avvenuto). Titolo breve in `text`, dettagli in `description`. Prima \
-                    cerca con list_decisions (query) le decisioni attive sullo stesso tema: se questa ne cambia \
-                    una o più, di qualsiasi tipo, indicale in supersedes_ids (diventano Superate). Collegala alla \
-                    fonte: source_item_id \
-                    (call con at_sec, email, documento) o source_note_id.
+                    Registra un punto chiave. Memoria: una decisione presa dall'utente o dal suo gruppo, una tappa \
+                    (fatto avvenuto). Lavoro aperto: un'attività (da fare, anche con checklist), un punto da \
+                    chiarire, un rischio (con severity), una richiesta del cliente; con responsabile (owner), \
+                    scadenza (due), "in attesa di" (waiting_on, waiting_until) solo se l'utente li dice. Titolo \
+                    breve in `text`, dettagli in `description`. Prima cerca con list_decisions (query) i punti \
+                    chiave sullo stesso tema: se questo ne cambia o ne chiude uno o più, di qualsiasi tipo, indicali \
+                    in supersedes_ids (una decisione che risponde a un punto da chiarire lo chiude come Chiarito, \
+                    una che accoglie una richiesta come Accolta). Se nasce da un'altra voce senza chiuderla (per \
+                    esempio un'attività nata da una richiesta) usa derived_from_id. Collegala alla fonte: \
+                    source_item_id (call con at_sec, email, documento) o source_note_id.
                     """ + preview,
                 inputSchema: [
                     "type": "object",
-                    "properties": [
-                        "text": ["type": "string", "description": "Cosa è stato deciso, in breve."],
-                        "kind": [
-                            "type": "string", "enum": ["decision", "activity", "milestone"],
-                            "description":
-                                "decision (default), activity (da fare o in corso) o milestone (tappa: fatto importante avvenuto).",
-                        ],
-                        "description": ["type": "string", "description": "Facoltativo: contesto e motivazioni."],
-                        "project": project, "stream": stream, "date": date,
-                        "source_item_id": ["type": "string", "description": "Facoltativo: elemento da cui nasce."],
-                        "at_sec": ["type": "number", "description": "Facoltativo: secondo della call."],
-                        "source_note_id": ["type": "string", "description": "Facoltativo: nota da cui nasce."],
-                        "supersedes_ids": [
-                            "type": "array", "items": ["type": "string"],
-                            "description":
-                                "Facoltativo: punti chiave (decisioni, attività o tappe) che questo supera.",
-                        ],
-                        "supersedes_id": ["type": "string", "description": "Come supersedes_ids, per una sola voce."],
-                        "people": ["type": "array", "items": ["type": "string"]],
-                        "tags": ["type": "array", "items": ["type": "string"]],
-                        "confirmation": confirmation,
-                    ],
+                    "properties": .object(
+                        ([
+                            "text": ["type": "string", "description": "Cosa è stato deciso, in breve."],
+                            "kind": [
+                                "type": "string",
+                                "enum": ["decision", "action", "milestone", "open_question", "risk", "request"],
+                                "description": """
+                                decision (default), action (attività: da fare), milestone (tappa: fatto importante \
+                                avvenuto), open_question (punto da chiarire), risk (rischio), request (richiesta del \
+                                cliente). activity vale come action.
+                                """,
+                            ],
+                            "status": [
+                                "type": "string", "enum": ["active", "in_progress", "waiting", "blocked"],
+                                "description":
+                                    "Facoltativo, solo per il lavoro: active (da fare, default), in_progress, waiting, blocked.",
+                            ],
+                            "description": ["type": "string", "description": "Facoltativo: contesto e motivazioni."],
+                            "project": project, "stream": stream, "date": date,
+                            "source_item_id": ["type": "string", "description": "Facoltativo: elemento da cui nasce."],
+                            "at_sec": ["type": "number", "description": "Facoltativo: secondo della call."],
+                            "source_note_id": ["type": "string", "description": "Facoltativo: nota da cui nasce."],
+                            "supersedes_ids": [
+                                "type": "array", "items": ["type": "string"],
+                                "description":
+                                    "Facoltativo: punti chiave (decisioni, attività o tappe) che questo supera.",
+                            ],
+                            "supersedes_id": [
+                                "type": "string", "description": "Come supersedes_ids, per una sola voce.",
+                            ],
+                            "people": ["type": "array", "items": ["type": "string"]],
+                            "tags": ["type": "array", "items": ["type": "string"]],
+                            "confirmation": confirmation,
+                        ] as [String: JSON]).merging(Self.workProperties(closing: false)) { $1 }),
                     "required": ["text"],
                 ], title: "Registra punto chiave"),
             ToolDefinition(
                 name: "update_decision",
                 description: """
-                    Modifica un punto chiave: titolo, descrizione, stato (active o cancelled; done per le attività), \
-                    stream, nome della catena o le voci che supera (supersedes_ids: l'elenco completo, che sostituisce \
-                    quello attuale; elenco vuoto per nessuna). Per registrare che una decisione è cambiata usa \
-                    add_decision con supersedes_ids.
+                    Modifica un punto chiave: titolo, descrizione, tipo, stato, stream, nome della catena o le voci \
+                    che supera (supersedes_ids: l'elenco completo, che sostituisce quello attuale; elenco vuoto per \
+                    nessuna). Per il lavoro aperto anche responsabile, scadenza, in attesa di, priorità, gravità, \
+                    esito (outcome_kind con outcome: la risposta a un punto da chiarire, il motivo di un rifiuto; \
+                    chiude la voce), dipendenze (blocked_by_ids, elenco completo), "nata da", ricorrenza e \
+                    checklist (elenco completo). Stringa vuota per togliere un campo. Per registrare che una \
+                    decisione è cambiata usa add_decision con supersedes_ids.
                     """ + preview,
                 inputSchema: [
                     "type": "object",
-                    "properties": [
-                        "decision_id": ["type": "string"], "text": ["type": "string"],
-                        "description": ["type": "string"],
-                        "status": [
-                            "type": "string", "enum": ["active", "done", "cancelled"],
-                            "description": "done solo per le attività.",
-                        ],
-                        "stream": ["type": "string", "description": "Nome dello stream; stringa vuota per toglierlo."],
-                        "supersedes_ids": [
-                            "type": "array", "items": ["type": "string"],
-                            "description": "Elenco completo delle voci che supera; vuoto per nessuna.",
-                        ],
-                        "supersedes_id": [
-                            "type": "string", "description": "Una sola voce; stringa vuota per nessuna.",
-                        ],
-                        "chain_name": ["type": "string", "description": "Stringa vuota per toglierlo."],
-                        "confirmation": confirmation,
-                    ],
+                    "properties": .object(
+                        ([
+                            "decision_id": ["type": "string"], "text": ["type": "string"],
+                            "description": ["type": "string"],
+                            "kind": [
+                                "type": "string",
+                                "enum": ["decision", "action", "milestone", "open_question", "risk", "request"],
+                                "description": "Facoltativo: cambia il tipo (per esempio una richiesta trasformata).",
+                            ],
+                            "status": [
+                                "type": "string",
+                                "enum": ["active", "in_progress", "waiting", "blocked", "done", "cancelled"],
+                                "description":
+                                    "active o cancelled per tutti; in_progress, waiting, blocked e done solo per il lavoro aperto.",
+                            ],
+                            "stream": [
+                                "type": "string", "description": "Nome dello stream; stringa vuota per toglierlo.",
+                            ],
+                            "supersedes_ids": [
+                                "type": "array", "items": ["type": "string"],
+                                "description": "Elenco completo delle voci che supera; vuoto per nessuna.",
+                            ],
+                            "supersedes_id": [
+                                "type": "string", "description": "Una sola voce; stringa vuota per nessuna.",
+                            ],
+                            "chain_name": ["type": "string", "description": "Stringa vuota per toglierlo."],
+                            "confirmation": confirmation,
+                        ] as [String: JSON]).merging(Self.workProperties(closing: true)) { $1 }),
                     "required": ["decision_id"],
                 ], title: "Modifica punto chiave"),
             ToolDefinition(
@@ -529,12 +560,21 @@ extension IAGOTools {
 
     func planDecision(_ scope: Scope, _ arguments: JSON) throws -> WritePlan {
         let text = try requiredText(arguments, "text")
-        let kind: Decision.Kind =
-            switch arguments["kind"]?.string {
-            case "activity": .action
-            case "milestone": .milestone
-            default: .decision
+        let kind = try kindArgument(arguments) ?? .decision
+        let status: Decision.Status =
+            switch arguments["status"]?.string {
+            case nil, "", "active": .active
+            case "in_progress" where kind.isWork: .inProgress
+            case "waiting" where kind.isWork: .waiting
+            case "blocked" where kind.isWork: .blocked
+            default:
+                throw ToolError(
+                    "Stato non valido per una voce nuova: active, oppure in_progress, waiting o blocked per il lavoro aperto."
+                )
             }
+        for key in ["outcome", "outcome_kind"] where arguments[key] != nil {
+            throw ToolError("\(key) chiude una voce: si indica dopo, con update_decision.")
+        }
         var sourceItem: Item?
         if let itemID = arguments["source_item_id"]?.string, !itemID.isEmpty {
             sourceItem = try visibleItem(scope, itemID)
@@ -561,12 +601,19 @@ extension IAGOTools {
             sourceNote?.notedAt ?? sourceItem.map { $0.occurredAt.addingTimeInterval(atSec ?? 0) }
         let date = try when(arguments, source: sourceDate, projectID: project.id)
         let description = arguments["description"]?.string?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let work = try workInput(arguments, kind: kind, project: project, current: nil)
 
         var summary = [
             "\(Self.kindLabel(kind)): «\(oneLine(text, limit: 120))»",
             "Progetto: \(project.name)" + (stream.map { " · stream \($0.name)" } ?? ""),
             date.line,
         ]
+        if status != .active {
+            var shown = Decision(text: text, decidedAt: clock(), origin: .mcp, kind: kind)
+            shown.status = status
+            summary.append("Stato: \(KeyPointLabels.status(shown))")
+        }
+        summary += work.lines
         if let sourceItem {
             summary.append(
                 "Fonte: «\(sourceItem.title)»" + (atSec.map { " al minuto \(TranscriptRenderer.clock($0))" } ?? ""))
@@ -581,7 +628,7 @@ extension IAGOTools {
                 "Supera: «\(oneLine(target.decision.text, limit: 80))» del \(minute(target.decision.decidedAt)), che diventerà Superata"
             )
         }
-        var doubts = [date.doubt, try streamDoubt(project, chosen: stream)].compactMap { $0 }
+        var doubts = [date.doubt, try streamDoubt(project, chosen: stream)].compactMap { $0 } + work.doubts
         if let latest = targets.map(\.decision.decidedAt).max(), (date.date ?? clock()) < latest {
             doubts.append(
                 "La data è precedente a quella di una voce che supera (\(minute(latest))): nella catena risulterebbe più vecchia. Chiedi all'utente quale data usare."
@@ -597,19 +644,23 @@ extension IAGOTools {
             }
         }
         if kind == .decision, Self.looksLike(text) == .action {
-            doubts.append("Il titolo sembra qualcosa da fare: chiedi all'utente se è un'attività (kind activity).")
+            doubts.append("Il titolo sembra qualcosa da fare: chiedi all'utente se è un'attività (kind action).")
         }
         return WritePlan(summary: summary, doubts: doubts) { writer, returned in
+            var draft = Decision(
+                text: text, decidedAt: date.date ?? clock(), projectId: project.id, sourceItemId: sourceItem?.id,
+                sourceAtSec: atSec, sourceNoteId: sourceNote?.id, origin: .mcp,
+                notes: description?.isEmpty == false ? description : nil, kind: kind)
+            draft.status = status
+            try work.apply(to: &draft, people: try work.resolvedPeople(writer))
             let decision = try writer.createDecision(
-                Decision(
-                    text: text, decidedAt: date.date ?? clock(), projectId: project.id, sourceItemId: sourceItem?.id,
-                    sourceAtSec: atSec, sourceNoteId: sourceNote?.id, origin: .mcp,
-                    notes: description?.isEmpty == false ? description : nil, kind: kind),
-                people: people, tags: tags,
-                streams: stream.map { [$0.id] } ?? [], supersedes: targets.map(\.id))
+                draft, people: people, tags: tags, streams: stream.map { [$0.id] } ?? [],
+                supersedes: targets.map(\.id))
+            try work.applyLinks(to: decision.id, writer)
             try writer.recordMCPChange(.decision, id: decision.id, action: .create)
             returned.append(decision.id)
-            return "\(Self.kindLabel(kind)) registrata in «\(project.name)» (decision_id `\(decision.id)`)"
+            return
+                "\(Self.kindLabel(kind)) \(Self.registered(kind)) in «\(project.name)» (decision_id `\(decision.id)`)"
                 + (targets.isEmpty
                     ? ". "
                     : targets.count == 1
@@ -624,14 +675,28 @@ extension IAGOTools {
         guard let summary = try archive.decisionSummary(id) else { throw ToolError("Decisione \(id) non trovata.") }
         let current = summary.decision
         let project = try writableProject(scope, current.projectId)
-        let status: Decision.Status? =
+        let newKind = try kindArgument(arguments)
+        let kind = newKind ?? current.kind
+        var status: Decision.Status? =
             switch arguments["status"]?.string {
             case "active": .active
             case "cancelled": .cancelled
-            case "done" where current.kind == .action: .done
+            case "done" where kind.isWork: .done
+            case "in_progress" where kind.isWork: .inProgress
+            case "waiting" where kind.isWork: .waiting
+            case "blocked" where kind.isWork: .blocked
             case nil: nil
-            default: throw ToolError("Stato non valido: usa active o cancelled (done solo per le attività).")
+            default:
+                throw ToolError(
+                    "Stato non valido: usa active o cancelled; done, in_progress, waiting e blocked solo per attività, punti da chiarire, rischi e richieste."
+                )
             }
+        let work = try workInput(arguments, kind: kind, project: project, current: summary)
+        // An outcome closes the entry; a memory kind has no work states.
+        if status == nil, case .some(.some) = work.outcomeKind, current.status.isOpen { status = .done }
+        if status == nil, !kind.isWork, current.status != .active, current.status.isOpen || current.status == .done {
+            status = .active
+        }
         if status != nil, current.status == .superseded {
             throw ToolError("La decisione è Superata: segue la sua catena, lo stato non si cambia a mano.")
         }
@@ -650,15 +715,24 @@ extension IAGOTools {
         }
         guard
             text != nil || description != nil || status != nil || chainName != nil || streams != nil
-                || newTargets != nil
+                || newTargets != nil || newKind != nil || !work.isEmpty
         else {
             throw ToolError(
-                "Niente da modificare: indica text, description, status, stream, supersedes_ids o chain_name.")
+                "Niente da modificare: indica text, description, kind, status, stream, supersedes_ids, chain_name o un campo del lavoro aperto."
+            )
         }
         var lines = ["\(Self.kindLabel(current.kind)) «\(oneLine(current.text, limit: 80))» in «\(project.name)»"]
         if let text, !text.isEmpty { lines.append("Titolo: «\(oneLine(text, limit: 120))»") }
         if description != nil { lines.append("Descrizione nuova") }
-        if let status { lines.append("Stato: \(status.rawValue)") }
+        if let newKind, newKind != current.kind { lines.append("Diventa: \(Self.kindLabel(newKind))") }
+        if let status {
+            var after = current
+            after.kind = kind
+            after.status = status
+            if let outcome = work.outcomeKind { after.outcomeKind = outcome }
+            lines.append("Stato: \(status.rawValue) (\(KeyPointLabels.status(after)))")
+        }
+        lines += work.lines
         if let streams {
             lines.append(
                 streams.isEmpty
@@ -694,17 +768,25 @@ extension IAGOTools {
                 doubts.append("Cambia l'ordine di una catena di decisioni: fallo confermare esplicitamente all'utente.")
             }
         }
+        doubts += work.doubts
         lines.append("La data e la posizione in timeline non cambiano.")
-        let (newIDs2, reorders2, streams2) = (newTargets?.map(\.id), reorders, streams)
+        let (newIDs2, reorders2, streams2, status2) = (newTargets?.map(\.id), reorders, streams, status)
         return WritePlan(summary: lines, doubts: doubts) { writer, returned in
-            let (newIDs, reorders, streams) = (newIDs2, reorders2, streams2)
+            let (newIDs, reorders, streams, status) = (newIDs2, reorders2, streams2, status2)
             let touched = [current.id] + (newIDs ?? []) + summary.supersedesAll.map(\.id)
+            let changesWork = newKind != nil || work.changesRecord
             try writer.recordMCPChange(
                 .decision, id: id, action: .update,
                 previous: MCPPrevious(
                     text: current.text, notes: current.notes, status: current.status,
                     chainName: try archive.chainName(of: id), streamIDs: summary.streamIDs,
-                    chain: newIDs == nil ? nil : try archive.decisionLinks(ofChainsOf: touched)))
+                    chain: newIDs == nil ? nil : try archive.decisionLinks(ofChainsOf: touched),
+                    work: changesWork ? MCPPrevious.Work(current) : nil,
+                    blockerIDs: work.blockers == nil ? nil : summary.blockers.map(\.id),
+                    checklist: work.checklist == nil
+                        ? nil
+                        : try archive.checklistItems(decisionID: id).map { .init(text: $0.text, done: $0.done) }))
+            let people = try work.resolvedPeople(writer)
             try writer.updateDecision(id, streams: streams, supersedes: newIDs, reorderingChain: reorders) {
                 decision in
                 if let text, !text.isEmpty { decision.text = text }
@@ -712,8 +794,11 @@ extension IAGOTools {
                     let trimmed = description.trimmingCharacters(in: .whitespacesAndNewlines)
                     decision.notes = trimmed.isEmpty ? nil : trimmed
                 }
+                if let newKind { decision.kind = newKind }
                 if let status { decision.status = status }
+                try work.apply(to: &decision, people: people)
             }
+            try work.applyLinks(to: id, writer)
             if let chainName { try writer.setChainName(chainName, decisionID: id) }
             returned.append(id)
             return "Punto chiave aggiornato. In IAGO compare come «modificato tramite Claude (MCP)» e si può annullare."
@@ -801,13 +886,359 @@ extension IAGOTools {
         return verbs.contains(firstWord) ? .action : nil
     }
 
-    static func kindLabel(_ kind: Decision.Kind) -> String {
-        switch kind {
-        case .decision: "Decisione"
-        case .action: "Attività"
-        case .milestone: "Tappa"
-        case .openQuestion: "Domanda aperta"
+    static func kindLabel(_ kind: Decision.Kind) -> String { KeyPointLabels.kind(kind) }
+
+    /// "registrata", or "registrato" for the masculine kinds (punto da chiarire, rischio).
+    static func registered(_ kind: Decision.Kind) -> String {
+        kind == .openQuestion || kind == .risk ? "registrato" : "registrata"
+    }
+
+    // MARK: Open work (ADR-0074)
+
+    /// The open work arguments of add_decision and update_decision. `closing`: also the outcome (update only).
+    static func workProperties(closing: Bool) -> [String: JSON] {
+        let day = "Data AAAA-MM-GG; stringa vuota per toglierla."
+        var properties: [String: JSON] = [
+            "owner": [
+                "type": "string",
+                "description":
+                    "Responsabile: nome di una persona (già nota a IAGO o nuova); stringa vuota per toglierlo.",
+            ],
+            "due": ["type": "string", "description": .string("Scadenza. " + day)],
+            "waiting_on": ["type": "string", "description": "In attesa di: nome della persona."],
+            "waiting_until": ["type": "string", "description": .string("In attesa fino a quando. " + day)],
+            "priority": ["type": "string", "enum": ["high", "medium", "low", ""]],
+            "starts_at": ["type": "string", "description": .string("Data d'inizio, solo da riportare. " + day)],
+            "estimate": ["type": "string", "description": "Stima, solo da riportare (es. \"3 giorni\")."],
+            "severity": [
+                "type": "string", "enum": ["high", "medium", "low", ""], "description": "Gravità di un rischio.",
+            ],
+            "happened_at": [
+                "type": "string", "description": .string("Rischio diventato problema, in che data. " + day),
+            ],
+            "recurrence": ["type": "string", "enum": ["daily", "weekly", "monthly", "yearly", ""]],
+            "derived_from_id": [
+                "type": "string",
+                "description":
+                    "Facoltativo: decision_id della voce da cui nasce (\"nata da\"), senza chiuderla. Stringa vuota per toglierlo.",
+            ],
+            "blocked_by_ids": [
+                "type": "array", "items": ["type": "string"],
+                "description":
+                    "decision_id delle voci da cui dipende: finché una è aperta, questa è Bloccata. Elenco completo; vuoto per nessuna.",
+            ],
+            "checklist": [
+                "type": "array", "items": ["type": "string"],
+                "description":
+                    "Sotto-voci da spuntare, nell'ordine; \"[x] testo\" per una già fatta. Elenco completo; vuoto per nessuna.",
+            ],
+        ]
+        if closing {
+            properties["outcome_kind"] = [
+                "type": "string",
+                "enum": ["answered", "accepted", "rejected", "converted", "resolved", "irrelevant", ""],
+                "description": """
+                Esito, chiude la voce: answered (punto da chiarire), accepted, rejected o converted (richiesta), \
+                resolved o irrelevant (rischio).
+                """,
+            ]
+            properties["outcome"] = [
+                "type": "string", "description": "La risposta, il motivo del rifiuto, com'è finita.",
+            ]
         }
+        return properties
+    }
+
+    func kindArgument(_ arguments: JSON) throws -> Decision.Kind? {
+        guard let value = arguments["kind"]?.string, !value.isEmpty else { return nil }
+        guard let kind = Self.decisionKind(value) else {
+            throw ToolError(
+                "Tipo «\(value)» non valido: decision, action, milestone, open_question, risk o request.")
+        }
+        return kind
+    }
+
+    /// The open work fields given to add_decision or update_decision, checked before anything is written. For each
+    /// field nil means "not given", `.some(nil)` (an empty string) "remove it".
+    struct WorkInput: Sendable {
+        var owner: String??
+        var waitingOn: String??
+        var due: Date??
+        var waitingUntil: Date??
+        var priority: Int??
+        var startsAt: Date??
+        var estimate: String??
+        var severity: Decision.Severity??
+        var happenedAt: Date??
+        var outcome: String??
+        var outcomeKind: Decision.Outcome??
+        var recurrence: Decision.Recurrence??
+        var derivedFromID: String??
+        var checklist: [MCPPrevious.ChecklistLine]?
+        var blockers: [String]?
+        /// For the preview.
+        var lines: [String] = []
+        var doubts: [String] = []
+
+        /// Something stored on the entry itself (not its checklist or dependencies).
+        var changesRecord: Bool {
+            owner != nil || waitingOn != nil || due != nil || waitingUntil != nil || priority != nil
+                || startsAt != nil || estimate != nil || severity != nil || happenedAt != nil || outcome != nil
+                || outcomeKind != nil || recurrence != nil || derivedFromID != nil
+        }
+        var isEmpty: Bool { !changesRecord && checklist == nil && blockers == nil }
+
+        /// Owner and waiting-for as person ids, created if new ("persone già note + nuove al volo").
+        struct People: Sendable {
+            var owner: String??
+            var waitingOn: String??
+        }
+
+        func resolvedPeople(_ writer: Archive) throws -> People {
+            func resolve(_ name: String??) throws -> String?? {
+                guard let name else { return nil }
+                guard let name else { return .some(nil) }
+                return .some(try writer.person(named: name)?.id)
+            }
+            return People(owner: try resolve(owner), waitingOn: try resolve(waitingOn))
+        }
+
+        func apply(to decision: inout Decision, people: People) throws {
+            if let owner = people.owner { decision.ownerId = owner }
+            if let waitingOn = people.waitingOn { decision.waitingOnId = waitingOn }
+            if let due { decision.dueAt = due }
+            if let waitingUntil { decision.waitingUntil = waitingUntil }
+            if let priority { decision.priority = priority }
+            if let startsAt { decision.startsAt = startsAt }
+            if let estimate { decision.estimate = estimate }
+            if let severity { decision.severity = severity }
+            if let happenedAt { decision.happenedAt = happenedAt }
+            if let outcome { decision.outcome = outcome }
+            if let outcomeKind { decision.outcomeKind = outcomeKind }
+            if let recurrence { decision.recurrence = recurrence }
+            if let derivedFromID { decision.derivedFromId = derivedFromID }
+        }
+
+        /// Checklist and dependencies, once the entry exists.
+        func applyLinks(to id: String, _ writer: Archive) throws {
+            if let checklist { try writer.replaceChecklist(checklist, decisionID: id) }
+            if let blockers {
+                do {
+                    try writer.setBlockers(blockers, of: id)
+                } catch WorkError.dependencyCycle {
+                    throw ToolError("Dipendenza circolare: una delle voci in blocked_by_ids dipende già da questa.")
+                }
+            }
+        }
+    }
+
+    /// Reads and checks the open work arguments. `current`: the entry being changed (nil for a new one).
+    func workInput(_ arguments: JSON, kind: Decision.Kind, project: Project, current: DecisionSummary?) throws
+        -> WorkInput
+    {
+        var input = WorkInput()
+        func text(_ key: String) -> String?? {
+            guard let value = arguments[key] else { return nil }
+            let trimmed: String
+            switch value {
+            case .string(let string): trimmed = string.trimmingCharacters(in: .whitespacesAndNewlines)
+            case .number(let number): trimmed = number.formatted()
+            case .null: trimmed = ""
+            default: return nil
+            }
+            return .some(trimmed.isEmpty ? nil : trimmed)
+        }
+        func day(_ key: String) throws -> Date?? {
+            guard let given = text(key) else { return nil }
+            guard let given else { return .some(nil) }
+            var calendar = Calendar(identifier: .gregorian)
+            calendar.timeZone = timeZone
+            let parts = given.split(separator: "-").compactMap { Int($0) }
+            guard parts.count == 3,
+                let date = calendar.date(
+                    from: DateComponents(year: parts[0], month: parts[1], day: parts[2], hour: 12))
+            else { throw ToolError("\(key): data «\(given)» non valida, usa AAAA-MM-GG.") }
+            return .some(date)
+        }
+        func choice<T>(_ key: String, _ make: (String) -> T?) throws -> T?? {
+            guard let given = text(key) else { return nil }
+            guard let given else { return .some(nil) }
+            guard let value = make(given) else { throw ToolError("\(key): valore «\(given)» non valido.") }
+            return .some(value)
+        }
+        func shown(_ date: Date) -> String { TranscriptRenderer.format(date, "yyyy-MM-dd", timeZone) }
+        func entry(_ id: String, _ key: String) throws -> DecisionSummary {
+            guard let found = try archive.decisionSummary(id), found.decision.projectId == project.id else {
+                throw ToolError("\(key): il punto chiave \(id) non è in «\(project.name)».")
+            }
+            guard found.id != current?.id else { throw ToolError("\(key): una voce non può riferirsi a sé stessa.") }
+            return found
+        }
+        func person(_ key: String, _ label: String) throws -> String?? {
+            guard let name = text(key) else { return nil }
+            guard let name else {
+                input.lines.append("\(label): tolto")
+                return .some(nil)
+            }
+            if let known = try knownPerson(name) {
+                input.lines.append("\(label): \(known.name)")
+                return .some(known.name)
+            }
+            input.lines.append("\(label): \(name) (persona nuova in IAGO)")
+            let similar = try archive.similarPeople(to: name).map(\.name)
+            if !similar.isEmpty {
+                input.doubts.append(
+                    "«\(name)» non è tra le persone di IAGO: chiedi all'utente se intende "
+                        + similar.map { "«\($0)»" }.joined(separator: " o ") + " (usa il nome esatto).")
+            }
+            return .some(name)
+        }
+
+        // Fields of open work only; on a decision or milestone they can only be removed.
+        let workOnly = [
+            "owner", "due", "waiting_on", "waiting_until", "priority", "starts_at", "estimate", "severity",
+            "happened_at", "outcome", "outcome_kind", "recurrence", "checklist", "blocked_by_ids",
+        ]
+        if !kind.isWork {
+            for key in workOnly {
+                let given: Bool =
+                    switch arguments[key] {
+                    case .array(let values)?: !values.isEmpty
+                    case .some: text(key).flatMap { $0 } != nil
+                    case nil: false
+                    }
+                if given {
+                    throw ToolError(
+                        "\(key) vale solo per il lavoro aperto (attività, punti da chiarire, rischi e richieste), non per \(Self.kindLabel(kind).lowercased())."
+                    )
+                }
+            }
+        }
+
+        input.owner = try person("owner", "Responsabile")
+        input.waitingOn = try person("waiting_on", "In attesa di")
+        input.due = try day("due")
+        input.waitingUntil = try day("waiting_until")
+        input.startsAt = try day("starts_at")
+        input.happenedAt = try day("happened_at")
+        input.estimate = text("estimate")
+        input.outcome = text("outcome")
+        input.priority = try choice("priority") { ["high": 1, "medium": 2, "low": 3, "1": 1, "2": 2, "3": 3][$0] }
+        input.severity = try choice("severity", Decision.Severity.init(rawValue:))
+        input.recurrence = try choice("recurrence", Decision.Recurrence.init(rawValue:))
+        input.outcomeKind = try choice("outcome_kind", Decision.Outcome.init(rawValue:))
+
+        if case .some(.some) = input.severity, kind != .risk { throw ToolError("severity vale solo per i rischi.") }
+        if case .some(.some) = input.happenedAt, kind != .risk {
+            throw ToolError("happened_at vale solo per i rischi.")
+        }
+        if case .some(.some(let outcome)) = input.outcomeKind {
+            let fits: Decision.Kind? =
+                switch outcome {
+                case .answered: .openQuestion
+                case .accepted, .rejected, .converted: .request
+                case .resolved, .irrelevant: .risk
+                }
+            guard fits == kind else {
+                throw ToolError(
+                    "outcome_kind \(outcome.rawValue) non vale per \(Self.kindLabel(kind).lowercased()): answered per i punti da chiarire; accepted, rejected o converted per le richieste; resolved o irrelevant per i rischi."
+                )
+            }
+        }
+
+        func line<T>(_ value: T??, _ label: String, _ show: (T) -> String) {
+            guard let value else { return }
+            input.lines.append(value.map { "\(label): \(show($0))" } ?? "\(label): tolta")
+        }
+        line(input.due, "Scadenza", shown)
+        line(input.waitingUntil, "In attesa fino al", shown)
+        line(input.priority, "Priorità", KeyPointLabels.priority)
+        line(input.startsAt, "Inizio", shown)
+        line(input.estimate, "Stima", { $0 })
+        line(input.severity, "Gravità", KeyPointLabels.severity)
+        line(input.happenedAt, "Diventato problema il", shown)
+        line(input.recurrence, "Ricorrenza", KeyPointLabels.recurrence)
+        line(input.outcomeKind, "Esito", KeyPointLabels.outcome)
+        line(input.outcome, "Risposta o motivo", { "«\(oneLine($0, limit: 120))»" })
+        if case .some(.some(let recurrence)) = input.recurrence, input.due == nil, current?.decision.dueAt == nil {
+            input.doubts.append(
+                "Ricorrenza \(KeyPointLabels.recurrence(recurrence)) senza scadenza: chiedi all'utente da quando.")
+        }
+
+        if let id = text("derived_from_id") {
+            if let id {
+                let origin = try entry(id, "derived_from_id")
+                input.lines.append(
+                    "Nata da: \(Self.kindLabel(origin.decision.kind).lowercased()) «\(oneLine(origin.decision.text, limit: 80))», che resta com'è"
+                )
+                input.derivedFromID = .some(id)
+            } else {
+                input.lines.append("Nata da: tolto")
+                input.derivedFromID = .some(nil)
+            }
+        }
+
+        if let ids = arguments["blocked_by_ids"]?.strings {
+            var seen: Set<String> = []
+            let blockers = try ids.filter { seen.insert($0).inserted }.map { try entry($0, "blocked_by_ids") }
+            for blocker in blockers where !blocker.decision.kind.isWork {
+                throw ToolError(
+                    "blocked_by_ids: «\(oneLine(blocker.decision.text, limit: 60))» è una decisione o una tappa: si dipende solo da lavoro aperto."
+                )
+            }
+            if let current {
+                for blocker in blockers where try dependsOn(blocker.id, current.id) {
+                    throw ToolError(
+                        "Dipendenza circolare: «\(oneLine(blocker.decision.text, limit: 60))» dipende già da questa voce."
+                    )
+                }
+            }
+            input.blockers = blockers.map(\.id)
+            if blockers.isEmpty {
+                input.lines.append("Non dipende più da nessuna voce")
+            } else {
+                input.lines.append(
+                    "Dipende da: "
+                        + blockers.map { "«\(oneLine($0.decision.text, limit: 60))»" }.joined(separator: ", ")
+                        + (blockers.contains { $0.decision.status.isOpen }
+                            ? " (finché una è aperta la voce risulta Bloccata)" : ""))
+            }
+        }
+
+        if let given = arguments["checklist"]?.strings {
+            let existing = try current.map { try archive.checklistItems(decisionID: $0.id) } ?? []
+            let checklist: [MCPPrevious.ChecklistLine] = given.compactMap { raw in
+                var text = raw.trimmingCharacters(in: .whitespaces)
+                var done: Bool?
+                for (prefix, value) in [("[x]", true), ("[X]", true), ("☑", true), ("[ ]", false), ("☐", false)]
+                where text.hasPrefix(prefix) {
+                    text = String(text.dropFirst(prefix.count)).trimmingCharacters(in: .whitespaces)
+                    done = value
+                    break
+                }
+                guard !text.isEmpty else { return nil }
+                return .init(text: text, done: done ?? existing.first { $0.text == text }?.done ?? false)
+            }
+            input.checklist = checklist
+            input.lines.append(
+                checklist.isEmpty
+                    ? "Checklist: vuota"
+                    : "Checklist: " + checklist.map { ($0.done ? "☑ " : "☐ ") + $0.text }.joined(separator: "; "))
+        }
+        return input
+    }
+
+    /// True if `from` depends on `to`, directly or through other entries.
+    func dependsOn(_ from: String, _ to: String) throws -> Bool {
+        var stack = [from]
+        var seen: Set<String> = []
+        while let next = stack.popLast() {
+            for blocker in try archive.blockers(of: next) {
+                if blocker.id == to { return true }
+                if seen.insert(blocker.id).inserted { stack.append(blocker.id) }
+            }
+        }
+        return false
     }
 
     // MARK: Items
