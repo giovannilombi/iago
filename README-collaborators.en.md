@@ -50,11 +50,11 @@ This guide is for people who join the project without knowing its history. It ex
 
 ### Git and GitHub
 - One branch per piece of work (`feat/…`, `fix/…`, `docs/…`, `chore/…`), from an up-to-date `main`.
-- Changes enter `main` only through a **pull request**, with green CI and the other person's OK. No direct pushes to `main`: GitHub Free does not prevent them, it is discipline.
+- Changes enter `main` only through a **pull request**, with the tests and the site build done locally and the other person's OK. No direct pushes to `main`: GitHub Free does not prevent them, it is discipline.
 - Conventional commits in English (`feat: …`, `fix: …`, `docs: …`).
 - **Builds from source and DMG:** developers use their own build compiled from the code (updated with `git pull` and a new build; it does not look for automatic updates). The release DMG is for people who do not develop: to try it, use another user account or another Mac, because two copies of IAGO on the same account compete for permissions and archive.
 - **Never a personal email address**, neither in files nor in commits (ADR-0065): sign with the anonymous GitHub address. In GitHub › Settings › Emails turn on "Keep my email addresses private" (so merges made from the website also use the anonymous address) and "Block command line pushes that expose my email". The git checks block commits and pushes with a personal address, and the Privacy workflow does the same on GitHub.
-- CI runs on PRs that touch code and runs the package tests. macOS minutes are few (GitHub Free counts them 10 times), so it should not be run for nothing.
+- GitHub's CI runs **only by hand**, when needed (`gh workflow run ci.yml --ref <branch>`, or from the Actions tab): GitHub Free minutes are few, and macOS ones count 10 times. Before every PR run `scripts/test-packages.sh` locally and, if the documentation changes, `npm run docs:build`; the local hooks do the other checks. With Claude Code: it asks whether to run it and what that implies.
 
 ### Languages
 - Code, types, comments and commits: **English**.
@@ -62,7 +62,7 @@ This guide is for people who join the project without knowing its history. It ex
   - app strings: `scripts/i18n.py missing /tmp/mancanti.json`, translate, `scripts/i18n.py apply traduzioni.json`;
   - documents: `docs/x.md` → `docs/en/x.md`, guide → `App/Resources/Guide/en/`, `README.md`, `README-collaborators.md` and `CLAUDE.md` → `*.en.md`; then `scripts/i18n.py record <English files>`;
   - the English names are in `i18n/glossary.tsv`.
-- The `pre-commit` hook and CI run `scripts/i18n.py check`: if a translation is missing, the commit stops and says what is missing. With Claude Code, it does the translation during the work.
+- The `pre-commit` hook (and `privacy.yml`, when it is run) runs `scripts/i18n.py check`: if a translation is missing, the commit stops and says what is missing. With Claude Code, it does the translation during the work.
 - Short, direct sentences, in both languages.
 
 ### Decisions (ADRs)
@@ -127,7 +127,7 @@ What remains to be done, in order, is in [`docs/stato.md`](docs/en/stato.md).
   - **Usage:** the guide, copied from the app chapters (`App/Resources/Guide`): it is edited there, never in the site. Plus installation, shortcuts, problems and logs.
   - **Technical:** `docs/tecnica` plus ADRs, status, tests, licenses, designs, benchmarks and phases.
 - Every guide chapter has the link to the corresponding technical page (`docs/.vitepress/theme/level.ts`).
-- On every PR that touches the documentation, CI builds the site; on every push to `main` it republishes it (when the repository is public).
+- The site is built locally before the PR (`npm run docs:build`); once the repository is public, every push to `main` will republish it by itself.
 
 ## 9. Making a release
 - The version is in `project.yml`, in the form `x.y.z-beta`. The third number goes up with a PR that changes the app (ask Giovanni), the second with a large group of features. At distribution, `-beta` is removed.

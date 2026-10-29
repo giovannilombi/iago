@@ -118,7 +118,7 @@ The name comes from the icon: a parrot with a memory of steel.
 2. the local Teams API (`127.0.0.1`), if you turn it on;
 3. the check for signed updates on GitHub Releases.
 
-A CI script (`scripts/check-network-apis.sh`) fails if a connection outside these points appears in the code.
+A script (`scripts/check-network-apis.sh`, run with the tests) fails if a connection outside these points appears in the code.
 
 ## Installation
 **Requirements:**
@@ -292,15 +292,15 @@ Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`
 - **301 automated tests** in the packages: Store 109, Capture 48, Intelligence 32, Transcription 29, Ingest 22, MCP 20, Core 15, Engine 15, Export 10, Sync 1.
   - The audio pipeline is tested with **synthetic** fixtures (`say` voices), never with real recordings.
   - The engines are tested with fake responses, which also reproduce the real errors of the models.
-- **CI** on every pull request (GitHub Actions, macOS): all the tests and the network API check. On Ubuntu, on every PR and push to `main`, the check that no personal email address enters the repository. The build with MLX (`scripts/test-engine.sh`) is done before PRs that touch the engine.
+- **Before every pull request**, on the Mac: all the tests and the network API check (`scripts/test-packages.sh`); the git hooks check real data, email addresses and languages. GitHub Actions CI runs only by hand, to save the GitHub Free minutes. The build with MLX (`scripts/test-engine.sh`) is done before PRs that touch the engine.
 - **Field tests:** measurements on real calls (`docs/benchmarks/`) and a **tester checklist** ([`docs/en/prove-tester.md`](docs/en/prove-tester.md)), ordered and doable by someone who does not know the app.
-- **Languages:** code, comments and commits in English; interface in Italian (String Catalog, ready for English).
+- **Languages:** code, comments and commits in English; interface, guide and documents in Italian and English (ADR-0077).
 
 ## Development
 ```bash
 scripts/bootstrap.sh          # generates IAGO.xcodeproj with XcodeGen (project.yml is the source)
 scripts/check-private-data.sh --all   # no real data in the files (also as a hook before every commit)
-scripts/check-commit-emails.sh main..HEAD   # no personal email address in the commits (hook before push and CI)
+scripts/check-commit-emails.sh main..HEAD   # no personal email address in the commits (hook before push)
 scripts/test-packages.sh      # swift test on all packages
 scripts/test-engine.sh        # app build with MLX and Metal shaders
 scripts/install-app.sh        # signed Release installed in /Applications
@@ -311,7 +311,7 @@ scripts/release.sh 1.2.0 --notes "…" --github   # signed release, Sparkle appc
 - **To collaborate:** [`README-collaborators.en.md`](README-collaborators.en.md) explains rules, documents, ADR status, tests and how to work with Claude Code.
 - **Conventions:**
   - one branch per feature;
-  - merge to `main` only via pull request with green CI;
+  - merge to `main` only via pull request, with the tests run locally;
   - conventional commits;
   - to change a decision, you write a new ADR.
 - **Structure:** `App/` (macOS target and guide in `App/Resources/Guide`), `Packages/` (the ten packages), `docs/` (ADRs, benchmarks, designs, tests), `scripts/`.

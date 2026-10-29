@@ -1,14 +1,8 @@
 name: CI
 
-# macOS runners count 10x against the GitHub Free minutes quota:
-# run only on pull requests touching code, or manually.
+# macOS runners count 10x against the GitHub Free minutes quota: manual only, when the owner asks for it
+# (`gh workflow run ci.yml --ref <branch>`). The same tests run on the developer's Mac before every PR.
 on:
-  pull_request:
-    paths:
-      - "Packages/**"
-      - "App/**"
-      - "scripts/check-network-apis.sh"
-      - ".github/workflows/ci.yml"
   workflow_dispatch:
 
 concurrency:

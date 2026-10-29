@@ -42,6 +42,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-29, CI solo a mano:** finiti i minuti di GitHub Free, tutti i workflow si lanciano solo quando l'utente lo chiede; prima di ogni PR, Claude Code chiede se lanciarla e cosa comporta. Il controllo delle API di rete gira ora con `scripts/test-packages.sh`.
 - **2026-10-29:** versione **1.2.3-beta**.
 - **2026-10-29, tag proposti solo dall'elemento** (ADR-0049, modifica): il motore sceglieva dall'elenco tag di altre call senza appiglio nella registrazione. Ora ogni tag deve avere la sua frase nel testo, o le sue parole nel testo.
 - **2026-10-29, diritti** (ADR-0065, modifica): Giovanni Lombi fino alla 1.3.x-beta, Giovanni Lombi e Gianluca Sestito dalla 1.4.0-beta; README più breve, piè di pagina del sito con entrambi e rimando ai crediti.
