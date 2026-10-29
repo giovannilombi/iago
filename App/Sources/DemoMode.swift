@@ -173,8 +173,12 @@ enum DemoMode {
             let item = { (title: String) in
                 (try? model.archive.summaries(.recent))?.first { $0.item.title == title }?.id
             }
+            // `-IAGODemoShots a,b`: only these screens, to check a fix without retaking the whole guide.
+            let only = UserDefaults.standard.string(forKey: "IAGODemoShots").map {
+                Set($0.split(separator: ",").map(String.init))
+            }
             func shot(_ name: String, _ window: NSWindow?) async {
-                guard let window else { return }
+                guard let window, only?.contains(name) ?? true else { return }
                 try? await Task.sleep(for: .seconds(1.5))
                 try? "\(window.windowNumber)".write(
                     to: out.appendingPathComponent("\(name).ready"), atomically: true, encoding: .utf8)

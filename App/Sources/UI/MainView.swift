@@ -44,13 +44,17 @@ struct MainView: View {
             }
         }
         .overlay(alignment: .bottomTrailing) {
-            if !model.showsChat, !askButtonHidden {
-                AskIAGOButton(model: model) { askButtonHidden = true }
-                    .padding(.trailing, 22).padding(.bottom, 20)
-                    .transition(.scale.combined(with: .opacity))
+            ZStack {
+                if !model.showsChat, !askButtonHidden {
+                    AskIAGOButton(model: model) { askButtonHidden = true }
+                        .padding(.trailing, 22).padding(.bottom, 20)
+                        .transition(.scale.combined(with: .opacity))
+                }
             }
+            // Only the floating button animates: an animated split view moved the sidebar under the title bar when
+            // «Chiedi a IAGO» opened on a wide view.
+            .animation(.easeOut(duration: 0.2), value: model.showsChat)
         }
-        .animation(.easeOut(duration: 0.2), value: model.showsChat)
         .sheet(item: Binding(get: { model.engine.neededFor }, set: { model.engine.neededFor = $0 })) { feature in
             EngineNeededSheet(model: model, feature: feature)
         }

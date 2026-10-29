@@ -30,15 +30,17 @@ struct DecisionDetailView: View {
     private func content(_ summary: DecisionSummary) -> some View {
         let decision = summary.decision
         VStack(alignment: .leading, spacing: 16) {
+            // Kind, state and actions on one line; the date below, so a narrow pane (the inspector of the kanban)
+            // never cuts the buttons.
             HStack(spacing: 8) {
                 Text(DecisionRow.kindLabel(decision.kind)).font(.callout.weight(.bold))
-                    .foregroundStyle(DecisionRow.tint(decision.kind))
+                    .foregroundStyle(DecisionRow.tint(decision.kind)).fixedSize()
                 Label(DecisionRow.label(summary, mode: mode), systemImage: DecisionRow.icon(summary))
-                    .font(.callout.weight(.semibold)).foregroundStyle(DecisionRow.color(summary))
-                Text(decision.decidedAt.formatted(date: .long, time: .shortened)).foregroundStyle(.secondary)
-                Spacer()
-                KeyPointPrimaryAction(model: model, summary: summary)
+                    .font(.callout.weight(.semibold)).foregroundStyle(DecisionRow.color(summary)).lineLimit(1)
+                Spacer(minLength: 8)
+                KeyPointPrimaryAction(model: model, summary: summary).fixedSize()
                 Button(String(localized: "Modifica…")) { model.editingDecision = DecisionDraft(summary) }
+                    .fixedSize()
                 Menu {
                     KeyPointActions(model: model, summary: summary)
                 } label: {
@@ -47,6 +49,8 @@ struct DecisionDetailView: View {
                 .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
                 .help(String(localized: "Altre azioni"))
             }
+            Text(decision.decidedAt.formatted(date: .long, time: .shortened)).foregroundStyle(.secondary)
+                .padding(.top, -8)
             ViaClaudeBadge(model: model, entity: .decision, id: decision.id)
             if let provenance = Provenance.decision(decision) {
                 ProvenanceLine(text: provenance, model: decision.model == Provenance.claude ? nil : decision.model)

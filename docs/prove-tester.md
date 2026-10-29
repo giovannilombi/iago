@@ -226,6 +226,7 @@ Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-bran
 - [ ] 10i.20 Barra laterale: in cima **Inbox** in grassetto, con l'icona del vassoio e, se hai voci in ritardo o di oggi o proposte da confermare, il bollino rosso con il loro numero; sotto una linea e **Elementi da classificare**.
 - [ ] 10i.21 *Aggiungi › Importa file ed elementi…* in un progetto: trascina un PDF nell'area, poi *Da testo* (si apre il campo) con un testo breve. Entrambi finiscono nel progetto, non in Elementi da classificare. *Email senza file* apre la finestra dell'email con il progetto già scelto.
 - [ ] 10i.22 Apri un cliente per la prima volta: la finestra chiede la modalità dei suoi progetti. Scegli Traccia: i progetti a cui non avevi scelto una modalità passano in Traccia, e un progetto nuovo del cliente nasce in Traccia.
+- [ ] 10i.23 Con il Riepilogo (o la Kanban) aperto, apri «Chiedi a IAGO»: la barra laterale resta al suo posto, con l'Inbox sotto i pulsanti della finestra. Nella Kanban apri una scheda: nel pannello a destra i pulsanti («Segna come fatta», «Modifica…») sono interi e la data sta sotto.
 
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
