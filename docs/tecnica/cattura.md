@@ -32,5 +32,5 @@ Rilevamento solo locale (ADR-0051):
 - **App che usano il microfono** (Teams, Zoom, Webex, FaceTime, Slack…), lette dagli oggetti processo di Core Audio.
 - **Calendario del Mac** con EventKit, per il titolo e la proposta all'orario d'inizio; con più riunioni sovrapposte `MeetingMatcher` sceglie la candidata migliore e, se è incerto, chiede all'utente.
 - **Titoli delle finestre di Teams** via Accessibilità, per riconoscere la riunione giusta.
-- **Mute di Teams** via Accessibilità (pulsante del microfono) oppure via **API locale di Teams** su `127.0.0.1:8124`, solo se l'utente la attiva: durante il mute la traccia del microfono riceve un marcatore.
+- **Mute di Teams** via Accessibilità (pulsante del microfono) oppure via **API locale di Teams** su `127.0.0.1:8124`, solo se l'utente la attiva: durante il mute la traccia del microfono riceve un marcatore. Il pulsante del microfono si cerca nelle finestre di Teams fuori dal thread principale (`TeamsAccessibility.search`, fino a 6.000 elementi): ogni 3 secondi se Teams usa il microfono o era in riunione, ogni 20 secondi altrimenti; trovato il pulsante, si rilegge solo la sua etichetta ogni secondo.
 - La proposta di registrare compare in un `NSPanel` con le scelte (registra, ignora, riunione giusta).

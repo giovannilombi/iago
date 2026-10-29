@@ -90,7 +90,7 @@ func memoryArchive() throws -> Archive {
         let older = try archive.createItem(
             title: "Kickoff fondo", occurredAt: Date(), source: .recording, status: .transcribed)
         try archive.updateItem(older.id) { $0.projectId = project.id }
-        try archive.setTags(["previdenza"], for: older.id)
+        try archive.setTags(["previdenza", "payroll"], for: older.id)
         let active = try archive.createDecision(
             Decision(text: "Contributo azienda al 1,5%", decidedAt: Date(), projectId: project.id, origin: .manual))
         let call = try archive.createItem(
@@ -109,7 +109,12 @@ func memoryArchive() throws -> Archive {
         let engine = FakeEngine { _ in "" }
         let answering = FakeEngine { prompt in
             if prompt.contains("TAG ESISTENTI") {
-                return #"{"esistenti": ["previdenza", "inventato"], "nuovi": ["tfr"]}"#
+                // A tag of another call with an invented quote, and a new tag with no ground, are dropped.
+                return #"""
+                    {"esistenti": [{"tag": "previdenza", "citazione": "il contributo dell'azienda al 2% da gennaio"},
+                    {"tag": "payroll", "citazione": "parliamo delle buste paga di tutti"}, "inventato"],
+                    "nuovi": [{"tag": "contributo", "citazione": "non detto"}, "tfr"]}
+                    """#
             }
             if prompt.hasPrefix("Io:") || prompt.hasPrefix("Speaker 1:") {
                 return
@@ -127,7 +132,9 @@ func memoryArchive() throws -> Archive {
         #expect(
             kinds.contains(.decision) && kinds.contains(.person) && kinds.contains(.tag) && kinds.contains(.project))
         #expect(proposals.first { $0.kind == .person }?.payload.targetID == "s1")
-        #expect(Set(proposals.filter { $0.kind == .tag }.map(\.payload.text)) == ["previdenza", "tfr"])
+        let tags = proposals.filter { $0.kind == .tag }.map(\.payload)
+        #expect(Set(tags.map(\.text)) == ["previdenza", "contributo"])
+        #expect(tags.first { $0.text == "previdenza" }?.atSec == 120)
         #expect(proposals.first { $0.kind == .project }?.payload.targetID == project.id)
         // In the project, the decision may supersede the active one and the older call is related.
         try archive.updateItem(call.id) { $0.projectId = project.id }

@@ -236,6 +236,12 @@ First of all, if you are testing a build not yet merged into `main`: `scripts/tr
 - [ ] 10l.5 In English, in search `category:` suggests the categories (`categoria:` works too).
 - [ ] 10l.6 Documentation site: the language selector takes you from every page to the same page in English, and the Usage/Technical button stays in the chosen language.
 
+## 10m. Window responsiveness and suggested tags (1.2.3-beta)
+- [ ] 10m.1 With IAGO open for a few minutes and no jobs in Activity, Activity Monitor shows IAGO close to 0% CPU (also with Teams open and Teams mute reading on).
+- [ ] 10m.2 The IAGO window drags as smoothly as the Finder's, and moving between Inbox, projects and views is immediate.
+- [ ] 10m.3 With Teams mute reading on, join a Teams meeting: the call is recognized within about twenty seconds and the mute is read as before.
+- [ ] 10m.4 With some tags already used in other calls, record a call on another topic and ask *Find suggestions*: the suggested tags concern only this call, each with the sentence it comes from (or a word said in the call); no tag of the other calls without ground.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

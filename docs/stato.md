@@ -5,13 +5,13 @@
 > Ultimo aggiornamento: **29 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.2-beta su `main` (tag `v1.2.2-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.3-beta su `main` (tag `v1.2.3-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 303 nei pacchetti, tutti verdi (1.2.2-beta).
+- **Test automatici:** 304 nei pacchetti, tutti verdi (1.2.3-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -42,6 +42,12 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-29:** versione **1.2.3-beta**.
+- **2026-10-29, tag proposti solo dall'elemento** (ADR-0049, modifica): il motore sceglieva dall'elenco tag di altre call senza appiglio nella registrazione. Ora ogni tag deve avere la sua frase nel testo, o le sue parole nel testo.
+- **2026-10-29, diritti** (ADR-0065, modifica): Giovanni Lombi fino alla 1.3.x-beta, Giovanni Lombi e Gianluca Sestito dalla 1.4.0-beta; README più breve, piè di pagina del sito con entrambi e rimando ai crediti.
+- **2026-10-29, lentezza della finestra** (finestra che si trascina a scatti, un secondo per cambiare sezione). Il thread principale era sempre occupato da due lavori:
+  - il giro del lavoro in background ripartiva senza sosta, perché il timer di un minuto, quando veniva annullato, lo svegliava di nuovo (errore presente dalla 1.0.0-beta, più pesante con l'archivio cresciuto);
+  - la ricerca del pulsante del microfono di Teams (Accessibilità) esplorava fino a 6.000 elementi ogni 3 secondi sul thread principale. Ora gira fuori dal thread principale, e ogni 20 secondi quando Teams non usa il microfono.
 - **2026-10-29:** versione **1.2.2-beta**, **italiano e inglese** (ADR-0077):
   - lingua scelta al primo avvio e in Impostazioni › Generale, con riavvio;
   - circa 1.700 testi dell'interfaccia tradotti nel String Catalog;

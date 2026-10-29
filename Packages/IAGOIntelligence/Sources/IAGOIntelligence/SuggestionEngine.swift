@@ -162,9 +162,12 @@ public enum SuggestionEngine {
 
     static let tagSystemItalian = """
         Scegli i temi di un contenuto di lavoro. Ricevi l'elenco dei TAG ESISTENTI e il testo.
-        Scegli fino a 5 tag tra quelli esistenti che descrivono davvero il contenuto. Proponi al massimo 3 tag nuovi \
-        solo se nessun tag esistente va bene: una o due parole, minuscole, in italiano.
-        Rispondi solo con JSON: {"esistenti": ["..."], "nuovi": ["..."]}
+        Scegli fino a 5 tag tra quelli esistenti solo se il testo parla davvero di quel tema: l'elenco viene da altri \
+        contenuti e di solito quasi nessun tag va bene, quindi l'elenco vuoto è una risposta normale. Proponi al \
+        massimo 3 tag nuovi solo se nessun tag esistente va bene: una o due parole, minuscole, in italiano.
+        Per ogni tag copia dal testo la frase che ne parla, parola per parola.
+        Rispondi solo con JSON: {"esistenti": [{"tag": "...", "citazione": "..."}], "nuovi": [{"tag": "...", \
+        "citazione": "..."}]}
         """
 
     static func tags(_ input: Input, engine: any LLMProvider, archive: Archive) async throws -> [Proposal] {
@@ -175,22 +178,49 @@ public enum SuggestionEngine {
             LLMRequest(
                 system: tagSystem,
                 prompt: "TAG ESISTENTI: \(existing.joined(separator: ", "))\n\nTESTO:\n\(text.prefix(8_000))",
-                maxTokens: 200))
+                maxTokens: 400))
         guard let object = jsonObject(answer) else { return [] }
         let byName = Dictionary(existing.map { ($0.lowercased(), $0) }, uniquingKeysWith: { first, _ in first })
+        let textWords = Set(KeyPointExtractor.words(text))
         var proposals: [Proposal] = []
-        for name in (object["esistenti"] as? [String] ?? []).prefix(5) {
-            guard let tag = byName[name.lowercased()], !current.contains(tag.lowercased()) else { continue }
-            proposals.append((.tag, SuggestionPayload(text: tag, isNew: false)))
-        }
-        for name in (object["nuovi"] as? [String] ?? []).prefix(3) {
-            let clean = name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-            guard !clean.isEmpty, clean.split(separator: " ").count <= 3, byName[clean] == nil,
-                !current.contains(clean)
+        for entry in tagEntries(object["esistenti"]).prefix(5) {
+            guard let tag = byName[entry.name.lowercased()], !current.contains(tag.lowercased()),
+                let payload = grounded(tag, quote: entry.quote, isNew: false, in: input.lines, words: textWords)
             else { continue }
-            proposals.append((.tag, SuggestionPayload(text: clean, isNew: true)))
+            proposals.append((.tag, payload))
+        }
+        for entry in tagEntries(object["nuovi"]).prefix(3) {
+            let clean = entry.name.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+            guard !clean.isEmpty, clean.split(separator: " ").count <= 3, byName[clean] == nil,
+                !current.contains(clean),
+                let payload = grounded(clean, quote: entry.quote, isNew: true, in: input.lines, words: textWords)
+            else { continue }
+            proposals.append((.tag, payload))
         }
         return proposals
+    }
+
+    /// The tags of an answer, with their quotes; a bare name (the older form) has none.
+    static func tagEntries(_ value: Any?) -> [(name: String, quote: String?)] {
+        (value as? [Any] ?? []).compactMap { entry in
+            if let name = entry as? String { return (name, nil) }
+            guard let entry = entry as? [String: Any], let name = entry["tag"] as? String else { return nil }
+            return (name, entry["citazione"] as? String)
+        }
+    }
+
+    /// A tag is proposed only if the text talks about it: its quote is found in the text (shown with the proposal,
+    /// at its minute), or failing that the tag's own words are in the text. A small model otherwise picks tags
+    /// of other calls from the list just because they are there.
+    static func grounded(
+        _ tag: String, quote: String?, isNew: Bool, in lines: [KeyPointExtractor.Line], words: Set<String>
+    ) -> SuggestionPayload? {
+        if let quote, let line = KeyPointExtractor.locateLine(quote, in: lines) {
+            return SuggestionPayload(text: tag, quote: quote, atSec: lines[line].atSec, isNew: isNew)
+        }
+        let own = KeyPointExtractor.words(tag)
+        guard !own.isEmpty, own.allSatisfy(words.contains) else { return nil }
+        return SuggestionPayload(text: tag, isNew: isNew)
     }
 
     // MARK: Project and related items

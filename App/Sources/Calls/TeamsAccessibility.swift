@@ -20,6 +20,7 @@ final class TeamsAccessibility {
     private(set) var lastLabel: String?
     @ObservationIgnored private var cached: AXUIElement?
     @ObservationIgnored private var lastSearch = Date.distantPast
+    @ObservationIgnored private var searching = false
 
     static let enabledKey = "teams.accessibility"
     static let mutedKey = "teams.accessibility.muted"
@@ -66,8 +67,10 @@ final class TeamsAccessibility {
         isMuted = nil
     }
 
-    /// One reading; cheap while the button stays the same, a fresh search at most every 3 seconds otherwise.
-    func poll() {
+    /// One reading; cheap while the button stays the same. A fresh search walks Teams' windows away from the main
+    /// thread (it can take seconds, and the window of IAGO stuttered meanwhile): every 3 seconds while Teams uses the
+    /// microphone or was in a meeting, every 20 seconds otherwise.
+    func poll(teamsUsesMic: Bool) {
         guard enabled, Self.trusted,
             let app = NSWorkspace.shared.runningApplications.first(where: {
                 Self.teamsBundles.contains($0.bundleIdentifier ?? "")
@@ -76,19 +79,28 @@ final class TeamsAccessibility {
             if buttonFound { reset() }
             return
         }
-        if let cached, let label = Self.label(of: cached), let state = state(of: label) {
+        let labels = Labels(muted: mutedLabels, unmuted: unmutedLabels)
+        if let cached, let label = Self.label(of: cached), let state = labels.state(of: label) {
             apply(label, state)
             return
         }
-        guard Date().timeIntervalSince(lastSearch) > 3 else { return }
+        let interval: TimeInterval = teamsUsesMic || buttonFound ? 3 : 20
+        guard !searching, Date().timeIntervalSince(lastSearch) > interval else { return }
         lastSearch = Date()
-        let root = AXUIElementCreateApplication(app.processIdentifier)
-        // Chromium-based apps build their accessibility tree only when asked.
-        AXUIElementSetAttributeValue(root, "AXManualAccessibility" as CFString, kCFBooleanTrue)
-        AXUIElementSetAttributeValue(root, "AXEnhancedUserInterface" as CFString, kCFBooleanTrue)
-        if let (element, label, state) = search(root) {
-            cached = element
-            apply(label, state)
+        searching = true
+        let pid = app.processIdentifier
+        Task.detached(priority: .utility) { [weak self] in
+            let found = Self.search(pid: pid, labels)
+            await self?.finishSearch(found)
+        }
+    }
+
+    private func finishSearch(_ found: Found?) {
+        searching = false
+        guard enabled else { return }
+        if let found {
+            cached = found.element
+            apply(found.label, found.muted)
         } else {
             cached = nil
             if buttonFound { logger.notice("Teams microphone button not found any more") }
@@ -119,53 +131,74 @@ final class TeamsAccessibility {
         isMuted = muted
     }
 
+    /// The microphone button found by a search.
+    private struct Found: @unchecked Sendable {
+        var element: AXUIElement
+        var label: String
+        var muted: Bool
+    }
+
+    /// The labels of the microphone button, read once per poll (they are settings in the archive).
+    struct Labels: Sendable {
+        var muted: String
+        var unmuted: String
+
+        /// true: the label is the one shown while muted; false: while speaking; nil: not the microphone button.
+        func state(of label: String) -> Bool? {
+            let text = label.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            func matches(_ list: String) -> Bool {
+                list.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+                    .contains {
+                        text.contains($0.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil))
+                    }
+            }
+            // "Unmute" contains "mute": the muted labels are checked first.
+            if matches(muted) { return true }
+            if matches(unmuted) { return false }
+            return nil
+        }
+    }
+
+    func state(of label: String) -> Bool? {
+        Labels(muted: mutedLabels, unmuted: unmutedLabels).state(of: label)
+    }
+
     /// Breadth-first through the windows, at most 6 000 elements.
-    private func search(_ root: AXUIElement) -> (AXUIElement, String, Bool)? {
-        var queue: [AXUIElement] = Self.children(of: root, attribute: kAXWindowsAttribute)
+    nonisolated private static func search(pid: pid_t, _ labels: Labels) -> Found? {
+        let root = AXUIElementCreateApplication(pid)
+        // Chromium-based apps build their accessibility tree only when asked.
+        AXUIElementSetAttributeValue(root, "AXManualAccessibility" as CFString, kCFBooleanTrue)
+        AXUIElementSetAttributeValue(root, "AXEnhancedUserInterface" as CFString, kCFBooleanTrue)
+        var queue: [AXUIElement] = children(of: root, attribute: kAXWindowsAttribute)
         var visited = 0
         while !queue.isEmpty, visited < 6_000 {
             let element = queue.removeFirst()
             visited += 1
-            if let role = Self.string(element, kAXRoleAttribute),
+            if let role = string(element, kAXRoleAttribute),
                 ["AXButton", "AXCheckBox", "AXToggle", "AXMenuButton"].contains(role),
-                let label = Self.label(of: element), let state = state(of: label)
+                let label = label(of: element), let state = labels.state(of: label)
             {
-                return (element, label, state)
+                return Found(element: element, label: label, muted: state)
             }
-            queue += Self.children(of: element, attribute: kAXChildrenAttribute)
+            queue += children(of: element, attribute: kAXChildrenAttribute)
         }
         return nil
     }
 
-    /// true: the label is the one shown while muted; false: while speaking; nil: not the microphone button.
-    func state(of label: String) -> Bool? {
-        let text = label.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-        func matches(_ list: String) -> Bool {
-            list.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
-                .contains {
-                    text.contains($0.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil))
-                }
-        }
-        // "Unmute" contains "mute": the muted labels are checked first.
-        if matches(mutedLabels) { return true }
-        if matches(unmutedLabels) { return false }
-        return nil
-    }
-
-    static func label(of element: AXUIElement) -> String? {
+    nonisolated static func label(of element: AXUIElement) -> String? {
         for attribute in [kAXDescriptionAttribute, kAXTitleAttribute, kAXHelpAttribute] {
             if let value = string(element, attribute), !value.isEmpty { return value }
         }
         return nil
     }
 
-    static func string(_ element: AXUIElement, _ attribute: String) -> String? {
+    nonisolated static func string(_ element: AXUIElement, _ attribute: String) -> String? {
         var value: CFTypeRef?
         guard AXUIElementCopyAttributeValue(element, attribute as CFString, &value) == .success else { return nil }
         return value as? String
     }
 
-    static func children(of element: AXUIElement, attribute: String) -> [AXUIElement] {
+    nonisolated static func children(of element: AXUIElement, attribute: String) -> [AXUIElement] {
         var value: CFTypeRef?
         guard AXUIElementCopyAttributeValue(element, attribute as CFString, &value) == .success,
             let array = value as? [AXUIElement]

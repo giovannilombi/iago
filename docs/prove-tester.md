@@ -236,6 +236,12 @@ Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-bran
 - [ ] 10l.5 In inglese, nella ricerca `category:` suggerisce le categorie (anche `categoria:` funziona).
 - [ ] 10l.6 Sito della documentazione: il selettore della lingua porta da ogni pagina alla stessa pagina in inglese, e il pulsante Uso/Tecnico resta nella lingua scelta.
 
+## 10m. Reattività della finestra e tag proposti (1.2.3-beta)
+- [ ] 10m.1 Con IAGO aperto da qualche minuto e senza lavori in Attività, Monitoraggio Attività mostra IAGO vicino allo 0% di CPU (anche con Teams aperto e la lettura del mute di Teams attiva).
+- [ ] 10m.2 La finestra di IAGO si trascina fluida come quella del Finder, e il passaggio tra Inbox, progetti e viste è immediato.
+- [ ] 10m.3 Con la lettura del mute di Teams attiva, entra in una riunione di Teams: la call viene riconosciuta entro una ventina di secondi e il mute si legge come prima.
+- [ ] 10m.4 Con alcuni tag già usati in altre call, registra una call su un altro tema e chiedi *Cerca proposte*: i tag proposti riguardano solo questa call, ognuno con la frase da cui viene (o una parola detta nella call); nessun tag delle altre call senza appiglio.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

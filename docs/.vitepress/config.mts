@@ -179,7 +179,12 @@ function themeOf(lang: Lang): DefaultTheme.Config {
         'Licenza CC BY-NC-SA 4.0. I tuoi dati restano tuoi: IAGO non contiene né raccoglie contenuti.',
         'License CC BY-NC-SA 4.0. Your data stays yours: IAGO neither contains nor collects content.'
       ),
-      copyright: t(lang, '© 2026 Giovanni Lombi e Gianluca Sestito', '© 2026 Giovanni Lombi and Gianluca Sestito')
+      // Who holds the rights for which versions is in the README (ADR-0065).
+      copyright: t(
+        lang,
+        '© 2026 Giovanni Lombi e Gianluca Sestito · <a href="https://github.com/giovannilombi/iago/blob/main/README.md#crediti-e-licenze">Crediti e licenze</a>',
+        '© 2026 Giovanni Lombi and Gianluca Sestito · <a href="https://github.com/giovannilombi/iago/blob/main/README.en.md#credits-and-licenses">Credits and licenses</a>'
+      )
     }
   }
 }

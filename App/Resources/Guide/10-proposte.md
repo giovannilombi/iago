@@ -6,7 +6,8 @@ Dopo ogni trascrizione o importazione, con il motore locale IAGO propone:
 - punti da chiarire (domande rimaste senza risposta), rischi con la gravità e richieste del cliente;
 - voci che una nuova decisione potrebbe superare, o un punto da chiarire a cui risponde, o una richiesta che accoglie;
 - nomi per gli speaker generici;
-- tag, progetto (per ciò che è da classificare) e collegamenti ad altri elementi.
+- tag, con la frase da cui vengono, solo se l'elemento parla davvero di quel tema;
+- progetto (per ciò che è da classificare) e collegamenti ad altri elementi.
 
 Le proposte compaiono nella scheda e in *Punti chiave › Da confermare*: **Conferma**, **Modifica…** o **Scarta**. Niente viene applicato senza la tua conferma; una proposta scartata non torna. Le proposte automatiche si accendono e si spengono in Impostazioni › Motore; sui Mac con meno di 32 GB di memoria sono spente di default, e le chiedi a mano con *Cerca proposte*.
 

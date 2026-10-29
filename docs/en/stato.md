@@ -5,13 +5,13 @@
 > Last update: **October 29, 2026**.
 
 ## In brief
-- **Version:** 1.2.2-beta on `main` (tag `v1.2.2-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
+- **Version:** 1.2.3-beta on `main` (tag `v1.2.3-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
 - **Repositories:**
   - `giovannilombi/iago`, private, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi; from the versions after 1.0.0-beta, Giovanni Lombi and Gianluca Sestito (ADR-0065).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 303 in the packages, all green (1.2.2-beta).
+- **Automated tests:** 304 in the packages, all green (1.2.3-beta).
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -42,6 +42,12 @@ The full description is in the [README](../../README.en.md). In short:
    - graph refinements.
 
 ## Latest changes
+- **2026-10-29:** version **1.2.3-beta**.
+- **2026-10-29, tags suggested only from the item** (ADR-0049, change): the engine picked tags of other calls from the list with no ground in the recording. Now every tag must have its sentence in the text, or its words in the text.
+- **2026-10-29, rights** (ADR-0065, change): Giovanni Lombi up to 1.3.x-beta, Giovanni Lombi and Gianluca Sestito from 1.4.0-beta; shorter README, site footer with both and a link to the credits.
+- **2026-10-29, slow window** (the window stuttered when dragged, a second to change section). The main thread was always busy with two jobs:
+  - the background round restarted without pause, because the one-minute timer, when cancelled, woke it again (a bug present since 1.0.0-beta, heavier as the archive grew);
+  - the search for Teams' microphone button (Accessibility) walked up to 6,000 elements every 3 seconds on the main thread. It now runs away from the main thread, and every 20 seconds when Teams does not use the microphone.
 - **2026-10-29:** version **1.2.2-beta**, **Italian and English** (ADR-0077):
   - language chosen at first launch and in Settings › General, with restart;
   - about 1,700 interface texts translated in the String Catalog;

@@ -93,8 +93,10 @@ final class IntelligenceService {
             while !Task.isCancelled {
                 await self?.runOnce()
                 // Work again when something changes, or every minute.
+                // Cancelled when woken earlier: it must not yield then, or each round would wake the next one at
+                // once and the loop would never rest.
                 let timeout = Task {
-                    try? await Task.sleep(for: .seconds(60))
+                    guard (try? await Task.sleep(for: .seconds(60))) != nil else { return }
                     continuation.yield()
                 }
                 _ = await iterator.next()
