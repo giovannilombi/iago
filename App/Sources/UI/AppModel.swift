@@ -721,7 +721,10 @@ final class AppModel {
 
     static let hiddenGraphsKey = "work.graphHidden"
     static let introDismissedKey = "work.modeIntro.dismissed"
-    static let clientModesKey = "work.clientModes"
+    /// In the archive (settings), so they travel with backups: the mode of a client's new projects, and the projects
+    /// whose mode the user chose on their own.
+    static func clientModeKey(_ clientID: String) -> String { "work.clientMode.\(clientID)" }
+    static let modeChosenKey = "work.modeChosen"
 
     /// «Mostra il Grafo» of a project in «Traccia»: on unless turned off. In «Gestisci» the graph is always there.
     func graphShown(projectID: String) -> Bool {
@@ -784,32 +787,34 @@ final class AppModel {
 
     /// The mode new projects of a client start in, chosen on the client's first-visit sheet («Gestisci» if never).
     func clientWorkMode(_ clientID: String) -> WorkMode {
-        let modes = UserDefaults.standard.dictionary(forKey: Self.clientModesKey) as? [String: String] ?? [:]
-        return modes[clientID].flatMap(WorkMode.init(rawValue:)) ?? .manage
+        _ = revision
+        return ((try? archive.setting(Self.clientModeKey(clientID))) ?? nil).flatMap(WorkMode.init(rawValue:))
+            ?? .manage
     }
 
     /// A client's mode: for its new projects, and for the ones that never had one of their own.
     func setClientWorkMode(_ clientID: String, _ mode: WorkMode) {
-        var modes = UserDefaults.standard.dictionary(forKey: Self.clientModesKey) as? [String: String] ?? [:]
-        modes[clientID] = mode == .manage ? nil : mode.rawValue
-        UserDefaults.standard.set(modes, forKey: Self.clientModesKey)
-        for project in projects where project.clientId == clientID && !Self.modeChosen.contains(project.id) {
-            perform { try archive.setProjectWorkMode(project.id, mode) }
+        let chosen = modeChosen
+        perform {
+            try archive.setSetting(Self.clientModeKey(clientID), mode == .manage ? nil : mode.rawValue)
+            for project in try archive.projects() where project.clientId == clientID && !chosen.contains(project.id) {
+                try archive.setProjectWorkMode(project.id, mode)
+            }
         }
         reload()
         fixView()
     }
 
     /// Projects whose mode the user chose on their own (pill, sheet, Settings): a client's choice leaves them alone.
-    static var modeChosen: Set<String> {
-        Set(UserDefaults.standard.stringArray(forKey: "work.modeChosen") ?? [])
+    var modeChosen: Set<String> {
+        Set(((try? archive.setting(Self.modeChosenKey)) ?? nil)?.split(separator: ",").map(String.init) ?? [])
     }
 
     /// The mode chosen for one project by the user.
     func chooseProjectWorkMode(_ projectID: String, _ mode: WorkMode) {
-        var chosen = Self.modeChosen
+        var chosen = modeChosen
         chosen.insert(projectID)
-        UserDefaults.standard.set(chosen.sorted(), forKey: "work.modeChosen")
+        perform { try archive.setSetting(Self.modeChosenKey, chosen.sorted().joined(separator: ",")) }
         setProjectWorkMode(projectID, mode)
     }
 

@@ -95,6 +95,6 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0071 | Sintesi e proposte fatte da Claude | accettato |
 | 0072 | Segna momento con screenshot e scorciatoie in tutte le app | accettato |
 | 0073 | Riconoscere le stesse voci in call diverse | accettato |
-| 0074 | Lavoro aperto e due modalità: Traccia e Gestisci | accettato (1.1.0-beta, in prova; modalità ridefinite da 0076) |
-| 0075 | Viste di progetto: come guardare e cosa mostrare | accettato (1.1.0-beta, in prova; in parte sostituito da 0076) |
-| 0076 | Modalità Traccia semplice, Inbox ed Elementi | accettato (1.1.0-beta, in prova) |
+| 0074 | Lavoro aperto e due modalità: Traccia e Gestisci | accettato (1.1.0-beta; modalità ridefinite da 0076) |
+| 0075 | Viste di progetto: come guardare e cosa mostrare | accettato (1.1.0-beta; in parte sostituito da 0076) |
+| 0076 | Modalità Traccia semplice, Inbox ed Elementi | accettato (1.2.0-beta) |

@@ -202,7 +202,7 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 10h.5 Elimina la voce: un solo avviso, poi sparisce dalla lista. *Elimina tutte le voci…* chiede tre passaggi (avviso, DELETE, ultima conferma).
 - [ ] 10h.6 Spegni l'interruttore: una nuova trascrizione non propone più nomi dalla voce.
 
-## 10i. Lavoro aperto (1.1.0-beta)
+## 10i. Lavoro aperto (1.1.0-beta e 1.2.0-beta)
 Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-branch.sh` la apre su una copia dell'archivio. Per tornare indietro chiudi la prova e riapri IAGO.
 - [ ] 10i.1 Apri un progetto per la prima volta: compare la finestra «… è in Modalità Gestisci» con le due modalità spiegate. *OK* la chiude e torna alla visita successiva; *Non mostrare più* la toglie per quel progetto. Il progetto si apre sul **Riepilogo**; accanto al nome c'è la pillola *Modalità Gestisci ▾* (blu, icona a colonne) e la stessa icona è accanto al progetto nella barra laterale. Dalla pillola scegli *Modalità Traccia* (verde, quaderno): spariscono la Kanban e il menu *Mostra*, il Riepilogo diventa breve. *Aggiungi* offre sempre la nota, i sei tipi e, in fondo, *Importa file ed elementi…*.
 - [ ] 10i.2 Crea un'attività con responsabile (prova un nome simile a uno esistente: deve chiedere «Intendi …?»), scadenza di ieri e due righe di checklist: in timeline la scadenza è rossa e si vede 0/2.

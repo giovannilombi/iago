@@ -12,9 +12,11 @@ Call, email, documenti, note e decisioni di ogni progetto in un'unica memoria. C
 </p>
 
 <p align="center">
-  📖 <strong><a href="https://giovannilombi.github.io/iago/">Documentazione</a></strong>: come si usa e come è fatto.<br>
-  <sub>Online quando il repository sarà pubblico; fino ad allora in locale con <code>npm install && npm run docs:dev</code>.</sub>
+  📖 <strong><a href="https://giovannilombi.github.io/iago/">Documentazione ufficiale</a></strong>: come si usa (livello <em>Uso</em>) e come è fatto (livello <em>Tecnico</em>).<br>
+  <sub>È il riferimento: questo README ne è solo il riassunto. Online quando il repository sarà pubblico; fino ad allora in locale con <code>npm install && npm run docs:dev</code> (sito VitePress in <code>docs/</code>).</sub>
 </p>
+
+> **Per usare o capire IAGO parti dalla [documentazione ufficiale](https://giovannilombi.github.io/iago/)** (in locale: `npm run docs:dev`). Guida d'uso, installazione, scorciatoie e il livello tecnico sono lì, sempre aggiornati a ogni versione.
 
 ![La finestra di IAGO: progetti, timeline e una scheda con la sintesi](App/Resources/Guide/img/finestra.png)
 
@@ -325,12 +327,13 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
-| **1.1.0-beta** | 28 ottobre 2026 | In prova, sul ramo `feat/lavoro` (si torna alla 1.0.1-beta: vedi sotto). Lavoro aperto: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, checklist; Modalità Traccia (semplice e veloce, Riepilogo breve, attività da spuntare) e Modalità Gestisci (completa, predefinita) per progetto, con la finestra alla prima visita; barra delle viste con Riepilogo, Elementi, Timeline, Kanban e Grafo, a tutta finestra Riepilogo, Kanban e Grafo; Inbox in cima alla barra laterale con il lavoro di tutti i progetti; import da dentro un progetto; Riepilogo con sintesi di stato, Kanban con colonne libere; dipendenze e ricorrenze; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP per il lavoro aperto. Sito della documentazione con la versione nell'header |
+| **1.2.0-beta** | 29 ottobre 2026 | Su `main` (tag `v1.2.0-beta`; si torna alla 1.0.1-beta o alla 1.1.0-beta: vedi sotto). Lavoro aperto rivisto dopo la prova (ADR-0076): **Modalità Traccia** semplice e veloce (Riepilogo breve, attività da spuntare, tutti i tipi, niente Kanban) e **Modalità Gestisci** completa e predefinita, con nome, icona e colore, finestra alla prima visita di un progetto o cliente e modalità del cliente per i progetti nuovi; **Inbox** in cima alla barra laterale con il bollino rosso; «Elementi da classificare»; barra delle viste Riepilogo · Elementi · Timeline, Kanban, Grafo; «Importa file ed elementi…» da dentro un progetto; Kanban di tutti con tutti i progetti |
+| **1.1.0-beta** | 28 ottobre 2026 | Prima versione del lavoro aperto (tag `v1.1.0-beta`), rivista dopo la prova nella 1.2.0-beta. Lavoro aperto: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, checklist; Modalità Traccia (semplice e veloce, Riepilogo breve, attività da spuntare) e Modalità Gestisci (completa, predefinita) per progetto, con la finestra alla prima visita; barra delle viste con Riepilogo, Elementi, Timeline, Kanban e Grafo, a tutta finestra Riepilogo, Kanban e Grafo; Inbox in cima alla barra laterale con il lavoro di tutti i progetti; import da dentro un progetto; Riepilogo con sintesi di stato, Kanban con colonne libere; dipendenze e ricorrenze; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP per il lavoro aperto. Sito della documentazione con la versione nell'header |
 | **1.0.1-beta** | 28 ottobre 2026 | Punto di ripristino prima della 1.1.0-beta. JSON e altri file di testo importabili, menu Modifica (⌘C, ⌘V…); coda unica del motore e gestione della memoria, impostazioni automatiche sotto i 32 GB; chi ha prodotto sintesi e proposte (modello o Claude); sintesi e proposte fatte da Claude con «Copia per Claude»; «Segna momento con screenshot» e scorciatoie in tutte le app; distribuzione con DMG; riconoscimento delle stesse voci tra call diverse |
 | **1.0.0-beta** | 24 ottobre 2026 | Beta, non ancora distribuita: tutto quello che è descritto qui (fasi 0-3). La 1.0.0 sarà la prima versione distribuibile |
 
 ### Tornare a una versione precedente
-Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
+Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
 - **Codice e documentazione:** `git checkout v1.0.1-beta`, poi `xcodegen generate` e una build; `npm run docs:dev` mostra il sito di quella versione. Se si abbandona una versione, lo sviluppo riprende dal ramo della versione precedente (per esempio `release/1.0.x`) con i numeri di quella serie (1.0.2-beta…).
 - **Archivio:** le migrazioni del database vanno solo avanti. Una versione più vecchia potrebbe non leggere un archivio già aperto da una più nuova. Per tornare indietro si ripristina il **backup** fatto prima dell'aggiornamento (Impostazioni › Backup e trasferimento), oppure si prova la versione nuova su una **copia** dell'archivio (`scripts/try-branch.sh`).
 

@@ -1,6 +1,6 @@
 # ADR-0075 — Viste di progetto: come guardare e cosa mostrare
 
-- Stato: accettato (1.1.0-beta, in prova; aggiornato da [ADR-0076](0076-modalita-inbox-elementi.md))
+- Stato: accettato (1.1.0-beta; aggiornato da [ADR-0076](0076-modalita-inbox-elementi.md))
 - Data: 2026-10-28
 - Riferimenti: ADR-0037 (timeline e registro), ADR-0045 (grafo), ADR-0074 (lavoro aperto, Traccia e Gestisci); discussione con l'utente del 2026-10-28 sulle alternative della barra delle viste (stile B2)
 

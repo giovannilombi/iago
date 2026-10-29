@@ -1,6 +1,6 @@
 # ADR-0076 — Modalità Traccia semplice, Inbox ed Elementi
 
-- Stato: accettato (1.1.0-beta, in prova)
+- Stato: accettato (1.2.0-beta)
 - Data: 2026-10-29
 - Riferimenti: ADR-0074 (lavoro aperto, Traccia e Gestisci), ADR-0075 (viste); discussione con l'utente del 2026-10-29 su quattro versioni di una proposta con le finestre di esempio
 
@@ -50,10 +50,8 @@
   - l'esclusione dei progetti in Traccia dalla Kanban di tutti.
 
   Di ADR-0075 sostituisce l'Elenco con «Mostra», l'elenco misto e il nome Mappa.
-- Nessuna migrazione dei dati. In `UserDefaults` restano solo preferenze di visualizzazione:
-  - interruttore del Grafo per progetto (`work.graphHidden`);
-  - finestre già chiuse per sempre (`work.modeIntro.dismissed`);
-  - modalità dei clienti per i progetti nuovi (`work.clientModes`);
-  - progetti con una modalità scelta a mano (`work.modeChosen`).
+- Nessuna migrazione dei dati.
+- Nelle impostazioni dell'archivio, perché passino con il backup: la modalità di un cliente per i progetti nuovi (`work.clientMode.<id>`) e i progetti con una modalità scelta a mano (`work.modeChosen`).
+- In `UserDefaults`, solo preferenze di visualizzazione di quel Mac: l'interruttore del Grafo per progetto (`work.graphHidden`) e le finestre già chiuse per sempre (`work.modeIntro.dismissed`).
 - Tolta `Archive.trackedProjectIDs()`.
 - Il tour dimostrativo non mostra le finestre della prima visita: le mostra lui. A fine giro si chiude con `exit(0)`, perché `terminate` lasciava l'app aperta.
