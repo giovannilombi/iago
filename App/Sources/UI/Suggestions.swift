@@ -21,7 +21,7 @@ extension AppModel {
                 decision.model = Provenance.decisionModel(of: suggestion)
                 // On calls the user's own voice is "Io": that owner is the user, by the name IAGO knows them by.
                 let owner = content.owner.flatMap { name in
-                    name.caseInsensitiveCompare("Io") == .orderedSame || name == meName
+                    MeLabel.isMe(name) || name == meName
                         ? meName : DecisionDraft.isPersonName(name) ? name : nil
                 }
                 let waitingOn = content.waitingOn.flatMap { DecisionDraft.isPersonName($0) ? $0 : nil }
@@ -79,7 +79,7 @@ extension AppModel {
         draft.supersedesID = content.supersedesID
         // As in `accept`: "Io" on a call is the user.
         if let owner = content.owner.flatMap({ name in
-            name.caseInsensitiveCompare("Io") == .orderedSame || name == meName
+            MeLabel.isMe(name) || name == meName
                 ? meName : DecisionDraft.isPersonName(name) ? name : nil
         }) {
             draft.people = [owner]

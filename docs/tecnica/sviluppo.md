@@ -40,9 +40,24 @@ Ogni commit che cambia il comportamento dell'app aggiorna la documentazione nell
 - **Livello Tecnico** di questo sito (`docs/tecnica`), se cambia come è fatto: pacchetti, dati, pipeline, modelli, rete.
 - **ADR** se cambia una decisione, `docs/prove-tester.md` per le prove, `docs/stato.md` per lo stato.
 
+## Italiano e inglese (ADR-0077)
+L'italiano è la fonte; ogni testo cambiato si aggiorna anche in inglese, nello stesso commit.
+- **Stringhe dell'app:** il String Catalog (`App/Resources/Localizable.xcstrings`) si riempie con l'estrazione di Xcode (`SWIFT_EMIT_LOC_STRINGS`). `scripts/i18n.py missing mancanti.json` elenca le stringhe senza inglese; tradotte in un oggetto `{id: inglese}`, `scripts/i18n.py apply traduzioni.json` le scrive nel catalogo.
+- **Documenti:**
+  - `docs/x.md` ha la traduzione in `docs/en/x.md`, la guida in `App/Resources/Guide/en/` con le schermate in inglese;
+  - `README.md`, `README-collaborators.md` e `CLAUDE.md` hanno `*.en.md`;
+  - dopo aver tradotto, `scripts/i18n.py record <file inglesi>` registra in `i18n/sources.json` la versione italiana da cui vengono.
+- **Nomi:** `i18n/glossary.tsv` fissa i nomi inglesi di interfaccia e concetti.
+- **Controllo:** `scripts/i18n.py check`, nell'hook `pre-commit` e in `privacy.yml`. Blocca se:
+  - manca una traduzione;
+  - l'italiano è cambiato dopo la traduzione;
+  - una stringa del catalogo non ha l'inglese;
+  - una stringa del codice non è ancora nel catalogo.
+- **Sito:** VitePress con l'italiano alla radice e l'inglese sotto `/en/` (`locales` in `docs/.vitepress/config.mts`); `scripts/docs-sync-guide.mjs` copia entrambe le guide.
+
 ## Controlli di git
 `scripts/bootstrap.sh` attiva gli hook in `scripts/git-hooks`:
-- `pre-commit`: niente dati reali nei file (audio, archivi, modelli, nomi di `Config/private-terms.local`, indirizzi dei servizi di posta personali) e autore e committer con l'indirizzo anonimo di GitHub;
+- `pre-commit`: niente dati reali nei file (audio, archivi, modelli, nomi di `Config/private-terms.local`, indirizzi dei servizi di posta personali), autore e committer con l'indirizzo anonimo di GitHub, italiano e inglese allineati (`scripts/i18n.py check`);
 - `commit-msg`: niente co-autore IA, niente indirizzi email nel messaggio, co-autori del team aggiunti da soli, documentazione nello stesso commit;
 - `pre-push`: ricontrolla autore, committer e messaggio di ogni commit che sta per uscire, anche quelli fatti saltando gli hook.
 
@@ -52,7 +67,7 @@ L'hook `commit-msg` blocca anche un commit che tocca il codice dell'app o dei pa
 - `ci.yml`, su macOS, solo per le PR che toccano codice: controllo delle API di rete e test dei pacchetti. I minuti macOS contano 10 volte, quindi niente esecuzioni inutili.
 - `deploy.yml`, su Ubuntu: compila il sito a ogni PR che tocca la documentazione e lo pubblica su GitHub Pages a ogni push su `main` (quando il repository è pubblico).
 - `engine.yml`, solo a mano: build con MLX.
-- `privacy.yml`, su Ubuntu, a ogni PR e push su `main`: nessun indirizzo email personale nei commit (autore, committer, messaggio) e nei file. Pochi secondi; i nomi reali restano un controllo locale, perché il loro elenco non lascia il Mac.
+- `privacy.yml`, su Ubuntu, a ogni PR e push su `main`: nessun indirizzo email personale nei commit (autore, committer, messaggio) e nei file; italiano e inglese allineati. Pochi secondi; i nomi reali restano un controllo locale, perché il loro elenco non lascia il Mac.
 - I test che usano Vision, PDFKit e gli importatori di AppKit hanno un limite di tempo, e ogni pacchetto si ferma dopo 10 minuti con il suo nome.
 - I tre test di OCR con Vision **non girano in CI**: sui runner macOS di GitHub Vision si blocca senza errore. Girano sul Mac di chi sviluppa con `scripts/test-packages.sh` (si saltano dove è impostata la variabile `CI`).
 - L'HTML importato si converte con il convertitore proprio, senza WebKit, che si bloccava fuori dal thread principale.

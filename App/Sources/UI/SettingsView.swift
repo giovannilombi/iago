@@ -149,13 +149,14 @@ private struct GeneralPane: View {
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
 
     var body: some View {
+        LanguageGroup()
         if let updates = model.updates { UpdatesGroup(updates: updates) }
         SettingsGroup(
             title: String(localized: "Il tuo nome"),
             footnote: String(
                 localized: "Nelle trascrizioni la tua voce (il microfono del Mac) compare con questo nome.")
         ) {
-            TextField(String(localized: "Io"), text: $name).textFieldStyle(.roundedBorder).frame(maxWidth: 260)
+            TextField(MeLabel.defaultName, text: $name).textFieldStyle(.roundedBorder).frame(maxWidth: 260)
                 .onSubmit { save() }
                 .onChange(of: name) { save() }
         }
@@ -176,13 +177,46 @@ private struct GeneralPane: View {
                     }
                 }
         }
-        .onAppear { name = (try? model.archive.setting(TranscriptionService.meLabelKey)) ?? "Io" }
+        .onAppear { name = (try? model.archive.setting(TranscriptionService.meLabelKey)) ?? MeLabel.defaultName }
         if let shortcuts = model.shortcuts { ShortcutSettings(model: model, shortcuts: shortcuts) }
     }
 
     private func save() {
         let value = name.trimmingCharacters(in: .whitespaces)
         model.perform { try model.archive.setSetting(TranscriptionService.meLabelKey, value.isEmpty ? nil : value) }
+    }
+}
+
+/// «Lingua» (ADR-0077): Italian or English. macOS applies the language at launch, so IAGO restarts; what it writes
+/// from then on (summaries, proposals) is in the new language too.
+private struct LanguageGroup: View {
+    @State private var selection = AppLanguage.current
+    @State private var asking = false
+
+    var body: some View {
+        SettingsGroup(
+            title: String(localized: "Lingua"),
+            footnote: String(
+                localized:
+                    "La lingua dell'app, della guida e di ciò che IAGO scrive per te (sintesi, proposte, risposte). Per cambiarla IAGO si riavvia."
+            )
+        ) {
+            Picker(String(localized: "Lingua"), selection: $selection) {
+                ForEach(AppLanguage.allCases) { Text(verbatim: $0.name).tag($0) }
+            }
+            .pickerStyle(.segmented).labelsHidden().fixedSize()
+            .onChange(of: selection) { _, language in
+                guard language != AppLanguage.current else { return }
+                language.choose()
+                asking = true
+            }
+        }
+        .alert(String(localized: "Riavviare IAGO?"), isPresented: $asking) {
+            Button(String(localized: "Riavvia ora")) { AppLanguage.relaunch() }
+            Button(String(localized: "Più tardi"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "La nuova lingua si vede dal prossimo avvio di IAGO."))
+        }
     }
 }
 
@@ -677,7 +711,7 @@ private struct CategoriesPane: View {
                 let members = categories.filter { $0.family == family }
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Text(family).font(.headline)
+                        Text(CategoryFamilyName.display(family)).font(.headline)
                         Spacer()
                         Button(
                             members.allSatisfy(\.archived)
@@ -758,7 +792,8 @@ private struct CategoriesPane: View {
                 .disabled(category.family == nil)
             Divider()
             ForEach(IAGOStore.Category.families, id: \.self) { family in
-                Button(family) { update(category) { $0.family = family } }.disabled(category.family == family)
+                Button(CategoryFamilyName.display(family)) { update(category) { $0.family = family } }.disabled(
+                    category.family == family)
             }
         } label: {
             Image(systemName: "square.stack.3d.up")

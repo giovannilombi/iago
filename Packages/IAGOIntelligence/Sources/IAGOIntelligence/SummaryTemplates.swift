@@ -1,4 +1,5 @@
 import Foundation
+import IAGOCore
 
 /// A summary template in Meetily's JSON format (github.com/Zackriya-Solutions/meeting-minutes, MIT), so templates can
 /// be exchanged with it (ADR-0054).
@@ -91,7 +92,10 @@ public enum SummaryLibrary {
     static let nextSteps = S(
         "Prossimi passi", "Cosa si farà dopo la riunione e chi lo fa.", columns: ["Chi", "Cosa", "Entro"])
 
-    public static let all: [SummaryTemplate] = [
+    /// The library in the language of the app (ADR-0077): same ids in Italian and English.
+    public static var all: [SummaryTemplate] { ContentLanguage.current == .en ? englishLibrary : italianLibrary }
+
+    public static let italianLibrary: [SummaryTemplate] = [
         .init(
             id: "standard", name: "Riunione standard",
             description: "Per riunioni generiche: esiti, decisioni e attività.", basedOn: "Meetily",

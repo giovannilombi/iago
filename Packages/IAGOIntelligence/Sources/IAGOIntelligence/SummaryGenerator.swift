@@ -138,6 +138,7 @@ public enum SummaryGenerator {
             - Non inventare nomi, numeri, date o importi. Usa i nomi di chi parla solo come compaiono nella trascrizione.
             - Nei punti con le colonne, "testo" dice solo cosa: chi e quando vanno nei "campi", non ripeterli nel testo.
             - Se un campo non è detto, non scriverlo (niente "non specificato").
+            - Scrivi "testo" e i "campi" \(ContentLanguage.current.inLanguage); la "citazione" resta come è detta.
             - Se in questo pezzo una sezione non ha niente, lasciala vuota: va benissimo.
 
             Rispondi solo con JSON valido e compatto (su una riga, senza rientri), senza altro testo:
@@ -323,7 +324,7 @@ public enum SummaryGenerator {
         let answer = try await engine.generate(
             LLMRequest(
                 system: """
-                    Scrivi in italiano al massimo 3 frasi che riassumono la riunione «\(input.title)», usando SOLO \
+                    Scrivi \(ContentLanguage.current.inLanguage) al massimo 3 frasi che riassumono la riunione «\(input.title)», usando SOLO \
                     i punti che ti do. Non aggiungere fatti, nomi o numeri che non ci sono. Solo il testo, senza titoli.
                     """, prompt: material, maxTokens: 300))
         let allowed = Set(KeyPointExtractor.words(material).filter { $0.contains(where: \.isNumber) })
@@ -343,21 +344,25 @@ public enum SummaryGenerator {
 
     static func render(_ input: Input, brief: String?, sections: [(title: String, points: [Point])]) -> String {
         var lines: [String] = []
-        if let brief { lines += ["## In breve", "", brief, ""] }
+        let language = ContentLanguage.current
+        if let brief { lines += ["## \(language.pick(it: "In breve", en: "In brief"))", "", brief, ""] }
         var facts: [String] = []
         if let date = input.date {
             facts.append(
-                "**Data:** \(date.formatted(.dateTime.day().month(.wide).year().locale(Locale(identifier: "it"))))")
+                "**\(language.pick(it: "Data", en: "Date")):** \(date.formatted(.dateTime.day().month(.wide).year().locale(language.locale)))"
+            )
         }
         if !input.participants.isEmpty {
-            facts.append("**Partecipanti:** \(input.participants.joined(separator: ", "))")
+            facts.append(
+                "**\(language.pick(it: "Partecipanti", en: "Participants")):** \(input.participants.joined(separator: ", "))"
+            )
         }
         if !facts.isEmpty { lines += [facts.joined(separator: " · "), ""] }
         for (index, section) in input.template.sections.enumerated() {
             let points = sections[index].points
             lines += ["## \(section.title)", ""]
             guard !points.isEmpty else {
-                lines += ["_Non emerso_", ""]
+                lines += ["_\(language.pick(it: "Non emerso", en: "Not mentioned"))_", ""]
                 continue
             }
             let columns = section.columns

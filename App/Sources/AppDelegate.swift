@@ -125,6 +125,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     try? archive.archive.setSetting(AppModel.pinnedLabelsKey, "stream:\(stream)")
                     model.reload()
                 }
+                // ADR-0077: names IAGO gave by itself in the app's language, and the engine writing in it.
+                AppLanguage.applyAtLaunch(archive: archive.archive)
+                model.reload()
                 await archive.buildSearchIndexIfNeeded()
                 await EngineBench.runIfRequested(
                     archive: archive.archive, engine: engine, root: paths.root, notifier: notifier)

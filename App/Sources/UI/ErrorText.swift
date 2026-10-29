@@ -118,7 +118,9 @@ enum ErrorText {
     private static func unknown(_ error: Error) -> String {
         if String(reflecting: type(of: error)).hasPrefix("GRDB.") {
             return String(
-                localized: "Errore del database: la modifica non è stata salvata. Dettaglio tecnico: \(error)")
+                localized:
+                    "Errore del database: la modifica non è stata salvata. Dettaglio tecnico: \(String(describing: error))"
+            )
         }
         let nsError = error as NSError
         if nsError.domain == NSCocoaErrorDomain || nsError.domain == NSURLErrorDomain
@@ -126,6 +128,6 @@ enum ErrorText {
         {
             return nsError.localizedDescription
         }
-        return String(localized: "Operazione non riuscita. Dettaglio tecnico: \(error)")
+        return String(localized: "Operazione non riuscita. Dettaglio tecnico: \(String(describing: error))")
     }
 }

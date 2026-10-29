@@ -1,4 +1,4 @@
-# No personal email addresses in the repository (ADR-0065), checked on GitHub too: the local hooks can be skipped or
+# No personal email addresses in the repository (ADR-0065), and Italian and English aligned (ADR-0077), checked on GitHub too: the local hooks can be skipped or
 # missing on a new clone, and merges made on the site are commits as well. Ubuntu, a few seconds, on every pull request
 # and every push to main. Real names stay a local check: their list (Config/private-terms.local) never leaves the Mac.
 name: Privacy
@@ -36,3 +36,5 @@ jobs:
           fi
       - name: Files (personal addresses, recordings, archives, models)
         run: scripts/check-private-data.sh --all
+      - name: Italian and English aligned (ADR-0077)
+        run: python3 scripts/i18n.py check

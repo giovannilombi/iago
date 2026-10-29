@@ -2,11 +2,13 @@
 // "Uso | Tecnico": who reads the site chooses the level of detail. The last page of each level is remembered.
 import { computed } from 'vue'
 import { useRoute, useRouter, withBase } from 'vitepress'
-import { levelOf } from './level'
+import { levelOf, localeOf } from './level'
 
 const route = useRoute()
 const router = useRouter()
-const current = computed(() => levelOf(route.path.replace(/^\/iago/, '')))
+const current = computed(() => levelOf(relative(route.path)))
+const locale = computed(() => localeOf(relative(route.path)))
+const en = computed(() => locale.value === '/en')
 
 function relative(path: string) {
   return path.replace(/^\/iago/, '')
@@ -15,20 +17,20 @@ function relative(path: string) {
 function go(level: 'uso' | 'tecnico') {
   if (level === current.value) return
   try {
-    localStorage.setItem(`iago-level-${current.value}`, relative(route.path))
+    localStorage.setItem(`iago-level${locale.value}-${current.value}`, relative(route.path))
   } catch {}
-  let target = level === 'uso' ? '/guida/primi-passi' : '/tecnica/'
+  let target = locale.value + (level === 'uso' ? '/guida/primi-passi' : '/tecnica/')
   try {
-    target = localStorage.getItem(`iago-level-${level}`) ?? target
+    target = localStorage.getItem(`iago-level${locale.value}-${level}`) ?? target
   } catch {}
   router.go(withBase(target))
 }
 </script>
 
 <template>
-  <div class="level-toggle" role="group" aria-label="Livello di dettaglio">
-    <button :aria-pressed="current === 'uso'" @click="go('uso')" title="Come si usa IAGO">Uso</button>
-    <button :aria-pressed="current === 'tecnico'" @click="go('tecnico')" title="Come è fatto IAGO: architettura, scelte, modelli">Tecnico</button>
+  <div class="level-toggle" role="group" :aria-label="en ? 'Level of detail' : 'Livello di dettaglio'">
+    <button :aria-pressed="current === 'uso'" @click="go('uso')" :title="en ? 'How to use IAGO' : 'Come si usa IAGO'">{{ en ? 'Usage' : 'Uso' }}</button>
+    <button :aria-pressed="current === 'tecnico'" @click="go('tecnico')" :title="en ? 'How IAGO is built: architecture, choices, models' : 'Come è fatto IAGO: architettura, scelte, modelli'">{{ en ? 'Technical' : 'Tecnico' }}</button>
   </div>
 </template>
 

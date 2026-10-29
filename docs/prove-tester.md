@@ -228,6 +228,14 @@ Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-bran
 - [ ] 10i.22 Apri un cliente per la prima volta: la finestra chiede la modalità dei suoi progetti. Scegli Traccia: i progetti a cui non avevi scelto una modalità passano in Traccia, e un progetto nuovo del cliente nasce in Traccia.
 - [ ] 10i.23 Con il Riepilogo (o la Kanban) aperto, apri «Chiedi a IAGO»: la barra laterale resta al suo posto, con l'Inbox sotto i pulsanti della finestra. Nella Kanban apri una scheda: nel pannello a destra i pulsanti («Segna come fatta», «Modifica…») sono interi e la data sta sotto.
 
+## 10l. Italiano e inglese (1.2.2-beta)
+- [ ] 10l.1 Con un archivio nuovo (`scripts/try-branch.sh --fresh`), la prima schermata chiede «Lingua · Language». Scegli English: IAGO si riavvia in inglese e la configurazione riparte dal benvenuto, in inglese. L'esempio iniziale si chiama Test Client, Test Pj. 1 e Test Pj. 2.
+- [ ] 10l.2 Impostazioni › Generale › Lingua: passa a Italiano. Compare «Riavviare IAGO?»; *Riavvia ora* riapre IAGO in italiano, con l'esempio iniziale e le categorie SAL, Interna e Altro di nuovo in italiano (se non li avevi rinominati).
+- [ ] 10l.3 In inglese, la guida (? Guida) è in inglese, con le schermate in inglese.
+- [ ] 10l.4 In inglese, genera la sintesi di una call e cerca le proposte: sintesi e proposte sono in inglese, con titoli inglesi («In brief»), mentre le citazioni restano come sono state dette.
+- [ ] 10l.5 In inglese, nella ricerca `category:` suggerisce le categorie (anche `categoria:` funziona).
+- [ ] 10l.6 Sito della documentazione: il selettore della lingua porta da ogni pagina alla stessa pagina in inglese, e il pulsante Uso/Tecnico resta nella lingua scelta.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

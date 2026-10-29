@@ -13,9 +13,10 @@ struct OnboardingView: View {
     let finish: () -> Void
 
     enum Step: Int, CaseIterable {
-        case welcome, requirements, name, microphone, systemAudio, notifications, models, done
+        case language, welcome, requirements, name, microphone, systemAudio, notifications, models, done
     }
-    @State private var step = Step.welcome
+    /// The language comes first, before anything is read (ADR-0077); once chosen the tour starts from the welcome.
+    @State private var step = AppLanguage.wasChosen ? Step.welcome : Step.language
 
     var body: some View {
         VStack(spacing: 0) {
@@ -28,6 +29,7 @@ struct OnboardingView: View {
             .padding(.horizontal, 28).padding(.top, 18)
             Group {
                 switch step {
+                case .language: LanguageStep { step = .welcome }
                 case .welcome: WelcomeStep(model: model)
                 case .requirements: RequirementsStep(model: model)
                 case .name: NameStep(model: model)
@@ -42,7 +44,7 @@ struct OnboardingView: View {
             .padding(28)
             Divider()
             HStack {
-                if step != .welcome {
+                if step != .welcome, step != .language {
                     Button(String(localized: "Indietro")) { step = Step(rawValue: step.rawValue - 1)! }
                 }
                 Spacer()
@@ -50,6 +52,8 @@ struct OnboardingView: View {
                 Spacer()
                 if step == .done {
                     Button(String(localized: "Inizia a usare IAGO"), action: finish).keyboardShortcut(.defaultAction)
+                } else if step == .language {
+                    EmptyView()
                 } else {
                     Button(String(localized: "Avanti")) { step = Step(rawValue: step.rawValue + 1)! }
                         .keyboardShortcut(.defaultAction)
@@ -58,6 +62,36 @@ struct OnboardingView: View {
             .padding(16)
         }
         .frame(width: 640, height: 520)
+    }
+}
+
+/// First of all, the language: both names written in their own language, since nothing else can be read yet. A
+/// different language than the running one restarts IAGO, which opens again on the welcome.
+private struct LanguageStep: View {
+    let next: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            Image(systemName: "globe").font(.system(size: 30)).foregroundStyle(.tint)
+            Text("Lingua · Language").font(.title).bold()
+            Text("Scegli la lingua di IAGO. Potrai cambiarla in Impostazioni › Generale.")
+                .foregroundStyle(.secondary)
+            Text("Choose IAGO's language. You can change it in Settings › General.").foregroundStyle(.secondary)
+            HStack(spacing: 14) {
+                ForEach(AppLanguage.allCases) { language in
+                    Button {
+                        let restart = language != AppLanguage.current
+                        language.choose()
+                        if restart { AppLanguage.relaunch() } else { next() }
+                    } label: {
+                        Text(verbatim: language.name).font(.title2.weight(.semibold))
+                            .frame(maxWidth: .infinity).padding(.vertical, 18)
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
+            .padding(.top, 8)
+        }
     }
 }
 

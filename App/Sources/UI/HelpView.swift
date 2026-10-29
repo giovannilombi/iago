@@ -64,7 +64,14 @@ struct GuideChapter: Identifiable {
     let symbol: String
     let text: String
 
-    static let folder = Bundle.main.url(forResource: "Guide", withExtension: nil)
+    /// The guide in the app's language (ADR-0077): `Guide` in Italian, `Guide/en` in English.
+    static let folder: URL? = {
+        let italian = Bundle.main.url(forResource: "Guide", withExtension: nil)
+        guard AppLanguage.current == .en, let english = italian?.appendingPathComponent("en"),
+            FileManager.default.fileExists(atPath: english.path)
+        else { return italian }
+        return english
+    }()
 
     static let all: [GuideChapter] = {
         guard let folder,

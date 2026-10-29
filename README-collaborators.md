@@ -58,8 +58,12 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 
 ### Lingue
 - Codice, tipi, commenti e commit: **inglese**.
-- Interfaccia: **italiano**, con lo String Catalog predisposto per l'inglese.
-- Documenti (`docs/`, README, questi file): **italiano**, frasi brevi e dirette.
+- Interfaccia, guida e documenti: **italiano e inglese** (ADR-0077). L'italiano è la fonte; l'inglese si aggiorna **nello stesso commit**:
+  - stringhe dell'app: `scripts/i18n.py missing /tmp/mancanti.json`, traduci, `scripts/i18n.py apply traduzioni.json`;
+  - documenti: `docs/x.md` → `docs/en/x.md`, guida → `App/Resources/Guide/en/`, `README.md`, `README-collaborators.md` e `CLAUDE.md` → `*.en.md`; poi `scripts/i18n.py record <file inglesi>`;
+  - i nomi inglesi sono in `i18n/glossary.tsv`.
+- L'hook `pre-commit` e la CI eseguono `scripts/i18n.py check`: se manca una traduzione il commit si ferma e dice cosa manca. Con Claude Code la traduzione la fa lui durante il lavoro.
+- Frasi brevi e dirette, in entrambe le lingue.
 
 ### Decisioni (ADR)
 - Una decisione rilevante si scrive come ADR in `docs/adr/`, con il formato dell'indice, e si aggiunge una riga all'indice.
@@ -94,7 +98,7 @@ Comandi utili, con la spiegazione, nel README › Sviluppo e in `CLAUDE.md` › 
 
 ## 5. Stato degli ADR
 L'indice completo con lo stato è in [`docs/adr/README.md`](docs/adr/README.md). Oggi:
-- **Accettati e fatti:** da 0001 a 0073, tranne quelli sotto. Il sito di 0068 è pronto ma andrà online solo con il repository pubblico.
+- **Accettati e fatti:** da 0001 a 0077, tranne quelli sotto. Il sito di 0068 è pronto ma andrà online solo con il repository pubblico.
 - **Da decidere:**
   - **0057**, progetti condivisi tramite una cartella cloud: è il cuore della fase 4. Quando viene accettato, supera il backend di 0012 (sincronizzazione su Cloudflare).
   - **0067**, MiniCPM al posto di Qwen 3.5 4B o in aggiunta: servono le prove descritte nell'ADR.
@@ -105,8 +109,8 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 
 ## 6. Prove
 - Le prove manuali sono in [`docs/prove-tester.md`](docs/prove-tester.md), ordinate e scritte per chi non conosce l'app.
-- **Ogni tester ha una issue su GitHub**, "Prove 1.2.1-beta — Nome Cognome", con tutte le prove come caselle da spuntare. Si spunta la casella quando la prova funziona; per un problema si scrive un commento con il numero della prova (es. "3h.4"), cosa si è fatto e cosa si è visto. Tutti i collaboratori leggono le issue e i commenti.
-- Una nuova tornata di prove (nuova beta, nuovo tester) si apre con `scripts/new-test-round.sh "Nome Cognome" 1.2.1-beta`: la issue prende le prove dalla versione attuale di `docs/prove-tester.md`.
+- **Ogni tester ha una issue su GitHub**, "Prove 1.2.2-beta — Nome Cognome", con tutte le prove come caselle da spuntare. Si spunta la casella quando la prova funziona; per un problema si scrive un commento con il numero della prova (es. "3h.4"), cosa si è fatto e cosa si è visto. Tutti i collaboratori leggono le issue e i commenti.
+- Una nuova tornata di prove (nuova beta, nuovo tester) si apre con `scripts/new-test-round.sh "Nome Cognome" 1.2.2-beta`: la issue prende le prove dalla versione attuale di `docs/prove-tester.md`.
 - Un difetto trovato diventa una issue a parte, collegata alla prova; la correzione arriva con una PR che la chiude.
 - Per le prove non servono dati reali. Chi prova con le proprie call tiene quei contenuti per sé: nei commenti si descrive il comportamento, non il contenuto.
 

@@ -155,7 +155,12 @@ public enum SuggestionEngine {
 
     // MARK: Tags
 
-    static let tagSystem = """
+    /// New tags in the language of the app (ADR-0077).
+    static var tagSystem: String {
+        tagSystemItalian.replacingOccurrences(of: "in italiano", with: ContentLanguage.current.inLanguage)
+    }
+
+    static let tagSystemItalian = """
         Scegli i temi di un contenuto di lavoro. Ricevi l'elenco dei TAG ESISTENTI e il testo.
         Scegli fino a 5 tag tra quelli esistenti che descrivono davvero il contenuto. Proponi al massimo 3 tag nuovi \
         solo se nessun tag esistente va bene: una o due parole, minuscole, in italiano.

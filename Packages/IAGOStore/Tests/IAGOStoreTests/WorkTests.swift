@@ -283,3 +283,25 @@ import Testing
         #expect(try archive.decision(blocked.id)?.status == .active)
     }
 }
+
+@Suite struct DefaultNamesTests {
+    @Test func relabelFollowsTheLanguageAndLeavesUserNamesAlone() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        _ = try archive.createStarterExampleIfNew()
+        let mine = try archive.createProject(name: "Portale")
+        try archive.relabelDefaults(to: "en")
+        let names = Set(try archive.projects().map(\.name))
+        #expect(names.contains("Test Pj. 1") && names.contains("Test Pj. 2") && names.contains("Portale"))
+        #expect(try archive.clients().first?.name == "Test Client")
+        #expect(try archive.categories(includeArchived: true).contains { $0.name == "Other" })
+        try archive.renameProject(mine.id, to: "Test Pj. 2 bis")
+        try archive.relabelDefaults(to: "it")
+        #expect(try archive.clients().first?.name == "Cliente Test")
+        #expect(try archive.projects().contains { $0.name == "Pj. Test 1" })
+        #expect(try archive.categories(includeArchived: true).contains { $0.name == "Altro" })
+        // Same language again: nothing to do.
+        try archive.relabelDefaults(to: "it")
+        #expect(try archive.projects().contains { $0.name == "Test Pj. 2 bis" })
+    }
+}
