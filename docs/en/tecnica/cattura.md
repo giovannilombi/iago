@@ -32,5 +32,5 @@ Local-only detection (ADR-0051):
 - **Apps using the microphone** (Teams, Zoom, Webex, FaceTime, Slack…), read from Core Audio process objects.
 - **Mac Calendar** with EventKit, for the title and the suggestion at start time; with several overlapping meetings `MeetingMatcher` picks the best candidate and, if uncertain, asks the user.
 - **Teams window titles** via Accessibility, to recognize the right meeting.
-- **Teams mute** via Accessibility (the microphone button) or via the **Teams local API** on `127.0.0.1:8124`, only if the user enables it: while muted, the microphone track receives a marker.
+- **Teams mute** via Accessibility (the microphone button) or via the **Teams local API** on `127.0.0.1:8124`, only if the user enables it: while muted, the microphone track receives a marker. The microphone button is looked for in Teams' windows away from the main thread (`TeamsAccessibility.search`, up to 6,000 elements): every 3 seconds if Teams uses the microphone or was in a meeting, every 20 seconds otherwise; once the button is found, only its label is read again every second.
 - The suggestion to record appears in an `NSPanel` with the choices (record, ignore, right meeting).

@@ -45,7 +45,7 @@ This guide is for people who join the project without knowing its history. It ex
 - An automatic check before every commit (`scripts/check-private-data.sh`) blocks forbidden files and words. Add to `Config/private-terms.local` the real names you use in your work: the file stays on your Mac.
 
 ### Authors and attribution
-- From the versions after 1.0.0-beta the rights belong to **Giovanni Lombi and Gianluca Sestito** (ADR-0065). Whoever makes the commit is its author; the other is added automatically as `Co-Authored-By`, by reading `Config/team.txt`.
+- The rights belong to **Giovanni Lombi** up to 1.3.x-beta, to **Giovanni Lombi and Gianluca Sestito** from 1.4.0-beta (ADR-0065). Every commit still names both: whoever makes the commit is its author; the other is added automatically as `Co-Authored-By`, by reading `Config/team.txt`.
 - **Never an AI as author or co-author**, and no "Generated with…" line in commits and PRs. The commit check blocks them.
 
 ### Git and GitHub
@@ -109,8 +109,8 @@ What remains to be done, in order, is in [`docs/stato.md`](docs/en/stato.md).
 
 ## 6. Testing
 - The manual tests are in [`docs/prove-tester.md`](docs/en/prove-tester.md), ordered and written for people who do not know the app.
-- **Each tester has an issue on GitHub**, "Prove 1.2.2-beta — Nome Cognome", with all the tests as checkboxes. Check the box when the test works; for a problem write a comment with the test number (e.g. "3h.4"), what you did and what you saw. All collaborators read the issues and comments.
-- A new round of tests (new beta, new tester) is opened with `scripts/new-test-round.sh "Nome Cognome" 1.2.2-beta`: the issue takes the tests from the current version of `docs/prove-tester.md`.
+- **Each tester has an issue on GitHub**, "Prove 1.2.3-beta — Nome Cognome", with all the tests as checkboxes. Check the box when the test works; for a problem write a comment with the test number (e.g. "3h.4"), what you did and what you saw. All collaborators read the issues and comments.
+- A new round of tests (new beta, new tester) is opened with `scripts/new-test-round.sh "Nome Cognome" 1.2.3-beta`: the issue takes the tests from the current version of `docs/prove-tester.md`.
 - A defect found becomes a separate issue, linked to the test; the fix comes with a PR that closes it.
 - Tests do not need real data. Whoever tests with their own calls keeps that content to themselves: comments describe the behavior, not the content.
 

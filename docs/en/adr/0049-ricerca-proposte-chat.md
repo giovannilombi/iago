@@ -98,3 +98,6 @@ The same rules as for the engine apply:
 ## Change of 2026-10-27 (ADR-0069)
 - "Engine and embeddings one at a time", "chat takes priority", and "with low memory the job is suspended" are implemented by the **single queue** of ADR-0069: chat interrupts the block in progress, which is then redone.
 - **"Suggest automatically"** is on by default only on Macs with 32 GB or more; below that, suggestions start from «Find suggestions», and the user can turn it back on.
+
+## Change of 2026-10-29
+- **Tags come from the item too:** the engine quotes the sentence that talks about each tag and IAGO looks for it in the text, as for the other suggestions; without the sentence, the tag passes only if its words are in the text. The list of existing tags is there to reuse names, not to pick topics: a tag of other calls with no ground in the item is not suggested.

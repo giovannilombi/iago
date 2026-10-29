@@ -96,8 +96,8 @@ final class CallDetector: NSObject, UNUserNotificationCenterDelegate {
     private func tick() async {
         let snapshot = await recorder.snapshot()
         let recording = snapshot.state != .idle
-        teamsAX.poll()
         let apps = CallActivity.current()
+        teamsAX.poll(teamsUsesMic: apps.contains { $0.name == "Teams" })
         micSince = apps.isEmpty ? nil : (micSince ?? Date())
         let micCall = micSince.map { Date().timeIntervalSince($0) >= 5 } ?? false
         let teamsInMeeting = teams.isInMeeting || teamsAX.buttonFound

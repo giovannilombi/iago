@@ -98,3 +98,6 @@ Valgono le stesse regole del motore:
 ## Modifica del 2026-10-27 (ADR-0069)
 - "Motore ed embedding uno alla volta", "la chat ha la precedenza" e "con poca memoria il job si sospende" sono implementati dalla **coda unica** di ADR-0069: la chat interrompe il blocco in corso, che poi si rifà.
 - **"Proponi automaticamente"** è acceso di default solo sui Mac da 32 GB in su; sotto, le proposte partono da «Cerca proposte», e l'utente può riaccenderlo.
+
+## Modifica del 2026-10-29
+- **Anche i tag vengono dall'elemento:** il motore cita la frase che parla di ogni tag e IAGO la cerca nel testo, come per le altre proposte; senza la frase, il tag passa solo se le sue parole sono nel testo. L'elenco dei tag esistenti serve a riusare i nomi, non a scegliere temi: un tag di altre call senza appiglio nell'elemento non viene proposto.

@@ -45,3 +45,8 @@
   - `pre-push` (`scripts/check-commit-emails.sh`): rechecks every commit about to go out, including those made with `--no-verify`, from a merge or from another program;
   - on GitHub, the `privacy.yml` workflow (Ubuntu, a few seconds) runs the same checks on every PR and every push to `main`, because local hooks can be skipped and a new clone does not have them until it runs `scripts/bootstrap.sh`.
 - **Each author's GitHub account:** in Settings › Emails, "Keep my email addresses private" (merges made from the website use the anonymous address) and "Block command line pushes that expose my email".
+
+## Change of 2026-10-29 (rights)
+- The rights belong to **Giovanni Lombi up to 1.3.x-beta** and to **Giovanni Lombi and Gianluca Sestito from 1.4.0-beta**. This replaces the "from the versions after 1.0.0-beta" of the change of 2026-10-24.
+- Commits still name both (`Co-Authored-By` added by the `commit-msg` hook).
+- Settings › About shows Giovanni Lombi up to 1.3.x-beta; the site names both and links to the README's credits.
