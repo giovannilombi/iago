@@ -6,6 +6,7 @@
 - **Incolla** un testo o un'email da *Importa*. Un JSON incollato o importato si vede in ordine, un valore per riga.
 - **Aggiungi a IAGO** da qualsiasi app: seleziona un testo › tasto destro › *Servizi* › *Aggiungi a IAGO*.
 - Dal menu dell'icona di IAGO {{icona}}: **Importa file…**.
+- **Da dentro un progetto:** *Aggiungi › Importa file ed elementi…*. Trascini, scegli dal Mac, incolli o scrivi un testo, e tutto va direttamente in quel progetto (e negli stream che scegli), senza passare da *Elementi da classificare*.
 
 Le email vengono riconosciute (mittente, destinatari, conversazione) e IAGO propone il progetto in base alle persone.
 
