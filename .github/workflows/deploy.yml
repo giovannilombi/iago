@@ -1,7 +1,8 @@
 # Documentation site (VitePress) on GitHub Pages, from the official VitePress workflow (ADR-0068).
-# - Pull requests: the site is built (broken links fail the build), on Ubuntu, so docs and guide stay publishable.
-# - Push to main: build and deploy. GitHub Free has no Pages for private repositories, so while giovannilombi/iago is
-#   private the deploy is skipped; the site goes live by itself on the first push after the repository becomes public.
+# - Push to main: build and deploy, only once giovannilombi/iago is public (GitHub Free has no Pages for private
+#   repositories); while it is private the job is skipped and uses no minutes.
+# - Manually (`gh workflow run deploy.yml --ref <branch>`), when the owner asks for it: builds the site (broken links
+#   fail the build). Before every PR the same build runs on the developer's Mac (`npm run docs:build`).
 name: Deploy docs
 
 on:
@@ -12,14 +13,6 @@ on:
       - "App/Resources/Guide/**"
       - "Design/iago-logo.svg"
       - "Design/iago-menubar-colors.svg"
-      - "scripts/docs-sync-guide.mjs"
-      - "package.json"
-      - "package-lock.json"
-      - ".github/workflows/deploy.yml"
-  pull_request:
-    paths:
-      - "docs/**"
-      - "App/Resources/Guide/**"
       - "scripts/docs-sync-guide.mjs"
       - "package.json"
       - "package-lock.json"
@@ -37,6 +30,7 @@ concurrency:
 
 jobs:
   build:
+    if: ${{ github.event_name == 'workflow_dispatch' || !github.event.repository.private }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

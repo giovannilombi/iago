@@ -27,7 +27,7 @@ The complete team rules are in [`README-collaborators.md`](https://github.com/gi
 | `swift-format format -i -r App Packages` | formatting |
 
 ## Rules that matter
-- **Branches and PRs:** one branch per piece of work, merge to `main` only through a PR, with green CI and the other person's OK.
+- **Branches and PRs:** one branch per piece of work, merge to `main` only through a PR, with the tests and the site build done locally and the other person's OK.
 - **Languages:** code and commits in English, interface and documents in Italian.
 - **Decisions:** every relevant choice is an [ADR](/en/adr/); an accepted ADR is not rewritten, it is amended with a dated section or superseded.
 - **Data:** never real data in the repository (ADR-0065); the app contains no content (ADR-0066).
@@ -48,7 +48,7 @@ Italian is the source; every changed text is also updated in English, in the sam
   - `README.md`, `README-collaborators.md` and `CLAUDE.md` have `*.en.md`;
   - after translating, `scripts/i18n.py record <english files>` records in `i18n/sources.json` the Italian version they come from.
 - **Names:** `i18n/glossary.tsv` fixes the English names of interface elements and concepts.
-- **Check:** `scripts/i18n.py check`, in the `pre-commit` hook and in `privacy.yml`. It blocks if:
+- **Check:** `scripts/i18n.py check`, in the `pre-commit` hook and in `privacy.yml` (when it is run). It blocks if:
   - a translation is missing;
   - the Italian changed after the translation;
   - a catalog string has no English;
@@ -64,10 +64,11 @@ Italian is the source; every changed text is also updated in English, in the sam
 The `commit-msg` hook also blocks a commit that touches the code of the app or of the packages without touching the documentation, unless the message contains a `Docs: <motivo>` line (for example `Docs: refactoring interno, nessun effetto visibile`).
 
 ## CI
-- `ci.yml`, on macOS, only for PRs that touch code: network API check and package tests. macOS minutes count 10 times, so no unnecessary runs.
-- `deploy.yml`, on Ubuntu: builds the site on every PR that touches the documentation and publishes it on GitHub Pages on every push to `main` (when the repository is public).
-- `engine.yml`, manual only: build with MLX.
-- `privacy.yml`, on Ubuntu, on every PR and push to `main`: no personal email address in commits (author, committer, message) or in files; Italian and English in sync. A few seconds; real names remain a local check, because their list does not leave the Mac.
+All workflows run **only by hand** (`gh workflow run <file> --ref <branch>`), when needed: GitHub Free minutes are few, and in October 2026 they ran out. Before every PR the package tests and the site build run locally; the hooks do the other checks.
+- `ci.yml`, on macOS: network API check and package tests, about 4 minutes, which GitHub counts 10 times.
+- `deploy.yml`, on Ubuntu: builds the site; publishes it on GitHub Pages by itself on every push to `main` only once the repository is public (while private the job is skipped and uses no minutes).
+- `engine.yml`: build with MLX.
+- `privacy.yml`, on Ubuntu: no personal email address in commits (author, committer, message) or in files; Italian and English in sync. A few seconds; real names remain a local check, because their list does not leave the Mac.
 - Tests that use Vision, PDFKit and the AppKit importers have a time limit, and each package stops after 10 minutes with its name.
 - The three Vision OCR tests **do not run in CI**: on GitHub's macOS runners Vision hangs without an error. They run on the developer's Mac with `scripts/test-packages.sh` (they are skipped where the `CI` variable is set).
 - Imported HTML is converted with IAGO's own converter, without WebKit, which used to hang off the main thread.

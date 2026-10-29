@@ -118,7 +118,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 2. l'API locale di Teams (`127.0.0.1`), se la attivi;
 3. il controllo degli aggiornamenti firmati su GitHub Releases.
 
-Uno script in CI (`scripts/check-network-apis.sh`) fallisce se nel codice compare una connessione fuori da questi punti.
+Uno script (`scripts/check-network-apis.sh`, lanciato con i test) fallisce se nel codice compare una connessione fuori da questi punti.
 
 ## Installazione
 **Requisiti:**
@@ -292,15 +292,15 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 - **301 test automatici** nei pacchetti: Store 109, Capture 48, Intelligence 32, Transcription 29, Ingest 22, MCP 20, Core 15, Engine 15, Export 10, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
-- **CI** su ogni pull request (GitHub Actions, macOS): tutti i test e il controllo delle API di rete. Su Ubuntu, a ogni PR e push su `main`, il controllo che nessun indirizzo email personale entri nel repository. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
+- **Prima di ogni pull request**, sul Mac: tutti i test e il controllo delle API di rete (`scripts/test-packages.sh`); gli hook di git controllano dati reali, indirizzi email e lingue. La CI di GitHub Actions si lancia solo a mano, per risparmiare i minuti di GitHub Free. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
 - **Prove sul campo:** misure su call reali (`docs/benchmarks/`) e una **lista di prove per tester** ([`docs/prove-tester.md`](docs/prove-tester.md)), ordinata e fattibile da chi non conosce l'app.
-- **Lingue:** codice, commenti e commit in inglese; interfaccia in italiano (String Catalog, predisposto per l'inglese).
+- **Lingue:** codice, commenti e commit in inglese; interfaccia, guida e documenti in italiano e inglese (ADR-0077).
 
 ## Sviluppo
 ```bash
 scripts/bootstrap.sh          # genera IAGO.xcodeproj con XcodeGen (project.yml è la fonte)
 scripts/check-private-data.sh --all   # nessun dato reale nei file (anche come hook prima di ogni commit)
-scripts/check-commit-emails.sh main..HEAD   # nessun indirizzo email personale nei commit (hook prima del push e CI)
+scripts/check-commit-emails.sh main..HEAD   # nessun indirizzo email personale nei commit (hook prima del push)
 scripts/test-packages.sh      # swift test su tutti i pacchetti
 scripts/test-engine.sh        # build dell'app con MLX e shader Metal
 scripts/install-app.sh        # Release firmata installata in /Applications
@@ -311,7 +311,7 @@ scripts/release.sh 1.2.0 --notes "…" --github   # release firmata, appcast Spa
 - **Per collaborare:** [`README-collaborators.md`](README-collaborators.md) spiega regole, documenti, stato degli ADR, prove e come lavorare con Claude Code.
 - **Convenzioni:**
   - un branch per funzione;
-  - merge su `main` solo via pull request con CI verde;
+  - merge su `main` solo via pull request, con i test fatti in locale;
   - commit convenzionali;
   - per cambiare una decisione si scrive un nuovo ADR.
 - **Struttura:** `App/` (target macOS e guida in `App/Resources/Guide`), `Packages/` (i dieci pacchetti), `docs/` (ADR, benchmark, progetti, prove), `scripts/`.

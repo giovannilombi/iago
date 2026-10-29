@@ -42,6 +42,7 @@ The full description is in the [README](../../README.en.md). In short:
    - graph refinements.
 
 ## Latest changes
+- **2026-10-29, CI by hand only:** the GitHub Free minutes ran out, so every workflow runs only when the user asks; before every PR, Claude Code asks whether to run it and what that implies. The network API check now runs with `scripts/test-packages.sh`.
 - **2026-10-29:** version **1.2.3-beta**.
 - **2026-10-29, tags suggested only from the item** (ADR-0049, change): the engine picked tags of other calls from the list with no ground in the recording. Now every tag must have its sentence in the text, or its words in the text.
 - **2026-10-29, rights** (ADR-0065, change): Giovanni Lombi up to 1.3.x-beta, Giovanni Lombi and Gianluca Sestito from 1.4.0-beta; shorter README, site footer with both and a link to the credits.

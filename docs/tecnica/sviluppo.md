@@ -27,7 +27,7 @@ Le regole complete del team sono in [`README-collaborators.md`](https://github.c
 | `swift-format format -i -r App Packages` | formattazione |
 
 ## Regole che contano
-- **Branch e PR:** un branch per lavoro, merge su `main` solo con PR, CI verde e OK dell'altro.
+- **Branch e PR:** un branch per lavoro, merge su `main` solo con PR, test e build del sito fatti in locale e OK dell'altro.
 - **Lingue:** codice e commit in inglese, interfaccia e documenti in italiano.
 - **Decisioni:** ogni scelta rilevante è un [ADR](/adr/); un ADR accettato non si riscrive, si modifica con una sezione datata o si sostituisce.
 - **Dati:** mai dati reali nel repository (ADR-0065); l'app non contiene contenuti (ADR-0066).
@@ -48,7 +48,7 @@ L'italiano è la fonte; ogni testo cambiato si aggiorna anche in inglese, nello 
   - `README.md`, `README-collaborators.md` e `CLAUDE.md` hanno `*.en.md`;
   - dopo aver tradotto, `scripts/i18n.py record <file inglesi>` registra in `i18n/sources.json` la versione italiana da cui vengono.
 - **Nomi:** `i18n/glossary.tsv` fissa i nomi inglesi di interfaccia e concetti.
-- **Controllo:** `scripts/i18n.py check`, nell'hook `pre-commit` e in `privacy.yml`. Blocca se:
+- **Controllo:** `scripts/i18n.py check`, nell'hook `pre-commit` e in `privacy.yml` (quando si lancia). Blocca se:
   - manca una traduzione;
   - l'italiano è cambiato dopo la traduzione;
   - una stringa del catalogo non ha l'inglese;
@@ -64,10 +64,11 @@ L'italiano è la fonte; ogni testo cambiato si aggiorna anche in inglese, nello 
 L'hook `commit-msg` blocca anche un commit che tocca il codice dell'app o dei pacchetti senza toccare la documentazione, a meno che il messaggio non contenga una riga `Docs: <motivo>` (per esempio `Docs: refactoring interno, nessun effetto visibile`).
 
 ## CI
-- `ci.yml`, su macOS, solo per le PR che toccano codice: controllo delle API di rete e test dei pacchetti. I minuti macOS contano 10 volte, quindi niente esecuzioni inutili.
-- `deploy.yml`, su Ubuntu: compila il sito a ogni PR che tocca la documentazione e lo pubblica su GitHub Pages a ogni push su `main` (quando il repository è pubblico).
-- `engine.yml`, solo a mano: build con MLX.
-- `privacy.yml`, su Ubuntu, a ogni PR e push su `main`: nessun indirizzo email personale nei commit (autore, committer, messaggio) e nei file; italiano e inglese allineati. Pochi secondi; i nomi reali restano un controllo locale, perché il loro elenco non lascia il Mac.
+Tutti i workflow si lanciano **solo a mano** (`gh workflow run <file> --ref <branch>`), quando serve: i minuti di GitHub Free sono pochi e a ottobre 2026 sono finiti. Prima di ogni PR si fanno in locale test dei pacchetti e build del sito; gli hook fanno gli altri controlli.
+- `ci.yml`, su macOS: controllo delle API di rete e test dei pacchetti, circa 4 minuti, che GitHub conta 10 volte.
+- `deploy.yml`, su Ubuntu: compila il sito; lo pubblica su GitHub Pages da solo a ogni push su `main` solo quando il repository sarà pubblico (da privato il job si salta e non consuma minuti).
+- `engine.yml`: build con MLX.
+- `privacy.yml`, su Ubuntu: nessun indirizzo email personale nei commit (autore, committer, messaggio) e nei file; italiano e inglese allineati. Pochi secondi; i nomi reali restano un controllo locale, perché il loro elenco non lascia il Mac.
 - I test che usano Vision, PDFKit e gli importatori di AppKit hanno un limite di tempo, e ogni pacchetto si ferma dopo 10 minuti con il suo nome.
 - I tre test di OCR con Vision **non girano in CI**: sui runner macOS di GitHub Vision si blocca senza errore. Girano sul Mac di chi sviluppa con `scripts/test-packages.sh` (si saltano dove è impostata la variabile `CI`).
 - L'HTML importato si converte con il convertitore proprio, senza WebKit, che si bloccava fuori dal thread principale.

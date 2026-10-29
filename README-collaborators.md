@@ -50,11 +50,11 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 
 ### Git e GitHub
 - Un branch per lavoro (`feat/…`, `fix/…`, `docs/…`, `chore/…`), da `main` aggiornato.
-- Su `main` si entra solo con una **pull request**, con la CI verde e l'OK dell'altro. Niente push diretti su `main`: GitHub Free non lo impedisce, è disciplina.
+- Su `main` si entra solo con una **pull request**, con i test e la build del sito fatti in locale e l'OK dell'altro. Niente push diretti su `main`: GitHub Free non lo impedisce, è disciplina.
 - Commit convenzionali in inglese (`feat: …`, `fix: …`, `docs: …`).
 - **Build da sorgente e DMG:** chi sviluppa usa la propria build compilata dal codice (si aggiorna con `git pull` e una nuova build; non cerca aggiornamenti automatici). Il DMG delle release è per chi non sviluppa: per provarlo si usa un altro account utente o un altro Mac, perché due copie di IAGO sullo stesso account si contendono permessi e archivio.
 - **Mai un indirizzo email personale**, né nei file né nei commit (ADR-0065): si firma con l'indirizzo anonimo di GitHub. In GitHub › Settings › Emails vanno attivati "Keep my email addresses private" (così anche i merge fatti dal sito usano l'indirizzo anonimo) e "Block command line pushes that expose my email". I controlli di git bloccano commit e push con un indirizzo personale, e il workflow Privacy fa lo stesso su GitHub.
-- La CI gira sulle PR che toccano codice e lancia i test dei pacchetti. I minuti macOS sono pochi (GitHub Free li conta 10 volte), quindi non va lanciata a vuoto.
+- La CI di GitHub si lancia **solo a mano**, quando serve (`gh workflow run ci.yml --ref <branch>`, oppure dalla scheda Actions): i minuti di GitHub Free sono pochi, e quelli macOS contano 10 volte. Prima di ogni PR si lanciano in locale `scripts/test-packages.sh` e, se cambia la documentazione, `npm run docs:build`; gli hook locali fanno gli altri controlli. Con Claude Code: chiede lui se lanciarla e cosa comporta.
 
 ### Lingue
 - Codice, tipi, commenti e commit: **inglese**.
@@ -62,7 +62,7 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
   - stringhe dell'app: `scripts/i18n.py missing /tmp/mancanti.json`, traduci, `scripts/i18n.py apply traduzioni.json`;
   - documenti: `docs/x.md` → `docs/en/x.md`, guida → `App/Resources/Guide/en/`, `README.md`, `README-collaborators.md` e `CLAUDE.md` → `*.en.md`; poi `scripts/i18n.py record <file inglesi>`;
   - i nomi inglesi sono in `i18n/glossary.tsv`.
-- L'hook `pre-commit` e la CI eseguono `scripts/i18n.py check`: se manca una traduzione il commit si ferma e dice cosa manca. Con Claude Code la traduzione la fa lui durante il lavoro.
+- L'hook `pre-commit` (e `privacy.yml`, quando si lancia) esegue `scripts/i18n.py check`: se manca una traduzione il commit si ferma e dice cosa manca. Con Claude Code la traduzione la fa lui durante il lavoro.
 - Frasi brevi e dirette, in entrambe le lingue.
 
 ### Decisioni (ADR)
@@ -127,7 +127,7 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
   - **Uso:** la guida, copiata dai capitoli dell'app (`App/Resources/Guide`): si modifica lì, mai nel sito. Più installazione, scorciatoie, problemi e log.
   - **Tecnico:** `docs/tecnica` più ADR, stato, prove, licenze, progetti, benchmark e fasi.
 - Ogni capitolo della guida ha il link alla pagina tecnica corrispondente (`docs/.vitepress/theme/level.ts`).
-- A ogni PR che tocca la documentazione la CI compila il sito; a ogni push su `main` lo ripubblica (quando il repository è pubblico).
+- Il sito si compila in locale prima della PR (`npm run docs:build`); quando il repository sarà pubblico, ogni push su `main` lo ripubblicherà da solo.
 
 ## 9. Fare una release
 - La versione è in `project.yml`, nella forma `x.y.z-beta`. Il terzo numero sale con una PR che cambia l'app (si chiede a Giovanni), il secondo con un gruppo grande di funzioni. Alla distribuzione si toglie `-beta`.
