@@ -133,10 +133,8 @@ import Testing
         #expect(archive.workMode(projectID: project.id) == .track)
         #expect(archive.workMode(projectID: other.id) == .manage)
         #expect(archive.workMode(projectID: nil) == .manage)
-        #expect(try archive.trackedProjectIDs() == [project.id])
         try archive.setProjectWorkMode(project.id, .manage)
         #expect(try archive.projects().first { $0.id == project.id }?.workMode == nil)
-        #expect(try archive.trackedProjectIDs().isEmpty)
     }
 
     @Test func ownersAndSimilarNames() throws {

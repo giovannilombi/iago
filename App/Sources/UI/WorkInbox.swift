@@ -1,7 +1,7 @@
 import IAGOStore
 import SwiftUI
 
-/// «Da fare» (ADR-0074): the open work of every project in one place. My entries by due date, the ones without an
+/// «Inbox» (ADR-0074, ADR-0076): the open work of every project in one place, whatever the project's mode. My entries by due date, the ones without an
 /// owner, what I am waiting for from others, the engine's proposals to confirm, the pinned checklists. In «Traccia»
 /// the minimal inbox; in «Gestisci» also priority ordering and a person filter. Projects kept in «Traccia» are here
 /// too: entries assigned to me always are.
@@ -98,7 +98,12 @@ struct WorkInbox: View {
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 10) {
-                Label(String(localized: "Da fare"), systemImage: "checklist").font(.headline)
+                Label {
+                    Text(String(localized: "Inbox"))
+                } icon: {
+                    Image(systemName: "tray").foregroundStyle(.tint)
+                }
+                .font(.headline)
                 Spacer(minLength: 8)
                 if model.boardAvailable(for: .all) {
                     Picker(String(localized: "Vista"), selection: $model.viewMode) {
@@ -218,7 +223,8 @@ struct WorkInbox: View {
     }
 }
 
-/// The «Da fare» row of the sidebar, with what is late or due today.
+/// The «Inbox» row of the sidebar (ADR-0076): first, in bold, with its sign in the accent colour and a red badge with
+/// what asks for an action: my entries late or due today, and the proposals to confirm.
 struct WorkInboxSidebarLabel: View {
     let model: AppModel
     @State private var count = 0
@@ -226,24 +232,25 @@ struct WorkInboxSidebarLabel: View {
     var body: some View {
         Label {
             HStack {
-                Text(String(localized: "Da fare"))
+                Text(String(localized: "Inbox")).fontWeight(.semibold)
                 Spacer()
                 if count > 0 {
-                    Text("\(count)").font(.caption.weight(.semibold)).monospacedDigit()
+                    Text("\(count)").font(.caption.weight(.bold)).monospacedDigit().foregroundStyle(.white)
                         .padding(.horizontal, 6).padding(.vertical, 1)
-                        .background(Capsule().fill(Color.orange.opacity(0.2)))
-                        .help(String(localized: "In ritardo o in scadenza oggi"))
+                        .background(Capsule().fill(Color.red))
+                        .help(String(localized: "Tue voci in ritardo o in scadenza oggi, e proposte da confermare"))
                 }
             }
         } icon: {
-            Image(systemName: "checklist")
+            Image(systemName: "tray").foregroundStyle(.tint)
         }
         .task(id: model.revision) {
             let open =
                 (try? model.archive.decisions(
                     DecisionQuery(scope: .all, statuses: DecisionQuery.current, kinds: Set(Decision.Kind.work)))) ?? []
             let counts = OpenWork.counts(open.map(\.decision), me: model.meIDs)
-            count = counts.today + counts.overdue
+            let proposals = (try? model.archive.pendingKeyPointSuggestions(.all).count) ?? 0
+            count = counts.today + counts.overdue + proposals
         }
     }
 }

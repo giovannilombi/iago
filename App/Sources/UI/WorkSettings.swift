@@ -13,7 +13,7 @@ struct WorkViewsSettings: View {
             title: String(localized: "Lavoro aperto"),
             footnote: String(
                 localized:
-                    "La kanban c'è solo in Gestisci: spenta, le sue colonne libere e le posizioni delle voci restano salvate. La notifica del mattino arriva nei giorni lavorativi: cosa scade oggi, cosa è in ritardo, le attese scadute; un clic apre «Da fare»."
+                    "La kanban c'è solo in Gestisci: spenta, le sue colonne libere e le posizioni delle voci restano salvate. La notifica del mattino arriva nei giorni lavorativi: cosa scade oggi, cosa è in ritardo, le attese scadute; un clic apre «Inbox»."
             )
         ) {
             Toggle(String(localized: "Mostra la kanban"), isOn: $board)

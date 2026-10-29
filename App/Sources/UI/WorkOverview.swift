@@ -4,9 +4,9 @@ import IAGOIntelligence
 import IAGOStore
 import SwiftUI
 
-/// «Riepilogo» of a project, client or stream (ADR-0074). «Traccia»: the short version (open entries by kind, next
-/// due dates, recent decisions and milestones, checklists). «Gestisci»: state and progress, what changed since the
-/// last visit, risks by severity, points to clear up, waits, and a written status report.
+/// «Riepilogo» of a project, client or stream (ADR-0074, ADR-0076). «Traccia»: the short version, one column with what
+/// to do, what to keep an eye on and the latest decisions and milestones. «Gestisci»: state and progress, what changed
+/// since the last visit, risks by severity, points to clear up, waits, and a written status report.
 struct WorkOverview: View {
     @Bindable var model: AppModel
     let scope: BoardScope
@@ -33,32 +33,82 @@ struct WorkOverview: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                numbers
-                if twoColumns {
-                    HStack(alignment: .top, spacing: 16) {
-                        VStack(spacing: 16) { actionCards }.frame(maxWidth: .infinity)
-                        VStack(spacing: 16) { contextCards }.frame(width: min(440, width * 0.4))
-                    }
-                } else {
-                    VStack(spacing: 16) {
-                        actionCards
-                        contextCards
-                    }
-                }
-            }
-            .padding(.horizontal, 24).padding(.vertical, 20)
-            .frame(maxWidth: 1400, alignment: .leading)
-            .frame(maxWidth: .infinity)
-            .onGeometryChange(for: CGFloat.self) {
-                $0.size.width
-            } action: {
-                width = $0
-            }
+            if mode == .track { brief } else { full }
         }
         .safeAreaInset(edge: .top, spacing: 0) { ViewModePicker(model: model).background(.bar) }
         .task(id: model.revision) { load() }
         .task(id: scope.key) { markSeen() }
+    }
+
+    /// «Riepilogo breve» (ADR-0076): «Da fare», «Da tenere d'occhio», «Ultime decisioni e tappe»; an empty block is
+    /// left out.
+    private var brief: some View {
+        let actions = open.filter { $0.decision.kind == .action }
+            .sorted { ($0.decision.dueAt ?? .distantFuture) < ($1.decision.dueAt ?? .distantFuture) }
+        let watch = open.filter { $0.decision.kind != .action }
+            .sorted { ($0.decision.dueAt ?? $0.decision.decidedAt) < ($1.decision.dueAt ?? $1.decision.decidedAt) }
+        let latest = Array(recentMemory.prefix(5))
+        return VStack(alignment: .leading, spacing: 16) {
+            if !actions.isEmpty {
+                card(
+                    String(localized: "Da fare"), count: actions.count, icon: "checklist", tint: WorkStyle.tint(.action)
+                ) {
+                    rows(actions)
+                }
+            }
+            if !watch.isEmpty {
+                card(String(localized: "Da tenere d'occhio"), count: watch.count, icon: "eye", tint: .purple) {
+                    rows(watch)
+                }
+            }
+            if !latest.isEmpty {
+                card(
+                    String(localized: "Ultime decisioni e tappe"), count: latest.count, icon: "checkmark.seal",
+                    tint: .green
+                ) { rows(latest) }
+            }
+            if actions.isEmpty && watch.isEmpty && latest.isEmpty {
+                ContentUnavailableView {
+                    Label(String(localized: "Niente da fare, per ora"), systemImage: "checkmark.circle")
+                } description: {
+                    Text(
+                        String(
+                            localized:
+                                "Qui compaiono le attività aperte, i rischi, le domande e le richieste del progetto, e le ultime decisioni. Aggiungili con «Aggiungi»."
+                        ))
+                }
+                .padding(.top, 40)
+            }
+        }
+        .padding(.horizontal, 24).padding(.vertical, 20)
+        .frame(maxWidth: 680, alignment: .leading)
+        .frame(maxWidth: .infinity)
+    }
+
+    /// The complete page of «Gestisci».
+    private var full: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            numbers
+            if twoColumns {
+                HStack(alignment: .top, spacing: 16) {
+                    VStack(spacing: 16) { actionCards }.frame(maxWidth: .infinity)
+                    VStack(spacing: 16) { contextCards }.frame(width: min(440, width * 0.4))
+                }
+            } else {
+                VStack(spacing: 16) {
+                    actionCards
+                    contextCards
+                }
+            }
+        }
+        .padding(.horizontal, 24).padding(.vertical, 20)
+        .frame(maxWidth: 1400, alignment: .leading)
+        .frame(maxWidth: .infinity)
+        .onGeometryChange(for: CGFloat.self) {
+            $0.size.width
+        } action: {
+            width = $0
+        }
     }
 
     /// Left: what to act on, most urgent first.
@@ -331,7 +381,7 @@ struct WorkOverview: View {
                         ? String(localized: "Nessuna checklist nei progetti di questo cliente.")
                         : String(
                             localized:
-                                "Liste da spuntare del progetto, per esempio «Consegna finale». Fissate, compaiono anche in «Da fare»."
+                                "Liste da spuntare del progetto, per esempio «Consegna finale». Fissate, compaiono anche in «Inbox»."
                         )
                 )
                 .font(.callout).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)

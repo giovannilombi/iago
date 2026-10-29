@@ -72,7 +72,11 @@ struct MainView: View {
                 if !model.pendingEmails.isEmpty { model.pendingEmails.removeFirst() }
             }
         }
-        .sheet(isPresented: $model.composingEmail) { NewEmailSheet(model: model) }
+        .sheet(isPresented: $model.composingEmail) {
+            NewEmailSheet(model: model, projectID: model.composingEmailProject)
+        }
+        .sheet(item: $model.importing) { target in ImportSheet(model: model, target: target) }
+        .sheet(item: $model.modeIntro) { intro in WorkModeIntroSheet(model: model, intro: intro) }
         .sheet(item: $model.exporting) { kind in
             switch kind {
             case .llm: LLMExportSheet(model: model, scope: .current(model))
@@ -145,8 +149,6 @@ struct MainView: View {
                     DecisionsView(model: model)
                 } else if model.showsTimeline {
                     ProjectTimeline(model: model)
-                } else if model.showsMixedList {
-                    MixedList(model: model)
                 } else {
                     ItemList(model: model)
                 }
@@ -353,7 +355,7 @@ extension MainView {
         case .activity, .labels: return (420, 560)
         default:
             if model.sidebar == .inbox { return (360, 620) }
-            if model.showsTimeline || model.showsDecisions || model.showsMixedList { return (280, 560) }
+            if model.showsTimeline || model.showsDecisions { return (280, 560) }
             return (280, 320)
         }
     }
@@ -415,23 +417,25 @@ private struct Sidebar: View {
         }
     }
 
+    /// «Inbox» first and set apart (ADR-0076), then the items waiting for a project and the other places.
     @ViewBuilder
     private var views: some View {
+        WorkInboxSidebarLabel(model: model).tag(AppModel.SidebarSelection.inbox)
+        Divider().selectionDisabled().padding(.vertical, 1)
         Label {
             HStack {
-                Text(String(localized: "Da classificare"))
+                Text(String(localized: "Elementi da classificare"))
                 Spacer()
                 if model.unclassifiedCount > 0 {
                     Text("\(model.unclassifiedCount)").foregroundStyle(.secondary).monospacedDigit()
                 }
             }
         } icon: {
-            Image(systemName: "tray")
+            Image(systemName: "questionmark.folder")
         }
         .tag(AppModel.SidebarSelection.library(.unclassified))
         Label(String(localized: "Recenti"), systemImage: "clock").tag(AppModel.SidebarSelection.library(.recent))
         Label(String(localized: "Punti chiave"), systemImage: "checkmark.seal").tag(AppModel.SidebarSelection.decisions)
-        WorkInboxSidebarLabel(model: model).tag(AppModel.SidebarSelection.inbox)
         Label(String(localized: "Importa"), systemImage: "square.and.arrow.down").tag(
             AppModel.SidebarSelection.importer)
         Label {
@@ -526,9 +530,10 @@ private struct SidebarMaterial: NSViewRepresentable {
     func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
-/// The bar on top of every view of the library (ADR-0075): where the view is, then «Riepilogo» apart, the four forms
-/// (Elenco, Timeline, Kanban, Mappa) and on the right «Mostra», what they contain. «Punti chiave» in the sidebar has
-/// only the list and the kanban.
+/// The bar on top of every view of the library (ADR-0075, ADR-0076): where the view is, then «Riepilogo» and
+/// «Elementi» each on its own, the forms of the history (Timeline, Kanban, Grafo) and on the right «Mostra», what the
+/// timeline and the graph contain. A project in «Traccia» has no kanban and no «Mostra». «Punti chiave» in the sidebar
+/// has only the list and the kanban.
 struct ViewModePicker: View {
     @Bindable var model: AppModel
 
@@ -583,13 +588,21 @@ struct ViewModePicker: View {
                         Label(DecisionRow.kindLabel(kind), systemImage: DecisionRow.kindIcon(kind))
                     }
                 }
+                Divider()
+                Button {
+                    model.importing = AppModel.ImportTarget(projectID: id, streamIDs: model.scopeStreamIDs)
+                } label: {
+                    Label(String(localized: "Importa file ed elementi…"), systemImage: "square.and.arrow.down")
+                }
             } label: {
                 Label(String(localized: "Aggiungi"), systemImage: "plus.circle")
             }
             .menuStyle(.borderlessButton).fixedSize()
             .help(
                 String(
-                    localized: "Aggiungi alla timeline del progetto una nota, un'attività, una tappa o una decisione"))
+                    localized:
+                        "Aggiungi al progetto una nota o un punto chiave, oppure importa audio, documenti, email e trascrizioni"
+                ))
         case .library(.category(let id)):
             if let category = model.categories.first(where: { $0.id == id }) {
                 labelTitle(category.name, systemImage: "square.grid.2x2", key: "category:\(id)")
@@ -663,43 +676,55 @@ struct ViewModePicker: View {
         .padding(.horizontal, 12).padding(.top, 10).padding(.bottom, 10)
     }
 
-    /// «Riepilogo», apart: the page the project opens on; then how to look at the history.
+    private var trackMode: Bool {
+        model.workScope != nil && model.workViewsMode(for: model.decisionScope) == .track
+    }
+
+    /// «Riepilogo» and «Elementi», each on its own: the page the project opens on and its items; then how to look at
+    /// the history. With «Riepilogo» or «Elementi» chosen no form is selected; a click on one goes to it.
     @ViewBuilder
     private var forms: some View {
         if model.workScope != nil {
-            Picker(String(localized: "Riepilogo"), selection: $model.viewMode) {
-                Label(String(localized: "Riepilogo"), systemImage: "list.bullet.clipboard").tag(
-                    AppModel.ViewMode.overview)
-            }
-            .pickerStyle(.segmented).labelsHidden().fixedSize()
-            .help(String(localized: "La pagina del progetto: lavoro aperto, scadenze, attese, checklist"))
-            Divider().frame(height: 18)
+            single(.overview, String(localized: "Riepilogo"), "list.bullet.clipboard")
+                .help(
+                    trackMode
+                        ? String(localized: "Cosa c'è da fare, cosa tenere d'occhio, le ultime decisioni")
+                        : String(localized: "La pagina del progetto: lavoro aperto, scadenze, attese, checklist"))
         }
-        // With «Riepilogo» chosen no form is selected; a click on one goes back to it.
+        single(.list, String(localized: "Elementi"), "doc.on.doc")
+            .help(String(localized: "Call, email, documenti e trascrizioni"))
+        Divider().frame(height: 18)
         Picker(String(localized: "Vista"), selection: $model.viewMode) {
-            Label(String(localized: "Elenco"), systemImage: "list.bullet").tag(AppModel.ViewMode.list)
             Label(String(localized: "Timeline"), systemImage: "calendar.day.timeline.left").tag(
                 AppModel.ViewMode.timeline)
             if model.workScope != nil, model.boardAvailable(for: model.decisionScope) {
                 Label(String(localized: "Kanban"), systemImage: "rectangle.split.3x1").tag(AppModel.ViewMode.board)
             }
-            Label(String(localized: "Mappa"), systemImage: "point.3.connected.trianglepath.dotted").tag(
-                AppModel.ViewMode.map)
+            if model.graphAvailable {
+                Label(String(localized: "Grafo"), systemImage: "point.3.connected.trianglepath.dotted").tag(
+                    AppModel.ViewMode.map)
+            }
         }
         .pickerStyle(.segmented).labelsHidden().fixedSize()
     }
 
-    /// «Mostra»: what the list, the timeline and the map contain. The kanban holds open work only; the overview is a
-    /// page of its own.
+    /// One view as a segmented control of its own, selected when it is the current one.
+    private func single(_ mode: AppModel.ViewMode, _ title: String, _ icon: String) -> some View {
+        Picker(title, selection: $model.viewMode) {
+            Label(title, systemImage: icon).labelStyle(.titleAndIcon).tag(mode)
+        }
+        .pickerStyle(.segmented).labelsHidden().fixedSize()
+    }
+
+    /// «Mostra»: what the timeline and the graph contain. The kanban holds open work only; «Riepilogo» and «Elementi»
+    /// are what they are; a project in «Traccia» shows everything.
     @ViewBuilder
     private var contentMenu: some View {
         switch model.viewMode {
-        case .overview:
-            EmptyView()
         case .board:
             Text(String(localized: "Mostra: Lavoro aperto")).font(.callout).foregroundStyle(.secondary)
                 .help(String(localized: "La kanban mostra solo attività, punti da chiarire, rischi e richieste"))
-        case .list, .timeline, .map:
+        case .timeline where !trackMode, .map where !trackMode:
             Menu {
                 Picker(String(localized: "Mostra"), selection: $model.viewContent) {
                     ForEach(AppModel.ViewContent.allCases, id: \.self) { content in
@@ -711,14 +736,16 @@ struct ViewModePicker: View {
                 Text(String(localized: "Mostra: \(Self.contentName(model.viewContent))"))
             }
             .menuStyle(.borderlessButton).fixedSize()
-            .help(String(localized: "Tutto, solo i materiali (call, email, documenti, note) o solo i punti chiave"))
+            .help(String(localized: "Tutto, solo gli elementi (call, email, documenti, note) o solo i punti chiave"))
+        default:
+            EmptyView()
         }
     }
 
     static func contentName(_ content: AppModel.ViewContent) -> String {
         switch content {
         case .all: String(localized: "Tutto")
-        case .materials: String(localized: "Materiali")
+        case .materials: String(localized: "Elementi")
         case .keyPoints: String(localized: "Punti chiave")
         }
     }
@@ -735,38 +762,98 @@ struct ViewModePicker: View {
     }
 }
 
-/// «Gestisci ▾» next to the project's name (ADR-0074): the mode of this project, «Gestisci» by default.
+/// «Modalità Gestisci ▾» next to the project's name (ADR-0074, ADR-0076): the mode, with its sign and colour; a click
+/// opens the two modes explained and, in «Traccia», the switch of the graph.
 struct WorkModePill: View {
     let model: AppModel
     let project: Project
+    @State private var open = false
 
     var body: some View {
         let mode = project.workMode ?? .manage
-        Menu {
+        Button {
+            open.toggle()
+        } label: {
+            HStack(spacing: 4) {
+                Image(systemName: WorkModeText.icon(mode))
+                Text(WorkModeText.fullTitle(mode))
+                Image(systemName: "chevron.down").font(.system(size: 8, weight: .bold))
+            }
+            .font(.caption.weight(.semibold)).foregroundStyle(WorkModeText.color(mode))
+            .padding(.horizontal, 8).padding(.vertical, 2)
+            .background(Capsule().fill(WorkModeText.color(mode).opacity(0.14)))
+            .contentShape(Capsule())
+        }
+        .buttonStyle(.plain).fixedSize()
+        .help(String(localized: "Modalità del progetto: cambiala quando vuoi, non si perde nulla"))
+        .popover(isPresented: $open, arrowEdge: .bottom) {
+            WorkModeMenu(model: model, project: project) { open = false }
+        }
+    }
+}
+
+/// The pill's popover: the two modes with what each one is, then the switches of the project.
+struct WorkModeMenu: View {
+    let model: AppModel
+    let project: Project
+    let done: () -> Void
+
+    var body: some View {
+        let mode = project.workMode ?? .manage
+        VStack(alignment: .leading, spacing: 4) {
             ForEach(WorkMode.allCases, id: \.self) { option in
                 Button {
-                    model.setProjectWorkMode(project.id, option)
+                    model.chooseProjectWorkMode(project.id, option)
+                    done()
                 } label: {
-                    if option == mode {
-                        Label(WorkModeText.title(option), systemImage: "checkmark")
-                    } else {
-                        Text(WorkModeText.title(option))
-                    }
+                    WorkModeChoice(mode: option, selected: option == mode)
                 }
+                .buttonStyle(.plain)
             }
-            Divider()
-            Text(WorkModeText.explanation(mode))
-        } label: {
-            Text(WorkModeText.title(mode)).font(.caption.weight(.semibold))
+            if mode == .track {
+                Divider().padding(.vertical, 4)
+                Text(String(localized: "In questo progetto")).font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary).textCase(.uppercase).padding(.horizontal, 8)
+                Toggle(
+                    String(localized: "Mostra il Grafo"),
+                    isOn: Binding(
+                        get: { model.graphShown(projectID: project.id) },
+                        set: { model.setGraphShown($0, projectID: project.id) })
+                )
+                .toggleStyle(.switch).controlSize(.small).padding(.horizontal, 8)
+            }
         }
-        .menuStyle(.borderlessButton).fixedSize()
-        .padding(.horizontal, 7).padding(.vertical, 1)
-        .background(Capsule().fill(Color.accentColor.opacity(mode == .manage ? 0.14 : 0.06)))
-        .help(
-            String(
-                localized:
-                    "Modo del progetto: Gestisci ha stati, priorità, dipendenze e kanban; Traccia è più semplice. Non si perde nulla cambiando."
-            ))
+        .padding(8)
+        .frame(width: 380)
+    }
+}
+
+/// One mode as a choice: sign, name, «semplice e veloce» or «completa», and what it gives.
+struct WorkModeChoice: View {
+    let mode: WorkMode
+    let selected: Bool
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: WorkModeText.icon(mode)).foregroundStyle(WorkModeText.color(mode))
+                .font(.system(size: 15)).frame(width: 20)
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text(WorkModeText.fullTitle(mode)).font(.body.weight(.semibold))
+                    Text(WorkModeText.level(mode)).font(.caption.weight(.medium))
+                        .foregroundStyle(WorkModeText.color(mode))
+                        .padding(.horizontal, 6).padding(.vertical, 1)
+                        .background(Capsule().fill(WorkModeText.color(mode).opacity(0.14)))
+                    Spacer(minLength: 0)
+                    if selected { Image(systemName: "checkmark").foregroundStyle(.secondary) }
+                }
+                Text(WorkModeText.explanation(mode)).font(.callout).foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .padding(8)
+        .background(RoundedRectangle(cornerRadius: 7).fill(selected ? Color.primary.opacity(0.06) : .clear))
+        .contentShape(Rectangle())
     }
 }
 
@@ -790,105 +877,6 @@ private struct ItemList: View {
                 ContentUnavailableView(String(localized: "Nessun elemento"), systemImage: "tray")
             }
         }
-    }
-}
-
-/// «Elenco» with «Mostra: Tutto» (ADR-0075): items, key points and notes in one list, most recent first; each opens
-/// in the detail.
-private struct MixedList: View {
-    @Bindable var model: AppModel
-
-    private var selection: Binding<String?> {
-        Binding(
-            get: {
-                model.selectedItemID.map { "item/\($0)" } ?? model.selectedDecisionID.map { "decision/\($0)" }
-                    ?? model.selectedNoteID.map { "note/\($0)" }
-            },
-            set: { id in
-                guard let id, let slash = id.firstIndex(of: "/") else { return }
-                let record = String(id[id.index(after: slash)...])
-                switch id[..<slash] {
-                case "item": model.selectedItemID = record
-                case "decision": model.selectedDecisionID = record
-                default: model.selectedNoteID = record
-                }
-            })
-    }
-
-    var body: some View {
-        let rows = TimelineRow.history(model)
-        List(rows, selection: selection) { row in
-            switch row {
-            case .item(let summary):
-                ItemRow(summary: summary, suggestions: model.pendingSuggestions[summary.id] ?? 0).tag(row.id)
-                    .contextMenu { ItemContextMenu(model: model, summary: summary) }
-            case .decision(let summary):
-                MixedKeyPointRow(model: model, summary: summary).tag(row.id)
-            case .note(let note):
-                MixedNoteRow(model: model, note: note).tag(row.id)
-            }
-        }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            VStack(spacing: 0) {
-                ViewModePicker(model: model)
-                FilterBar(model: model)
-            }
-            .background(.bar)
-        }
-        .overlay {
-            if rows.isEmpty {
-                ContentUnavailableView(String(localized: "Nessun elemento"), systemImage: "tray")
-            }
-        }
-    }
-}
-
-/// A key point in the mixed list: its sign, text, state and date.
-private struct MixedKeyPointRow: View {
-    let model: AppModel
-    let summary: DecisionSummary
-
-    var body: some View {
-        let decision = summary.decision
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
-            Image(systemName: DecisionRow.icon(summary)).foregroundStyle(DecisionRow.color(summary))
-            VStack(alignment: .leading, spacing: 3) {
-                Text(decision.text).font(.headline).lineLimit(2)
-                    .foregroundStyle(decision.status.isOpen ? .primary : .secondary)
-                HStack(spacing: 6) {
-                    Text(decision.decidedAt, format: .dateTime.day().month(.abbreviated).year())
-                    Text("· \(DecisionRow.kindLabel(decision.kind))")
-                    Text("· \(DecisionRow.label(summary, mode: model.workMode(for: decision.projectId)))")
-                }
-                .font(.caption).foregroundStyle(.secondary).lineLimit(1)
-            }
-        }
-        .padding(.vertical, 2)
-    }
-}
-
-/// A note in the mixed list: its first line and date.
-private struct MixedNoteRow: View {
-    let model: AppModel
-    let note: Note
-
-    var body: some View {
-        HStack(alignment: .firstTextBaseline, spacing: 6) {
-            Image(systemName: note.input == .voice ? "mic.circle.fill" : "note.text").foregroundStyle(.yellow)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(note.body.split(separator: "\n").first.map(String.init) ?? "").font(.headline).lineLimit(1)
-                HStack(spacing: 6) {
-                    Text(note.notedAt, format: .dateTime.day().month(.abbreviated).year())
-                    if let itemID = note.itemId, let item = model.item(itemID) {
-                        Text("· \(String(localized: "nota su «\(item.title)»"))")
-                    } else {
-                        Text("· \(String(localized: "nota di progetto"))")
-                    }
-                }
-                .font(.caption).foregroundStyle(.secondary).lineLimit(1)
-            }
-        }
-        .padding(.vertical, 2)
     }
 }
 

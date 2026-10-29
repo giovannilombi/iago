@@ -304,7 +304,7 @@ struct ClaudePane: View {
         case .unclassified:
             String(
                 localized:
-                    "Oltre ai progetti consultabili, Claude vede anche gli elementi non ancora assegnati a un progetto (Da classificare): potrebbero esserci cose che non vuoi condividere."
+                    "Oltre ai progetti consultabili, Claude vede anche gli elementi non ancora assegnati a un progetto (Elementi da classificare): potrebbero esserci cose che non vuoi condividere."
             )
         case .client:
             String(localized: "Solo i progetti consultabili di questo cliente: meno contesto, risposte più mirate.")

@@ -70,7 +70,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 intelligence: intelligence, folderImporter: folderImporter, calls: calls, activity: activity)
             model.updates = updates
             calls.start()
-            // ADR-0074: the morning notification, and «Da fare» when it is clicked.
+            // ADR-0074: the morning notification, and «Inbox» when it is clicked.
             let reminder = WorkReminder(archive: archive.archive)
             reminder.start()
             self.reminder = reminder

@@ -60,7 +60,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 
 ### Ricorda ciò che conta
 - **Punti chiave:** decisioni e tappe (la memoria) e lavoro aperto (attività con checklist, punti da chiarire, rischi, richieste), ognuno con la fonte (fino al minuto della call), le persone e la data; il lavoro con responsabile, scadenza e «in attesa di».
-- **Il lavoro aperto sotto controllo:** **Da fare** raccoglie cosa è aperto, di chi è e per quando; il **Riepilogo** dice a che punto è un progetto, con una sintesi di stato da copiare. Due modi di lavorare sugli stessi dati, scelti per progetto: **Gestisci**, il predefinito, con stati fini, priorità, dipendenze, ricorrenze e **Kanban** a tutta finestra con colonne tue, e **Traccia**, semplice.
+- **Il lavoro aperto sotto controllo:** l'**Inbox**, in cima alla barra laterale, raccoglie cosa è aperto in tutti i progetti, di chi è e per quando; il **Riepilogo** dice a che punto è un progetto, con una sintesi di stato da copiare. Due modalità sugli stessi dati, scelte per progetto: **Modalità Gestisci**, la completa e predefinita, con stati fini, priorità, dipendenze, ricorrenze e **Kanban** a tutta finestra con colonne tue, e **Modalità Traccia**, semplice e veloce: Riepilogo breve, attività da spuntare, tutti i tipi di punto chiave.
 - **L'evoluzione delle decisioni:** una voce può superarne altre, anche di tipo diverso, e IAGO tiene la storia di come ci si è arrivati.
 - **Momenti segnati** durante una call, anche **con lo screenshot** della slide condivisa (il testo letto entra nella trascrizione, nella ricerca e nelle sintesi), e **note** datate sul progetto o sull'elemento, anche dettate a voce. Le scorciatoie (⌃⌥M, ⌃⌥S, ⌃⌥R) funzionano in qualsiasi app.
 - **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività (con chi, entro quando, chi si aspetta), punti da chiarire, rischi, richieste, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
@@ -71,7 +71,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
   - Ogni punto porta il minuto da cui viene, verificato sulla trascrizione.
   - I modelli di sintesi vengono da Meetily e Hyprnote (MIT) e sono modificabili.
 - **Trascrizione** con chi parla: la tua voce è "Io", gli altri vengono separati per persona e si possono rinominare; un glossario aiuta con i nomi difficili.
-- **Viste di progetto** con due scelte: come guardare (**Elenco**, **Timeline**, **Kanban**, **Mappa** delle persone e delle decisioni collegate) e cosa mostrare (tutto, solo i materiali o solo i punti chiave); il **Riepilogo** a parte. IAGO ricorda l'ultima vista di ogni progetto.
+- **Viste di progetto:** il **Riepilogo**, gli **Elementi** del progetto, e le forme della storia (**Timeline**, **Kanban**, **Grafo** delle persone e delle decisioni collegate) con cosa mostrare (tutto, solo gli elementi o solo i punti chiave). IAGO ricorda l'ultima vista di ogni progetto. Da un progetto **Importa file ed elementi…** porta dentro audio, documenti, email e testo direttamente lì.
 
 ### Raccoglie da ogni fonte
 - **Call:**
@@ -278,6 +278,7 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0073](docs/adr/0073-riconoscere-le-voci.md) | Voci riconosciute tra le call, solo se attivo e solo come proposta | meno nomi da scrivere, dati biometrici sotto controllo |
 | [0074](docs/adr/0074-lavoro-aperto-traccia-gestisci.md) | Lavoro aperto con due modi per progetto, Traccia e Gestisci, sugli stessi dati | semplice dove basta, completo dove si gestisce |
 | [0075](docs/adr/0075-viste-come-e-cosa.md) | Viste come «come guardare × cosa mostrare», Riepilogo a parte, Kanban a tutta finestra | una barra con una gerarchia chiara |
+| [0076](docs/adr/0076-modalita-inbox-elementi.md) | Modalità Traccia davvero semplice, Inbox in cima, Elementi e Grafo, import dal progetto | due modalità che si distinguono, il lavoro di tutti in un posto |
 | [0056](docs/adr/0056-aggiornamenti.md) | Aggiornamenti Sparkle firmati, maggiori obbligatori | tutti sulla stessa versione sicura |
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
 
@@ -324,7 +325,7 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
-| **1.1.0-beta** | 28 ottobre 2026 | In prova, sul ramo `feat/lavoro` (si torna alla 1.0.1-beta: vedi sotto). Lavoro aperto: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, checklist; modi di lavorare Traccia e Gestisci per progetto (Gestisci predefinito); barra delle viste «come × cosa» con Riepilogo, Kanban e Mappa a tutta finestra; Da fare, Riepilogo con sintesi di stato, Kanban con colonne libere; dipendenze e ricorrenze; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP per il lavoro aperto. Sito della documentazione con la versione nell'header |
+| **1.1.0-beta** | 28 ottobre 2026 | In prova, sul ramo `feat/lavoro` (si torna alla 1.0.1-beta: vedi sotto). Lavoro aperto: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, checklist; Modalità Traccia (semplice e veloce, Riepilogo breve, attività da spuntare) e Modalità Gestisci (completa, predefinita) per progetto, con la finestra alla prima visita; barra delle viste con Riepilogo, Elementi, Timeline, Kanban e Grafo, a tutta finestra Riepilogo, Kanban e Grafo; Inbox in cima alla barra laterale con il lavoro di tutti i progetti; import da dentro un progetto; Riepilogo con sintesi di stato, Kanban con colonne libere; dipendenze e ricorrenze; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP per il lavoro aperto. Sito della documentazione con la versione nell'header |
 | **1.0.1-beta** | 28 ottobre 2026 | Punto di ripristino prima della 1.1.0-beta. JSON e altri file di testo importabili, menu Modifica (⌘C, ⌘V…); coda unica del motore e gestione della memoria, impostazioni automatiche sotto i 32 GB; chi ha prodotto sintesi e proposte (modello o Claude); sintesi e proposte fatte da Claude con «Copia per Claude»; «Segna momento con screenshot» e scorciatoie in tutte le app; distribuzione con DMG; riconoscimento delle stesse voci tra call diverse |
 | **1.0.0-beta** | 24 ottobre 2026 | Beta, non ancora distribuita: tutto quello che è descritto qui (fasi 0-3). La 1.0.0 sarà la prima versione distribuibile |
 

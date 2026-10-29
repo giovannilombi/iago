@@ -186,8 +186,8 @@ private struct GeneralPane: View {
     }
 }
 
-/// Names and explanations of «Traccia» and «Gestisci» (ADR-0074), chosen per project: in the project's header and in
-/// Impostazioni › Progetti.
+/// Names, signs and explanations of «Modalità Traccia» and «Modalità Gestisci» (ADR-0074, ADR-0076), chosen per
+/// project: in the project's header, on its first-visit sheet and in Impostazioni › Progetti.
 enum WorkModeText {
     static func title(_ mode: WorkMode) -> String {
         switch mode {
@@ -196,17 +196,45 @@ enum WorkModeText {
         }
     }
 
+    static func fullTitle(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track: String(localized: "Modalità Traccia")
+        case .manage: String(localized: "Modalità Gestisci")
+        }
+    }
+
+    /// Which one is the simple one and which one the complete one.
+    static func level(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track: String(localized: "semplice e veloce")
+        case .manage: String(localized: "completa")
+        }
+    }
+
     static func explanation(_ mode: WorkMode) -> String {
         switch mode {
         case .track:
-            String(
-                localized:
-                    "Tieni traccia del lavoro: attività aperte, in attesa, fatte, con responsabile, scadenza e checklist."
-            )
+            String(localized: "Tieni il filo del progetto: elementi, decisioni e attività da spuntare.")
         case .manage:
             String(
                 localized:
-                    "Gestisci i progetti: anche in corso e bloccata, priorità, dipendenze, stima, inizio, ricorrenza.")
+                    "Tutti gli strumenti per guidarlo: stati, priorità, scadenze, dipendenze, Kanban e Riepilogo completo."
+            )
+        }
+    }
+
+    /// A notebook for «Traccia», the columns of a kanban for «Gestisci».
+    static func icon(_ mode: WorkMode) -> String {
+        switch mode {
+        case .track: "book.closed"
+        case .manage: "rectangle.split.3x1"
+        }
+    }
+
+    static func color(_ mode: WorkMode) -> Color {
+        switch mode {
+        case .track: .green
+        case .manage: .blue
         }
     }
 }
@@ -380,17 +408,19 @@ private struct ProjectsPane: View {
                     Button(String(localized: "Elimina…"), role: .destructive) { startDelete(project) }.buttonStyle(
                         .link)
                 }
-                // ADR-0074: each project in «Gestisci» (the default) or kept simple in «Traccia».
+                // ADR-0074, ADR-0076: each project in «Gestisci» (the default) or kept simple in «Traccia».
                 Picker(
-                    String(localized: "Modo"),
+                    String(localized: "Modalità"),
                     selection: Binding(
                         get: { project.workMode ?? .manage },
                         set: { mode in
-                            model.setProjectWorkMode(project.id, mode)
+                            model.chooseProjectWorkMode(project.id, mode)
                             reload()
                         })
                 ) {
-                    ForEach(WorkMode.allCases, id: \.self) { Text(WorkModeText.title($0)).tag($0) }
+                    ForEach(WorkMode.allCases, id: \.self) {
+                        Label(WorkModeText.fullTitle($0), systemImage: WorkModeText.icon($0)).tag($0)
+                    }
                 }
                 .pickerStyle(.segmented).fixedSize().controlSize(.small).padding(.leading, 26)
                 .help(WorkModeText.explanation(project.workMode ?? .manage))

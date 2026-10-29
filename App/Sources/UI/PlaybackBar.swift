@@ -101,7 +101,7 @@ private struct PlaybackPath: View {
     static func parts(model: AppModel, itemID: String) -> (ancestors: [String], title: String) {
         guard let item = model.item(itemID) else { return ([], "") }
         guard let project = model.project(item.projectId) else {
-            return ([String(localized: "Da classificare")], item.title)
+            return ([String(localized: "Elementi da classificare")], item.title)
         }
         let client = model.client(project.clientId)?.name ?? String(localized: "Senza cliente")
         let streams = ((try? model.archive.streamIDs(itemID: itemID)) ?? []).compactMap { model.stream($0)?.name }

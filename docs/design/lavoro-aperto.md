@@ -9,6 +9,8 @@ IAGO resta la memoria del lavoro, e tiene anche traccia di **ciò che è aperto*
 
 Aggiornamento del 28 ottobre 2026, durante la prova: la modalità si sceglie per progetto e Gestisci è il default; le viste sono ridisegnate come «come guardare × cosa mostrare» (ADR-0075).
 
+Aggiornamento del 29 ottobre 2026 ([ADR-0076](../adr/0076-modalita-inbox-elementi.md)): le due modalità ora si distinguono davvero. **Modalità Traccia** (semplice e veloce) ha Riepilogo breve, Elementi, Timeline e Grafo, attività da spuntare, nessuna Kanban né «Mostra»; **Modalità Gestisci** (completa) ha tutto. «Da fare» diventa **Inbox** in cima alla barra laterale, «Da classificare» diventa «Elementi da classificare», «Elenco» diventa «Elementi», «Mappa» torna «Grafo». La Kanban di tutti comprende anche i progetti in Traccia. Dove questo documento dice altro, vale l'ADR-0076.
+
 Si passa dall'una all'altra senza perdere nulla.
 
 ## Perché
@@ -98,14 +100,14 @@ In **Traccia** un campo di Gestisci già compilato non si perde: resta salvato e
 | | **Traccia** | **Gestisci** (predefinita) |
 |---|---|---|
 | Tipi | tutti | tutti |
-| Stati di lavoro visibili | Aperta · In attesa · Fatta · Annullata | tutti e sei |
+| Stati di lavoro visibili | una casella da spuntare (fatta o no); «in attesa» segue «In attesa di» (ADR-0076) | tutti e sei |
 | Scheda di una voce | titolo, tipo, responsabile, scadenza, in attesa di, checklist, descrizione | anche «Altri dettagli»: priorità, dipendenze, stima, inizio, ricorrenza |
-| Viste | Elenco, Timeline, Mappa, **Da fare** (inbox), **Riepilogo** breve | in più **Kanban** (progetto e globale), **Riepilogo** completo, filtri per persona e priorità |
+| Viste | **Riepilogo** breve, Elementi, Timeline, Grafo (spegnibile); **Inbox** | in più **Kanban** (progetto e globale), «Mostra», **Riepilogo** completo, filtri per persona e priorità |
 | Notifica del mattino | disponibile, spenta | disponibile, spenta |
 | Proposte del motore e di Claude | tutti i tipi | tutti i tipi |
 
 - **Dove si sceglie:** la pillola «Gestisci ▾» accanto al nome del progetto, e Impostazioni › Progetti.
-- **Per progetto:** un progetto in Traccia si vede in Traccia, ma le voci assegnate a te restano nella tua inbox; la kanban di tutti lo lascia fuori.
+- **Per progetto:** un progetto in Traccia si vede in Traccia; le sue voci sono nell'Inbox e nella kanban di tutti, ognuna nella modalità del suo progetto (ADR-0076).
 - **Kanban:** in Gestisci è accesa di default e ha un suo interruttore. Spenta, le colonne libere e le posizioni restano salvate.
 
 ## Le viste

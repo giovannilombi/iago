@@ -101,7 +101,7 @@ struct GraphView: View {
 
     /// «Mostra» (ADR-0075): materials leave out key points, key points leave out calls, emails, documents and notes.
     private func shows(_ kind: GraphNode.Kind) -> Bool {
-        switch model.viewContent {
+        switch model.shownContent {
         case .all: true
         case .materials: !Self.keyPointKinds.contains(kind)
         case .keyPoints: !Self.materialKinds.contains(kind)
@@ -112,7 +112,7 @@ struct GraphView: View {
     static let materialKinds: Set<GraphNode.Kind> = [.call, .email, .document, .note, .group]
 
     private var visibleKey: String {
-        "\(model.viewContent)|\(full.nodes.count)|\(mode)|\(focus ?? "")|\(expanded.sorted())|\(kinds.map(\.rawValue).sorted())|\(cutoff?.timeIntervalSince1970 ?? 0)"
+        "\(model.shownContent)|\(full.nodes.count)|\(mode)|\(focus ?? "")|\(expanded.sorted())|\(kinds.map(\.rawValue).sorted())|\(cutoff?.timeIntervalSince1970 ?? 0)"
     }
 
     private var dateRange: ClosedRange<Date>? {
@@ -420,7 +420,7 @@ struct GraphView: View {
                     .font(.caption).monospacedDigit().foregroundStyle(.secondary).frame(
                         width: 110, alignment: .trailing)
                 }
-                .help(String(localized: "La mappa com'era fino a una data"))
+                .help(String(localized: "Il grafo com'era fino a una data"))
             }
         }
         .padding(.horizontal, 12).padding(.vertical, 8)

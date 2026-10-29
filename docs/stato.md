@@ -2,7 +2,7 @@
 
 > Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
 > **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
-> Ultimo aggiornamento: **27 ottobre 2026**.
+> Ultimo aggiornamento: **29 ottobre 2026**.
 
 ## In breve
 - **Versione:** 1.1.0-beta **in prova** sul ramo `feat/lavoro` (si prova con `scripts/try-branch.sh` su una copia dell'archivio); su `main` c'è la 1.0.1-beta, punto di ripristino (tag `v1.0.1-beta`, ramo `release/1.0.x`). Se la 1.1 viene approvata si unisce su `main` con il tag `v1.1.0-beta`; se no si riprende dalla 1.0.x. La prima versione distribuibile sarà senza `-beta`.
@@ -11,7 +11,7 @@
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 301 nei pacchetti, tutti verdi (1.1.0-beta).
+- **Test automatici:** 300 nei pacchetti, tutti verdi (1.1.0-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -42,6 +42,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-29:** 1.1.0-beta, seconda revisione dopo la prova (ADR-0076, decisa su una proposta con le finestre di esempio): **Modalità Traccia** davvero semplice (Riepilogo breve con Da fare, Da tenere d'occhio, Ultime decisioni e tappe; attività da spuntare; niente Kanban né «Mostra»; Grafo spegnibile; tutti i tipi) e **Modalità Gestisci** completa; nome, icona e colore delle modalità nella pillola e nella barra laterale; finestra alla prima visita di un progetto o cliente («OK» / «Non mostrare più»). **Inbox** al posto di «Da fare», in cima con il bollino rosso; «Elementi da classificare»; barra delle viste `[Riepilogo] [Elementi] │ [Timeline · Kanban · Grafo]`; «Importa file ed elementi…» in fondo ad «Aggiungi», con import diretto nel progetto. La Kanban di tutti comprende i progetti in Traccia. Il tour dimostrativo si chiude da solo; schermate della guida rifatte, nuove `inbox.png`, `modalita.png`, `importa.png`, `riepilogo-breve.png`.
 - **2026-10-28:** 1.1.0-beta, dopo la prima prova dell'utente: Traccia / Gestisci per progetto, Gestisci predefinito (pillola «Gestisci ▾» accanto al nome e Impostazioni › Progetti; tolti la scelta in Generale e il passo del tour di benvenuto). Barra delle viste ridisegnata (ADR-0075): Riepilogo a parte, poi Elenco · Timeline · Kanban · Mappa, e «Mostra: Tutto / Materiali / Punti chiave»; Kanban, Riepilogo e Mappa a tutta finestra con il pannello a destra (✕ o Esc); Riepilogo ridisegnato per la finestra larga (fascia di numeri, a sinistra cosa fare, a destra contesto, sintesi e checklist); ultima vista ricordata per progetto. Notifica del mattino spenta finché non la si accende. Schermate della guida rifatte dall'archivio dimostrativo, nuova `kanban.png`.
 - **2026-10-28:** **1.1.0-beta, lavoro aperto** (ADR-0074), sul ramo `feat/lavoro`: punti da chiarire, rischi, richieste; responsabile, scadenze, attese, priorità, dipendenze, ricorrenze, checklist; modi Traccia e Gestisci; Da fare, Riepilogo con sintesi di stato, Kanban con colonne libere e archivio a 14 giorni; notifica del mattino; proposte di tutti i tipi dal motore e da Claude; strumenti MCP; esportazioni e grafo. Migrazione `v21-work` (solo aggiunte), provata su una copia di un archivio reale. Header del sito con il selettore Uso/Tecnico fisso, ricerca larga e versione dell'app.
 - **2026-10-28:** progetto del lavoro aperto (ADR-0074 proposto, [`docs/design/lavoro-aperto.md`](design/lavoro-aperto.md)), sul branch `feat/lavoro`: nessun codice finché non è approvato.

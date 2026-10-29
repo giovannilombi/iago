@@ -4,7 +4,7 @@ import UserNotifications
 import os
 
 /// «Notifica del mattino» (ADR-0074): on workdays, at the chosen time, one local notification with what is due today,
-/// late, and the waits past their date. A click opens «Da fare». Computed on the Mac when it is time, no network. Off
+/// late, and the waits past their date. A click opens «Inbox». Computed on the Mac when it is time, no network. Off
 /// by default in «Traccia», on in «Gestisci», unless the user chose.
 @MainActor
 final class WorkReminder {

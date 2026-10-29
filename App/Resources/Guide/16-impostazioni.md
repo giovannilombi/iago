@@ -7,7 +7,7 @@
 - **Trascrizione:** motore, lingua, glossario, cosa fare dopo lo Stop, solo con alimentazione, modelli.
 - **Voci:** riconoscimento delle stesse voci tra una call e l'altra (spento di default) e voci conosciute, da eliminare una per una o tutte.
 - **Motore:** modello locale, ricerca per significato, lavori automatici (proposte e sintesi; spenti di default sotto i 32 GB di memoria).
-- **Progetti:** rinomina, archivia, elimina (in tre passi); il modo di ciascuno, *Traccia* o *Gestisci* (predefinito).
+- **Progetti:** rinomina, archivia, elimina (in tre passi); la modalità di ciascuno, *Modalità Traccia* o *Modalità Gestisci* (predefinita).
 - **Email e persone:** i tuoi indirizzi, contatti, cartelle sorvegliate, regole.
 - **Categorie:** principali e famiglie, colori, ordine, modelli di sintesi.
 - **Claude:** progetti abilitati, scrittura, immagini delle schermate, registro delle modifiche.

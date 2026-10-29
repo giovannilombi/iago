@@ -58,7 +58,10 @@ struct ImportView: View {
                         localized:
                             "Quando non puoi trascinarla: incolla il testo e scrivi mittente, destinatari e oggetto, oppure fai leggere uno screenshot della mail."
                     )
-                ) { model.composingEmail = true }
+                ) {
+                    model.composingEmailProject = nil
+                    model.composingEmail = true
+                }
             }
             .padding(20)
             .frame(maxWidth: 640, alignment: .leading)

@@ -29,7 +29,7 @@ final class CallDetector: NSObject, UNUserNotificationCenterDelegate {
     /// Starts a recording as the menu bar does (permission, voice notes); true if it started.
     var startRecording: (() async -> Bool)?
     var stopRecording: (() async -> Void)?
-    /// A click on the morning notification (ADR-0074): opens «Da fare».
+    /// A click on the morning notification (ADR-0074): opens «Inbox».
     var openInbox: (() -> Void)?
 
     /// A call is going on: its app, tentative title and, when IAGO is not sure, the meetings it may be.

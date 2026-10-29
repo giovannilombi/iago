@@ -42,7 +42,7 @@ final class AppModel {
         case library(LibraryScope)
         /// The global decision register (FR-153).
         case decisions
-        /// «Da fare»: the open work of every project (ADR-0074).
+        /// «Inbox»: the open work of every project (ADR-0074, ADR-0076).
         case inbox
         /// "Importa": drop area and every way to bring material in (files, clipboard, text, emails).
         case importer
@@ -323,12 +323,12 @@ final class AppModel {
                 decisions = try archive.decisions(query)
                 // The timeline shows every decision of the scope, whatever the register's filters.
                 timelineDecisions =
-                    showsMixedHistory ? try archive.decisions(DecisionQuery(scope: scope, statuses: [])) : []
+                    showsTimeline ? try archive.decisions(DecisionQuery(scope: scope, statuses: [])) : []
             } else {
                 decisions = []
                 timelineDecisions = []
             }
-            if showsMixedHistory {
+            if showsTimeline {
                 if case .library(.stream(let id)) = sidebar {
                     timelineNotes = try archive.notes(streamID: id, itemIDs: summaries.map(\.id))
                 } else {
@@ -346,16 +346,16 @@ final class AppModel {
         }
     }
 
-    /// How the scope is looked at (ADR-0075): «Riepilogo», then the four forms, from the simplest to the richest.
-    /// «Riepilogo» and the kanban (ADR-0074) are for projects, clients and streams; the kanban also for «Da fare» and
-    /// «Punti chiave».
+    /// How the scope is looked at (ADR-0075, ADR-0076): «Riepilogo», «Elementi» (the items, with a place of their own),
+    /// then the forms of the history: timeline, kanban and graph. «Riepilogo» and the kanban (ADR-0074) are for
+    /// projects, clients and streams; the kanban also for «Inbox» and «Punti chiave», where `list` is their «Elenco».
     enum ViewMode: String, Hashable { case overview, list, timeline, board, map }
-    /// «Mostra»: what the list, the timeline and the map contain. The kanban shows open work only.
+    /// «Mostra»: what the timeline and the graph contain. «Elementi» shows the items only, the kanban open work only.
     enum ViewContent: String, Hashable, CaseIterable { case all, materials, keyPoints }
     var viewMode = ViewMode.list {
         didSet {
             guard viewMode != oldValue else { return }
-            // The kanban and the overview open with their inspector closed; the map keeps the selection as its centre.
+            // The kanban and the overview open with their inspector closed; the graph keeps the selection as its centre.
             if viewMode == .board || viewMode == .overview { clearSelection() }
             rememberView()
             if !restoringView { reload() }
@@ -368,21 +368,16 @@ final class AppModel {
             if !restoringView { reload() }
         }
     }
+    /// «Mostra» as the view uses it: a project in «Traccia» has no «Mostra» and shows everything.
+    var shownContent: ViewContent {
+        workViewsMode(for: decisionScope) == .track && workScope != nil ? .all : viewContent
+    }
     var showsTimeline: Bool { viewMode == .timeline }
-    var showsDecisions: Bool {
-        sidebar == .decisions ? viewMode != .board : viewMode == .list && viewContent == .keyPoints
-    }
+    var showsDecisions: Bool { sidebar == .decisions && viewMode != .board }
     var showsGraph: Bool { viewMode == .map && sidebar != .decisions && sidebar != .inbox }
-    /// «Elenco» with «Tutto»: items, key points and notes in one list by date.
-    var showsMixedList: Bool {
-        guard case .library = sidebar else { return false }
-        return viewMode == .list && viewContent == .all
-    }
-    /// The views that interleave items, key points and notes need the scope's whole history.
-    private var showsMixedHistory: Bool { showsTimeline || showsMixedList }
 
-    /// Kanban, «Riepilogo» and map take the space of the list and of the detail; what is opened from them shows in an
-    /// inspector on the right.
+    /// Kanban, «Riepilogo» and graph take the space of the list and of the detail; what is opened from them shows in
+    /// an inspector on the right.
     var isWide: Bool {
         switch viewMode {
         case .board: workScope != nil || sidebar == .inbox || sidebar == .decisions
@@ -428,7 +423,7 @@ final class AppModel {
     }
 
     /// The last view of the scope, or where it opens the first time: a project, client or stream on its overview,
-    /// the project-less items on the timeline, the rest on the list of materials.
+    /// the project-less items on the timeline, the rest on «Elementi».
     private func restoreView() {
         restoringView = true
         defer { restoringView = false }
@@ -462,8 +457,8 @@ final class AppModel {
         fixView()
     }
 
-    /// A view the scope does not have (the kanban of a project kept in «Traccia», the overview outside a project)
-    /// falls back to the overview or the list.
+    /// A view the scope does not have (the kanban of a project kept in «Traccia», the overview outside a project, the
+    /// graph turned off in a project) falls back to the overview or the list.
     func fixView() {
         switch viewMode {
         case .overview where workScope == nil:
@@ -472,6 +467,8 @@ final class AppModel {
             viewMode = workScope != nil ? .overview : .list
         case .map where sidebar == .decisions || sidebar == .inbox:
             viewMode = .list
+        case .map where !graphAvailable:
+            viewMode = .timeline
         default: break
         }
     }
@@ -720,6 +717,102 @@ final class AppModel {
         fixView()
     }
 
+    // MARK: Mode of a project: graph switch, first-visit sheet, client default (ADR-0076)
+
+    static let hiddenGraphsKey = "work.graphHidden"
+    static let introDismissedKey = "work.modeIntro.dismissed"
+    static let clientModesKey = "work.clientModes"
+
+    /// «Mostra il Grafo» of a project in «Traccia»: on unless turned off. In «Gestisci» the graph is always there.
+    func graphShown(projectID: String) -> Bool {
+        _ = revision
+        guard workMode(for: projectID) == .track else { return true }
+        return !(UserDefaults.standard.stringArray(forKey: Self.hiddenGraphsKey) ?? []).contains(projectID)
+    }
+
+    func setGraphShown(_ shown: Bool, projectID: String) {
+        var hidden = Set(UserDefaults.standard.stringArray(forKey: Self.hiddenGraphsKey) ?? [])
+        if shown { hidden.remove(projectID) } else { hidden.insert(projectID) }
+        UserDefaults.standard.set(hidden.sorted(), forKey: Self.hiddenGraphsKey)
+        revision += 1
+        fixView()
+    }
+
+    /// The graph exists everywhere but in a project (or its stream) in «Traccia» that turned it off.
+    var graphAvailable: Bool {
+        switch sidebar {
+        case .library(.project(let id)): graphShown(projectID: id)
+        case .library(.stream(let id)): stream(id).map { graphShown(projectID: $0.projectId) } ?? true
+        default: true
+        }
+    }
+
+    /// What the first-visit sheet is about: a project, or a client and the projects in it.
+    enum ModeIntro: Identifiable, Hashable {
+        case project(String)
+        case client(String)
+        var id: String {
+            switch self {
+            case .project(let id): "project:\(id)"
+            case .client(let id): "client:\(id)"
+            }
+        }
+    }
+
+    /// The sheet that says which mode a project (or a client) is in, shown on every visit until «Non mostrare più».
+    var modeIntro: ModeIntro?
+
+    func dismissModeIntroForever(_ intro: ModeIntro) {
+        var dismissed = Set(UserDefaults.standard.stringArray(forKey: Self.introDismissedKey) ?? [])
+        dismissed.insert(intro.id)
+        UserDefaults.standard.set(dismissed.sorted(), forKey: Self.introDismissedKey)
+    }
+
+    private func showModeIntro(for selection: SidebarSelection?) {
+        guard !DemoMode.isActive else { return }
+        let intro: ModeIntro? =
+            switch selection {
+            case .library(.project(let id)): .project(id)
+            case .library(.client(let id)): .client(id)
+            default: nil
+            }
+        guard let intro,
+            !(UserDefaults.standard.stringArray(forKey: Self.introDismissedKey) ?? []).contains(intro.id)
+        else { return }
+        modeIntro = intro
+    }
+
+    /// The mode new projects of a client start in, chosen on the client's first-visit sheet («Gestisci» if never).
+    func clientWorkMode(_ clientID: String) -> WorkMode {
+        let modes = UserDefaults.standard.dictionary(forKey: Self.clientModesKey) as? [String: String] ?? [:]
+        return modes[clientID].flatMap(WorkMode.init(rawValue:)) ?? .manage
+    }
+
+    /// A client's mode: for its new projects, and for the ones that never had one of their own.
+    func setClientWorkMode(_ clientID: String, _ mode: WorkMode) {
+        var modes = UserDefaults.standard.dictionary(forKey: Self.clientModesKey) as? [String: String] ?? [:]
+        modes[clientID] = mode == .manage ? nil : mode.rawValue
+        UserDefaults.standard.set(modes, forKey: Self.clientModesKey)
+        for project in projects where project.clientId == clientID && !Self.modeChosen.contains(project.id) {
+            perform { try archive.setProjectWorkMode(project.id, mode) }
+        }
+        reload()
+        fixView()
+    }
+
+    /// Projects whose mode the user chose on their own (pill, sheet, Settings): a client's choice leaves them alone.
+    static var modeChosen: Set<String> {
+        Set(UserDefaults.standard.stringArray(forKey: "work.modeChosen") ?? [])
+    }
+
+    /// The mode chosen for one project by the user.
+    func chooseProjectWorkMode(_ projectID: String, _ mode: WorkMode) {
+        var chosen = Self.modeChosen
+        chosen.insert(projectID)
+        UserDefaults.standard.set(chosen.sorted(), forKey: "work.modeChosen")
+        setProjectWorkMode(projectID, mode)
+    }
+
     /// The user's name ("Io" in the transcripts), first among the people of a key point.
     var meName: String {
         _ = revision
@@ -853,6 +946,7 @@ final class AppModel {
         if changed {
             restoreView()
             clearSelection()
+            showModeIntro(for: selection)
         }
         showsSearch = false
         reload()
@@ -992,6 +1086,11 @@ final class AppModel {
             if let clientID, let id = project?.id {
                 try archive.setProjectClient(id, clientID)
                 project?.clientId = clientID
+                // ADR-0076: a new project starts in the mode chosen for its client.
+                if clientWorkMode(clientID) == .track {
+                    try archive.setProjectWorkMode(id, .track)
+                    project?.workMode = .track
+                }
             }
         }
         reload()
@@ -1290,8 +1389,19 @@ final class AppModel {
         reload()
         return count
     }
-    /// "Nuova email" sheet.
+    /// "Nuova email" sheet, and the project it starts in when opened from a project's import (ADR-0076).
     var composingEmail = false
+    var composingEmailProject: String?
+
+    /// Where «Importa file ed elementi…» puts what it brings in: the project it was opened from, and its streams.
+    struct ImportTarget: Identifiable, Hashable {
+        var projectID: String
+        var streamIDs: [String] = []
+        var id: String { projectID }
+    }
+
+    /// The import sheet of a project (ADR-0076).
+    var importing: ImportTarget?
 
     enum ExportKind: String, Identifiable {
         case llm, audio
@@ -1322,7 +1432,7 @@ final class AppModel {
     }
 
     /// "Importa › Da file…" (and "Email .eml…" with `emailsOnly`): the system panel, then the usual import.
-    func chooseFilesToImport(emailsOnly: Bool = false) {
+    func chooseFilesToImport(emailsOnly: Bool = false, into target: ImportTarget? = nil) {
         let panel = NSOpenPanel()
         panel.allowsMultipleSelection = true
         panel.canChooseDirectories = !emailsOnly
@@ -1331,7 +1441,7 @@ final class AppModel {
         }
         panel.prompt = String(localized: "Importa")
         guard panel.runModal() == .OK else { return }
-        importFiles(panel.urls)
+        importFiles(panel.urls, into: target)
     }
 
     /// What the clipboard holds, shown in "Importa › Dagli appunti" before anything is imported.
@@ -1366,23 +1476,25 @@ final class AppModel {
     }
 
     /// An image from the clipboard becomes a document read with OCR, like a dropped image.
-    func importClipboardImage(_ png: Data) {
+    func importClipboardImage(_ png: Data, into target: ImportTarget? = nil) {
         let folder = archiveService.paths.scratch.appendingPathComponent(UUID().uuidString, isDirectory: true)
         let file = folder.appendingPathComponent(
             String(localized: "Immagine dagli appunti") + " \(Date().formatted(.iso8601.year().month().day())).png")
         do {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             try png.write(to: file)
-            importFiles([file])
+            importFiles([file], into: target)
         } catch {
             lastError = ErrorText.describe(error)
         }
     }
 
-    /// "Importa › Da testo": the text becomes a document to classify, like an imported file.
-    func importText(_ text: String, title: String) async -> Bool {
+    /// "Importa › Da testo": the text becomes a document to classify, like an imported file; from a project, a
+    /// document of that project.
+    func importText(_ text: String, title: String, into target: ImportTarget? = nil) async -> Bool {
         do {
             let item = try await archiveService.importText(text, title: title)
+            if let target { file(item.id, in: target) }
             reload()
             selectedItemID = item.id
             return true
@@ -1407,14 +1519,30 @@ final class AppModel {
         }
     }
 
-    func importFiles(_ dropped: [URL]) {
+    /// An imported item put in the project (and streams) the import was opened from.
+    private func file(_ itemID: String, in target: ImportTarget) {
+        let projectID = target.projectID
+        perform {
+            _ = try archive.updateItem(itemID) { $0.projectId = projectID }
+            if !target.streamIDs.isEmpty { try archive.setStreams(target.streamIDs, itemID: itemID) }
+        }
+        refreshTextAssets(itemID)
+    }
+
+    func importFiles(_ dropped: [URL], into target: ImportTarget? = nil) {
         let urls = Self.expandFolders(dropped)
         // Emails go through their confirmation sheet; everything else is imported at once.
         let emails = urls.filter(ArchiveService.isEmail)
         var drafts: [EmailImportDraft] = []
         for url in emails {
             do {
-                drafts.append(try archiveService.readEmail(url))
+                var draft = try archiveService.readEmail(url)
+                if let target {
+                    draft.projectID = target.projectID
+                    draft.streamIDs = target.streamIDs
+                    draft.include = !draft.alreadyImported
+                }
+                drafts.append(draft)
             } catch {
                 lastError = String(
                     localized: "\(url.lastPathComponent) non sembra un'email leggibile: \(ErrorText.describe(error))")
@@ -1445,8 +1573,13 @@ final class AppModel {
                 }
             }
             if !failures.isEmpty { lastError = failures.joined(separator: "\n") }
+            if let target {
+                for case .success(let item) in results.map(\.result) { file(item.id, in: target) }
+                reload()
+            }
             if case .success(let item)? = results.last?.result {
-                select(.library(.unclassified))
+                // From a project the items stay where the user is; otherwise they wait in «Elementi da classificare».
+                if target == nil { select(.library(.unclassified)) }
                 selectedItemID = item.id
             }
         }

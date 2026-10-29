@@ -787,7 +787,7 @@ struct DecisionEditor: View {
                         .help(
                             String(
                                 localized:
-                                    "Ha dettagli in Gestisci (priorità, dipendenze, stima, inizio, ricorrenza o «in corso»): restano salvati."
+                                    "Ha dettagli della Modalità Gestisci (priorità, dipendenze, gravità, stima, inizio, ricorrenza o «in corso»): restano salvati."
                             ))
                 }
             }
@@ -1003,9 +1003,10 @@ struct DecisionEditor: View {
     private var hasManageDetails: Bool {
         draft.priority != nil || !draft.blockerIDs.isEmpty || !(draft.estimate ?? "").isEmpty
             || draft.startsAt != nil || draft.recurrence != nil || draft.status == .inProgress
+            || draft.severity != nil || draft.derivedFromID != nil
     }
 
-    /// Owner, due date, waiting for, severity, checklist: in both modes (design, «Campi»).
+    /// Owner, due date, waiting for, checklist: in both modes. Severity and «nata da» only in «Gestisci» (ADR-0076).
     private var workFields: some View {
         Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
             GridRow {
@@ -1031,7 +1032,7 @@ struct DecisionEditor: View {
                     }
                 }
             }
-            if draft.kind == .risk {
+            if draft.kind == .risk, mode == .manage {
                 GridRow {
                     Text(String(localized: "Gravità")).foregroundStyle(.secondary).fixedSize()
                     Picker("", selection: $draft.severity) {
@@ -1047,7 +1048,7 @@ struct DecisionEditor: View {
                 Text(String(localized: "Checklist")).foregroundStyle(.secondary).fixedSize()
                 ChecklistEditor(lines: $draft.checklist)
             }
-            if let derivedFrom {
+            if let derivedFrom, mode == .manage {
                 GridRow {
                     Text(String(localized: "Nata da")).foregroundStyle(.secondary).fixedSize()
                     HStack(spacing: 4) {
@@ -1068,9 +1069,42 @@ struct DecisionEditor: View {
         }
     }
 
-    /// "Traccia": Aperta, In attesa, Fatta, Annullata; under way and blocked show as "Aperta" and are kept unless
-    /// the user picks another state. "Gestisci": all six. A new entry starts open.
+    /// "Traccia" (ADR-0076): one box, done or not; waiting follows «In attesa di». "Gestisci": all six states. A new
+    /// entry starts open.
+    @ViewBuilder
     private var statusPicker: some View {
+        if mode == .track { doneBox } else { fullStatusPicker }
+    }
+
+    /// The box of «Traccia»: «Fatta» for an activity, the outcome of the others («Chiarito», «Accolta», «Risolto»).
+    /// An entry closed by another one or cancelled says so and keeps its state.
+    @ViewBuilder
+    private var doneBox: some View {
+        if draft.status == .superseded || draft.status == .cancelled {
+            Text(DecisionRow.statusName(draft.status, mode: mode)).foregroundStyle(.secondary)
+        } else {
+            Toggle(
+                Self.doneTitle(draft.kind),
+                isOn: Binding(
+                    get: { draft.status == .done },
+                    set: { done in
+                        draft.status = done ? .done : (draft.waitingOnName != nil ? .waiting : .active)
+                    })
+            )
+            .toggleStyle(.checkbox)
+        }
+    }
+
+    static func doneTitle(_ kind: Decision.Kind) -> String {
+        switch kind {
+        case .openQuestion: String(localized: "Chiarito")
+        case .request: String(localized: "Accolta")
+        case .risk: String(localized: "Risolto")
+        default: String(localized: "Fatta")
+        }
+    }
+
+    private var fullStatusPicker: some View {
         let statuses = DecisionRow.workStatuses(mode).filter { draft.existingID != nil || $0.isOpen }
         let binding = Binding<Decision.Status>(
             get: { mode == .track ? DecisionRow.trackStatus(draft.status) : draft.status },
@@ -1087,9 +1121,6 @@ struct DecisionEditor: View {
                 }
             }
             .labelsHidden().fixedSize()
-            if mode == .track, draft.status == .blocked {
-                Label(String(localized: "bloccata"), systemImage: "nosign").font(.caption).foregroundStyle(.red)
-            }
         }
     }
 

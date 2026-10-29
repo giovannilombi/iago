@@ -73,7 +73,7 @@ struct WorkBoard: View {
 
     // MARK: Header and filters
 
-    /// The global board, from «Da fare» or from «Punti chiave».
+    /// The global board, from «Inbox» or from «Punti chiave».
     private var globalHeader: some View {
         HStack(spacing: 10) {
             Label(String(localized: "Kanban di tutti i progetti"), systemImage: "rectangle.split.3x1").font(.headline)
@@ -148,10 +148,6 @@ struct WorkBoard: View {
                 DecisionQuery(
                     scope: scope.query, statuses: Set(Self.fixed + [.superseded]), kinds: Set(Decision.Kind.work))))
             ?? []
-        // Boards spanning projects leave out those kept in «Traccia» (ADR-0074).
-        if spansProjects, let tracked = try? archive.trackedProjectIDs(), !tracked.isEmpty {
-            entries.removeAll { $0.decision.projectId.map(tracked.contains) ?? false }
-        }
         columns = (try? archive.boardColumns(scope)) ?? []
         places = (try? archive.boardPlaces(scope)) ?? [:]
         showsArchived = ((try? archive.setting(Archive.boardShowArchivedKey)) ?? nil) == "1"
@@ -475,7 +471,14 @@ struct BoardCard: View {
                     .foregroundStyle(decision.status.isOpen ? .primary : .secondary)
             }
             if showsProject, let project = summary.projectName {
-                Text(project).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
+                // The project with the sign of its mode (ADR-0076): «Traccia» projects are on the board too.
+                let mode = model.workMode(for: decision.projectId)
+                Label {
+                    Text(project)
+                } icon: {
+                    Image(systemName: WorkModeText.icon(mode)).foregroundStyle(WorkModeText.color(mode))
+                }
+                .font(.caption2).foregroundStyle(.secondary).lineLimit(1)
             }
             HStack(spacing: 6) {
                 if let owner = summary.ownerName {

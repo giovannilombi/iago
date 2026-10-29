@@ -233,6 +233,13 @@ struct EmailImportSheet: View {
 struct NewEmailSheet: View {
     let model: AppModel
     @Environment(\.dismiss) private var dismiss
+
+    /// From a project's import (ADR-0076) the email starts in that project.
+    init(model: AppModel, projectID: String? = nil) {
+        self.model = model
+        _projectID = State(initialValue: projectID)
+    }
+
     @State private var from = ""
     @State private var to = ""
     @State private var cc = ""

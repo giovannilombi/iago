@@ -122,19 +122,20 @@ struct DecisionDetailView: View {
                         ].compactMap { $0 }.joined(separator: " · "))
                 }
             }
-            if let severity = decision.severity, decision.kind == .risk {
+            // Severity, «diventato problema» and «nata da» belong to «Gestisci» (ADR-0076).
+            if mode == .manage, let severity = decision.severity, decision.kind == .risk {
                 GridRow {
                     Text(String(localized: "Gravità")).foregroundStyle(.secondary)
                     Text(DecisionRow.severityLabel(severity))
                 }
             }
-            if let happened = decision.happenedAt {
+            if mode == .manage, let happened = decision.happenedAt {
                 GridRow {
                     Text(String(localized: "Diventato problema")).foregroundStyle(.secondary)
                     Text(happened.formatted(date: .long, time: .omitted)).foregroundStyle(.red)
                 }
             }
-            if let origin = summary.derivedFrom {
+            if mode == .manage, let origin = summary.derivedFrom {
                 GridRow {
                     Text(String(localized: "Nata da")).foregroundStyle(.secondary)
                     Button {

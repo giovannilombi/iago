@@ -18,6 +18,9 @@ enum DemoMode {
         #endif
     }
 
+    /// A demo archive is open: no first-visit sheets, the tour shows them itself.
+    static var isActive: Bool { root != nil }
+
     /// Debug only: `-IAGOTrialRoot <dir>` opens a copy of the user's archive there, to try a branch without touching
     /// the real one (`scripts/try-branch.sh`). Unlike the demo root, nothing is seeded.
     static var trialRoot: URL? {
@@ -212,6 +215,24 @@ enum DemoMode {
             await shot("kanban", main)
             model.viewMode = .overview
             await shot("riepilogo", main)
+            // ADR-0076: the same project in «Modalità Traccia», its short «Riepilogo», and the two sheets.
+            if let portal {
+                model.setProjectWorkMode(portal.id, .track)
+                model.viewMode = .overview
+                await shot("riepilogo-breve", main)
+                model.setProjectWorkMode(portal.id, .manage)
+                model.modeIntro = .project(portal.id)
+                try? await Task.sleep(for: .seconds(0.5))
+                await shot("modalita", main?.attachedSheet)
+                model.modeIntro = nil
+                model.importing = AppModel.ImportTarget(projectID: portal.id)
+                try? await Task.sleep(for: .seconds(0.5))
+                await shot("importa", main?.attachedSheet)
+                model.importing = nil
+            }
+            model.select(.inbox)
+            model.viewMode = .list
+            await shot("inbox", main)
             model.viewMode = .list
             model.select(.labels)
             await shot("categorie-tag", main)
@@ -235,7 +256,8 @@ enum DemoMode {
             await shot(
                 "tour", NSApp.windows.first { $0.title == String(localized: "Benvenuto in IAGO") && $0.isVisible })
             try? "".write(to: out.appendingPathComponent("done"), atomically: true, encoding: .utf8)
-            NSApp.terminate(nil)
+            // `terminate` waited on open sheets and left the demo running: the tour has nothing to save.
+            exit(0)
         }
 
         // MARK: Content (invented)

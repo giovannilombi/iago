@@ -43,7 +43,7 @@ struct ProjectTimeline: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 VStack(spacing: 0) {
                     ViewModePicker(model: model)
-                    if model.viewContent != .keyPoints { FilterBar(model: model) }
+                    if model.shownContent != .keyPoints { FilterBar(model: model) }
                 }
                 .background(.bar)
             }
@@ -67,7 +67,7 @@ enum TimelineRow: Identifiable {
     /// filtering by tag or type shows just the matching items.
     @MainActor
     static func history(_ model: AppModel) -> [TimelineRow] {
-        let content = model.viewContent
+        let content = model.shownContent
         var rows = content == .keyPoints ? [] : model.summaries.map(TimelineRow.item)
         rows.sort { $0.date > $1.date }
         if content != .materials, !model.filter.isActive || content == .keyPoints {
@@ -229,11 +229,17 @@ private struct TimelineDecision: View {
                 .opacity(nested ? 0.6 : 1)
             ZStack(alignment: .top) {
                 Rectangle().fill(Color.secondary.opacity(0.3)).frame(width: 2)
-                Image(systemName: DecisionRow.icon(summary))
-                    .font(.system(size: 14))
-                    .foregroundStyle(DecisionRow.color(summary))
-                    .background(Circle().fill(Color(nsColor: .windowBackgroundColor)).padding(-2))
-                    .padding(.top, 8)
+                Group {
+                    // In «Traccia» an activity is a box to tick (ADR-0076).
+                    if WorkCheckbox.applies(decision, mode: mode) {
+                        WorkCheckbox(model: model, decision: decision)
+                    } else {
+                        Image(systemName: DecisionRow.icon(summary)).foregroundStyle(DecisionRow.color(summary))
+                    }
+                }
+                .font(.system(size: 14))
+                .background(Circle().fill(Color(nsColor: .windowBackgroundColor)).padding(-2))
+                .padding(.top, 8)
             }
             .frame(width: 30)
             HStack(alignment: .firstTextBaseline, spacing: 6) {

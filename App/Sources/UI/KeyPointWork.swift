@@ -240,11 +240,13 @@ extension DecisionRow {
         return Calendar.current.startOfDay(for: due) < Calendar.current.startOfDay(for: now)
     }
 
-    /// Fields only "Gestisci" shows, filled in: "Traccia" keeps them and says so with a small sign.
+    /// Fields only "Gestisci" shows, filled in: "Traccia" keeps them and says so with a small sign (ADR-0076: also
+    /// severity, «diventato problema» and «nata da»).
     static func hasManageDetails(_ summary: DecisionSummary) -> Bool {
         let decision = summary.decision
         return decision.priority != nil || !summary.blockers.isEmpty || !(decision.estimate ?? "").isEmpty
             || decision.startsAt != nil || decision.recurrence != nil || decision.status == .inProgress
+            || decision.severity != nil || decision.happenedAt != nil || summary.derivedFrom != nil
     }
 
     static func priorityLabel(_ priority: Int) -> String {
@@ -357,13 +359,13 @@ struct KeyPointWorkLine: View {
                         : String(
                             localized: "Dipende da: \(summary.blockers.map(\.text).joined(separator: ", "))")))
         }
-        if decision.kind == .risk, let severity = decision.severity {
+        if mode == .manage, decision.kind == .risk, let severity = decision.severity {
             parts.append(
                 Piece(
                     text: String(localized: "gravità \(DecisionRow.severityLabel(severity).lowercased())"),
                     icon: "gauge.with.dots.needle.67percent", color: severity == .high ? .red : .secondary))
         }
-        if let happened = decision.happenedAt {
+        if mode == .manage, let happened = decision.happenedAt {
             parts.append(
                 Piece(
                     text: String(localized: "diventato problema · \(DecisionRow.shortDate(happened))"),
@@ -382,7 +384,7 @@ struct KeyPointWorkLine: View {
                     color: summary.checklist.done == summary.checklist.total ? .green : .secondary,
                     help: String(localized: "Checklist")))
         }
-        if let origin = summary.derivedFrom {
+        if mode == .manage, let origin = summary.derivedFrom {
             parts.append(
                 Piece(
                     text: String(localized: "nata da «\(DecisionRow.clip(origin.text, 40))»"),
@@ -392,7 +394,10 @@ struct KeyPointWorkLine: View {
             parts.append(
                 Piece(
                     text: "", icon: "slider.horizontal.3",
-                    help: String(localized: "Ha dettagli in Gestisci: priorità, dipendenze, stima, inizio o ricorrenza")
+                    help: String(
+                        localized:
+                            "Ha dettagli della Modalità Gestisci (priorità, dipendenze, gravità, stima, inizio, ricorrenza): restano salvati"
+                    )
                 ))
         }
         return parts
@@ -433,6 +438,7 @@ struct KeyPointActions: View {
 
     var body: some View {
         let decision = summary.decision
+        let manage = model.workMode(for: decision.projectId) == .manage
         if decision.kind.isWork {
             if decision.status.isOpen {
                 switch decision.kind {
@@ -454,7 +460,7 @@ struct KeyPointActions: View {
                         }
                     }
                 case .risk:
-                    if decision.happenedAt == nil {
+                    if manage, decision.happenedAt == nil {
                         Button(String(localized: "Diventato problema")) { model.riskHappened(decision.id) }
                     }
                     Button(String(localized: "Risolto")) { model.closeKeyPoint(decision.id, .resolved) }
@@ -477,7 +483,34 @@ struct KeyPointActions: View {
         } else if decision.status == .cancelled {
             Button(String(localized: "Riattiva")) { model.setDecisionStatus(decision.id, .active) }
         }
-        Button(String(localized: "Nuova attività da questo")) { model.editingDecision = .derived(from: summary) }
+        // «Nata da» is a link of «Gestisci» (ADR-0076).
+        if manage {
+            Button(String(localized: "Nuova attività da questo")) { model.editingDecision = .derived(from: summary) }
+        }
+    }
+}
+
+/// The box of an activity in a project in «Traccia» (ADR-0076): ticked, it is done; unticked, open again (or waiting,
+/// if it waits for someone).
+struct WorkCheckbox: View {
+    let model: AppModel
+    let decision: Decision
+
+    /// Only activities of «Traccia» projects that are not closed by another entry or cancelled.
+    static func applies(_ decision: Decision, mode: WorkMode) -> Bool {
+        mode == .track && decision.kind == .action && decision.status != .superseded && decision.status != .cancelled
+    }
+
+    var body: some View {
+        let done = decision.status == .done
+        Button {
+            model.setDecisionStatus(decision.id, done ? (decision.waitingOnId != nil ? .waiting : .active) : .done)
+        } label: {
+            Image(systemName: done ? "checkmark.square.fill" : "square")
+                .foregroundStyle(done ? Color.green : DecisionRow.tint(.action))
+        }
+        .buttonStyle(.borderless)
+        .help(done ? String(localized: "Fatta: clicca per riaprirla") : String(localized: "Segna come fatta"))
     }
 }
 

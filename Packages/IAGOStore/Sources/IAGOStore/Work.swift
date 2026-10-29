@@ -113,13 +113,6 @@ extension Archive {
         try updateProject(projectID) { $0.workMode = mode == .manage ? nil : mode }
     }
 
-    /// The projects kept in "Traccia": their entries stay off the global kanban.
-    public func trackedProjectIDs() throws -> Set<String> {
-        try database.writer.read { db in
-            Set(try String.fetchAll(db, sql: "SELECT id FROM project WHERE work_mode = ?", arguments: ["track"]))
-        }
-    }
-
     // MARK: People
 
     /// The person entity with this name, created if needed ("persone già note + nuove al volo").

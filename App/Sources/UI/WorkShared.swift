@@ -1,12 +1,12 @@
 import IAGOStore
 import SwiftUI
 
-// Pieces shared by «Da fare», «Riepilogo» and the kanban (ADR-0074).
+// Pieces shared by «Inbox», «Riepilogo» and the kanban (ADR-0074).
 
 // MARK: - Mode and people
 
 extension AppModel {
-    /// The mode of the global views («Da fare», «Punti chiave»): «Gestisci»; each entry follows its own project.
+    /// The mode of the global views («Inbox», «Punti chiave»): «Gestisci»; each entry follows its own project.
     var workViewsMode: WorkMode { .manage }
 
     /// The mode a scope is shown in: a project (or a stream's project) can be kept in «Traccia».
@@ -118,7 +118,7 @@ enum WorkStyle {
 
 // MARK: - Open work, grouped
 
-/// How open work is grouped by its due date, for «Da fare» and the morning notification.
+/// How open work is grouped by its due date, for «Inbox» and the morning notification.
 enum OpenWork {
     enum Due: CaseIterable {
         case overdue, today, thisWeek, later, none
@@ -189,22 +189,30 @@ enum OpenWork {
 
 // MARK: - A row of work
 
-/// One entry in «Da fare» and in «Riepilogo»: sign, title, where and who, due date. A click opens it in the detail
+/// One entry in «Inbox» and in «Riepilogo»: sign, title, where and who, due date. A click opens it in the detail
 /// pane, as in «Punti chiave»; the right click changes its state.
 struct WorkEntryRow: View {
     let model: AppModel
     let summary: DecisionSummary
+    /// The mode of the view; each entry is shown in the mode of its own project (ADR-0076).
     let mode: WorkMode
     var showsProject = true
     /// Shows the owner even when it is the user (the inbox leaves it out: those are mine).
     var showsOwner = true
     @State private var askingWaiting = false
 
+    private var entryMode: WorkMode { model.workMode(for: summary.decision.projectId) }
+
     var body: some View {
         let decision = summary.decision
+        let mode = entryMode
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Image(systemName: WorkStyle.icon(decision)).foregroundStyle(WorkStyle.color(decision))
-                .help(WorkStyle.label(decision.kind))
+            if WorkCheckbox.applies(decision, mode: mode) {
+                WorkCheckbox(model: model, decision: decision)
+            } else {
+                Image(systemName: WorkStyle.icon(decision)).foregroundStyle(WorkStyle.color(decision))
+                    .help(WorkStyle.label(decision.kind))
+            }
             VStack(alignment: .leading, spacing: 2) {
                 Text(decision.text).lineLimit(2)
                     .foregroundStyle(decision.kind.isWork && !decision.status.isOpen ? .secondary : .primary)
@@ -231,10 +239,11 @@ struct WorkEntryRow: View {
 
     private var detailLine: some View {
         let decision = summary.decision
+        let mode = entryMode
         var parts: [String] = []
         if showsProject, let project = summary.projectName { parts.append(project) }
         if showsOwner, let owner = summary.ownerName { parts.append(owner) }
-        if let severity = decision.severity, decision.kind == .risk {
+        if mode == .manage, let severity = decision.severity, decision.kind == .risk {
             parts.append(String(localized: "gravità \(WorkStyle.severity(severity))"))
         }
         if mode == .manage, let priority = decision.priority { parts.append(WorkStyle.priority(priority)) }
@@ -247,7 +256,7 @@ struct WorkEntryRow: View {
             if mode == .manage, decision.status == .inProgress {
                 WorkTag(text: String(localized: "in corso"), color: .accentColor)
             }
-            if decision.happenedAt != nil, decision.kind == .risk {
+            if mode == .manage, decision.happenedAt != nil, decision.kind == .risk {
                 WorkTag(text: String(localized: "diventato problema"), color: .red)
             }
         }
@@ -386,7 +395,7 @@ struct WaitingForm: View {
 
 // MARK: - Checklists of projects
 
-/// A project's checklist: tick, add, rename, pin to «Da fare», delete.
+/// A project's checklist: tick, add, rename, pin to «Inbox», delete.
 struct ChecklistCard: View {
     let model: AppModel
     let checklist: Checklist
@@ -472,7 +481,7 @@ struct ChecklistCard: View {
                 .buttonStyle(.borderless)
                 .help(
                     checklist.pinned
-                        ? String(localized: "Togli da «Da fare»") : String(localized: "Fissa in «Da fare»"))
+                        ? String(localized: "Togli da «Inbox»") : String(localized: "Fissa in «Inbox»"))
                 Menu {
                     Button(String(localized: "Rinomina")) { renaming = checklist.name }
                     Divider()
