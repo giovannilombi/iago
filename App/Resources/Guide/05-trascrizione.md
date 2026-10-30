@@ -40,6 +40,7 @@ Puoi ritrascrivere con l'altro motore, rinominare gli speaker, e per documenti e
 Una call può avere **due trascrizioni affiancate**: quella di IAGO e quella di Teams. *Allega trascrizione Teams…* la **aggiunge**, non sostituisce quella di IAGO. Allo stesso modo, *Trascrivi* su una call che ha solo Teams aggiunge quella di IAGO.
 - Nella sezione Trascrizione ci sono due schede, **IAGO** e **Teams**, oltre a Markdown.
 - Nella trascrizione di IAGO un minuto fa partire l'audio da lì. In quella di Teams i minuti sono **solo testo**: Teams li conta dall'avvio della sua trascrizione, non della registrazione, e non corrispondono all'audio.
-- Sintesi, proposte, ricerca, esportazioni e Claude usano **una** delle due, segnata con *Usata per sintesi, proposte e ricerca*: di solito quella di IAGO. Sull'altra, *Usa questa per sintesi, proposte e ricerca* la scambia. Una sintesi già fatta resta com'è: rigenerala per usare l'altra trascrizione.
+- Una delle due è la **principale**, con la ★ accanto al nome della scheda: è sempre la prima, e di solito è quella di IAGO. Sintesi, proposte, esportazioni e Claude usano la principale. La **ricerca** guarda in tutte e due.
+- Per cambiarla apri la scheda dell'altra e premi **Rendi principale**. Se la call ha già una sintesi, IAGO chiede conferma: la sintesi resta com'è finché non la rigeneri, e sopra compare «Fatta sulla trascrizione IAGO, ora la principale è Teams» con *Rigenera*.
 - *Elimina questa trascrizione…* toglie una delle due, anche dopo. Resta l'altra. Non si può annullare, ma la trascrizione si può rifare o allegare di nuovo.
 - Allegare un'altra trascrizione di Teams sostituisce quella di Teams di prima, mai quella di IAGO.

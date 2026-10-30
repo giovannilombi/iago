@@ -1,6 +1,6 @@
 # ADR-0078 — Trascrizioni di IAGO e di Teams affiancate, Claude consigliato sui Mac lenti
 
-- Stato: accettato (1.2.5-beta)
+- Stato: accettato (1.2.5-beta), modificato nella 1.2.6-beta
 - Data: 2026-10-30
 - Riferimenti: ADR-0033 (trascrizioni Teams), ADR-0043 (server MCP), ADR-0054 (sintesi), ADR-0069 (coda unica e memoria), ADR-0071 (sintesi e proposte fatte da Claude), ADR-0058 (niente esce senza la scelta dell'utente); richieste dell'utente del 2026-10-30
 
@@ -33,7 +33,13 @@
   - **Impostazioni › Motore › Sintesi e proposte: Motore del Mac / Claude** (`intelligence.byClaude`). Con Claude il motore del Mac non parte più da solo, i lavori automatici sono spenti e il consiglio compare su qualsiasi Mac.
 - I collegamenti di Claude Code non si leggono: IAGO non ha un file sicuro dove trovarli. Chi usa solo Claude Code vede «Collega Claude…», ma può comunque copiare la richiesta da *Copia per Claude…*.
 
+## Modifica (1.2.6-beta, 2026-10-30)
+Richiesta dell'utente: la ricerca deve guardare anche nella trascrizione secondaria, e la principale deve vedersi.
+- **Ricerca in tutte e due:** anche la trascrizione secondaria è nell'indice. Una call compare una volta: i passaggi della secondaria contano solo se la principale non ha le stesse parole, con l'etichetta «nella trascrizione Teams» (o IAGO), e aprono quella scheda. La ricerca per significato e Claude restano sulla principale.
+- **La principale si vede:** ★ accanto al nome della sua scheda, sempre la prima, e sotto «Principale · usata per sintesi, proposte ed esportazioni». Sull'altra *Rendi principale*, con conferma se la call ha già una sintesi.
+- **Sintesi e trascrizione:** la sintesi ricorda da quale trascrizione è stata scritta (`summary.transcript_source`, migrazione `v23-summary-transcript`). Se la principale cambia, sopra la sintesi compare «Fatta sulla trascrizione IAGO, ora la principale è Teams» con *Rigenera*; non si rigenera da sola.
+
 ## Conseguenze
-- Ricerca ed esportazioni contengono solo la trascrizione principale. Per cercare nell'altra la si rende principale.
+- Esportazioni, sintesi, proposte e Claude contengono solo la trascrizione principale. La ricerca, dalla 1.2.6-beta, guarda in tutte e due.
 - Le call di prima con Teams al posto di IAGO sono riconosciute dal motore della trascrizione salvata (`asr = teams`): i loro minuti smettono di essere link all'audio.
 - Il consiglio prepara il terreno per altri assistenti (ADR-0079): oggi nomina Claude, domani l'assistente scelto.

@@ -154,6 +154,8 @@ final class AppModel {
     var searchSource: SearchHit.Source? { didSet { if searchSource != oldValue { scheduleSearch() } } }
     /// Set when a search result is opened: the item view starts the audio there.
     var pendingSeek: (itemID: String, atSec: Double)?
+    /// Set when a search result is in the call's other transcript (ADR-0078): the item view opens that tab.
+    var pendingAlternateFor: String?
     /// Speaker names typed and not saved yet, by item and speaker: they stay while IAGO is open, also after moving to
     /// another item, and the field shows them in red until Return.
     var speakerDrafts: [String: [String: String]] = [:]
@@ -192,6 +194,7 @@ final class AppModel {
             return
         }
         guard let itemID = hit.itemID else { return }
+        if hit.alternate != nil { pendingAlternateFor = itemID }
         if let at = hit.atSec { pendingSeek = (itemID, at) }
         selectedItemID = itemID
     }

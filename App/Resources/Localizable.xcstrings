@@ -1175,6 +1175,16 @@
         }
       }
     },
+    "★ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "★ %@"
+          }
+        }
+      }
+    },
     "☑ %lld/%lld" : {
       "localizations" : {
         "en" : {
@@ -5114,6 +5124,16 @@
         }
       }
     },
+    "dalla trascrizione %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from the %@ transcript"
+          }
+        }
+      }
+    },
     "Data" : {
       "localizations" : {
         "en" : {
@@ -7050,6 +7070,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Done"
+          }
+        }
+      }
+    },
+    "Fatta sulla trascrizione %@, ora la principale è %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Written from the %1$@ transcript; the main one is now %2$@."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Fatta sulla trascrizione %1$@, ora la principale è %2$@."
           }
         }
       }
@@ -10817,6 +10853,16 @@
         }
       }
     },
+    "nella trascrizione %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "in the %@ transcript"
+          }
+        }
+      }
+    },
     "Nelle trascrizioni la tua voce (il microfono del Mac) compare con questo nome." : {
       "localizations" : {
         "en" : {
@@ -13049,6 +13095,16 @@
         }
       }
     },
+    "Principale · usata per sintesi, proposte ed esportazioni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Main · used for summaries, suggestions and exports"
+          }
+        }
+      }
+    },
     "Principale o in una famiglia" : {
       "localizations" : {
         "en" : {
@@ -14045,6 +14101,26 @@
         }
       }
     },
+    "Rendere principale la trascrizione %@?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make the %@ transcript the main one?"
+          }
+        }
+      }
+    },
+    "Rendi principale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make main"
+          }
+        }
+      }
+    },
     "Responsabile" : {
       "localizations" : {
         "en" : {
@@ -14075,7 +14151,18 @@
         }
       }
     },
+    "Resta l'altra trascrizione, che diventa la principale. Non si può annullare: la trascrizione si può rifare o allegare di nuovo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other transcript stays and becomes the main one. This can't be undone: the transcript can be made or attached again."
+          }
+        }
+      }
+    },
     "Resta l'altra trascrizione, che diventa quella usata per sintesi, proposte e ricerca. Non si può annullare: la trascrizione si può rifare o allegare di nuovo." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15868,6 +15955,16 @@
         }
       }
     },
+    "Si cerca anche qui. Sintesi, proposte ed esportazioni usano «%@»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search looks here too. Summaries, suggestions and exports use «%@»."
+          }
+        }
+      }
+    },
     "Si è verificato un errore" : {
       "localizations" : {
         "en" : {
@@ -15984,6 +16081,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Summary replaced"
+          }
+        }
+      }
+    },
+    "Sintesi, proposte ed esportazioni useranno questa. La sintesi già fatta resta com'è: per usare questa trascrizione, rigenerala." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summaries, suggestions and exports will use this one. The summary already written stays as it is: regenerate it to use this transcript."
+          }
+        }
+      }
+    },
+    "Sintesi, proposte ed esportazioni useranno questa. La sintesi già fatta resta com'è: per usare questa trascrizione, rigenerala. I minuti di Teams non sono collegati all'audio." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summaries, suggestions and exports will use this one. The summary already written stays as it is: regenerate it to use this transcript. Teams' minutes are not linked to the audio."
           }
         }
       }
@@ -17601,6 +17718,16 @@
         }
       }
     },
+    "Trovato solo nell'altra trascrizione della call: aprendolo si apre quella scheda" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Found only in the call's other transcript: opening it opens that tab"
+          }
+        }
+      }
+    },
     "Tue voci in ritardo o in scadenza oggi, e proposte da confermare" : {
       "extractionState" : "stale",
       "localizations" : {
@@ -18033,6 +18160,7 @@
       }
     },
     "Una sintesi già fatta non cambia da sola: rigenerala per usare questa trascrizione." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18139,6 +18267,7 @@
       }
     },
     "Usa questa per sintesi, proposte e ricerca" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18169,6 +18298,7 @@
       }
     },
     "Usata per sintesi, proposte e ricerca" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

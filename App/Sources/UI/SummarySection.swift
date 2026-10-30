@@ -10,6 +10,8 @@ struct SummarySection: View {
     let item: Item
     /// There is a transcript (calls) or a text (emails, documents) to summarize.
     let hasText: Bool
+    /// `iago` or `teams` when the call has two transcripts (ADR-0078): the main one, to compare with the summary's.
+    var mainTranscript: String?
     let seek: (Double) -> Void
     @State private var summary: ItemSummaryText?
     @State private var editing: String?
@@ -158,6 +160,23 @@ struct SummarySection: View {
                 .background(RoundedRectangle(cornerRadius: 8).fill(Color.indigo.opacity(0.08)))
                 .help(String(localized: "Non rigenera da solo: scegli tu."))
             }
+            if let main = mainTranscript, let made = summary.transcriptSource, made != main {
+                HStack(spacing: 8) {
+                    Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
+                    Text(
+                        String(
+                            localized:
+                                "Fatta sulla trascrizione \(ItemDetailView.sourceName(made)), ora la principale è \(ItemDetailView.sourceName(main))."
+                        ))
+                    Button(String(localized: "Rigenera")) { askingNames { regenerate(summary) } }
+                        .buttonStyle(.link)
+                    Spacer(minLength: 0)
+                }
+                .font(.callout)
+                .padding(8)
+                .background(RoundedRectangle(cornerRadius: 8).fill(Color.orange.opacity(0.08)))
+                .help(String(localized: "Non rigenera da solo: scegli tu."))
+            }
             MarkdownText(markdown: summary.markdown)
                 .environment(
                     \.openURL,
@@ -219,6 +238,9 @@ struct SummarySection: View {
         // Who wrote it (ADR-0070): the model of the Mac, or Claude.
         if let provenance = Provenance.summary(summary) { parts.append(provenance) }
         if let template { parts.append(String(localized: "modello «\(template)»")) }
+        if mainTranscript != nil, let made = summary.transcriptSource {
+            parts.append(String(localized: "dalla trascrizione \(ItemDetailView.sourceName(made))"))
+        }
         parts.append(summary.updatedAt.formatted(date: .abbreviated, time: .shortened))
         if summary.edited { parts.append(String(localized: "modificata a mano")) }
         return parts.joined(separator: " · ")

@@ -511,6 +511,8 @@ public struct IAGOTools: ToolProvider {
         for hit in try archive.search(query, scope: searchScope, limit: 500) {
             let projectID = hit.projectID
             guard lines.count < limit, scope.allows(projectID), !onlyUnclassified || projectID == nil else { continue }
+            // Claude reads the main transcript only (ADR-0078).
+            guard hit.alternate == nil else { continue }
             var item: Item?
             if let itemID = hit.itemID {
                 if items[itemID] == nil { items[itemID] = try archive.item(itemID) }

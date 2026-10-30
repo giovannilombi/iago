@@ -431,6 +431,10 @@ enum Migrations {
                 t.column("created_at", .datetime).notNull()
             }
         }
+        migrator.registerMigration("v23-summary-transcript") { db in
+            // ADR-0078: the transcript a summary was written from (`iago` or `teams`), shown when the main one changes.
+            try db.alter(table: "summary") { t in t.add(column: "transcript_source", .text) }
+        }
         return migrator
     }
 

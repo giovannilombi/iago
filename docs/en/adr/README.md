@@ -99,5 +99,5 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0075 | Project views: how to look and what to show | accepted (1.1.0-beta; partly superseded by 0076) |
 | 0076 | Simple Track mode, Inbox and Items | accepted (1.2.0-beta) |
 | 0077 | Italian and English, always in sync | accepted (1.2.2-beta) |
-| 0078 | IAGO's and Teams' transcripts side by side, Claude suggested on slow Macs | accepted (1.2.5-beta) |
+| 0078 | IAGO's and Teams' transcripts side by side, Claude suggested on slow Macs | accepted (1.2.5-beta; search in both and ★ on the main one: 1.2.6-beta) |
 | 0079 | Assistants beyond Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposed |

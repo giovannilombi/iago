@@ -2,9 +2,9 @@ import Foundation
 import GRDB
 import IAGOCore
 
-/// Two transcripts of the same call (ADR-0078): IAGO's and Teams', side by side. `transcriptJSON` is the one
-/// summaries, proposals, search and exports read; `alternateTranscriptJSON` the other. Both stay until the user
-/// removes one.
+/// Two transcripts of the same call (ADR-0078): IAGO's and Teams', side by side. `transcriptJSON` is the main one,
+/// which summaries, proposals, exports and Claude read; `alternateTranscriptJSON` the other. Search looks in both.
+/// Both stay until the user removes one.
 extension Archive {
     public struct Transcripts: Sendable {
         public var main: Asset?
@@ -16,6 +16,14 @@ extension Archive {
         return Transcripts(
             main: assets.first { $0.kind == .transcriptJSON },
             alternate: assets.first { $0.kind == .alternateTranscriptJSON })
+    }
+
+    /// `teams` or `iago`: where the main transcript comes from; nil without one.
+    public func mainTranscriptSource(itemID: String) throws -> String? {
+        guard let main = try transcripts(itemID: itemID).main,
+            let transcript = try? Transcript.decode(from: readAssetData(main))
+        else { return nil }
+        return transcript.isImported ? "teams" : "iago"
     }
 
     /// An imported transcript next to the one the call has: the call keeps its own as the main one.
@@ -30,6 +38,7 @@ extension Archive {
         }
         try storeAsset(transcriptJSON, itemID: itemID, kind: .alternateTranscriptJSON, fileName: "transcript-alt.json")
         try setSpeakers(speakers, for: itemID)
+        try indexAlternateTranscript(itemID: itemID)
     }
 
     /// The main transcript becomes the other one and vice versa. Both are written again under their own file, so a
@@ -41,6 +50,7 @@ extension Archive {
         let alternateData = try readAssetData(alternate)
         try storeAsset(alternateData, itemID: itemID, kind: .transcriptJSON, fileName: "transcript.json")
         try storeAsset(mainData, itemID: itemID, kind: .alternateTranscriptJSON, fileName: "transcript-alt.json")
+        try indexAlternateTranscript(itemID: itemID)
     }
 
     /// Moves the main transcript aside before a new one takes its place: IAGO's transcription added to a call that
@@ -49,6 +59,7 @@ extension Archive {
         guard let main = try transcripts(itemID: itemID).main else { return }
         try storeAsset(
             try readAssetData(main), itemID: itemID, kind: .alternateTranscriptJSON, fileName: "transcript-alt.json")
+        try indexAlternateTranscript(itemID: itemID)
     }
 
     /// Removes one of the two transcripts for good (the user confirmed it). Removing the main one makes the other the
@@ -78,5 +89,6 @@ extension Archive {
                     sql: "DELETE FROM item_speaker WHERE item_id = ? AND speaker_id = ?", arguments: [itemID, id])
             }
         }
+        try indexAlternateTranscript(itemID: itemID)
     }
 }

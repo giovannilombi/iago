@@ -206,7 +206,8 @@ public enum HybridSearch {
 
     /// The passage a hit belongs to: the chunk that contains its minute, or the hit itself.
     static func key(_ hit: SearchHit, _ chunksByItem: [String: [Chunk]]) -> String {
-        if hit.source == .transcript, let itemID = hit.itemID, let at = hit.atSec,
+        // The chunks are of the main transcript: a passage of the other one keeps its own key (ADR-0078).
+        if hit.source == .transcript, hit.alternate == nil, let itemID = hit.itemID, let at = hit.atSec,
             let chunk = chunksByItem[itemID]?.first(where: { ($0.startSec ?? 0) <= at && at <= ($0.endSec ?? 0) })
         {
             return chunk.id

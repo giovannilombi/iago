@@ -16,6 +16,8 @@ public struct SearchHit: Sendable, Hashable, Identifiable {
     public var snippet: String
     /// Found by meaning (ADR-0049) and not by its words.
     public var byMeaning = false
+    /// Found only in the call's other transcript (ADR-0078): `teams` or `iago`; nil in the main one.
+    public var alternate: String?
 
     public var id: String { "\(source.rawValue)/\(sourceID)/\(atSec ?? -1)" }
 
@@ -44,13 +46,14 @@ public enum SearchScope: Sendable, Hashable {
 /// Full-text index (FTS5, accents and case ignored). Texts are indexed in clear inside the database, which
 /// is excluded from Time Machine (spec 9.3); crypto-shredding removes the rows with the item.
 extension Archive {
-    /// Replaces the transcript passages of an item: one row per segment, with its start time.
+    /// Replaces the passages of an item's main transcript: one row per segment, with its start time.
     public func indexTranscript(_ transcript: Transcript, itemID: String) throws {
         let projectID = try item(itemID)?.projectId
         let speakers = Dictionary(uniqueKeysWithValues: transcript.speakers.map { ($0.id, $0.label) })
         try database.writer.write { db in
             try db.execute(
-                sql: "DELETE FROM search_index WHERE item_id = ? AND source = 'transcript'", arguments: [itemID])
+                sql: "DELETE FROM search_index WHERE item_id = ? AND source = 'transcript' AND source_id NOT LIKE ?",
+                arguments: [itemID, "%\(Self.alternateMark)%"])
             for segment in transcript.segments {
                 try db.execute(
                     sql:
@@ -68,6 +71,40 @@ extension Archive {
                 try Self.indexScreenshot(shot, projectID: projectID, db)
             }
         }
+    }
+
+    /// Marks the passages of the other transcript in `source_id`: `<item>#alt-<teams|iago>-<segment>`.
+    static let alternateMark = "#alt-"
+
+    /// Replaces the passages of the call's other transcript (ADR-0078), or removes them when it has none.
+    public func indexAlternateTranscript(itemID: String) throws {
+        let projectID = try item(itemID)?.projectId
+        let transcript = try transcripts(itemID: itemID).alternate.flatMap {
+            try? Transcript.decode(from: readAssetData($0))
+        }
+        try database.writer.write { db in
+            try db.execute(
+                sql: "DELETE FROM search_index WHERE item_id = ? AND source = 'transcript' AND source_id LIKE ?",
+                arguments: [itemID, "%\(Self.alternateMark)%"])
+            guard let transcript else { return }
+            let speakers = Dictionary(uniqueKeysWithValues: transcript.speakers.map { ($0.id, $0.label) })
+            let origin = transcript.isImported ? "teams" : "iago"
+            for segment in transcript.segments {
+                try db.execute(
+                    sql:
+                        "INSERT INTO search_index (item_id, project_id, source, source_id, at_sec, text) VALUES (?, ?, 'transcript', ?, ?, ?)",
+                    arguments: [
+                        itemID, projectID, "\(itemID)\(Self.alternateMark)\(origin)-\(segment.id)", segment.start,
+                        "\(speakers[segment.speaker] ?? ""): \(segment.text)",
+                    ])
+            }
+        }
+    }
+
+    /// `teams` or `iago` for a passage of the other transcript.
+    static func alternateOrigin(_ sourceID: String) -> String? {
+        guard let range = sourceID.range(of: alternateMark) else { return nil }
+        return sourceID[range.upperBound...].split(separator: "-").first.map(String.init)
     }
 
     /// Indexes the Markdown of a document by paragraph.
@@ -112,7 +149,8 @@ extension Archive {
     }
 
     /// Passages matching `text` (every word, prefix match), best first. Items in the trash or deleted are
-    /// left out.
+    /// left out. The other transcript of a call counts only where the main one has no match (ADR-0078): the same
+    /// words said in both show once.
     public func search(
         _ text: String, scope: SearchScope = .all, sources: Set<SearchHit.Source> = [], limit: Int = 200
     ) throws -> [SearchHit] {
@@ -152,12 +190,16 @@ extension Archive {
             }
             sql += " ORDER BY rank LIMIT ?"
             arguments += [limit]
-            return try Row.fetchAll(db, sql: sql, arguments: arguments).map { row in
-                SearchHit(
+            let hits = try Row.fetchAll(db, sql: sql, arguments: arguments).map { row in
+                var hit = SearchHit(
                     itemID: row["item_id"], projectID: row["project_id"],
                     source: SearchHit.Source(rawValue: row["source"]) ?? .note, sourceID: row["source_id"],
                     atSec: row["at_sec"], snippet: row["snippet"])
+                if hit.source == .transcript { hit.alternate = Self.alternateOrigin(hit.sourceID) }
+                return hit
             }
+            let inMain = Set(hits.filter { $0.source == .transcript && $0.alternate == nil }.compactMap(\.itemID))
+            return hits.filter { hit in hit.alternate == nil || !inMain.contains(hit.itemID ?? "") }
         }
     }
 
@@ -180,6 +222,7 @@ extension Archive {
                 let transcript = try? Transcript.decode(from: readAssetData(json))
             {
                 try indexTranscript(transcript, itemID: item.id)
+                try indexAlternateTranscript(itemID: item.id)
                 count += 1
             }
             if let md = assets.first(where: { $0.kind == .contentMD }), let data = try? readAssetData(md) {

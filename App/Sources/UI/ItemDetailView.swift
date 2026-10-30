@@ -22,6 +22,8 @@ struct ItemDetailView: View {
     @State private var transcript: Transcript?
     /// The second transcript of the call (ADR-0078): Teams beside IAGO's, or the other way round.
     @State private var alternate: Transcript?
+    /// «Rendi principale» on a call with a summary: asks first.
+    @State private var confirmMakingMain = false
     @State private var alternateLoadedAt: Date?
     /// «Elimina questa trascrizione…»: true for the main one.
     @State private var removingTranscript: Bool?
@@ -52,7 +54,8 @@ struct ItemDetailView: View {
                         if let job = activeJob { jobProgress(job) }
                         SummarySection(
                             model: model, item: item,
-                            hasText: item.type == .call ? transcript != nil : content?.isEmpty == false
+                            hasText: item.type == .call ? transcript != nil : content?.isEmpty == false,
+                            mainTranscript: alternate == nil ? nil : transcript.map { $0.isImported ? "teams" : "iago" }
                         ) { seconds in
                             tab = .transcript
                             // Minutes of a Teams transcript are not minutes of the audio (ADR-0078).
@@ -173,11 +176,18 @@ struct ItemDetailView: View {
         if !player.isActive, !isMine, let first = preferredTrack(assets) {
             await player.load(first, itemID: itemID)
         }
-        // Opened from a search result: start the audio at the passage.
+        // Opened from a search result: the tab of the transcript it is in, and the audio at the passage when the
+        // minutes are the audio's (not Teams', ADR-0078).
+        let toAlternate = model.pendingAlternateFor == itemID && alternate != nil
+        if model.pendingAlternateFor == itemID {
+            model.pendingAlternateFor = nil
+            if toAlternate { tab = .alternate }
+        }
         if let seek = model.pendingSeek, seek.itemID == itemID, hasAudio {
             model.pendingSeek = nil
-            tab = .transcript
-            if transcript?.isImported != true { await listen(at: seek.atSec) }
+            if !toAlternate { tab = .transcript }
+            let shown = toAlternate ? alternate : transcript
+            if shown?.isImported != true { await listen(at: seek.atSec) }
         }
     }
 
@@ -451,7 +461,8 @@ struct ItemDetailView: View {
                 let shown = tab == .alternate ? (alternate ?? transcript) : transcript
                 Picker("", selection: $tab) {
                     if let alternate {
-                        Text(Self.sourceName(transcript)).tag(Tab.transcript)
+                        // The star marks the main one, always the first tab.
+                        Text("★ \(Self.sourceName(transcript))").tag(Tab.transcript)
                         Text(Self.sourceName(alternate)).tag(Tab.alternate)
                     } else {
                         Text(String(localized: "Trascrizione")).tag(Tab.transcript)
@@ -502,6 +513,24 @@ struct ItemDetailView: View {
             }
         }
         .confirmationDialog(
+            String(localized: "Rendere principale la trascrizione \(alternate.map(Self.sourceName) ?? "")?"),
+            isPresented: $confirmMakingMain, titleVisibility: .visible
+        ) {
+            Button(String(localized: "Rendi principale")) { makeMain() }
+            Button(String(localized: "Annulla"), role: .cancel) {}
+        } message: {
+            Text(
+                alternate?.isImported == true
+                    ? String(
+                        localized:
+                            "Sintesi, proposte ed esportazioni useranno questa. La sintesi già fatta resta com'è: per usare questa trascrizione, rigenerala. I minuti di Teams non sono collegati all'audio."
+                    )
+                    : String(
+                        localized:
+                            "Sintesi, proposte ed esportazioni useranno questa. La sintesi già fatta resta com'è: per usare questa trascrizione, rigenerala."
+                    ))
+        }
+        .confirmationDialog(
             String(localized: "Eliminare la trascrizione \(removingName)?"),
             isPresented: Binding(get: { removingTranscript != nil }, set: { if !$0 { removingTranscript = nil } }),
             titleVisibility: .visible
@@ -514,14 +543,24 @@ struct ItemDetailView: View {
             Text(
                 String(
                     localized:
-                        "Resta l'altra trascrizione, che diventa quella usata per sintesi, proposte e ricerca. Non si può annullare: la trascrizione si può rifare o allegare di nuovo."
+                        "Resta l'altra trascrizione, che diventa la principale. Non si può annullare: la trascrizione si può rifare o allegare di nuovo."
                 ))
         }
     }
 
     /// «IAGO» or «Teams».
     static func sourceName(_ transcript: Transcript) -> String {
-        transcript.isImported ? String(localized: "Teams") : String(localized: "IAGO")
+        sourceName(transcript.isImported ? "teams" : "iago")
+    }
+
+    /// «IAGO» or «Teams» for a stored source (`iago`, `teams`).
+    static func sourceName(_ source: String) -> String {
+        source == "teams" ? String(localized: "Teams") : String(localized: "IAGO")
+    }
+
+    private func makeMain() {
+        model.useAlternateTranscript(itemID)
+        tab = .transcript
     }
 
     private var removingName: String {
@@ -529,23 +568,35 @@ struct ItemDetailView: View {
         return removed.map(Self.sourceName) ?? ""
     }
 
-    /// Which transcript feeds summaries, proposals and search, and the actions on the one shown.
+    /// The main transcript (★), which feeds summaries, proposals and exports, and the actions on the one shown. Search
+    /// looks in both.
     private func transcriptChoice(shown: Transcript, isMain: Bool) -> some View {
         HStack(spacing: 10) {
             if isMain {
                 Label(
-                    String(localized: "Usata per sintesi, proposte e ricerca"), systemImage: "checkmark.circle.fill"
+                    String(localized: "Principale · usata per sintesi, proposte ed esportazioni"),
+                    systemImage: "star.fill"
                 )
-                .foregroundStyle(.green)
+                .foregroundStyle(.orange)
             } else {
-                Button(String(localized: "Usa questa per sintesi, proposte e ricerca")) {
-                    model.useAlternateTranscript(itemID)
-                    tab = .transcript
+                Button {
+                    // A summary already written does not change by itself: say so before.
+                    if (try? model.archive.summary(itemID: itemID)) != nil {
+                        confirmMakingMain = true
+                    } else {
+                        makeMain()
+                    }
+                } label: {
+                    Label(String(localized: "Rendi principale"), systemImage: "star")
                 }
-                .help(
+                .buttonStyle(.bordered).controlSize(.small)
+                Text(
                     String(
                         localized:
-                            "Una sintesi già fatta non cambia da sola: rigenerala per usare questa trascrizione."))
+                            "Si cerca anche qui. Sintesi, proposte ed esportazioni usano «\(Self.sourceName(transcript ?? shown))»."
+                    )
+                )
+                .foregroundStyle(.secondary)
             }
             if shown.isImported {
                 Text(String(localized: "Minuti di Teams, senza collegamento all'audio")).foregroundStyle(.secondary)

@@ -99,5 +99,5 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0075 | Viste di progetto: come guardare e cosa mostrare | accettato (1.1.0-beta; in parte sostituito da 0076) |
 | 0076 | Modalità Traccia semplice, Inbox ed Elementi | accettato (1.2.0-beta) |
 | 0077 | Italiano e inglese, sempre allineati | accettato (1.2.2-beta) |
-| 0078 | Trascrizioni di IAGO e di Teams affiancate, Claude consigliato sui Mac lenti | accettato (1.2.5-beta) |
+| 0078 | Trascrizioni di IAGO e di Teams affiancate, Claude consigliato sui Mac lenti | accettato (1.2.5-beta; ricerca in tutte e due e ★ sulla principale: 1.2.6-beta) |
 | 0079 | Assistenti oltre Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposto |
