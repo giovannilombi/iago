@@ -6,6 +6,8 @@ You can connect **Claude Desktop** (or Claude Code) to the projects you choose. 
 2. Claude can **read**: search, open items, the timeline, key points, notes, export a project.
 3. With **Can write**, Claude can add notes, key points, documents, emails and files: every write goes through a **preview** and your confirmation, appears with the label *via Claude* and can be **undone** from Settings › Claude.
 
+![Settings › Claude: the projects Claude can read and write](img/claude.png)
+
 ## Summaries and suggestions made by Claude
 You can ask Claude for an item's summary or suggestions, instead of the Mac's engine.
 

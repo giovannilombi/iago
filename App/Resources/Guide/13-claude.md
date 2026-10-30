@@ -7,6 +7,8 @@ Puoi collegare **Claude Desktop** (o Claude Code) ai progetti che scegli. Claude
 2. Claude può **leggere**: cercare, aprire elementi, la timeline, i punti chiave, le note, esportare un progetto.
 3. Con **Può scrivere** Claude può aggiungere note, punti chiave, documenti, email e file: ogni scrittura passa da un'**anteprima** e dalla tua conferma, compare con l'etichetta *tramite Claude* e si può **annullare** da Impostazioni › Claude.
 
+![Impostazioni › Claude: i progetti che Claude può leggere e scrivere](img/claude.png)
+
 ## Sintesi e proposte fatte da Claude
 Puoi chiedere a Claude la sintesi o le proposte di un elemento, al posto del motore del Mac.
 

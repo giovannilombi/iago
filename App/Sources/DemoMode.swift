@@ -243,6 +243,9 @@ enum DemoMode {
                     $0.decision.text == "Configurare l'accesso SSO"
                 }?.id
             await shot("kanban", main)
+            model.viewMode = .map
+            model.selectedDecisionID = nil
+            await shot("grafo", main)
             model.viewMode = .overview
             await shot("riepilogo", main)
             // ADR-0076: the same project in «Modalità Traccia», its short «Riepilogo», and the two sheets.
@@ -272,10 +275,19 @@ enum DemoMode {
             model.showsChat = true
             await shot("chiedi", main)
             model.showsChat = false
-            for (pane, name) in [(SettingsView.Pane.permissions, "permessi"), (.engine, "motore")] {
+            for (pane, name) in [(SettingsView.Pane.permissions, "permessi"), (.engine, "motore"), (.claude, "claude")]
+            {
                 model.settingsPane = pane
                 windows.showSettings()
                 await shot(name, NSApp.windows.first { $0.title == String(localized: "Impostazioni di IAGO") })
+            }
+            // The panel after Stop (FR-20), with those present (ADR-0031).
+            if let sal = item("SAL settimanale portale") {
+                windows.showPostRecording(itemID: sal)
+                await shot(
+                    "dopo-stop",
+                    NSApp.windows.first { $0.title == String(localized: "Nuova registrazione") && $0.isVisible })
+                NSApp.windows.first { $0.title == String(localized: "Nuova registrazione") }?.close()
             }
             detector.showExamplePrompt()
             try? await Task.sleep(for: .seconds(1))

@@ -632,12 +632,12 @@ private struct HelpPane: View {
             Button(String(localized: "Apri la guida")) { model.openHelp?() }.buttonStyle(.borderedProminent)
         }
         SettingsGroup(
-            title: String(localized: "Tour di benvenuto"),
-            footnote: String(localized: "Sette schermate sulle cose principali.")
+            title: String(localized: "Introduzione"),
+            footnote: String(localized: "Dieci passi con le schermate dell'app, e i primi passi da fare.")
         ) {
-            Button(String(localized: "Rivedi il tour di benvenuto")) { model.openTour?() }
+            Button(String(localized: "Rivedi l'introduzione")) { model.openTour?() }
             Toggle(
-                String(localized: "Mostra il tour all'avvio"),
+                String(localized: "Mostra l'introduzione all'avvio"),
                 isOn: Binding(
                     get: { tourAtLaunch },
                     set: { value in

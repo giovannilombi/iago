@@ -331,6 +331,16 @@
         }
       }
     },
+    "«Cosa abbiamo deciso sul rilascio?» IAGO risponde solo con i tuoi contenuti e cita le fonti. Cerca anche per significato, non solo per parole." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«What did we decide about the release?» IAGO answers only with your own content and cites the sources. It also searches by meaning, not only by words."
+          }
+        }
+      }
+    },
     "(gratuito): ti avvisa a ogni connessione di qualsiasi app." : {
       "localizations" : {
         "en" : {
@@ -893,6 +903,22 @@
         }
       }
     },
+    "%lld di %lld fatti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld done"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld di %2$lld fatti"
+          }
+        }
+      }
+    },
     "%lld di %lld selezionate" : {
       "localizations" : {
         "en" : {
@@ -1171,6 +1197,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "+ Stream"
+          }
+        }
+      }
+    },
+    "⌘K da qualsiasi punto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⌘K from anywhere"
           }
         }
       }
@@ -2129,12 +2165,32 @@
         }
       }
     },
+    "Apri il progetto di esempio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the example project"
+          }
+        }
+      }
+    },
     "Apri il punto chiave nato da questa nota" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open the key point derived from this note"
+          }
+        }
+      }
+    },
+    "Apri Importa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Import"
           }
         }
       }
@@ -2159,6 +2215,16 @@
         }
       }
     },
+    "Apri Impostazioni › Privacy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings › Privacy"
+          }
+        }
+      }
+    },
     "Apri Impostazioni di Sistema" : {
       "localizations" : {
         "en" : {
@@ -2170,6 +2236,7 @@
       }
     },
     "Apri l'Aiuto" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2185,6 +2252,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open item"
+          }
+        }
+      }
+    },
+    "Apri l'Inbox" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the Inbox"
+          }
+        }
+      }
+    },
+    "Apri l'ultima call" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the latest call"
           }
         }
       }
@@ -2235,6 +2322,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open the note it came from"
+          }
+        }
+      }
+    },
+    "Apri Punti chiave" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Key points"
           }
         }
       }
@@ -2305,6 +2402,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Archive"
+          }
+        }
+      }
+    },
+    "Archivio cifrato e motore sul Mac: niente esce se non lo decidi tu. Claude, Condividi e le esportazioni partono solo da una tua scelta." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Encrypted archive and engine on the Mac: nothing leaves unless you decide it. Claude, Share and exports start only from your choice."
           }
         }
       }
@@ -3047,6 +3154,16 @@
         }
       }
     },
+    "Call, email, documenti e note di ogni progetto, in un posto e interrogabili. Clienti e progetti a sinistra, quello che è successo al centro, la scheda a destra." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calls, emails, documents and notes of every project, in one place and searchable. Clients and projects on the left, what happened in the middle, the item card on the right."
+          }
+        }
+      }
+    },
     "Call, email, documenti e trascrizioni" : {
       "localizations" : {
         "en" : {
@@ -3269,6 +3386,7 @@
       }
     },
     "Cerca per parole o per significato, oppure chiedi (⌘K): IAGO risponde solo con i tuoi contenuti e cita le fonti, su un progetto, un cliente o tutta la memoria." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3480,6 +3598,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ask IAGO"
+          }
+        }
+      }
+    },
+    "Chiedi a IAGO (⌘K)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask IAGO (⌘K)"
           }
         }
       }
@@ -3790,6 +3918,16 @@
         }
       }
     },
+    "Claude, sui progetti che scegli" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude, on the projects you choose"
+          }
+        }
+      }
+    },
     "Clic destro sull'icona: avvia, metti in pausa e riprendi la registrazione" : {
       "localizations" : {
         "en" : {
@@ -3841,6 +3979,7 @@
       }
     },
     "Clicca l'icona di IAGO nella barra dei menu, in alto a destra (il nostro pappagallo con la memoria di ferro), e scegli Avvia registrazione: la call è registrata e trascritta. Quando inizia una riunione IAGO te lo propone, con il titolo dal calendario." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4276,6 +4415,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confirm each email with its attachments"
+          }
+        }
+      }
+    },
+    "Conferma una proposta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm a suggestion"
           }
         }
       }
@@ -5180,6 +5329,16 @@
         }
       }
     },
+    "Dai un nome a uno speaker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name a speaker"
+          }
+        }
+      }
+    },
     "Dal" : {
       "localizations" : {
         "en" : {
@@ -5206,6 +5365,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Since you last opened the overview, %@."
+          }
+        }
+      }
+    },
+    "Dalla scheda o dagli Elementi da classificare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From the item card or from Unfiled items"
           }
         }
       }
@@ -5326,6 +5495,16 @@
         }
       }
     },
+    "Decisioni e attività con la loro fonte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decisions and tasks with their source"
+          }
+        }
+      }
+    },
     "Decisioni e tappe recenti" : {
       "localizations" : {
         "en" : {
@@ -5337,6 +5516,7 @@
       }
     },
     "Decisioni, attività e momenti" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5472,6 +5652,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Everyone's"
+          }
+        }
+      }
+    },
+    "Dieci passi con le schermate dell'app, e i primi passi da fare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ten steps with the app's screenshots, and the first steps to take."
           }
         }
       }
@@ -5850,6 +6040,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "After Stop"
+          }
+        }
+      }
+    },
+    "Dopo lo Stop IAGO trascrive sul Mac e distingue chi parla, anche più persone nella stessa stanza. Dai un nome agli speaker: la sintesi prende la forma della categoria della call (1to1, SAL, kickoff…), con il minuto di ogni punto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After Stop IAGO transcribes on the Mac and tells who is speaking, even several people in the same room. Name the speakers: the summary takes the shape of the call's category (1to1, progress review, kickoff…), with the minute of every point."
           }
         }
       }
@@ -6633,7 +6833,18 @@
         }
       }
     },
+    "Email, PDF, documenti Word, immagini (il testo viene letto), audio e trascrizioni di Teams. Trascinali nella finestra, mandali da qualsiasi app con «Aggiungi a IAGO», o lascia che IAGO li prenda da una cartella, anche quella dove Outlook salva le email." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emails, PDFs, Word documents, images (the text is read), audio and Teams transcripts. Drag them into the window, send them from any app with «Add to IAGO», or let IAGO pick them up from a folder, also the one where Outlook saves emails."
+          }
+        }
+      }
+    },
     "Email, PDF, documenti, immagini, audio e trascrizioni di Teams: trascinali nella finestra, mandali da qualsiasi app con «Aggiungi a IAGO», o lascia che IAGO li prenda da una cartella." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7149,6 +7360,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Do this first"
+          }
+        }
+      }
+    },
+    "Fai una domanda a IAGO" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask IAGO a question"
           }
         }
       }
@@ -7986,6 +8207,7 @@
       }
     },
     "IAGO raccoglie call, email, documenti e note di ogni progetto e li rende interrogabili: chiedi cosa si è deciso, chi deve fare cosa, com'è cambiata una scelta, e torni subito alla fonte." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8021,6 +8243,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "IAGO notices a call when Teams, Zoom, Webex, FaceTime or Slack use the microphone, or through the Teams local API. The temporary title comes from the Mac's Calendar, if turned on."
+          }
+        }
+      }
+    },
+    "IAGO si accorge quando inizia una riunione su Teams o Zoom, o una del calendario con il link di Meet o Webex, e ti propone di registrarla con il suo titolo. Mentre parli segni i momenti (⌃⌥M) e catturi le slide (⌃⌥S). Dopo lo Stop sistemi progetto, categoria e presenti. Vale anche per una riunione in presenza: avvia la registrazione dall'icona in alto a destra o con ⌃⌥R." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IAGO notices when a meeting starts on Teams or Zoom, or a calendar meeting with a Meet or Webex link, and offers to record it with its title. While you talk you mark moments (⌃⌥M) and capture slides (⌃⌥S). After Stop you set project, category and those present. It works for a meeting in person too: start recording from the icon at the top right or with ⌃⌥R."
           }
         }
       }
@@ -8075,6 +8307,16 @@
         }
       }
     },
+    "IAGO, sempre sulla tua spalla. Riunione dopo riunione." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "IAGO, always on your shoulder. Meeting after meeting."
+          }
+        }
+      }
+    },
     "ieri" : {
       "localizations" : {
         "en" : {
@@ -8091,6 +8333,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ignore"
+          }
+        }
+      }
+    },
+    "Il bollino rosso conta ciò che chiede un'azione: in ritardo, oggi, senza responsabile. Il giallo conta le proposte da confermare. Il lavoro aperto di tutti i progetti, in un posto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The red badge counts what needs action: overdue, today, no owner. The yellow one counts the suggestions to confirm. The open work of every project, in one place."
           }
         }
       }
@@ -8345,6 +8597,16 @@
         }
       }
     },
+    "Il Riepilogo dice a che punto è il progetto. La Timeline mette in fila call, email, decisioni e note. La Kanban sposta il lavoro aperto tra le colonne. Il Grafo mostra chi e cosa è collegato a cosa." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Overview says where the project stands. The Timeline lines up calls, emails, decisions and notes. The Kanban moves open work between columns. The Graph shows who and what is linked to what."
+          }
+        }
+      }
+    },
     "Il testo e il file originale" : {
       "localizations" : {
         "en" : {
@@ -8557,6 +8819,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Import a template…"
+          }
+        }
+      }
+    },
+    "Importa un'email o un documento" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import an email or a document"
           }
         }
       }
@@ -9209,6 +9481,16 @@
         }
       }
     },
+    "Introduzione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Introduction"
+          }
+        }
+      }
+    },
     "Invia (⌘↩)" : {
       "localizations" : {
         "en" : {
@@ -9431,6 +9713,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A voiceprint is biometric data: it stays only on this Mac, encrypted with the call it comes from, and never goes to Claude, exports or sharing. It applies to calls transcribed after you turn it on; for a call already transcribed use Transcribe again."
+          }
+        }
+      }
+    },
+    "L'Inbox: cosa fare adesso" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Inbox: what to do now"
           }
         }
       }
@@ -10256,6 +10548,16 @@
         }
       }
     },
+    "Metti un elemento in un progetto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Put an item in a project"
+          }
+        }
+      }
+    },
     "mic: %@" : {
       "localizations" : {
         "en" : {
@@ -10747,6 +11049,7 @@
       }
     },
     "Mostra il tour all'avvio" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -10762,6 +11065,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show at the top of the sidebar"
+          }
+        }
+      }
+    },
+    "Mostra l'introduzione all'avvio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the introduction at launch"
           }
         }
       }
@@ -11062,6 +11375,16 @@
         }
       }
     },
+    "Nell'Inbox o nella scheda" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the Inbox or in the item card"
+          }
+        }
+      }
+    },
     "Nella nuova versione non trovo: %@. Controlla prima di sostituire." : {
       "localizations" : {
         "en" : {
@@ -11078,6 +11401,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "in the %@ transcript"
+          }
+        }
+      }
+    },
+    "Nella trascrizione, poi Invio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the transcript, then Return"
           }
         }
       }
@@ -11623,6 +11956,7 @@
       }
     },
     "Niente lascia il tuo Mac se non lo decidi tu: archivio cifrato e motore locale. Se vuoi di più colleghi Claude ai progetti che scegli; per lavorare in gruppo potrai condividere in spazi che controlli tu o la tua azienda, come OneDrive o Google Drive." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12532,6 +12866,16 @@
         }
       }
     },
+    "O lascia che IAGO te la proponga quando inizia" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Or let IAGO offer it when it starts"
+          }
+        }
+      }
+    },
     "Obbligatorio" : {
       "localizations" : {
         "en" : {
@@ -12592,6 +12936,16 @@
         }
       }
     },
+    "Ogni decisione, attività o rischio ricorda la frase e il minuto da cui viene. Quando una decisione cambia, IAGO tiene la storia di come ci si è arrivati." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every decision, task or risk remembers the sentence and the minute it comes from. When a decision changes, IAGO keeps the story of how it got there."
+          }
+        }
+      }
+    },
     "Ogni elemento ha al più una categoria, che decide anche la forma della sintesi. Le categorie archiviate non compaiono più nelle scelte. I modelli di sintesi sono adattati da Meetily e Hyprnote (licenza MIT)." : {
       "localizations" : {
         "en" : {
@@ -12628,6 +12982,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Each permission has a specific purpose and can be changed at any time. IAGO doesn't ask for access it doesn't use."
+          }
+        }
+      }
+    },
+    "Ogni progetto, come ti serve" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every project, the way you need it"
           }
         }
       }
@@ -13330,6 +13694,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Exclusions apply first, then assignments, in order. Without an assigning rule, the email goes to the project IAGO suggests only if the suggestion is certain (same conversation or known people); otherwise it stays in “Unfiled items”."
+          }
+        }
+      }
+    },
+    "Primi passi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First steps"
           }
         }
       }
@@ -14221,6 +14595,7 @@
       }
     },
     "Registra le call" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -14236,6 +14611,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Records calls on two tracks, transcribes them and organizes calls, notes and documents by project. All local."
+          }
+        }
+      }
+    },
+    "Registra una call" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record a call"
           }
         }
       }
@@ -14613,6 +14998,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Requests"
+          }
+        }
+      }
+    },
+    "Riconosce la riunione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It recognizes the meeting"
           }
         }
       }
@@ -15158,11 +15553,22 @@
       }
     },
     "Rivedi il tour di benvenuto" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Replay the welcome tour"
+          }
+        }
+      }
+    },
+    "Rivedi l'introduzione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See the introduction again"
           }
         }
       }
@@ -15878,6 +16284,16 @@
         }
       }
     },
+    "Se usi Claude, collegalo a IAGO: abiliti i progetti uno per uno e scegli se Claude può solo leggere o anche scrivere. Claude cerca nella memoria, apre call ed email, segue decisioni e attività, prepara sintesi, proposte e note. Quello che scrive arriva in IAGO da confermare, e il registro accessi dice cosa ha letto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you use Claude, connect it to IAGO: you enable projects one by one and choose whether Claude can only read or also write. Claude searches the memory, opens calls and emails, follows decisions and tasks, prepares summaries, suggestions and notes. What it writes arrives in IAGO to confirm, and the access log says what it read."
+          }
+        }
+      }
+    },
     "Seconda trascrizione" : {
       "localizations" : {
         "en" : {
@@ -15919,6 +16335,7 @@
       }
     },
     "Segna i momenti importanti mentre parli. Decisioni, attività e tappe restano collegate alla fonte e al minuto, e quando una decisione cambia IAGO tiene la storia di come ci si è arrivati." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16074,6 +16491,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "always present"
+          }
+        }
+      }
+    },
+    "Sempre sulla tua spalla, riunione dopo riunione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always on your shoulder, meeting after meeting"
           }
         }
       }
@@ -16275,6 +16702,7 @@
       }
     },
     "Sette schermate sulle cose principali." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16300,6 +16728,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An error occurred"
+          }
+        }
+      }
+    },
+    "Si spuntano da soli quando li fai davvero. Collegare Claude è facoltativo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They tick themselves when you really do them. Connecting Claude is optional."
           }
         }
       }
@@ -16375,6 +16813,7 @@
       }
     },
     "Sintesi per ogni tipo di riunione" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17707,6 +18146,7 @@
       }
     },
     "Tour di benvenuto" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17772,6 +18212,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Drag a file here, or"
+          }
+        }
+      }
+    },
+    "Trascinalo nella finestra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag it into the window"
           }
         }
       }
@@ -18013,6 +18463,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Original Teams transcript"
+          }
+        }
+      }
+    },
+    "Trascrizione, nomi e sintesi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transcript, names and summary"
           }
         }
       }
@@ -18409,6 +18869,7 @@
       }
     },
     "Un 1to1, un SAL o un kickoff hanno la sintesi nella loro forma, con il minuto da cui viene ogni punto. Il motore locale propone anche decisioni e attività da confermare." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

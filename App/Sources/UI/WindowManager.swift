@@ -95,20 +95,24 @@ final class WindowManager: NSObject, NSWindowDelegate {
         present(helpWindow!)
     }
 
-    /// The welcome tour: at launch until "Non mostrare più", or on request from Aiuto.
+    /// The introduction: at launch until "Non mostrare più" or until the first steps are done, or on request from
+    /// Aiuto.
     func showTour(force: Bool = false) {
-        guard force || (try? model.archive.setting(Self.tourHiddenKey)) != "1" else { return }
+        guard
+            force
+                || ((try? model.archive.setting(Self.tourHiddenKey)) != "1"
+                    && (try? model.archive.firstSteps().isComplete) != true)
+        else { return }
         if tourWindow == nil {
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 560, height: 400), styleMask: [.titled, .closable],
+                contentRect: NSRect(x: 0, y: 0, width: 960, height: 700), styleMask: [.titled, .closable],
                 backing: .buffered, defer: false)
             window.title = String(localized: "Benvenuto in IAGO")
             window.contentView = NSHostingView(
-                rootView: WelcomeTour(
-                    onClose: { [weak self] hide in
-                        if hide { self?.model.perform { try self?.model.archive.setSetting(Self.tourHiddenKey, "1") } }
-                        self?.tourWindow?.close()
-                    }, openHelp: { [weak self] in self?.showHelp() }))
+                rootView: IntroView(model: model) { [weak self] hide in
+                    if hide { self?.model.perform { try self?.model.archive.setSetting(Self.tourHiddenKey, "1") } }
+                    self?.tourWindow?.close()
+                })
             window.isReleasedWhenClosed = false
             window.delegate = self
             window.center()

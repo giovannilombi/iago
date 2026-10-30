@@ -13,7 +13,7 @@ IAGO is not distributed through the App Store and is not notarized by Apple. The
 3. Confirm with your password or Touch ID, then click **Open**.
 
 ## Guided setup
-The first time it starts, IAGO first asks for the **language**, Italian or English (you can change it any time in Settings › General), then for your name (it becomes "Me" in transcripts), tests the microphone and the Mac's audio, asks for notifications and downloads the transcription models. Then the welcome tour starts.
+The first time it starts, IAGO first asks for the **language**, Italian or English (you can change it any time in Settings › General), then for your name (it becomes "Me" in transcripts), tests the microphone and the Mac's audio, asks for notifications and downloads the transcription models. Then the introduction opens (see Getting started).
 
 ## Permissions
 In **Settings › Permissions** you see what is on; **Turn on the missing ones** walks you through them one at a time.

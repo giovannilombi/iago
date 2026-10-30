@@ -77,10 +77,10 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 3e.6 Nella scheda di un elemento, il clic su un tag apre tutti gli elementi con quel tag. Accanto alla categoria non c'è nessuna icona: tutti gli elementi di una categoria si aprono da Categorie e tag.
 
 ## 3f. Aiuto, tour e glossario
-- [ ] 3f.1 Al primo avvio dopo la configurazione compare il tour di benvenuto (7 pagine: memoria, registrazione con l'icona di IAGO, importazioni, decisioni e momenti, sintesi, Chiedi, dati sotto il tuo controllo). "Non mostrare più" lo spegne; si rivede da Aiuto › Primi passi.
+- [ ] 3f.1 Al primo avvio dopo la configurazione compare l'introduzione (vedi 10s). "Non mostrare più" la spegne; si rivede da Aiuto › Primi passi.
 - [ ] 3f.2 "Aiuto di IAGO" si apre dal menu della barra e dal "?" nella finestra; ogni argomento si legge e i pulsanti "Apri Impostazioni" funzionano.
 - [ ] 3f.2b Il pulsante **? Guida** in alto a sinistra, accanto alle Impostazioni, apre la guida a tutta pagina: capitoli a sinistra, testi e immagini, ricerca, "← Precedente / Successivo →".
-- [ ] 3f.2c Impostazioni › **Aiuto**: "Apri la guida", "Rivedi il tour di benvenuto" e "Mostra il tour all'avvio" funzionano.
+- [ ] 3f.2c Impostazioni › **Aiuto**: "Apri la guida", "Rivedi l'introduzione" e "Mostra l'introduzione all'avvio" funzionano.
 - [ ] 3f.3 Impostazioni › Trascrizione › Glossario: scrivi un nome difficile detto in una call (es. un'azienda), ritrascrivi: il nome è scritto giusto.
 
 ## 3g. Aggiornamenti e motore minimo per le sintesi
@@ -288,6 +288,13 @@ Servono due persone vere nella stessa stanza (nomi inventati nelle prove scritte
 - [ ] 10r.5 Con *Riconosci le voci* attivo, dai un nome a «Stanza 2»; in un'altra riunione con la stessa persona nella stanza arriva la proposta con quel nome.
 - [ ] 10r.6 *Condividi* ed *Esporta*: la scheda Markdown riporta «Presenti: …».
 - [ ] 10r.7 (Solo con una release di prova segnata obbligatoria) il menu dell'icona mostra «Aggiornamento obbligatorio …: installalo entro …» e *Aggiorna ora…*; dopo 2 giorni *Avvia registrazione* chiede di aggiornare e trascrizioni, sintesi e proposte non partono.
+
+## 10s. Introduzione (1.2.9-beta)
+- [ ] 10s.1 Con un archivio nuovo (`scripts/try-branch.sh --fresh` o un account utente di prova), finita la configurazione si apre l'introduzione: in alto «IAGO, sempre sulla tua spalla. Riunione dopo riunione.», dieci passi, «1 di 10».
+- [ ] 10s.2 Ogni passo ha la sua schermata; il passo 2 ha le schede «Riconosce la riunione» e «Dopo lo Stop», il passo 5 Riepilogo, Timeline, Kanban e Grafo. In inglese le schermate sono quelle inglesi.
+- [ ] 10s.3 I pulsanti portano nel punto giusto: progetto di esempio (sul passo 5 nella vista della scheda scelta), Importa, Inbox, Punti chiave, Chiedi a IAGO, Impostazioni › Claude e › Privacy, guida.
+- [ ] 10s.4 Primi passi: importa un documento con l'introduzione aperta e la riga si spunta da sola; «x di 6 fatti» sale.
+- [ ] 10s.5 Chiudi con *Inizia* senza *Non mostrare più*: al prossimo avvio si riapre. Con *Non mostrare più*, o con tutti i primi passi fatti, non si riapre; *Rivedi l'introduzione* in Aiuto › Primi passi e in Impostazioni › Aiuto la riapre.
 
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
