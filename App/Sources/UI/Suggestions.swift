@@ -70,6 +70,12 @@ extension AppModel {
         reload()
     }
 
+    /// «Scarta tutte» in «Inbox»: several proposals at once.
+    func dismiss(_ suggestions: [Suggestion]) {
+        perform { for suggestion in suggestions { try archive.setSuggestionStatus(suggestion.id, .rejected) } }
+        reload()
+    }
+
     /// "Modifica…" on a key point: the editor, prefilled; saving it confirms the proposal.
     func edit(_ suggestion: Suggestion) {
         guard let item = item(suggestion.itemId) else { return }

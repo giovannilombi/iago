@@ -55,3 +55,13 @@
 - In `UserDefaults`, solo preferenze di visualizzazione di quel Mac: l'interruttore del Grafo per progetto (`work.graphHidden`) e le finestre già chiuse per sempre (`work.modeIntro.dismissed`).
 - Tolta `Archive.trackedProjectIDs()`.
 - Il tour dimostrativo non mostra le finestre della prima visita: le mostra lui. A fine giro si chiude con `exit(0)`, perché `terminate` lasciava l'app aperta.
+
+## Modifica del 2026-10-30 (1.2.4-beta)
+- **Due bollini al posto di uno.** Un solo numero che sommava scadenze e proposte non si ritrovava nell'Inbox: 38 proposte stavano in una riga con un link a Punti chiave.
+  - **Rosso, con «!» (Da fare ora):** ciò che chiede un'azione, tranne le proposte. Le voci dell'utente in ritardo o di oggi, quelle senza responsabile, le attese scadute (`OpenWork.needsAction`).
+  - **Giallo, con la stellina (Proposte da confermare):** le proposte di punti chiave in attesa.
+- **L'Inbox in tre blocchi**, ognuno con il suo numero nell'intestazione, dello stesso colore e con lo stesso segno del bollino (`InboxBlockHeader`, `InboxCountBadge`):
+  - **Da fare ora:** in ritardo, oggi, senza responsabile, attese scadute;
+  - **Proposte da confermare:** tutte, per elemento di origine, tre per elemento e poi «Mostra le altre»; si confermano, modificano e scartano lì, anche tutte insieme («Scarta queste», «Scarta tutte…»);
+  - **Più avanti**, senza bollino: questa settimana, dopo, senza data, attese non scadute, checklist fissate.
+- Ogni unità di un bollino è una riga visibile nell'Inbox. Punti chiave conserva il suo blocco «Da confermare».

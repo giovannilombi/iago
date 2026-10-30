@@ -14,6 +14,9 @@ struct SummarySection: View {
     @State private var summary: ItemSummaryText?
     @State private var editing: String?
     @State private var confirmRegenerate = false
+    /// Speakers still without a name when a summary is asked for, and what to do if the user goes on.
+    @State private var unnamed: [String] = []
+    @State private var afterNames: (() -> Void)?
 
     private var intelligence: IntelligenceService { model.intelligence }
 
@@ -38,6 +41,21 @@ struct SummarySection: View {
                 model.perform { try model.archive.editSummary(itemID: item.id, markdown: text) }
                 summary = try? model.archive.summary(itemID: item.id)
             }
+        }
+        .confirmationDialog(
+            String(localized: "Alcuni speaker non hanno ancora un nome"),
+            isPresented: Binding(get: { afterNames != nil }, set: { if !$0 { afterNames = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "Dai prima i nomi")) { model.namingSpeakersFor = item.id }
+            Button(String(localized: "Procedi così")) { afterNames?() }
+            Button(String(localized: "Annulla"), role: .cancel) {}
+        } message: {
+            Text(
+                String(
+                    localized:
+                        "\(unnamed.formatted(.list(type: .and))) compaiono così nella sintesi. Puoi dare prima i nomi, così la sintesi li usa, oppure procedere ora: la sintesi si può rigenerare più avanti, quando avrai individuato gli speaker."
+                ))
         }
         .confirmationDialog(
             summary?.origin == .claude && summary?.edited == false
@@ -102,7 +120,7 @@ struct SummarySection: View {
                     value in
                     model.update(item.id) { $0.categoryId = value }
                 }
-                Button(String(localized: "Genera sintesi")) { intelligence.summarize(item.id) }
+                Button(String(localized: "Genera sintesi")) { askingNames { intelligence.summarize(item.id) } }
                     .buttonStyle(.borderedProminent).tint(.indigo)
                     .disabled(!hasText || templateName == nil)
             }
@@ -128,8 +146,10 @@ struct SummarySection: View {
                 HStack(spacing: 8) {
                     Image(systemName: "arrow.triangle.2.circlepath").foregroundStyle(.indigo)
                     Text(String(localized: "La categoria è cambiata."))
-                    Button(String(localized: "Rigenera con il modello «\(name)»")) { regenerate(summary) }
-                        .buttonStyle(.link)
+                    Button(String(localized: "Rigenera con il modello «\(name)»")) {
+                        askingNames { regenerate(summary) }
+                    }
+                    .buttonStyle(.link)
                     Spacer(minLength: 0)
                 }
                 .font(.callout)
@@ -152,7 +172,7 @@ struct SummarySection: View {
                 Text(caption(summary)).font(.caption).foregroundStyle(.secondary)
                 Spacer(minLength: 8)
                 Button(String(localized: "Modifica…")) { editing = summary.markdown }
-                Button(String(localized: "Rigenera")) { regenerate(summary) }
+                Button(String(localized: "Rigenera")) { askingNames { regenerate(summary) } }
                 Button {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(summary.markdown, forType: .string)
@@ -170,6 +190,17 @@ struct SummarySection: View {
     private var templateName: String? {
         let category = item.categoryId.flatMap { id in model.categories.first { $0.id == id } }
         return IntelligenceService.template(for: category)?.name
+    }
+
+    /// A call with speakers still called «Speaker 1»: asks first whether to name them, since the summary uses the
+    /// names. Automatic summaries cannot ask: they go on with what there is.
+    private func askingNames(_ action: @escaping () -> Void) {
+        unnamed = item.type == .call ? model.unnamedSpeakers(item.id) : []
+        if unnamed.isEmpty {
+            action()
+        } else {
+            afterNames = action
+        }
     }
 
     private func regenerate(_ summary: ItemSummaryText) {

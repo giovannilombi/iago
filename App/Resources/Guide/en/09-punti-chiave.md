@@ -52,11 +52,15 @@ An entry can **close others**, even of a different kind: a milestone "Contract s
 - An entry closed by another one on the same day sits below it.
 
 ## Inbox
-The **Inbox**, at the top of the sidebar, gathers the open work of all projects, in any mode. The **red badge** counts what needs action: your entries that are overdue or due today and the suggestions to confirm.
-- your entries, by due date: overdue, today, this week, later, no date; then those with *No owner*;
-- **Waiting on others:** the entries that are waiting, with the promised date and the delay;
-- the **suggestions to confirm**;
-- the projects' **pinned checklists**, to tick off here.
+The **Inbox**, at the top of the sidebar, gathers the open work of all projects, in any mode. Next to its name it has two badges, and each one counts a block of the Inbox, with the same colour and the same sign in the header:
+- **Do now**, **red** badge with the exclamation mark: what needs action now.
+  - your entries that are **late** and those due **today**;
+  - the entries with **no owner**, to assign;
+  - the **overdue waits**: you have waited past the promised date, time to follow up.
+- **Suggestions to confirm**, **yellow** badge with the sparkle: the engine's suggestions, grouped by the item they come from. Each one has the sentence it comes from and the minute, and you confirm, edit or dismiss it right there. Three are shown per item, then *Show the other*. *Dismiss these* dismisses those of one item, *Dismiss all…* all of them.
+- **Later**, with no badge: your entries for this week, after it and with no date, **Waiting on others** (the waits not yet overdue) and the projects' **pinned checklists**, to tick off here.
+
+A badge at zero does not appear, and neither does an empty block.
 
 *Show closed* also shows the entries closed recently. In Manage you can sort by priority and filter by person.
 

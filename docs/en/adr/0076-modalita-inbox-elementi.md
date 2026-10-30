@@ -55,3 +55,13 @@
 - In `UserDefaults`, only display preferences of that Mac: the Graph switch per project (`work.graphHidden`) and the windows already closed for good (`work.modeIntro.dismissed`).
 - Removed `Archive.trackedProjectIDs()`.
 - The demo tour does not show the first-visit windows: it shows them itself. At the end of the run it quits with `exit(0)`, because `terminate` left the app open.
+
+## Amendment of 2026-10-30 (1.2.4-beta)
+- **Two badges instead of one.** A single number adding up due dates and suggestions could not be found in the Inbox: 38 suggestions sat in one row with a link to Key points.
+  - **Red, with «!» (Do now):** what needs action, except the suggestions. The user's entries late or due today, those with no owner, the overdue waits (`OpenWork.needsAction`).
+  - **Yellow, with the sparkle (Suggestions to confirm):** the pending key point suggestions.
+- **The Inbox in three blocks**, each with its number in the header, in the same colour and with the same sign as the badge (`InboxBlockHeader`, `InboxCountBadge`):
+  - **Do now:** late, today, no owner, overdue waits;
+  - **Suggestions to confirm:** all of them, by source item, three per item and then «Show the other»; they are confirmed, edited and dismissed there, also all together («Dismiss these», «Dismiss all…»);
+  - **Later**, with no badge: this week, after it, no date, waits not yet overdue, pinned checklists.
+- Every unit of a badge is a row you can see in the Inbox. Key points keeps its «To confirm» block.

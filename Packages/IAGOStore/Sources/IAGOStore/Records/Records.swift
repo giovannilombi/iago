@@ -233,6 +233,8 @@ public struct ItemSpeaker: Codable, FetchableRecord, PersistableRecord, Sendable
     public var speakerId: String
     public var label: String
     public var entityId: String?
+    /// The speaker of the same call this one was joined to; its label is then that speaker's.
+    public var mergedInto: String?
 }
 
 public struct AuditEntry: Codable, FetchableRecord, Sendable, Hashable {

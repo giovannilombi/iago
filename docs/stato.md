@@ -5,13 +5,13 @@
 > Ultimo aggiornamento: **29 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.3-beta su `main` (tag `v1.2.3-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.4-beta su `main` (tag `v1.2.4-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 304 nei pacchetti, tutti verdi (1.2.3-beta).
+- **Test automatici:** 307 nei pacchetti, tutti verdi (1.2.4-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -42,6 +42,9 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-30:** versione **1.2.4-beta**.
+- **2026-10-30, Inbox con due bollini** (ADR-0076, modifica): il bollino rosso sommava scadenze e proposte, e le 38 proposte di prova non si vedevano nell'Inbox (solo un link a Punti chiave). Ora il **rosso** (!) conta ciò che chiede un'azione adesso, cioè in ritardo, oggi, senza responsabile e attese scadute. Il **giallo** (✦) conta le proposte da confermare. L'Inbox ha tre blocchi (Da fare ora, Proposte da confermare, Più avanti), con il numero nell'intestazione dello stesso colore, e le proposte si confermano o si scartano lì. Prove 10n.
+- **2026-10-30, nomi degli speaker** (ADR-0073, modifica; migrazione `v22-speaker-names`): un nome scritto e lasciato con un clic andava perso senza avviso. Ora si conferma con Invio o ⏎, e il campo non confermato è rosso e resta. Prima di applicarlo IAGO chiede dei nomi simili (errori, un nome dentro l'altro, diminutivi come Lello/Antonello) e ricorda le risposte. Lo stesso nome a due speaker propone *Unisci*, che si annulla con *Separa*. *Genera sintesi* e *Rigenera* chiedono se dare prima i nomi. Prove 10n.6–10n.9.
 - **2026-10-29, CI solo a mano:** finiti i minuti di GitHub Free, tutti i workflow si lanciano solo quando l'utente lo chiede; prima di ogni PR, Claude Code chiede se lanciarla e cosa comporta. Il controllo delle API di rete gira ora con `scripts/test-packages.sh`.
 - **2026-10-29:** versione **1.2.3-beta**.
 - **2026-10-29, tag proposti solo dall'elemento** (ADR-0049, modifica): il motore sceglieva dall'elenco tag di altre call senza appiglio nella registrazione. Ora ogni tag deve avere la sua frase nel testo, o le sue parole nel testo.

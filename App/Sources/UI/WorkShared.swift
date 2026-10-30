@@ -173,6 +173,17 @@ enum OpenWork {
         return counts
     }
 
+    /// «Da fare ora», the red count of «Inbox»: my entries late or due today, the ones without an owner, and the waits
+    /// past their date. The proposals to confirm are counted apart.
+    static func needsAction(_ decision: Decision, me: Set<String>, now: Date = Date()) -> Bool {
+        guard decision.kind.isWork, decision.status.isOpen, isMine(decision, me: me) else { return false }
+        if decision.status == .waiting {
+            return decision.waitingUntil.map { $0 < Calendar.current.startOfDay(for: now) } ?? false
+        }
+        if decision.ownerId == nil { return true }
+        return [.overdue, .today].contains(due(decision.dueAt, now: now))
+    }
+
     /// Priority first (in «Gestisci»), then the due date, then the most recent.
     static func sorted(_ entries: [DecisionSummary], byPriority: Bool) -> [DecisionSummary] {
         entries.sorted { a, b in
@@ -588,5 +599,81 @@ struct WorkSectionTitle: View {
             if let count { Text("\(count)").font(.callout).monospacedDigit().foregroundStyle(.secondary) }
         }
         .padding(.top, 14).padding(.bottom, 2)
+    }
+}
+
+/// The two counts of «Inbox» (ADR-0076): red with «!» for what asks an action, yellow with a sparkle for the proposals
+/// to confirm. The same colour and sign in the sidebar and in the header of the block they count.
+enum InboxCount {
+    case action, proposals
+
+    var color: Color { self == .action ? .red : .yellow }
+    var textColor: Color { self == .action ? .white : .black }
+    var systemImage: String { self == .action ? "exclamationmark" : "sparkle" }
+
+    var help: String {
+        switch self {
+        case .action:
+            String(
+                localized:
+                    "Da fare ora: tue voci in ritardo o in scadenza oggi, voci senza responsabile, attese scadute")
+        case .proposals: String(localized: "Proposte del motore da confermare")
+        }
+    }
+}
+
+/// A count of «Inbox» as a coloured capsule with its sign.
+struct InboxCountBadge: View {
+    let kind: InboxCount
+    let count: Int
+    var large = false
+
+    var body: some View {
+        HStack(spacing: 2) {
+            Image(systemName: kind.systemImage).font(.system(size: large ? 9 : 8, weight: .heavy))
+            Text("\(count)").monospacedDigit()
+        }
+        .font((large ? Font.callout : .caption).weight(.bold)).foregroundStyle(kind.textColor)
+        .padding(.horizontal, large ? 8 : 6).padding(.vertical, 1)
+        .background(Capsule().fill(kind.color))
+        .help(kind.help)
+    }
+}
+
+/// The header of a block of «Inbox»: a square sign, the title and, at the end, the count in the block's colour (none
+/// for a block nothing counts).
+struct InboxBlockHeader<Trailing: View>: View {
+    let title: String
+    let systemImage: String
+    let count: Int
+    var kind: InboxCount?
+    @ViewBuilder var trailing: () -> Trailing
+
+    var body: some View {
+        VStack(spacing: 6) {
+            HStack(spacing: 8) {
+                Image(systemName: systemImage).font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(kind?.textColor ?? .secondary)
+                    .frame(width: 22, height: 22)
+                    .background(
+                        RoundedRectangle(cornerRadius: 6).fill(kind?.color ?? Color.secondary.opacity(0.2)))
+                Text(title).font(.title3.bold()).foregroundStyle(kind == nil ? .secondary : .primary)
+                Spacer()
+                trailing()
+                if let kind {
+                    InboxCountBadge(kind: kind, count: count, large: true)
+                } else {
+                    Text("\(count)").font(.callout).monospacedDigit().foregroundStyle(.secondary)
+                }
+            }
+            Rectangle().fill((kind?.color ?? .secondary).opacity(0.25)).frame(height: 1)
+        }
+        .padding(.top, 18).padding(.bottom, 2)
+    }
+}
+
+extension InboxBlockHeader where Trailing == EmptyView {
+    init(title: String, systemImage: String, count: Int, kind: InboxCount? = nil) {
+        self.init(title: title, systemImage: systemImage, count: count, kind: kind) { EmptyView() }
     }
 }

@@ -475,6 +475,16 @@ public final class Archive: Sendable {
                 sql: "UPDATE item_speaker SET label = ? WHERE item_id = ? AND speaker_id = ?",
                 arguments: [label, itemID, speakerID])
             try Self.linkVoice(itemID: itemID, speakerID: speakerID, label: label, now: now, db)
+            // The speakers joined to this one take its name, and their voice goes with it.
+            for joined in try String.fetchAll(
+                db, sql: "SELECT speaker_id FROM item_speaker WHERE item_id = ? AND merged_into = ?",
+                arguments: [itemID, speakerID])
+            {
+                try db.execute(
+                    sql: "UPDATE item_speaker SET label = ? WHERE item_id = ? AND speaker_id = ?",
+                    arguments: [label, itemID, joined])
+                try Self.linkVoice(itemID: itemID, speakerID: joined, label: label, now: now, db)
+            }
             try ChangeLog.append(
                 db, table: "item_speaker", rowID: "\(itemID)/\(speakerID)", op: .update, version: 0, at: now)
         }
