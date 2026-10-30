@@ -122,6 +122,7 @@ public enum ItemShare {
         if !document.participants.isEmpty {
             facts.append("Partecipanti: \(document.participants.joined(separator: ", "))")
         }
+        if !document.attendees.isEmpty { facts.append("Presenti: \(document.attendees.joined(separator: ", "))") }
         if !document.tags.isEmpty { facts.append("Tag: \(document.tags.joined(separator: ", "))") }
         lines += [facts.joined(separator: " · "), ""]
         if let summary = document.summary {

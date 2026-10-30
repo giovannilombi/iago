@@ -6,14 +6,14 @@ Tutto avviene sul Mac (ADR-0005), nella coda dei lavori, un elemento alla volta.
 1. **Decodifica** delle tracce e ricampionamento a 16 kHz mono.
 2. **VAD** Silero (via FluidAudio) e divisione in blocchi di parlato (ADR-0006).
 3. **Riconoscimento** con il motore scelto.
-4. **Diarizzazione** pyannote/WeSpeaker (FluidAudio) sulla traccia di sistema; la traccia del microfono è "Io". Più persone nella stessa stanza si separano anche sul microfono (ADR-0031).
+4. **Diarizzazione** pyannote/WeSpeaker (FluidAudio) sulla traccia di sistema; la traccia del microfono è "Io". Il microfono viene diarizzato anch'esso: le voci della stanza con almeno 20 s di parlato si separano da sole se la traccia di sistema ha meno di 10 s di parlato (riunione in presenza), sempre con «Più persone nella stanza»; con una call restano su «Io» e il loro numero va in `Transcript.otherMicVoices`, che fa comparire *Separa le voci* (ADR-0031, `TranscriptionPipeline.RoomMode`).
 5. **Segmentazione per speaker:** tempi per parola di whisper, segmenti divisi ai cambi di speaker e frasi spezzate ricucite.
 6. **Unione** delle due tracce sulla linea del tempo e **filtro dell'eco:** le frasi del microfono che ripetono quelle della traccia di sistema vengono scartate.
 7. **Indicizzazione** dei segmenti per la ricerca.
 8. **Voci** (solo se attive in Impostazioni › Voci, ADR-0073): vedi sotto.
 
 ## Riconoscere le voci (ADR-0073)
-- La diarizzazione dà per ogni speaker un'**impronta WeSpeaker** (256 numeri, `DiarizationResult.speakerDatabase`), rinumerata come gli speaker (`TranscriptPostProcessing.normalizeVoices`). La pipeline la restituisce in `Output.voices`, con i secondi di parlato, per la traccia di sistema o per il file importato; il microfono ("Io") e le voci della stanza no.
+- La diarizzazione dà per ogni speaker un'**impronta WeSpeaker** (256 numeri, `DiarizationResult.speakerDatabase`), rinumerata come gli speaker (`TranscriptPostProcessing.normalizeVoices`). La pipeline la restituisce in `Output.voices`, con i secondi di parlato, per la traccia di sistema, per il file importato e per le voci della stanza separate; il microfono dell'utente («Io») no.
 - Dopo la trascrizione `TranscriptionService` la salva (`Archive.storeVoices`, almeno 10 s di parlato) e cerca le voci conosciute (`Archive.voiceMatches`): somiglianza del coseno ≥ 0,60 con la media delle impronte della persona, almeno 0,05 sopra la seconda voce, una persona per speaker. Le corrispondenze diventano proposte `person` con `origin = voice`.
 - `Archive.renameSpeaker` lega l'impronta della call al nome (o la slega, se torna generico). Un errore nelle voci non fa fallire la trascrizione.
 - **Nomi degli speaker** (`App/Sources/UI/ItemDetailView.swift`, `SpeakerNames`; `IAGOStore/SpeakerNames.swift`):

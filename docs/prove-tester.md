@@ -279,6 +279,16 @@ Serve una call con la trascrizione di IAGO e quella di Teams (10o.1), e una paro
 - [ ] 10q.4 Su un'email importata: le parti sono Scheda, Testo e Email originale (.eml); l'`.eml` si apre in Mail.
 - [ ] 10q.5 Impostazioni › Privacy › registro accessi: c'è una riga di esportazione «share» per ogni condivisione. Mentre i file si preparano, la condivisione compare in Attività.
 
+## 10r. Più persone nella stanza, presenti e aggiornamenti obbligatori (1.2.8-beta)
+Servono due persone vere nella stessa stanza (nomi inventati nelle prove scritte).
+- [ ] 10r.1 Senza nessuna call aperta, *Avvia registrazione* e parlate in due per almeno un minuto ciascuno. Trascrivi: chi ha parlato di più è «Io», l'altra voce è «Stanza 2», senza aver attivato nulla.
+- [ ] 10r.2 Durante una call di prova con un'altra persona accanto a te, senza attivare nulla: dopo la trascrizione la voce accanto è sotto «Io» e nella scheda compare «Nel microfono ho sentito un'altra voce…» con *Separa le voci*. Premilo: la call viene ritrascritta e compare «Stanza 2».
+- [ ] 10r.3 Durante una registrazione, menu dell'icona › *Più persone qui nella stanza* (resta spuntato). Dopo lo Stop il pannello ha *Più persone nella stanza* già attivo e la trascrizione separa le voci.
+- [ ] 10r.4 Nel pannello dopo lo Stop scrivi in *Presenti* «Bruno Test, Carla Prova» e Invio: compaiono due nomi. Nella scheda, accanto a «Stanza 2», il pulsante dei presenti offre i due nomi; sceglierne uno rinomina lo speaker. Un nome già noto scritto in minuscolo prende la grafia nota.
+- [ ] 10r.5 Con *Riconosci le voci* attivo, dai un nome a «Stanza 2»; in un'altra riunione con la stessa persona nella stanza arriva la proposta con quel nome.
+- [ ] 10r.6 *Condividi* ed *Esporta*: la scheda Markdown riporta «Presenti: …».
+- [ ] 10r.7 (Solo con una release di prova segnata obbligatoria) il menu dell'icona mostra «Aggiornamento obbligatorio …: installalo entro …» e *Aggiorna ora…*; dopo 2 giorni *Avvia registrazione* chiede di aggiornare e trascrizioni, sintesi e proposte non partono.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

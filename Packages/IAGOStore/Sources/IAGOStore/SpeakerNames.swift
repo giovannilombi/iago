@@ -159,3 +159,33 @@ extension Archive {
         }
     }
 }
+
+/// «Persone presenti» (ADR-0031): who was at a meeting, in the order the user wrote them. They are offered as names
+/// for the speakers, and they are not linked to the voices until the user names a speaker.
+extension Archive {
+    public func attendees(itemID: String) throws -> [String] {
+        try database.writer.read { db in
+            try String.fetchAll(
+                db, sql: "SELECT name FROM item_attendee WHERE item_id = ? ORDER BY position", arguments: [itemID])
+        }
+    }
+
+    /// Replaces the list. A name written like one IAGO already knows takes the known spelling; repeats go.
+    public func setAttendees(_ names: [String], itemID: String) throws {
+        let known = Dictionary(
+            try knownPersonNames().map { (TagNormalizer.normalize($0), $0) }, uniquingKeysWith: { first, _ in first })
+        var seen = Set<String>()
+        let cleaned = names.map { $0.trimmingCharacters(in: .whitespaces) }.filter { !$0.isEmpty }
+            .map { known[TagNormalizer.normalize($0)] ?? $0 }
+            .filter { seen.insert(TagNormalizer.normalize($0)).inserted }
+        let now = self.now()
+        try database.writer.write { db in
+            try db.execute(sql: "DELETE FROM item_attendee WHERE item_id = ?", arguments: [itemID])
+            for (position, name) in cleaned.enumerated() {
+                try db.execute(
+                    sql: "INSERT INTO item_attendee (item_id, name, position, created_at) VALUES (?, ?, ?, ?)",
+                    arguments: [itemID, name, position, now])
+            }
+        }
+    }
+}

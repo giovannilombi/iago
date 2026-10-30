@@ -7,6 +7,8 @@ IAGO registra **due tracce separate**: l'audio del Mac (le voci degli altri in T
 - **Clic sull'icona di IAGO** {{icona}} nella barra dei menu: si apre il menu, con **Avvia registrazione**. Durante la registrazione lo stesso menu ha **Pausa**, **Stop**, **Scarta** e **Segna momento**, e l'icona mostra il tempo.
 - **Clic destro** (o ctrl-clic) sull'icona: avvia, mette in pausa e riprende senza aprire il menu. Un clic normale non mette mai in pausa per sbaglio una call.
 - La registrazione compare in **Attività** con durata, microfono e stato.
+- **Riunione in presenza:** si avvia allo stesso modo, anche senza nessuna call aperta. Se l'audio del Mac resta muto, IAGO capisce che eravate nella stessa stanza e separa da solo le voci del microfono.
+- **Più persone nella stanza durante una call:** se ti accorgi che con te ci sono altre persone, scegli **Più persone qui nella stanza** dal menu durante la registrazione. La call verrà trascritta con le loro voci separate.
 
 ## Segna momento
 Durante la call scegli **Segna momento** dal menu: IAGO mette un segnalibro qualche secondo prima di adesso, con una nota facoltativa. Nella scheda lo ritrovi tra i *Segnalibri* e un clic ti porta in quel punto dell'audio. Da un segnalibro puoi creare direttamente un punto chiave.

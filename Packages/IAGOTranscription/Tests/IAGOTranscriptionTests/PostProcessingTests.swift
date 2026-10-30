@@ -153,6 +153,18 @@ typealias P = TranscriptPostProcessing
         #expect(room.others == ["r2", "r3"])
     }
 
+    @Test func shortRoomVoicesStayWithTheUser() {
+        let labeled: [(speaker: String, segment: TranscribedSegment)] = [
+            ("s1", .init(start: 0, end: 3, text: "ospite")),
+            ("s2", .init(start: 3, end: 10, text: "io parlo tanto")),
+            ("s3", .init(start: 10, end: 11, text: "un colpo di tosse")),
+        ]
+        let room = P.roomSpeakers(labeled, minimum: 2)
+        #expect(room.labeled.map(\.speaker) == ["r2", "me", "me"])
+        #expect(room.others == ["r2"])
+        #expect(room.mapping == ["s1": "r2", "s2": "me", "s3": "me"])
+    }
+
     @Test func idsAreNormalizedByFirstAppearance() {
         let raw = [
             P.SpeakerTurn(speaker: "SPEAKER_07", start: 5, end: 6),

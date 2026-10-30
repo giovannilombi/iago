@@ -435,6 +435,16 @@ enum Migrations {
             // ADR-0078: the transcript a summary was written from (`iago` or `teams`), shown when the main one changes.
             try db.alter(table: "summary") { t in t.add(column: "transcript_source", .text) }
         }
+        migrator.registerMigration("v24-attendees") { db in
+            // ADR-0031: who was at a meeting, said by the user when they want; offered as names for the speakers.
+            try db.create(table: "item_attendee") { t in
+                t.column("item_id", .text).notNull().references("item", onDelete: .cascade)
+                t.column("name", .text).notNull()
+                t.column("position", .integer).notNull()
+                t.column("created_at", .datetime).notNull()
+                t.primaryKey(["item_id", "name"])
+            }
+        }
         return migrator
     }
 

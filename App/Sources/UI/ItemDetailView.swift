@@ -22,6 +22,8 @@ struct ItemDetailView: View {
     @State private var transcript: Transcript?
     /// The second transcript of the call (ADR-0078): Teams beside IAGO's, or the other way round.
     @State private var alternate: Transcript?
+    /// «Presenti» of a meeting (ADR-0031), offered as speaker names.
+    @State private var attendees: [String] = []
     /// «Rendi principale» on a call with a summary: asks first.
     @State private var confirmMakingMain = false
     @State private var alternateLoadedAt: Date?
@@ -151,6 +153,7 @@ struct ItemDetailView: View {
         decisions = (try? archive.decisions(sourceItemID: itemID)) ?? []
         notes = (try? archive.notes(itemID: itemID)) ?? []
         speakers = (try? archive.speakers(itemID: itemID)) ?? []
+        attendees = (try? archive.attendees(itemID: itemID)) ?? []
         activeJob = (try? archive.jobs(itemID: itemID))?.first { $0.isActive }
         if let md = assets.first(where: { $0.kind == .contentMD }), content == nil {
             content = await Task.detached { try? String(decoding: archive.readAssetData(md), as: UTF8.self) }.value
@@ -226,7 +229,11 @@ struct ItemDetailView: View {
         VStack(alignment: .leading, spacing: 10) {
             if hasAudio, item.source == .recording, assets.contains(where: { $0.kind == .audioSystem }) {
                 Toggle(String(localized: "Più persone nella stanza"), isOn: $roomMode)
-                    .help(String(localized: "Distingue le voci anche nel microfono del Mac (ADR-0031)"))
+                    .help(
+                        String(
+                            localized:
+                                "Distingue sempre le voci nel microfono del Mac. Senza, IAGO le separa da solo quando non c'è una call."
+                        ))
             }
             ActionGrid {
                 if hasAudio, activeJob == nil {
@@ -466,6 +473,7 @@ struct ItemDetailView: View {
         SectionBox(
             String(localized: "Trascrizione"), systemImage: "text.alignleft", tint: .blue, collapseKey: "transcript"
         ) {
+            if item.type == .call { AttendeesRow(model: model, itemID: itemID) }
             if let transcript {
                 let shown = tab == .alternate ? (alternate ?? transcript) : transcript
                 Picker("", selection: $tab) {
@@ -489,8 +497,13 @@ struct ItemDetailView: View {
                     )
                     .font(.caption).foregroundStyle(.secondary)
                 }
-                SpeakerNames(model: model, itemID: itemID, transcript: shown, speakers: speakers)
-                    .id("speakers")
+                if tab != .alternate, let others = transcript.otherMicVoices, others > 0, hasAudio, activeJob == nil {
+                    roomVoicesNotice(others)
+                }
+                SpeakerNames(
+                    model: model, itemID: itemID, transcript: shown, speakers: speakers, attendees: attendees
+                )
+                .id("speakers")
                 switch tab {
                 case .transcript, .alternate:
                     CappedScroll(isLong: shown.segments.count > 14) {
@@ -555,6 +568,29 @@ struct ItemDetailView: View {
                         "Resta l'altra trascrizione, che diventa la principale. Non si può annullare: la trascrizione si può rifare o allegare di nuovo."
                 ))
         }
+    }
+
+    /// Other voices heard on the microphone during a call, left under «Io» (ADR-0031): one click separates them.
+    private func roomVoicesNotice(_ count: Int) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "person.3.fill").foregroundStyle(.teal)
+            Text(
+                count == 1
+                    ? String(localized: "Nel microfono ho sentito un'altra voce oltre alla tua: ora è sotto «Io».")
+                    : String(
+                        localized: "Nel microfono ho sentito altre \(count) voci oltre alla tua: ora sono sotto «Io».")
+            )
+            .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 8)
+            Button(String(localized: "Separa le voci")) {
+                roomMode = true
+                startTranscription(deleteAudio: false)
+            }
+            .help(String(localized: "Ritrascrive la call con le voci della stanza separate: Stanza 2, Stanza 3…"))
+        }
+        .font(.callout)
+        .padding(8)
+        .background(RoundedRectangle(cornerRadius: 8).fill(Color.teal.opacity(0.08)))
     }
 
     /// «IAGO» or «Teams».
@@ -912,6 +948,8 @@ private struct SpeakerNames: View {
     let itemID: String
     let transcript: Transcript
     let speakers: [ItemSpeaker]
+    /// «Presenti» (ADR-0031): offered in a menu next to each field.
+    var attendees: [String] = []
     @FocusState private var focused: String?
     @State private var question: Question?
 
@@ -1014,6 +1052,20 @@ private struct SpeakerNames: View {
                 .focused($focused, equals: id)
                 .onSubmit { confirm(id) }
                 .onExitCommand { discard(id) }
+            let free = attendees.filter { name in
+                !ids.contains { TagNormalizer.normalize(current($0)) == TagNormalizer.normalize(name) }
+            }
+            if !pending, !free.isEmpty {
+                Menu {
+                    ForEach(free, id: \.self) { name in
+                        Button(name) { proceed(id, name) }
+                    }
+                } label: {
+                    Image(systemName: "person.crop.circle.badge.checkmark")
+                }
+                .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+                .help(String(localized: "Scegli tra i presenti"))
+            }
             if pending {
                 Button {
                     confirm(id)

@@ -18,13 +18,19 @@ Your track is **Me** (the name you gave at the start). The others' voices are se
 
 The local engine can also suggest the names.
 
-With several people in the same room, turn on **Several people in the room** when you transcribe: IAGO also separates the voices on your track.
+## Several people in the room
+People connected remotely are always told apart, even many of them from the same computer. For those in the room with you:
+- **Meeting in person** (the Mac's audio is silent): IAGO separates the microphone's voices by itself. You stay «Me», the others become «Room 2», «Room 3»…
+- **Call with someone next to you:** IAGO does not separate by itself, because the microphone also hears the call's echo. If it hears other voices besides yours, the card shows «On the microphone I heard other voices» with **Separate the voices**, which transcribes the call again.
+- You can also decide it before: **Several people here in the room** from the menu while recording, or **Several people in the room** when you transcribe.
+- **Present:** in the card, and in the panel after Stop, write who was there (a name and Return, or several names separated by commas). Next to each speaker still without a name a button lets you choose among those present. Those present also go into exports and *Share*.
 
 ## Recognizing voices
 In **Settings › Voices** you can turn on *Recognize voices from one call to the next* (off by default). When you name a speaker, IAGO remembers their voice; in later calls it suggests the name ("Speaker 2 becomes Marco", *Recognized by voice*) and you confirm or dismiss it. It never assigns a name on its own.
 
 - It applies to calls transcribed after you turn it on; for a call already transcribed, use **Transcribe again**.
 - It needs at least about ten seconds of speech to recognize a voice.
+- The room's voices count too, when they are separated. Yours («Me») does not.
 - Voices stay only on the Mac and never go to Claude or into exports. In the same panel you see the known voices and can delete them one by one or all together.
 
 ## Glossary

@@ -1201,6 +1201,32 @@
         }
       }
     },
+    "⚠︎ Aggiornamento obbligatorio %@: installalo entro %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠︎ Mandatory update %1$@: install it by %2$@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "⚠︎ Aggiornamento obbligatorio %1$@: installalo entro %2$@"
+          }
+        }
+      }
+    },
+    "⚠︎ Aggiornamento obbligatorio %@: installalo per registrare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠︎ Mandatory update %@: install it to record"
+          }
+        }
+      }
+    },
     "⚠︎ Problema nella registrazione. Dettaglio tecnico: %@" : {
       "localizations" : {
         "en" : {
@@ -1417,6 +1443,16 @@
         }
       }
     },
+    "Aggiorna ora…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update now…"
+          }
+        }
+      }
+    },
     "Aggiornamenti" : {
       "localizations" : {
         "en" : {
@@ -1539,6 +1575,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add folder…"
+          }
+        }
+      }
+    },
+    "Aggiungi chi c'era" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add who was there"
           }
         }
       }
@@ -5531,6 +5577,7 @@
       }
     },
     "Distingue le voci anche nel microfono del Mac" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5541,11 +5588,22 @@
       }
     },
     "Distingue le voci anche nel microfono del Mac (ADR-0031)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tells voices apart on the Mac's microphone too (ADR-0031)"
+          }
+        }
+      }
+    },
+    "Distingue sempre le voci nel microfono del Mac. Senza, IAGO le separa da solo quando non c'è una call." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always tells apart the voices on the Mac's microphone. Without it, IAGO separates them by itself when there is no call."
           }
         }
       }
@@ -6012,7 +6070,18 @@
         }
       }
     },
+    "È uscita la versione %@ di IAGO e il tempo per installarla è finito: per registrare di nuovo va installata. Ci vuole un minuto; l'archivio resta com'è." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version %@ of IAGO is out and the time to install it is over: it must be installed to record again. It takes a minute; the archive stays as it is."
+          }
+        }
+      }
+    },
     "È uscita la versione %@ di IAGO: per continuare a registrare va installata. Ci vuole un minuto; l'archivio resta com'è." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9626,6 +9695,16 @@
         }
       }
     },
+    "La registrazione verrà trascritta con le voci della stanza separate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The recording will be transcribed with the room's voices apart"
+          }
+        }
+      }
+    },
     "La risposta" : {
       "localizations" : {
         "en" : {
@@ -10949,6 +11028,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "It stays in the Trash for 30 days and can be restored. Permanent deletion can't be undone."
+          }
+        }
+      }
+    },
+    "Nel microfono ho sentito altre %lld voci oltre alla tua: ora sono sotto «Io»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On the microphone I heard %lld other voices besides yours: they are now under «Me»."
+          }
+        }
+      }
+    },
+    "Nel microfono ho sentito un'altra voce oltre alla tua: ora è sotto «Io»." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On the microphone I heard another voice besides yours: it is now under «Me»."
           }
         }
       }
@@ -12969,6 +13068,16 @@
         }
       }
     },
+    "Per trascrivere e fare sintesi e proposte va installata la versione %@ di IAGO: Impostazioni › Generale › Aggiornamenti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To transcribe and make summaries and suggestions, version %@ of IAGO must be installed: Settings › General › Updates."
+          }
+        }
+      }
+    },
     "Per trascrivere le call sul Mac, senza rete. Si scaricano una volta sola." : {
       "localizations" : {
         "en" : {
@@ -13085,6 +13194,16 @@
         }
       }
     },
+    "Più persone qui nella stanza" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Several people here in the room"
+          }
+        }
+      }
+    },
     "Più tardi" : {
       "localizations" : {
         "en" : {
@@ -13181,6 +13300,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Preparing suggestions for “%@”"
+          }
+        }
+      }
+    },
+    "Presenti:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Present:"
           }
         }
       }
@@ -14978,6 +15107,16 @@
         }
       }
     },
+    "Ritrascrive la call con le voci della stanza separate: Stanza 2, Stanza 3…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transcribes the call again with the room's voices apart: Room 2, Room 3…"
+          }
+        }
+      }
+    },
     "Ritrascrivi" : {
       "localizations" : {
         "en" : {
@@ -15529,6 +15668,16 @@
         }
       }
     },
+    "Scegli tra i presenti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose among those present"
+          }
+        }
+      }
+    },
     "Scegli tra le persone che IAGO conosce" : {
       "localizations" : {
         "en" : {
@@ -16005,6 +16154,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Separate"
+          }
+        }
+      }
+    },
+    "Separa le voci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Separate the voices"
           }
         }
       }
@@ -17357,6 +17516,16 @@
         }
       }
     },
+    "Togli «%@»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove «%@»"
+          }
+        }
+      }
+    },
     "Togli da «In evidenza»" : {
       "localizations" : {
         "en" : {
@@ -18305,6 +18474,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A small model that finds passages that say the same thing in other words, also for chat and links. It downloads with the first engine; texts stay on the Mac."
+          }
+        }
+      }
+    },
+    "Un nome, poi Invio. Diventano i nomi proposti per gli speaker." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A name, then Return. They become the names offered for the speakers."
           }
         }
       }

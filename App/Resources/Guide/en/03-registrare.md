@@ -7,6 +7,8 @@ IAGO records **two separate tracks**: the Mac's audio (the voices of the others 
 - **Click the IAGO icon** {{icona}} in the menu bar: the menu opens, with **Start recording**. While recording, the same menu has **Pause**, **Stop**, **Discard** and **Mark moment**, and the icon shows the time.
 - **Right-click** (or Control-click) the icon: it starts, pauses and resumes without opening the menu. A normal click never pauses a call by mistake.
 - The recording appears in **Activity** with its duration, microphone and status.
+- **Meeting in person:** it starts the same way, also without any open call. If the Mac's audio stays silent, IAGO understands you were in the same room and separates the microphone's voices by itself.
+- **Several people in the room during a call:** if you notice other people are with you, choose **Several people here in the room** from the menu while recording. The call will be transcribed with their voices apart.
 
 ## Mark moment
 During the call, choose **Mark moment** from the menu: IAGO places a bookmark a few seconds before now, with an optional note. In the item card you find it under *Bookmarks*, and a click takes you to that point in the audio. You can create a key point directly from a bookmark.

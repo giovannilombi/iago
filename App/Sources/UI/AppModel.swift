@@ -161,6 +161,10 @@ final class AppModel {
     var speakerDrafts: [String: [String: String]] = [:]
     /// «Dai prima i nomi» before a summary: the item whose speaker names to bring into view and focus.
     var namingSpeakersFor: String?
+    /// «Più persone qui» from the menu during a recording (ADR-0031): the recording, once saved, is transcribed with
+    /// the room's voices apart. `roomModeItems` keeps it for the saved items, for the panel after Stop.
+    var roomModeForRecording = false
+    var roomModeItems: Set<String> = []
     @ObservationIgnored private var searchTask: Task<Void, Never>?
 
     private func scheduleSearch() {
@@ -1312,7 +1316,18 @@ final class AppModel {
 
     // MARK: Transcription
 
+    /// After the margin of a mandatory update (ADR-0056) no new jobs start: the user is told how to update.
+    func blockedByUpdate() -> Bool {
+        guard let updates, updates.mandatoryOverdue, let version = updates.mandatoryVersion else { return false }
+        lastError = String(
+            localized:
+                "Per trascrivere e fare sintesi e proposte va installata la versione \(version) di IAGO: Impostazioni › Generale › Aggiornamenti."
+        )
+        return true
+    }
+
     func transcribe(_ itemID: String, deleteAudio: Bool, roomMode: Bool) {
+        guard !blockedByUpdate() else { return }
         Task {
             do {
                 try await transcription.transcribe(itemID: itemID, deleteAudio: deleteAudio, roomMode: roomMode)

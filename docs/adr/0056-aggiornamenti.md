@@ -58,3 +58,10 @@
 ## Conseguenze
 - Prima di aprire il repository va controllato che non contenga dati personali né registrazioni: la spec, HANDOVER.md e `Test-recordings/` sono già esclusi da git.
 - Se si perde la chiave EdDSA, gli utenti non accettano più gli aggiornamenti: va salvata (`generate_keys --account iago -x <file>`) in un posto sicuro.
+
+## Modifica del 2026-10-30 (1.2.8-beta)
+Decisione dell'utente: le versioni maggiori restano obbligatorie, con **2 giorni di margine**.
+- Da quando IAGO vede un aggiornamento obbligatorio, il menu mostra fino a quando installarlo e *Aggiorna ora…*.
+- Passati i 2 giorni IAGO non avvia nuove registrazioni, trascrizioni, sintesi e proposte, nemmeno quelle automatiche, e dice come aggiornare. L'utente deve solo premere *Aggiorna ora*.
+- L'archivio resta leggibile ed esportabile, e una registrazione in corso non si interrompe mai.
+- Un Mac sempre senza rete non vede l'aggiornamento e quindi non viene bloccato.

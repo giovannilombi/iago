@@ -52,7 +52,7 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0028 | Master key in the Keychain and per-item keys | accepted |
 | 0029 | Phase 0 recordings imported into the encrypted archive | accepted |
 | 0030 | Trash with automatic deletion after 30 days (open decision D) | accepted |
-| 0031 | "Several people in the room" option | accepted |
+| 0031 | "Several people in the room" option | accepted (IAGO decides by itself and those present: 1.2.8-beta) |
 | 0032 | "Discard" during recording and "Temporarily discarded" | accepted |
 | 0033 | Generic import, Teams transcripts and attachments in notes | accepted (Teams transcript side by side: 0078) |
 | 0034 | IAGO license: Creative Commons BY-NC-SA 4.0 | accepted |
@@ -77,7 +77,7 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0053 | macOS echo cancellation on the microphone | withdrawn |
 | 0054 | Summary based on the category | accepted |
 | 0055 | "Activity" section | accepted |
-| 0056 | App updates | accepted |
+| 0056 | App updates | accepted (2 days of margin for mandatory ones: 1.2.8-beta) |
 | 0057 | Sync through a shared cloud folder | proposed |
 | 0058 | The data principle: nothing leaves without the user's choice | accepted |
 | 0059 | Distribution without notarization | accepted (DMG since 2026-10-27) |
@@ -94,7 +94,7 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0070 | Who produced each result | accepted |
 | 0071 | Summaries and suggestions made by Claude | accepted |
 | 0072 | Mark moment with screenshot and shortcuts in all apps | accepted |
-| 0073 | Recognizing the same voices across different calls | accepted |
+| 0073 | Recognizing the same voices across different calls | accepted (room voices: 1.2.8-beta) |
 | 0074 | Open work and two modes: Track and Manage | accepted (1.1.0-beta; modes redefined by 0076) |
 | 0075 | Project views: how to look and what to show | accepted (1.1.0-beta; partly superseded by 0076) |
 | 0076 | Simple Track mode, Inbox and Items | accepted (1.2.0-beta) |

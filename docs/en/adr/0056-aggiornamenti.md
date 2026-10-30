@@ -58,3 +58,10 @@
 ## Consequences
 - Before opening the repository it must be checked that it contains no personal data or recordings: the spec, HANDOVER.md and `Test-recordings/` are already excluded from git.
 - If the EdDSA key is lost, users no longer accept updates: it must be saved (`generate_keys --account iago -x <file>`) in a safe place.
+
+## Change of 2026-10-30 (1.2.8-beta)
+User's decision: major versions stay mandatory, with **2 days of margin**.
+- From when IAGO sees a mandatory update, the menu shows until when to install it and *Update now…*.
+- After the 2 days IAGO starts no new recordings, transcriptions, summaries or suggestions, not even automatic ones, and says how to update. The user only has to press *Update now*.
+- The archive stays readable and exportable, and a recording in progress is never interrupted.
+- A Mac that is always offline does not see the update and so is not blocked.

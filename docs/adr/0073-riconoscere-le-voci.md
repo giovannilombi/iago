@@ -44,3 +44,5 @@
 - **Unisci e Separa:** lo stesso nome a due speaker della stessa call propone di unirli, perché spesso la diarizzazione divide una persona in due. Lo speaker unito prende nome e voce dell'altro (`item_speaker.merged_into`), e così l'impronta della persona si fa con tutte le sue frasi. «Separa» lo riporta com'era, utile quando invece erano due persone. La trascrizione salvata non cambia.
 - **Prima della sintesi:** con speaker ancora generici, *Genera sintesi* e *Rigenera* chiedono se dare prima i nomi o procedere, ricordando che la sintesi si può rigenerare. Le sintesi automatiche procedono senza chiedere.
 
+## Modifica del 2026-10-30 (1.2.8-beta)
+- Anche le **voci della stanza** separate (ADR-0031, «Stanza 2», «Stanza 3»…) hanno la loro impronta e vengono riconosciute nelle call successive. La voce dell'utente («Io») resta senza impronta.

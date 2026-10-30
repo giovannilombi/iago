@@ -112,15 +112,16 @@ final class StatusItemController: NSObject {
         }
     }
 
-    /// A new recording waits for a mandatory update (ADR-0056); one going on is never stopped.
+    /// After the margin of a mandatory update (ADR-0056, 2 days) a new recording waits for it: asks to update instead
+    /// of starting. One going on is never stopped.
     private func blockedByMandatoryUpdate() -> Bool {
-        guard let version = updates?.mandatoryVersion else { return false }
+        guard let version = updates?.mandatoryVersion, updates?.mandatoryOverdue == true else { return false }
         NSApp.activate()
         let alert = NSAlert()
         alert.messageText = String(localized: "Aggiornamento obbligatorio")
         alert.informativeText = String(
             localized:
-                "È uscita la versione \(version) di IAGO: per continuare a registrare va installata. Ci vuole un minuto; l'archivio resta com'è."
+                "È uscita la versione \(version) di IAGO e il tempo per installarla è finito: per registrare di nuovo va installata. Ci vuole un minuto; l'archivio resta com'è."
         )
         alert.addButton(withTitle: String(localized: "Aggiorna ora"))
         alert.addButton(withTitle: String(localized: "Più tardi"))
@@ -179,6 +180,16 @@ final class StatusItemController: NSObject {
             let track = silent == .mic ? String(localized: "microfono") : String(localized: "audio di sistema")
             menu.addItem(disabledItem(String(localized: "⚠︎ Traccia \(track) muta da oltre 30 s")))
         }
+        // ADR-0056: the margin to install a mandatory update, and the way to do it.
+        if let version = updates?.mandatoryVersion, let deadline = updates?.mandatoryDeadline {
+            let when = deadline.formatted(date: .abbreviated, time: .shortened)
+            menu.addItem(
+                disabledItem(
+                    updates?.mandatoryOverdue == true
+                        ? String(localized: "⚠︎ Aggiornamento obbligatorio \(version): installalo per registrare")
+                        : String(localized: "⚠︎ Aggiornamento obbligatorio \(version): installalo entro \(when)")))
+            menu.addItem(item(String(localized: "Aggiorna ora…"), #selector(updateNow)))
+        }
         if let proposal = windows?.model.calls.pendingProposal, state == .idle {
             let record = item(String(localized: "Registra la call «\(proposal)»"), #selector(acceptCallProposal))
             menu.addItem(record)
@@ -220,6 +231,11 @@ final class StatusItemController: NSObject {
             menu.addItem(bookmarkWithNote)
             // ADR-0072: also while paused, the slide on screen is still worth keeping.
             menu.addItem(item(String(localized: "Segna momento con screenshot"), #selector(addScreenshot)))
+            // ADR-0031: said during the meeting, when it turns out there are more people in the room.
+            let room = item(String(localized: "Più persone qui nella stanza"), #selector(toggleRoomMode))
+            room.state = windows?.model.roomModeForRecording == true ? .on : .off
+            room.toolTip = String(localized: "La registrazione verrà trascritta con le voci della stanza separate")
+            menu.addItem(room)
         }
         menu.addItem(micMenuItem())
         menu.addItem(.separator())
@@ -303,6 +319,10 @@ final class StatusItemController: NSObject {
     }
 
     @objc private func startRecording() { toggleRecording() }
+
+    @objc private func updateNow() { updates?.checkNow() }
+
+    @objc private func toggleRoomMode() { windows?.model.roomModeForRecording.toggle() }
 
     @objc private func openVoiceNote() { windows?.showVoiceNote() }
 

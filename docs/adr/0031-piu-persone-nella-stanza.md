@@ -17,3 +17,13 @@ La pipeline assegna tutta la traccia mic allo speaker "Io" e diarizza solo la tr
 - Deroga a spec 7.2 passo 3 e ad ADR-0006 solo quando l'opzione è attiva.
 - La voce principale è scelta per durata: se l'utente parla meno degli altri presenti va rinominata a mano.
 - Diarizzazione in più sulla traccia mic: pochi secondi per ora di audio.
+
+## Modifica del 2026-10-30 (1.2.8-beta)
+Richiesta dell'utente: spesso non si sa prima che ci saranno più persone, e avviare la registrazione deve restare immediato.
+- **IAGO decide da solo** (`RoomMode.auto`, il nuovo predefinito): il microfono viene sempre diarizzato. Se la traccia di sistema ha meno di 10 s di parlato è una riunione in presenza e le voci con almeno 20 s di parlato si separano da sole. Con una call restano su «Io», perché l'eco della call confonde, e la scheda propone *Separa le voci*, che ritrascrive con l'opzione attiva.
+- Le voci più brevi di 20 s restano con l'utente: di solito sono la sua stessa voce divisa in due, o un rumore.
+- **Durante la registrazione:** *Più persone qui nella stanza* nel menu dell'icona; la trascrizione automatica e il pannello dopo lo Stop lo usano.
+- **Presenti** (migrazione `v24-attendees`): l'utente può scrivere chi c'era, durante il pannello dopo lo Stop o dopo nella scheda. I nomi sono proposti per gli speaker ancora senza nome e vanno nelle esportazioni; non sono collegati alle voci finché l'utente non dà un nome.
+- Le voci della stanza separate hanno la loro impronta (ADR-0073).
+- Per chi è collegato da remoto non cambia nulla: la traccia di sistema era già separata per voce, anche con più persone dallo stesso computer.
+- Registrare solo il microfono, senza l'audio del Mac, resta per dopo: con l'audio del Mac muto il risultato è lo stesso.

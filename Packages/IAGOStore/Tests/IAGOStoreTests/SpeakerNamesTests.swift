@@ -54,4 +54,16 @@ import Testing
         #expect(try labels() == ["s1": "Anna Prova", "s2": "Speaker 2", "s3": "Speaker 3"])
         #expect(try archive.speakers(itemID: item.id).allSatisfy { $0.mergedInto == nil })
     }
+
+    @Test func attendeesKeepOrderAndKnownSpelling() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let item = try fixture.makeItem()
+        try archive.setSpeakers([("s1", "Anna Prova")], for: item.id)
+        _ = try archive.renameSpeaker("s1", of: item.id, to: "Anna Prova")
+        try archive.setAttendees(["Bruno Test", "anna prova", " ", "Bruno Test"], itemID: item.id)
+        #expect(try archive.attendees(itemID: item.id) == ["Bruno Test", "Anna Prova"])
+        try archive.setAttendees([], itemID: item.id)
+        #expect(try archive.attendees(itemID: item.id).isEmpty)
+    }
 }
