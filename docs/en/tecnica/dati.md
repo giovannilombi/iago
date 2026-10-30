@@ -37,6 +37,7 @@ Twenty-one so far, from `v1` to `v21-work` (open work, ADR-0074: only new column
 ## Backups and exports
 - **Encrypted backup** with a password chosen by the user: a single file with the whole archive, for an external drive or a new Mac (ADR-0041).
 - Project **export** in Markdown (also designed for an LLM), optional **Obsidian mirror**, TXT/MD of a transcript (`IAGOExport`).
+- **Share an item** (ADR-0080, `IAGOExport/ItemShare.swift`): the chosen parts (Markdown card, transcripts, audio, tracks, originals, screenshots) decrypted into a temporary folder (`IAGO-Condividi`, emptied at each share), optionally in a zip made with `ditto`, then `NSSharingServicePicker` or a chosen folder. Voice prints are not assets and are never there. In the access log as `export/share`.
 - **Access log:** downloads, Claude reads and writes, exports, backups and updates.
 
 ## Starter example

@@ -7,7 +7,7 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 ```markdown
 # ADR-NNNN — Titolo
 
-- Stato: proposto | accettato | sostituito da ADR-XXXX
+- Stato: proposto | accettato | rifiutato | sostituito da ADR-XXXX
 - Data: AAAA-MM-GG
 - Riferimenti spec: sez. …
 
@@ -88,7 +88,7 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0064 | Pulizia dell'eco dopo la registrazione | rifiutato |
 | 0065 | Repository pulito, 1.0.0-beta e niente dati reali nei commit | accettato |
 | 0066 | Esempio iniziale in un archivio nuovo | accettato |
-| 0067 | MiniCPM: al posto di Qwen 3.5 4B o in aggiunta | proposto |
+| 0067 | MiniCPM: al posto di Qwen 3.5 4B o in aggiunta | rifiutato |
 | 0068 | Sito di documentazione con VitePress su GitHub Pages | accettato (online quando il repository è pubblico) |
 | 0069 | Coda unica del motore e memoria | accettato |
 | 0070 | Chi ha prodotto ogni risultato | accettato |
@@ -101,3 +101,4 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0077 | Italiano e inglese, sempre allineati | accettato (1.2.2-beta) |
 | 0078 | Trascrizioni di IAGO e di Teams affiancate, Claude consigliato sui Mac lenti | accettato (1.2.5-beta; ricerca in tutte e due e ★ sulla principale: 1.2.6-beta) |
 | 0079 | Assistenti oltre Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposto |
+| 0080 | Condividere un elemento | accettato (1.2.7-beta) |

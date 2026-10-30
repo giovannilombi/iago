@@ -119,6 +119,7 @@ function tecnicoSidebar(lang: Lang): DefaultTheme.SidebarItem[] {
           text: t(lang, 'Progetti condivisi (proposta)', 'Shared projects (proposal)'),
           link: `${p}/design/sync-cartella-condivisa`
         },
+        { text: t(lang, 'ClickUp (idea)', 'ClickUp (idea)'), link: `${p}/design/clickup` },
         { text: t(lang, 'Benchmark trascrizione', 'Transcription benchmark'), link: `${p}/benchmarks/2026-10-phase0` },
         {
           text: t(lang, 'Prova sintesi e glossario', 'Summary and glossary test'),

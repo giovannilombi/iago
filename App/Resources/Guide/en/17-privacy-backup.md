@@ -8,6 +8,7 @@
 - The **local engine** (summaries, suggestions, Ask) runs on the Mac: the texts go nowhere.
 - No telemetry, statistics or remote crash reporters.
 - The only connections IAGO makes on its own are the model downloads you ask for (from fixed addresses, with verification) and the update check. The **access log** (Settings › Privacy) lists them all.
+- What you share with *Share…* leaves the Mac only the way you choose (Mail, Messages, AirDrop, a folder), and is not encrypted.
 
 ## If you want more: Claude
 You can connect **Claude** to the projects you choose (chapter *Claude*):

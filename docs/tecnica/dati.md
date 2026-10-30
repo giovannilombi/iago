@@ -37,6 +37,7 @@ Ventuno finora, da `v1` a `v21-work` (lavoro aperto, ADR-0074: solo colonne e ta
 ## Backup ed esportazioni
 - **Backup cifrato** con password scelta dall'utente: un unico file con tutto l'archivio, per un disco esterno o un Mac nuovo (ADR-0041).
 - **Export** di progetto in Markdown (anche pensato per un LLM), **specchio Obsidian** facoltativo, TXT/MD di una trascrizione (`IAGOExport`).
+- **Condividi un elemento** (ADR-0080, `IAGOExport/ItemShare.swift`): le parti scelte (scheda Markdown, trascrizioni, audio, tracce, originali, schermate) decifrate in una cartella temporanea (`IAGO-Condividi`, svuotata a ogni condivisione), facoltativamente in uno zip con `ditto`, poi `NSSharingServicePicker` o una cartella scelta. Le impronte delle voci non sono asset e non ci sono mai. Nel registro accessi come `export/share`.
 - **Registro accessi:** download, letture e scritture di Claude, esportazioni, backup e aggiornamenti.
 
 ## Esempio iniziale

@@ -272,6 +272,13 @@ You need a call with IAGO's and Teams' transcripts (10o.1), and a word that is o
 - [ ] 10p.5 *Regenerate*: the warning goes away and below the summary there is «from the Teams transcript». Now search for a word that is only in IAGO's transcript: the passage says «in the IAGO transcript».
 - [ ] 10p.6 On a call without a summary *Make main* swaps at once, without questions.
 
+## 10q. Sharing an item (1.2.7-beta)
+- [ ] 10q.1 On a transcribed call with audio, *Share…*: the list shows Card, Transcript, Audio (with the size) and, if present, Separate tracks, Screenshots, Other transcript. Card and Transcript are already ticked.
+- [ ] 10q.2 *Share…* with Card and Transcript: the Mac's Share menu opens. Choose Mail: the message has the two `.md` files. The card has summary, key points and notes, without the transcript; the transcript has the speakers' names.
+- [ ] 10q.3 Also tick Audio and *A single .zip file*, then *Save to a folder…*: the folder has a single `.zip` with the item's folder and the three files, and the Finder shows it.
+- [ ] 10q.4 On an imported email: the parts are Card, Text and Original email (.eml); the `.eml` opens in Mail.
+- [ ] 10q.5 Settings › Privacy › access log: there is an export «share» row for each share. While the files are prepared, the share shows in Activity.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

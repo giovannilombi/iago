@@ -46,6 +46,11 @@
   - su GitHub, il workflow `privacy.yml` (Ubuntu, pochi secondi) fa gli stessi controlli su ogni PR e ogni push su `main`, perché gli hook locali si possono saltare e un clone nuovo non li ha finché non lancia `scripts/bootstrap.sh`.
 - **Account GitHub di ogni autore:** in Settings › Emails, "Keep my email addresses private" (i merge fatti dal sito usano l'indirizzo anonimo) e "Block command line pushes that expose my email".
 
+## Modifica del 2026-10-30 (diritti e numeri di versione)
+- I diritti sono di **Giovanni Lombi fino all'inizio del lavoro sulla condivisione** (fase 4, ADR-0057) e di **Giovanni Lombi e Gianluca Sestito dalla prima versione con quel lavoro**, il primo fatto insieme. Sostituisce le soglie 1.3.x-beta e 1.4.0-beta della modifica del 2026-10-29.
+- Si resta sulle 1.2.x-beta fino al repository pubblico; poi la versione è la **1.3.0**, senza `-beta`, salvo indicazioni diverse dell'utente.
+- Impostazioni › Informazioni mostra Giovanni Lombi fino a quella versione.
+
 ## Modifica del 2026-10-29 (diritti)
 - I diritti sono di **Giovanni Lombi fino alla 1.3.x-beta** e di **Giovanni Lombi e Gianluca Sestito dalla 1.4.0-beta**. Sostituisce il «dalle versioni successive alla 1.0.0-beta» della modifica del 2026-10-24.
 - I commit continuano a nominare entrambi (`Co-Authored-By` aggiunto dall'hook `commit-msg`).

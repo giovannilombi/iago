@@ -331,7 +331,8 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
-| **1.2.6-beta** | 30 ottobre 2026 | Su `main` (tag `v1.2.6-beta`; si torna alle versioni precedenti: vedi sotto). **Trascrizione principale con la ★** sulla sua scheda e *Rendi principale* con conferma; la **ricerca guarda anche nella trascrizione secondaria**, con la call una volta sola e l'etichetta «nella trascrizione Teams»; la sintesi dice da quale trascrizione è fatta e propone *Rigenera* quando la principale cambia |
+| **1.2.7-beta** | 30 ottobre 2026 | Su `main` (tag `v1.2.7-beta`; si torna alle versioni precedenti: vedi sotto). **Condividi un elemento:** scegli cosa mandare (scheda con sintesi e punti chiave, trascrizioni, audio, tracce, originali, schermate) e passalo al menu Condividi del Mac o a una cartella, anche in un solo zip. Nuova schermata dell'Inbox nella guida |
+| **1.2.6-beta** | 30 ottobre 2026 | Tag `v1.2.6-beta`. **Trascrizione principale con la ★** sulla sua scheda e *Rendi principale* con conferma; la **ricerca guarda anche nella trascrizione secondaria**, con la call una volta sola e l'etichetta «nella trascrizione Teams»; la sintesi dice da quale trascrizione è fatta e propone *Rigenera* quando la principale cambia |
 | **1.2.5-beta** | 30 ottobre 2026 | Tag `v1.2.5-beta`. **Trascrizioni di IAGO e di Teams affiancate:** Teams si aggiunge senza sostituire, i suoi minuti non sono link all'audio, una delle due è la principale e ciascuna si elimina. **Consiglio «Usa Claude»** per sintesi e proposte sui Mac fino a 16 GB, e scelta di Claude in Impostazioni › Motore. ADR-0079 (altri assistenti) proposto |
 | **1.2.4-beta** | 30 ottobre 2026 | Tag `v1.2.4-beta`. **Inbox con due bollini:** rosso per ciò che chiede un'azione adesso (in ritardo, oggi, senza responsabile, attese scadute), giallo per le proposte da confermare. L'Inbox è divisa in tre blocchi con lo stesso numero nell'intestazione, e le proposte si confermano o si scartano lì. **Nomi degli speaker:** si confermano con Invio (campo rosso finché non salvati), IAGO chiede dei nomi simili e dei diminutivi (Lello/Antonello), due speaker con lo stesso nome si uniscono e si separano, e prima della sintesi chiede se dare i nomi |
 | **1.2.3-beta** | 29 ottobre 2026 | Tag `v1.2.3-beta`. **Finestra di nuovo fluida:** il lavoro del motore in background non riparte più senza sosta e la lettura del mute di Teams non blocca la finestra. **Tag proposti solo dall'elemento:** ogni tag ha la frase da cui viene, o le sue parole nel testo. Diritti aggiornati: Giovanni Lombi fino alla 1.3.x-beta, Giovanni Lombi e Gianluca Sestito dalla 1.4.0-beta |
@@ -343,7 +344,7 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 | **1.0.0-beta** | 24 ottobre 2026 | Beta, non ancora distribuita: tutto quello che è descritto qui (fasi 0-3). La 1.0.0 sarà la prima versione distribuibile |
 
 ### Tornare a una versione precedente
-Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
+Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
 - **Codice e documentazione:** `git checkout v1.0.1-beta`, poi `xcodegen generate` e una build; `npm run docs:dev` mostra il sito di quella versione. Se si abbandona una versione, lo sviluppo riprende dal ramo della versione precedente (per esempio `release/1.0.x`) con i numeri di quella serie (1.0.2-beta…).
 - **Archivio:** le migrazioni del database vanno solo avanti. Una versione più vecchia potrebbe non leggere un archivio già aperto da una più nuova. Per tornare indietro si ripristina il **backup** fatto prima dell'aggiornamento (Impostazioni › Backup e trasferimento), oppure si prova la versione nuova su una **copia** dell'archivio (`scripts/try-branch.sh`).
 
@@ -381,4 +382,4 @@ IAGO si regge su ottimo software open source:
 
 Elenco completo, con versioni e licenze verificate: [`docs/licenses.md`](docs/licenses.md).
 
-**IAGO** © 2026 Giovanni Lombi (fino alla 1.3.x-beta), Giovanni Lombi e Gianluca Sestito (dalla 1.4.0-beta). Licenza [Creative Commons BY-NC-SA 4.0](LICENSE).
+**IAGO** © 2026 Giovanni Lombi (fino all'inizio della condivisione, fase 4), Giovanni Lombi e Gianluca Sestito (dalla prima versione con la condivisione). Licenza [Creative Commons BY-NC-SA 4.0](LICENSE).

@@ -8,6 +8,7 @@
 - Il **motore locale** (sintesi, proposte, Chiedi) gira sul Mac: i testi non vanno da nessuna parte.
 - Niente telemetria, statistiche o crash reporter remoti.
 - Le sole connessioni che IAGO fa da solo sono il download dei modelli che chiedi tu (da indirizzi fissi, con verifica) e il controllo degli aggiornamenti. Il **registro accessi** (Impostazioni › Privacy) le elenca tutte.
+- Quello che condividi con *Condividi…* esce dal Mac solo come scegli tu (Mail, Messaggi, AirDrop, una cartella), e non è cifrato.
 
 ## Se vuoi di più: Claude
 Puoi collegare **Claude** ai progetti che scegli (capitolo *Claude*):

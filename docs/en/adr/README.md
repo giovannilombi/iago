@@ -7,7 +7,7 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 ```markdown
 # ADR-NNNN — Title
 
-- Status: proposed | accepted | superseded by ADR-XXXX
+- Status: proposed | accepted | rejected | superseded by ADR-XXXX
 - Date: YYYY-MM-DD
 - Spec references: sec. …
 
@@ -88,7 +88,7 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0064 | Echo cleanup after recording | rejected |
 | 0065 | Clean repository, 1.0.0-beta and no real data in commits | accepted |
 | 0066 | Initial example in a new archive | accepted |
-| 0067 | MiniCPM: instead of Qwen 3.5 4B or in addition | proposed |
+| 0067 | MiniCPM: instead of Qwen 3.5 4B or in addition | rejected |
 | 0068 | Documentation site with VitePress on GitHub Pages | accepted (online when the repository is public) |
 | 0069 | Single engine queue and memory | accepted |
 | 0070 | Who produced each result | accepted |
@@ -101,3 +101,4 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0077 | Italian and English, always in sync | accepted (1.2.2-beta) |
 | 0078 | IAGO's and Teams' transcripts side by side, Claude suggested on slow Macs | accepted (1.2.5-beta; search in both and ★ on the main one: 1.2.6-beta) |
 | 0079 | Assistants beyond Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposed |
+| 0080 | Sharing an item | accepted (1.2.7-beta) |

@@ -45,7 +45,7 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 - Un controllo automatico prima di ogni commit (`scripts/check-private-data.sh`) blocca file e parole vietate. Aggiungi a `Config/private-terms.local` i nomi reali che usi nel tuo lavoro: il file resta sul tuo Mac.
 
 ### Autori e attribuzione
-- I diritti sono di **Giovanni Lombi** fino alla 1.3.x-beta, di **Giovanni Lombi e Gianluca Sestito** dalla 1.4.0-beta (ADR-0065). Ogni commit nomina comunque entrambi: chi fa il commit ne è l'autore; l'altro viene aggiunto da solo come `Co-Authored-By`, leggendo `Config/team.txt`.
+- I diritti sono di **Giovanni Lombi** fino all'inizio del lavoro sulla condivisione (fase 4), di **Giovanni Lombi e Gianluca Sestito** dalla prima versione con quel lavoro, il primo fatto insieme (ADR-0065). Ogni commit nomina comunque entrambi: chi fa il commit ne è l'autore; l'altro viene aggiunto da solo come `Co-Authored-By`, leggendo `Config/team.txt`.
 - **Mai un'IA come autore o co-autore**, e nessuna riga "Generated with…" nei commit e nelle PR. Il controllo dei commit li blocca.
 
 ### Git e GitHub
@@ -109,8 +109,8 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 
 ## 6. Prove
 - Le prove manuali sono in [`docs/prove-tester.md`](docs/prove-tester.md), ordinate e scritte per chi non conosce l'app.
-- **Ogni tester ha una issue su GitHub**, "Prove 1.2.6-beta — Nome Cognome", con tutte le prove come caselle da spuntare. Si spunta la casella quando la prova funziona; per un problema si scrive un commento con il numero della prova (es. "3h.4"), cosa si è fatto e cosa si è visto. Tutti i collaboratori leggono le issue e i commenti.
-- Una nuova tornata di prove (nuova beta, nuovo tester) si apre con `scripts/new-test-round.sh "Nome Cognome" 1.2.6-beta`: la issue prende le prove dalla versione attuale di `docs/prove-tester.md`.
+- **Ogni tester ha una issue su GitHub**, "Prove 1.2.7-beta — Nome Cognome", con tutte le prove come caselle da spuntare. Si spunta la casella quando la prova funziona; per un problema si scrive un commento con il numero della prova (es. "3h.4"), cosa si è fatto e cosa si è visto. Tutti i collaboratori leggono le issue e i commenti.
+- Una nuova tornata di prove (nuova beta, nuovo tester) si apre con `scripts/new-test-round.sh "Nome Cognome" 1.2.7-beta`: la issue prende le prove dalla versione attuale di `docs/prove-tester.md`.
 - Un difetto trovato diventa una issue a parte, collegata alla prova; la correzione arriva con una PR che la chiude.
 - Per le prove non servono dati reali. Chi prova con le proprie call tiene quei contenuti per sé: nei commenti si descrive il comportamento, non il contenuto.
 

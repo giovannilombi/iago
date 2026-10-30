@@ -272,6 +272,13 @@ Serve una call con la trascrizione di IAGO e quella di Teams (10o.1), e una paro
 - [ ] 10p.5 *Rigenera*: l'avviso sparisce e sotto la sintesi c'è «dalla trascrizione Teams». Ora cerca una parola che c'è solo nella trascrizione di IAGO: il passaggio dice «nella trascrizione IAGO».
 - [ ] 10p.6 Su una call senza sintesi *Rendi principale* scambia subito, senza domande.
 
+## 10q. Condividere un elemento (1.2.7-beta)
+- [ ] 10q.1 Su una call trascritta con audio, *Condividi…*: l'elenco mostra Scheda, Trascrizione, Audio (con la dimensione) e, se ci sono, Tracce separate, Schermate, Altra trascrizione. Scheda e Trascrizione sono già spuntate.
+- [ ] 10q.2 *Condividi…* con Scheda e Trascrizione: si apre il menu Condividi del Mac. Scegli Mail: il messaggio ha i due file `.md`. La scheda ha sintesi, punti chiave e note, senza trascrizione; la trascrizione ha i nomi degli speaker.
+- [ ] 10q.3 Spunta anche Audio e *Un solo file .zip*, poi *Salva in una cartella…*: nella cartella c'è un solo `.zip` con la cartella dell'elemento e i tre file, e il Finder la mostra.
+- [ ] 10q.4 Su un'email importata: le parti sono Scheda, Testo e Email originale (.eml); l'`.eml` si apre in Mail.
+- [ ] 10q.5 Impostazioni › Privacy › registro accessi: c'è una riga di esportazione «share» per ogni condivisione. Mentre i file si preparano, la condivisione compare in Attività.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.
