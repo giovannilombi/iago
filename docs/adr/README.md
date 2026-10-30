@@ -54,7 +54,7 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0030 | Cestino con eliminazione automatica dopo 30 giorni (decisione aperta D) | accettato |
 | 0031 | Opzione "Più persone nella stanza" | accettato |
 | 0032 | "Scarta" durante la registrazione e "Scartate temporanee" | accettato |
-| 0033 | Import generico, trascrizioni Teams e allegati nelle note | accettato |
+| 0033 | Import generico, trascrizioni Teams e allegati nelle note | accettato (trascrizione Teams affiancata: 0078) |
 | 0034 | Licenza di IAGO: Creative Commons BY-NC-SA 4.0 | accettato |
 | 0035 | "Non definito" e gestione dei progetti | accettato |
 | 0036 | Indice di ricerca FTS5 e controllo delle API di rete | accettato |
@@ -99,3 +99,5 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0075 | Viste di progetto: come guardare e cosa mostrare | accettato (1.1.0-beta; in parte sostituito da 0076) |
 | 0076 | Modalità Traccia semplice, Inbox ed Elementi | accettato (1.2.0-beta) |
 | 0077 | Italiano e inglese, sempre allineati | accettato (1.2.2-beta) |
+| 0078 | Trascrizioni di IAGO e di Teams affiancate, Claude consigliato sui Mac lenti | accettato (1.2.5-beta) |
+| 0079 | Assistenti oltre Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposto |

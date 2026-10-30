@@ -440,6 +440,31 @@ enum ClaudeConnection {
         .sorted()
     }
 
+    /// The arguments of each connection to this IAGO in Claude Desktop: none for the whole archive, `--project <id>`,
+    /// `--client <id>` or `--unclassified`. Claude Code's are not read: there is no file IAGO knows for sure.
+    static func desktopScopes() -> [[String]] {
+        guard let data = try? Data(contentsOf: desktopConfigURL),
+            let config = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let servers = config["mcpServers"] as? [String: Any]
+        else { return [] }
+        return servers.values.compactMap { value in
+            guard let server = value as? [String: Any], (server["command"] as? String)?.hasSuffix("/iago-mcp") == true
+            else { return nil }
+            return server["args"] as? [String] ?? []
+        }
+    }
+
+    /// Whether a connection with these arguments sees the project.
+    static func covers(_ arguments: [String], project: Project) -> Bool {
+        if let index = arguments.firstIndex(of: "--project"), index + 1 < arguments.count {
+            return arguments[index + 1] == project.id
+        }
+        if let index = arguments.firstIndex(of: "--client"), index + 1 < arguments.count {
+            return arguments[index + 1] == project.clientId
+        }
+        return true
+    }
+
     /// Removes one connection from Claude Desktop's configuration, keeping a copy of the file.
     static func removeFromDesktop(name: String) -> String {
         let url = desktopConfigURL

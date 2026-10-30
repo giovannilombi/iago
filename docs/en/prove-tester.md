@@ -253,6 +253,16 @@ First of all, if you are testing a build not yet merged into `main`: `scripts/tr
 - [ ] 10n.8 In a call with three speakers give Speaker 3 the same name as Speaker 1: IAGO offers *Join*. Join: one field remains, the transcript shows that name also on Speaker 3's sentences, and below there is «Speaker 3 joined to …» with *Separate*. Rename Speaker 1: it changes on Speaker 3's sentences too. *Separate*: Speaker 3 goes back as it was.
 - [ ] 10n.9 On a call with speakers still «Speaker N» press *Generate summary* (or *Regenerate*): IAGO asks whether to name them first. *Name them first* opens the transcript with the cursor in the first unnamed field; *Go ahead as is* starts the summary. With all speakers named, the question does not appear.
 
+## 10o. Transcripts side by side and Claude tip (1.2.5-beta)
+- [ ] 10o.1 On a call already transcribed by IAGO, *Attach Teams transcript…* with a test `.vtt`: the **IAGO** and **Teams** tabs appear. IAGO's stays *Used for summaries, suggestions and search* and its minutes start the audio.
+- [ ] 10o.2 In the **Teams** tab the minutes are grey text, without links, and *Listen from here* in the right-click menu is off. Screenshots do not appear among the lines.
+- [ ] 10o.3 On the Teams tab *Use this one for summaries, suggestions and search*: the tabs swap and search finds Teams' sentences. *Regenerate* the summary: it uses Teams' text, and a click on a minute in the summary does not start the audio.
+- [ ] 10o.4 *Delete this transcript…* on the Teams tab, with confirmation: only IAGO's stays and the Teams speaker names disappear. Repeat with IAGO's transcript: Teams' stays and becomes the main one.
+- [ ] 10o.5 On a call with only Teams' transcript, *Transcribe*: IAGO transcribes and its transcript becomes the main one, with Teams' beside it.
+- [ ] 10o.6 On a Mac with 16 GB or less, in a call without a summary the tip «have Claude write the summary» appears. On a project not allowed for Claude the button is *Allow and ask Claude*. Without a connection to Claude it is *Connect Claude…*, which opens Settings › Claude.
+- [ ] 10o.7 *Ask Claude for the summary*: the request is on the clipboard and Claude opens. Paste it: Claude writes the summary, the preview asks for the OK and afterwards the summary is in the item card.
+- [ ] 10o.8 *Use the Mac's engine* on a project: the tip no longer appears there, but it does on the others. In Settings › Engine › *Summaries and suggestions* choose **Claude**: the automatic jobs turn off and the tip appears everywhere.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

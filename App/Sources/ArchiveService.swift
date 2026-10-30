@@ -178,12 +178,30 @@ final class ArchiveService: Sendable {
     }
 
     /// ADR-0033: the imported transcript becomes the item's transcript; the original is kept too.
+    /// Teams' transcript of a call (ADR-0033, ADR-0078): beside IAGO's when the call has it, which stays the main one;
+    /// otherwise the main one, replacing an earlier Teams transcript.
     static func attach(_ transcript: Transcript, from url: URL, to itemID: String, archive: Archive) throws {
         var transcript = transcript
         transcript.itemId = itemID
-        try archive.attachImportedTranscript(
-            try transcript.encoded(), speakers: transcript.speakers.map { ($0.id, $0.label) }, original: url, to: itemID
-        )
+        let speakers = transcript.speakers.map { ($0.id, $0.label) }
+        if let main = try archive.transcripts(itemID: itemID).main,
+            let current = try? Transcript.decode(from: archive.readAssetData(main)), !current.isImported
+        {
+            try archive.attachAlternateTranscript(
+                try transcript.encoded(), speakers: speakers, original: url, to: itemID)
+            return
+        }
+        try archive.attachImportedTranscript(try transcript.encoded(), speakers: speakers, original: url, to: itemID)
+        try archive.indexTranscript(transcript, itemID: itemID)
+        try TextAssets.render(archive: archive, itemID: itemID, transcript: transcript)
+    }
+
+    /// «Usa per sintesi e proposte» on the other transcript, or «Elimina» on one of the two (ADR-0078): search and the
+    /// text files follow the main one.
+    static func changeTranscripts(itemID: String, archive: Archive, _ change: (Archive) throws -> Void) throws {
+        try change(archive)
+        guard let main = try archive.transcripts(itemID: itemID).main else { return }
+        let transcript = try Transcript.decode(from: archive.readAssetData(main))
         try archive.indexTranscript(transcript, itemID: itemID)
         try TextAssets.render(archive: archive, itemID: itemID, transcript: transcript)
     }

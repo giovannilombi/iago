@@ -54,7 +54,7 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0030 | Trash with automatic deletion after 30 days (open decision D) | accepted |
 | 0031 | "Several people in the room" option | accepted |
 | 0032 | "Discard" during recording and "Temporarily discarded" | accepted |
-| 0033 | Generic import, Teams transcripts and attachments in notes | accepted |
+| 0033 | Generic import, Teams transcripts and attachments in notes | accepted (Teams transcript side by side: 0078) |
 | 0034 | IAGO license: Creative Commons BY-NC-SA 4.0 | accepted |
 | 0035 | "Undefined" and project management | accepted |
 | 0036 | FTS5 search index and control of network APIs | accepted |
@@ -99,3 +99,5 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0075 | Project views: how to look and what to show | accepted (1.1.0-beta; partly superseded by 0076) |
 | 0076 | Simple Track mode, Inbox and Items | accepted (1.2.0-beta) |
 | 0077 | Italian and English, always in sync | accepted (1.2.2-beta) |
+| 0078 | IAGO's and Teams' transcripts side by side, Claude suggested on slow Macs | accepted (1.2.5-beta) |
+| 0079 | Assistants beyond Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposed |

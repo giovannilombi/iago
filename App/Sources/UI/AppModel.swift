@@ -1343,6 +1343,26 @@ final class AppModel {
         }
     }
 
+    /// «Usa questa per sintesi, proposte e ricerca» on the second transcript of a call (ADR-0078).
+    func useAlternateTranscript(_ itemID: String) {
+        perform {
+            try ArchiveService.changeTranscripts(itemID: itemID, archive: archive) {
+                try $0.swapTranscripts(itemID: itemID)
+            }
+        }
+        reload()
+    }
+
+    /// «Elimina questa trascrizione…» with two transcripts: the other one stays and becomes the main one.
+    func removeTranscript(main: Bool, itemID: String) {
+        perform {
+            try ArchiveService.changeTranscripts(itemID: itemID, archive: archive) {
+                try $0.removeTranscript(main: main, itemID: itemID)
+            }
+        }
+        reload()
+    }
+
     // MARK: Deletion (ADR-0030)
 
     enum DeleteChoice { case trash, permanent }

@@ -60,6 +60,22 @@ struct EnginePane: View {
             }
         }
         SettingsGroup(
+            title: String(localized: "Sintesi e proposte"),
+            footnote: String(
+                localized:
+                    "Con Claude il motore del Mac non parte da solo e nelle schede compare «Chiedi a Claude»: IAGO copia la richiesta e apre Claude, e ogni risultato passa dalla tua anteprima. Consigliato sui Mac fino a 16 GB. Serve Claude collegato a IAGO (Impostazioni › Claude)."
+            )
+        ) {
+            Picker(
+                String(localized: "Fatte da"),
+                selection: Binding(get: { model.intelligence.byClaude }, set: { model.intelligence.byClaude = $0 })
+            ) {
+                Text(String(localized: "Motore del Mac")).tag(false)
+                Text(String(localized: "Claude")).tag(true)
+            }
+            .pickerStyle(.segmented).fixedSize()
+        }
+        SettingsGroup(
             title: String(localized: "Lavori automatici"),
             footnote: String(
                 localized:
@@ -70,13 +86,13 @@ struct EnginePane: View {
                 String(localized: "Proponi automaticamente"),
                 isOn: Binding(get: { model.intelligence.autoSuggest }, set: { model.intelligence.autoSuggest = $0 })
             )
-            .disabled(engine.activeModel == nil)
+            .disabled(engine.activeModel == nil || model.intelligence.byClaude)
             Toggle(
                 String(localized: "Sintesi automatiche"),
                 isOn: Binding(
                     get: { model.intelligence.autoSummarize }, set: { model.intelligence.autoSummarize = $0 })
             )
-            .disabled(engine.activeModel == nil)
+            .disabled(engine.activeModel == nil || model.intelligence.byClaude)
             if !EnginePolicy.automaticWorkByDefault(ramGB: EngineService.ramGB) {
                 Text(
                     String(

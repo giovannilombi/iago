@@ -8,6 +8,16 @@ You can connect **Claude Desktop** (or Claude Code) to the projects you choose. 
 
 ## Summaries and suggestions made by Claude
 You can ask Claude for an item's summary or suggestions, instead of the Mac's engine.
+
+**On Macs up to 16 GB** the local engine is slow, and in the item card, under *Summary* and *Suggestions*, a **tip** appears: *Ask Claude for the summary* copies the request and opens Claude, and you paste it with ⌘V. The tip also says what is missing:
+- Claude not yet connected to IAGO: *Connect Claude…* takes you to Settings › Claude;
+- connection limited to other projects: a connection that includes this one must be added;
+- project Claude cannot read or write: *Allow and ask Claude* enables it for that project only;
+- item without a project: Claude writes only in projects, so it must be assigned first.
+
+IAGO never enables anything by itself. *Use the Mac's engine* hides the tip on that project, *Don't show again* on the whole Mac. In **Settings › Engine › Summaries and suggestions** you can choose **Claude**: the Mac's engine no longer starts by itself and the tip always appears, on any Mac.
+
+At any time you can also do this:
 1. In the item card press **Copy for Claude…** and choose *For the summary*, *For suggestions* or *Reference only*. If Claude cannot read (or write to) the project yet, IAGO tells you and turns it on with one click.
 2. Paste into Claude: it works on exactly that item, without searching for it.
 3. Claude shows you a preview; after your OK the summary appears as **Summarized by Claude** and the suggestions as **Recommended by Claude**, to confirm like the engine's. Claude also suggests open questions, risks and requests, with owner, due date and waits.

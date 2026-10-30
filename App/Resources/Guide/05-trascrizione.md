@@ -35,3 +35,11 @@ In Impostazioni › Trascrizione scegli cosa succede a fine registrazione: **tra
 
 ## Correggere
 Puoi ritrascrivere con l'altro motore, rinominare gli speaker, e per documenti ed email correggere il testo a mano (il testo automatico resta ripristinabile). Una trascrizione di Teams (.vtt o .docx) si può allegare a una registrazione.
+
+## Trascrizione di IAGO e di Teams
+Una call può avere **due trascrizioni affiancate**: quella di IAGO e quella di Teams. *Allega trascrizione Teams…* la **aggiunge**, non sostituisce quella di IAGO. Allo stesso modo, *Trascrivi* su una call che ha solo Teams aggiunge quella di IAGO.
+- Nella sezione Trascrizione ci sono due schede, **IAGO** e **Teams**, oltre a Markdown.
+- Nella trascrizione di IAGO un minuto fa partire l'audio da lì. In quella di Teams i minuti sono **solo testo**: Teams li conta dall'avvio della sua trascrizione, non della registrazione, e non corrispondono all'audio.
+- Sintesi, proposte, ricerca, esportazioni e Claude usano **una** delle due, segnata con *Usata per sintesi, proposte e ricerca*: di solito quella di IAGO. Sull'altra, *Usa questa per sintesi, proposte e ricerca* la scambia. Una sintesi già fatta resta com'è: rigenerala per usare l'altra trascrizione.
+- *Elimina questa trascrizione…* toglie una delle due, anche dopo. Resta l'altra. Non si può annullare, ma la trascrizione si può rifare o allegare di nuovo.
+- Allegare un'altra trascrizione di Teams sostituisce quella di Teams di prima, mai quella di IAGO.
