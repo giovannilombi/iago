@@ -5,13 +5,13 @@
 > Last update: **October 29, 2026**.
 
 ## In brief
-- **Version:** 1.2.4-beta on `main` (tag `v1.2.4-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
+- **Version:** 1.2.5-beta on `main` (tag `v1.2.5-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
 - **Repositories:**
   - `giovannilombi/iago`, private, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi; from the versions after 1.0.0-beta, Giovanni Lombi and Gianluca Sestito (ADR-0065).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 307 in the packages, all green (1.2.4-beta).
+- **Automated tests:** 309 in the packages, all green (1.2.5-beta).
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -42,6 +42,10 @@ The full description is in the [README](../../README.en.md). In short:
    - graph refinements.
 
 ## Latest changes
+- **2026-10-30:** version **1.2.5-beta**.
+- **2026-10-30, IAGO's and Teams' transcripts side by side** (ADR-0078): attaching Teams no longer replaces IAGO's transcript. The two sit in two tabs; Teams' minutes are plain text, with no link to the audio. Only one is the main one for summaries, suggestions and search, they swap with a click and each can be deleted later. Tests 10o.1–10o.5.
+- **2026-10-30, «Use Claude» tip on Macs up to 16 GB** (ADR-0078): under Summary and Suggestions a box copies the request and opens Claude, saying what is missing (connection, consent, project) without enabling anything by itself. Settings › Engine › *Summaries and suggestions* can choose Claude for everything. Tests 10o.6–10o.8.
+- **2026-10-30, ADR-0079 proposed:** analysis for also using Claude Code, Gemini, Gemini CLI, ChatGPT and Codex CLI, to start from. Only tools that start IAGO locally, separate consents per assistant.
 - **2026-10-30:** version **1.2.4-beta**.
 - **2026-10-30, Inbox with two badges** (ADR-0076, amendment): the red badge added up due dates and suggestions, and the 38 test suggestions could not be seen in the Inbox (only a link to Key points). Now the **red** one (!) counts what needs action now, that is late, today, no owner and overdue waits. The **yellow** one (✦) counts the suggestions to confirm. The Inbox has three blocks (Do now, Suggestions to confirm, Later), with the number in the header in the same colour, and suggestions are confirmed or dismissed there. Tests 10n.
 - **2026-10-30, speaker names** (ADR-0073, amendment; migration `v22-speaker-names`): a name typed and left with a click was lost without warning. Now it is confirmed with Return or ⏎, and the unconfirmed field is red and stays. Before applying it IAGO asks about similar names (typos, one name inside the other, nicknames like Lello/Antonello) and remembers the answers. The same name for two speakers offers *Join*, undone with *Separate*. *Generate summary* and *Regenerate* ask whether to name them first. Tests 10n.6–10n.9.

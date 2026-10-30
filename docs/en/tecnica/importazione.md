@@ -6,7 +6,7 @@ Everything that is not a call comes in through `IAGOIngest`, which depends only 
 | Input | What it becomes | How |
 |---|---|---|
 | Audio, video | item to transcribe (only the audio of a video is kept) | AVFoundation, then the transcription queue |
-| Teams transcripts (`.vtt`, `.docx`) | transcript with the speakers' **real names** | parser for the recent format and the old one |
+| Teams transcripts (`.vtt`, `.docx`) | transcript with the speakers' **real names**; attached to a call with IAGO's transcript it sits **beside** it (`alternate_transcript_json`, ADR-0078) and its minutes are not links to the audio (`Transcript.isImported`) | parser for the recent format and the old one |
 | PDF | document | PDFKit; OCR for pages without text (`## Pagina N`) |
 | Images, screenshots | document | OCR with Vision (`it-IT`, `en-US`, language correction) |
 | DOCX, RTF, ODT | document | `NSAttributedString` → Markdown with headings, lists and bold |

@@ -143,6 +143,9 @@ public struct Asset: SyncRecord, Identifiable, Hashable {
         case contentMDAuto = "content_md_auto"
         /// A screenshot taken during the call ("Segna momento con screenshot", ADR-0072), with `atSec` and `text`.
         case screenshot
+        /// The second transcript of a call (ADR-0078): Teams beside IAGO's, or IAGO's beside Teams. The one in
+        /// `transcriptJSON` is what summaries, proposals, search and exports read.
+        case alternateTranscriptJSON = "alternate_transcript_json"
 
         public var isAudio: Bool { [.audioMic, .audioSystem, .audioMix, .audioImport].contains(self) }
     }

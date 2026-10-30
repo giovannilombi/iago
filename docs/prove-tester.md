@@ -253,6 +253,16 @@ Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-bran
 - [ ] 10n.8 In una call con tre speaker dai a Speaker 3 lo stesso nome di Speaker 1: IAGO propone *Unisci*. Unisci: resta un campo, la trascrizione mostra quel nome anche sulle frasi di Speaker 3, e sotto c'è «Speaker 3 unito a …» con *Separa*. Rinomina Speaker 1: cambia anche sulle frasi di Speaker 3. *Separa*: Speaker 3 torna com'era.
 - [ ] 10n.9 Su una call con speaker ancora «Speaker N» premi *Genera sintesi* (o *Rigenera*): IAGO chiede se dare prima i nomi. *Dai prima i nomi* apre la trascrizione con il cursore nel primo campo senza nome; *Procedi così* avvia la sintesi. Con tutti gli speaker con un nome la domanda non compare.
 
+## 10o. Trascrizioni affiancate e consiglio Claude (1.2.5-beta)
+- [ ] 10o.1 Su una call già trascritta da IAGO, *Allega trascrizione Teams…* con un `.vtt` di prova: compaiono le schede **IAGO** e **Teams**. Quella di IAGO resta *Usata per sintesi, proposte e ricerca* e i suoi minuti fanno partire l'audio.
+- [ ] 10o.2 Nella scheda **Teams** i minuti sono testo grigio, senza link, e *Ascolta da qui* nel menu del clic destro è spento. Le schermate non compaiono tra le righe.
+- [ ] 10o.3 Sulla scheda Teams *Usa questa per sintesi, proposte e ricerca*: le schede si scambiano e la ricerca trova le frasi di Teams. *Rigenera* la sintesi: usa il testo di Teams, e un clic su un minuto della sintesi non fa partire l'audio.
+- [ ] 10o.4 *Elimina questa trascrizione…* sulla scheda Teams, con conferma: resta solo quella di IAGO e spariscono i nomi degli speaker di Teams. Ripeti con la trascrizione di IAGO: resta quella di Teams, che diventa principale.
+- [ ] 10o.5 Su una call con solo la trascrizione di Teams, *Trascrivi*: IAGO trascrive e la sua trascrizione diventa la principale, con Teams accanto.
+- [ ] 10o.6 Su un Mac da 16 GB o meno, in una call senza sintesi compare il consiglio «fai la sintesi con Claude». Su un progetto non consentito a Claude il pulsante è *Consenti e chiedi a Claude*. Senza collegamento a Claude è *Collega Claude…*, che apre Impostazioni › Claude.
+- [ ] 10o.7 *Chiedi a Claude la sintesi*: la richiesta è negli appunti e Claude si apre. Incollala: Claude fa la sintesi, l'anteprima chiede l'OK e dopo la sintesi è nella scheda.
+- [ ] 10o.8 *Usa il motore del Mac* su un progetto: il consiglio non compare più lì, ma sì sugli altri. In Impostazioni › Motore › *Sintesi e proposte* scegli **Claude**: i lavori automatici si spengono e il consiglio compare ovunque.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

@@ -35,3 +35,11 @@ In Settings › Transcription choose what happens when a recording ends: **trans
 
 ## Correcting
 You can transcribe again with the other engine, rename the speakers, and for documents and emails correct the text by hand (the automatic text can be restored). A Teams transcript (.vtt or .docx) can be attached to a recording.
+
+## IAGO's and Teams' transcripts
+A call can have **two transcripts side by side**: IAGO's and Teams'. *Attach Teams transcript…* **adds** it and does not replace IAGO's. In the same way, *Transcribe* on a call that has only Teams' adds IAGO's.
+- In the Transcript section there are two tabs, **IAGO** and **Teams**, besides Markdown.
+- In IAGO's transcript a minute starts the audio from there. In Teams' the minutes are **plain text**: Teams counts them from the start of its own transcription, not of the recording, and they do not match the audio.
+- Summaries, suggestions, search, exports and Claude use **one** of the two, marked *Used for summaries, suggestions and search*: usually IAGO's. On the other one, *Use this one for summaries, suggestions and search* swaps them. A summary already written stays as it is: regenerate it to use the other transcript.
+- *Delete this transcript…* removes one of the two, also later. The other stays. It cannot be undone, but the transcript can be made or attached again.
+- Attaching another Teams transcript replaces the earlier Teams one, never IAGO's.

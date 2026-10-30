@@ -2083,6 +2083,16 @@
         }
       }
     },
+    "Apri Impostazioni › Claude" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings › Claude"
+          }
+        }
+      }
+    },
     "Apri Impostazioni di Sistema" : {
       "localizations" : {
         "en" : {
@@ -3378,6 +3388,26 @@
         }
       }
     },
+    "Chiedi a Claude" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask Claude"
+          }
+        }
+      }
+    },
+    "Chiedi a Claude la sintesi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask Claude for the summary"
+          }
+        }
+      }
+    },
     "Chiedi a IAGO" : {
       "localizations" : {
         "en" : {
@@ -3674,6 +3704,16 @@
         }
       }
     },
+    "Claude scrive solo nei progetti: assegna prima questo elemento a un progetto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude writes only in projects: assign this item to a project first."
+          }
+        }
+      }
+    },
     "Claude vede tutti i progetti con \"Consultabile da Claude\" attivo." : {
       "localizations" : {
         "en" : {
@@ -3830,6 +3870,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Connect Claude"
+          }
+        }
+      }
+    },
+    "Collega Claude…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Claude…"
           }
         }
       }
@@ -4064,6 +4114,16 @@
         }
       }
     },
+    "Con Claude il motore del Mac non parte da solo e nelle schede compare «Chiedi a Claude»: IAGO copia la richiesta e apre Claude, e ogni risultato passa dalla tua anteprima. Consigliato sui Mac fino a 16 GB. Serve Claude collegato a IAGO (Impostazioni › Claude)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With Claude the Mac's engine does not start by itself and the item cards show «Ask Claude»: IAGO copies the request and opens Claude, and every result goes through your preview. Recommended on Macs up to 16 GB. Claude must be connected to IAGO (Settings › Claude)."
+          }
+        }
+      }
+    },
     "Con il motore più leggero le risposte possono sbagliare: controlla le fonti." : {
       "localizations" : {
         "en" : {
@@ -4150,6 +4210,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Allow IAGO to use the microphone in System Settings › Privacy & Security › Microphone."
+          }
+        }
+      }
+    },
+    "Consenti e chiedi a Claude" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow and ask Claude"
           }
         }
       }
@@ -4270,6 +4340,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recommended for this Mac"
+          }
+        }
+      }
+    },
+    "Consiglio: fai la sintesi con Claude" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tip: have Claude write the summary"
           }
         }
       }
@@ -4450,6 +4530,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Copy"
+          }
+        }
+      }
+    },
+    "Copia di nuovo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy again"
           }
         }
       }
@@ -5136,6 +5226,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Decisions, tasks and moments"
+          }
+        }
+      }
+    },
+    "decisioni, attività e tag proposti da Claude, con la frase da cui vengono. Restano da confermare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "decisions, tasks and tags suggested by Claude, with the sentence they come from. They stay to be confirmed."
           }
         }
       }
@@ -6038,6 +6138,16 @@
         }
       }
     },
+    "Elimina questa trascrizione…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this transcript…"
+          }
+        }
+      }
+    },
     "Elimina stream" : {
       "localizations" : {
         "en" : {
@@ -6194,6 +6304,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete the screenshot?"
+          }
+        }
+      }
+    },
+    "Eliminare la trascrizione %@?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete the %@ transcript?"
           }
         }
       }
@@ -6954,6 +7074,16 @@
         }
       }
     },
+    "Fatte da" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done by"
+          }
+        }
+      }
+    },
     "Fatto" : {
       "localizations" : {
         "en" : {
@@ -7025,11 +7155,22 @@
       }
     },
     "File .vtt o .docx scaricato da Teams: i nomi degli speaker sono quelli veri" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : ".vtt or .docx file downloaded from Teams: speaker names are the real ones"
+          }
+        }
+      }
+    },
+    "File .vtt o .docx scaricato da Teams: si affianca a quella di IAGO, con i nomi veri degli speaker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ".vtt or .docx file downloaded from Teams: it sits beside IAGO's, with the speakers' real names"
           }
         }
       }
@@ -7795,6 +7936,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The Trash is empty"
+          }
+        }
+      }
+    },
+    "Il collegamento di Claude con IAGO è limitato ad altri progetti: da lì Claude non vede «%@». Aggiungi un collegamento che lo includa in Impostazioni › Claude." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude's connection to IAGO is limited to other projects: from there Claude cannot see «%@». Add a connection that includes it in Settings › Claude."
           }
         }
       }
@@ -8661,6 +8812,16 @@
         }
       }
     },
+    "Incollala nella chat di Claude con ⌘V. Quando Claude ha finito, controlli il risultato nell'anteprima e, con il tuo OK, compare qui." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paste it in the Claude chat with ⌘V. When Claude is done, you check the result in the preview and, with your OK, it appears here."
+          }
+        }
+      }
+    },
     "Indicizzazione per la ricerca per significato" : {
       "localizations" : {
         "en" : {
@@ -9289,6 +9450,16 @@
         }
       }
     },
+    "La nuova trascrizione Teams prende il posto di quella allegata prima. Quella di IAGO, se c'è, resta com'è." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The new Teams transcript takes the place of the one attached before. IAGO's, if there is one, stays as it is."
+          }
+        }
+      }
+    },
     "La pagina del progetto: lavoro aperto, scadenze, attese, checklist" : {
       "localizations" : {
         "en" : {
@@ -9410,6 +9581,7 @@
       }
     },
     "La trascrizione Teams diventerà quella dell'elemento." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9939,6 +10111,26 @@
         }
       }
     },
+    "Minuti di Teams, senza collegamento all'audio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teams minutes, not linked to the audio"
+          }
+        }
+      }
+    },
+    "Minuto della trascrizione Teams: non corrisponde all'audio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Minute of the Teams transcript: it does not match the audio"
+          }
+        }
+      }
+    },
     "Mix" : {
       "localizations" : {
         "en" : {
@@ -10445,6 +10637,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Engine changed"
+          }
+        }
+      }
+    },
+    "Motore del Mac" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mac's engine"
           }
         }
       }
@@ -12461,6 +12663,16 @@
         }
       }
     },
+    "Per farlo, Claude deve poter leggere e scrivere il progetto «%@». Lo consenti solo per questo progetto, e puoi toglierlo in Impostazioni › Claude." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To do it, Claude must be able to read and write the project «%@». You allow it for this project only, and you can remove it in Settings › Claude."
+          }
+        }
+      }
+    },
     "Per importarle più tardi dovrai trascinarle di nuovo." : {
       "localizations" : {
         "en" : {
@@ -12723,6 +12935,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Most used"
+          }
+        }
+      }
+    },
+    "Più veloce con Claude:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faster with Claude:"
           }
         }
       }
@@ -13603,6 +13825,16 @@
         }
       }
     },
+    "Questo Mac ha %lld GB di memoria: il motore locale ci mette molto e rallenta il resto. Claude scrive la sintesi con lo stesso modello della categoria, e IAGO controlla ogni citazione come fa con il motore del Mac." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This Mac has %lld GB of memory: the local engine takes a long time and slows everything else down. Claude writes the summary with the same category template, and IAGO checks every quote as it does with the Mac's engine."
+          }
+        }
+      }
+    },
     "Qui arrivano le attività, i punti da chiarire, i rischi e le richieste aperti di tutti i progetti, assegnati a te o senza responsabile." : {
       "localizations" : {
         "en" : {
@@ -13843,6 +14075,16 @@
         }
       }
     },
+    "Resta l'altra trascrizione, che diventa quella usata per sintesi, proposte e ricerca. Non si può annullare: la trascrizione si può rifare o allegare di nuovo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The other transcript stays and becomes the one used for summaries, suggestions and search. It cannot be undone: the transcript can be made or attached again."
+          }
+        }
+      }
+    },
     "Resta solo in IAGO: Claude non lo vede, nemmeno se è collegato a IAGO." : {
       "localizations" : {
         "en" : {
@@ -14015,6 +14257,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Request"
+          }
+        }
+      }
+    },
+    "Richiesta copiata, Claude è aperto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Request copied, Claude is open"
           }
         }
       }
@@ -15220,6 +15472,26 @@
         }
       }
     },
+    "Seconda trascrizione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second transcript"
+          }
+        }
+      }
+    },
+    "Seconda trascrizione (JSON)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Second transcript (JSON)"
+          }
+        }
+      }
+    },
     "Segna come decisione…" : {
       "localizations" : {
         "en" : {
@@ -15646,6 +15918,16 @@
         }
       }
     },
+    "Sintesi e proposte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Summaries and suggestions"
+          }
+        }
+      }
+    },
     "Sintesi meno ricche di Gemma" : {
       "localizations" : {
         "en" : {
@@ -15872,6 +16154,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Replace the existing transcript?"
+          }
+        }
+      }
+    },
+    "Sostituire la trascrizione Teams?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace the Teams transcript?"
           }
         }
       }
@@ -16242,6 +16534,26 @@
         }
       }
     },
+    "Su questo Mac il motore locale è lento. Se usi Claude, collegalo a IAGO una volta: poi sintesi e proposte le fa lui, con i controlli di IAGO." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On this Mac the local engine is slow. If you use Claude, connect it to IAGO once: then Claude does summaries and suggestions, with IAGO's checks."
+          }
+        }
+      }
+    },
+    "Su questo progetto il consiglio non compare più" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tip no longer appears on this project"
+          }
+        }
+      }
+    },
     "Su tua richiesta, Claude può aggiungere e modificare note e decisioni, creare documenti e inserire email. Trascrizioni, audio e originali non si toccano. Tutto compare come «tramite Claude (MCP)» e si annulla da Impostazioni › Claude." : {
       "localizations" : {
         "en" : {
@@ -16424,6 +16736,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Milestones"
+          }
+        }
+      }
+    },
+    "Teams" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teams"
           }
         }
       }
@@ -17189,11 +17511,22 @@
       }
     },
     "Trascrizione Teams importata" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Teams transcript imported"
+          }
+        }
+      }
+    },
+    "Trascrizione Teams importata: i minuti sono quelli di Teams, non dell'audio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Imported Teams transcript: the minutes are Teams', not the audio's"
           }
         }
       }
@@ -17699,6 +18032,16 @@
         }
       }
     },
+    "Una sintesi già fatta non cambia da sola: rigenerala per usare questa trascrizione." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A summary already written does not change by itself: regenerate it to use this transcript."
+          }
+        }
+      }
+    },
     "Una voce non può dipendere da sé stessa né da una voce che dipende già da lei. Togli quella voce da «Dipende da»." : {
       "localizations" : {
         "en" : {
@@ -17785,6 +18128,26 @@
         }
       }
     },
+    "Usa il motore del Mac" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use the Mac's engine"
+          }
+        }
+      }
+    },
+    "Usa questa per sintesi, proposte e ricerca" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use this one for summaries, suggestions and search"
+          }
+        }
+      }
+    },
     "Usa questo" : {
       "localizations" : {
         "en" : {
@@ -17801,6 +18164,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In use by another app"
+          }
+        }
+      }
+    },
+    "Usata per sintesi, proposte e ricerca" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used for summaries, suggestions and search"
           }
         }
       }

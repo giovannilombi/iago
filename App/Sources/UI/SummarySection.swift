@@ -113,6 +113,7 @@ struct SummarySection: View {
                 )
             )
             .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+            ClaudeTip(model: model, item: item, request: .summary)
             HStack(spacing: 10) {
                 CategoryPicker(
                     model: model, selection: item.categoryId, noneLabel: String(localized: "Scegli la categoria")

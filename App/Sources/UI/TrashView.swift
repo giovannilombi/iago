@@ -87,6 +87,7 @@ struct TrashView: View {
         case .transcriptJSON, .transcriptTXT, .transcriptMD: String(localized: "Trascrizione")
         case .originalDocument, .originalImage, .contentMD: String(localized: "Documento")
         case .originalTranscript: String(localized: "Trascrizione originale")
+        case .alternateTranscriptJSON: String(localized: "Seconda trascrizione")
         case .noteAttachment: String(localized: "Allegato")
         case .originalEmail: String(localized: "Email originale (.eml)")
         case .contentMDAuto: String(localized: "Testo automatico")

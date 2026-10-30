@@ -17,6 +17,7 @@ Trascrizione, motore e ricerca per significato lavorano **uno alla volta**, cos�
 ## Mac con meno di 32 GB
 - **Proposte e sintesi automatiche sono spente di default**: le chiedi dalla scheda (*Cerca proposte*, *Genera sintesi*), oppure le accendi in Impostazioni › Motore › *Lavori automatici*. Mentre lavorano il Mac rallenta.
 - Il modello si libera dalla memoria alla fine di ogni lavoro.
+- **Fino a 16 GB** la scheda consiglia di far fare sintesi e proposte a **Claude**, e in Impostazioni › Motore › *Sintesi e proposte* puoi sceglierlo per tutto (vedi il capitolo *Claude*).
 - Se macOS segnala poca memoria, IAGO sospende per qualche minuto il lavoro in sottofondo.
 
 ## Ricerca per significato

@@ -42,6 +42,7 @@ final class IntelligenceService {
 
     static let autoKey = "intelligence.autoSuggest"
     static let autoSummaryKey = "summaries.auto"
+    static let byClaudeKey = "intelligence.byClaude"
     static let sinceKey = "intelligence.since"
     static func doneKey(_ itemID: String) -> String { "intelligence.suggested.\(itemID)" }
     static let summarySinceKey = "summaries.since"
@@ -57,7 +58,10 @@ final class IntelligenceService {
     /// "Proponi automaticamente". Until the user chooses, on only on Macs with 32 GB or more (ADR-0069): the default
     /// is worked out on each Mac and never saved, because the archive can move to another Mac.
     var autoSuggest: Bool {
-        get { Self.choice(archive, Self.autoKey) ?? EnginePolicy.automaticWorkByDefault(ramGB: EnginePolicy.ramGB) }
+        get {
+            !byClaude
+                && (Self.choice(archive, Self.autoKey) ?? EnginePolicy.automaticWorkByDefault(ramGB: EnginePolicy.ramGB))
+        }
         set {
             try? archive.setSetting(Self.autoKey, newValue ? "1" : "0")
             poke()
@@ -67,10 +71,26 @@ final class IntelligenceService {
     /// "Sintesi automatiche" after each transcription, with the same default as the proposals (ADR-0069).
     var autoSummarize: Bool {
         get {
-            Self.choice(archive, Self.autoSummaryKey) ?? EnginePolicy.automaticWorkByDefault(ramGB: EnginePolicy.ramGB)
+            !byClaude
+                && (Self.choice(archive, Self.autoSummaryKey)
+                    ?? EnginePolicy.automaticWorkByDefault(ramGB: EnginePolicy.ramGB))
         }
         set {
             try? archive.setSetting(Self.autoSummaryKey, newValue ? "1" : "0")
+            poke()
+        }
+    }
+
+    /// «Sintesi e proposte fatte da: Claude» (ADR-0071, ADR-0078): the engine of the Mac never starts by itself, and
+    /// the item offers «Chiedi a Claude». Saved in the archive, like the other choices about the work.
+    var byClaude: Bool {
+        get {
+            _ = revision
+            return Self.choice(archive, Self.byClaudeKey) ?? false
+        }
+        set {
+            try? archive.setSetting(Self.byClaudeKey, newValue ? "1" : "0")
+            revision += 1
             poke()
         }
     }

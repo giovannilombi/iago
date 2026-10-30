@@ -147,7 +147,14 @@ final class TranscriptionService: Sendable {
     }
 
     /// `transcript.json` is the source of truth; TXT and MD are rendered from it (FR-51).
+    /// A call that had only Teams' transcript keeps it beside IAGO's (ADR-0078); IAGO's becomes the main one, since
+    /// its minutes are tied to the audio.
     private func store(_ transcript: Transcript, itemID: String) throws {
+        if let main = try archive.transcripts(itemID: itemID).main,
+            (try? Transcript.decode(from: archive.readAssetData(main)))?.isImported == true
+        {
+            try archive.setMainTranscriptAside(itemID: itemID)
+        }
         try archive.storeAsset(
             try transcript.encoded(), itemID: itemID, kind: .transcriptJSON, fileName: "transcript.json")
         try archive.setSpeakers(transcript.speakers.map { ($0.id, $0.label) }, for: itemID)

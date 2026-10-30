@@ -129,12 +129,15 @@ struct SuggestionsSection: View {
 
     var body: some View {
         let busy = model.intelligence.proposingFor == item.title
-        if !suggestions.isEmpty || busy || model.engine.activeModel != nil {
+        if !suggestions.isEmpty || busy || model.engine.activeModel != nil || model.intelligence.byClaude
+            || EnginePolicy.ramGB <= 16
+        {
             SectionBox(
                 suggestions.isEmpty
                     ? String(localized: "Proposte") : String(localized: "Proposte (\(suggestions.count))"),
                 systemImage: "cpu", tint: .indigo, collapseKey: "suggestions"
             ) {
+                ClaudeTip(model: model, item: item, request: .suggestions, compact: true)
                 ForEach(suggestions) { suggestion in
                     SuggestionRow(model: model, item: item, suggestion: suggestion)
                     if suggestion.id != suggestions.last?.id { Divider() }

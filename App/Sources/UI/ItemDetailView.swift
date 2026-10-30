@@ -20,6 +20,11 @@ struct ItemDetailView: View {
     @State private var notes: [Note] = []
     @State private var speakers: [ItemSpeaker] = []
     @State private var transcript: Transcript?
+    /// The second transcript of the call (ADR-0078): Teams beside IAGO's, or the other way round.
+    @State private var alternate: Transcript?
+    @State private var alternateLoadedAt: Date?
+    /// «Elimina questa trascrizione…»: true for the main one.
+    @State private var removingTranscript: Bool?
     @State private var content: String?
     @State private var originalImage: NSImage?
     @State private var attachingTranscript = false
@@ -34,7 +39,7 @@ struct ItemDetailView: View {
     /// The Markdown of a document or email being corrected (FR-191).
     @State private var editingContent: String?
 
-    enum Tab: Hashable { case transcript, markdown }
+    enum Tab: Hashable { case transcript, alternate, markdown }
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -50,7 +55,8 @@ struct ItemDetailView: View {
                             hasText: item.type == .call ? transcript != nil : content?.isEmpty == false
                         ) { seconds in
                             tab = .transcript
-                            Task { await listen(at: seconds) }
+                            // Minutes of a Teams transcript are not minutes of the audio (ADR-0078).
+                            if transcript?.isImported != true { Task { await listen(at: seconds) } }
                         }
                         SuggestionsSection(model: model, item: item)
                         if hasAudio {
@@ -98,11 +104,15 @@ struct ItemDetailView: View {
         .task(id: model.revision) { await load() }
         // Audio that was only prepared is released; audio being listened to keeps going (playback bar).
         .onDisappear { if isMine, !player.isActive { player.close() } }
-        .alert(String(localized: "Sostituire la trascrizione esistente?"), isPresented: $confirmAttachTranscript) {
+        .alert(String(localized: "Sostituire la trascrizione Teams?"), isPresented: $confirmAttachTranscript) {
             Button(String(localized: "Scegli il file…")) { chooseTranscript() }
             Button(String(localized: "Annulla"), role: .cancel) {}
         } message: {
-            Text(String(localized: "La trascrizione Teams diventerà quella dell'elemento."))
+            Text(
+                String(
+                    localized:
+                        "La nuova trascrizione Teams prende il posto di quella allegata prima. Quella di IAGO, se c'è, resta com'è."
+                ))
         }
         .sheet(
             isPresented: Binding(get: { editingContent != nil }, set: { if !$0 { editingContent = nil } })
@@ -149,6 +159,15 @@ struct ItemDetailView: View {
         } else {
             transcript = nil
         }
+        if let json = assets.first(where: { $0.kind == .alternateTranscriptJSON }) {
+            if alternate == nil || json.updatedAt > (alternateLoadedAt ?? .distantPast) {
+                alternate = await Task.detached { try? Transcript.decode(from: archive.readAssetData(json)) }.value
+                alternateLoadedAt = json.updatedAt
+            }
+        } else {
+            alternate = nil
+            if tab == .alternate { tab = .transcript }
+        }
         if isMine, let asset = player.asset, !assets.contains(where: { $0.id == asset.id }) { player.close() }
         // Prepared in advance, unless another item is being listened to.
         if !player.isActive, !isMine, let first = preferredTrack(assets) {
@@ -158,7 +177,7 @@ struct ItemDetailView: View {
         if let seek = model.pendingSeek, seek.itemID == itemID, hasAudio {
             model.pendingSeek = nil
             tab = .transcript
-            await listen(at: seek.atSec)
+            if transcript?.isImported != true { await listen(at: seek.atSec) }
         }
     }
 
@@ -197,13 +216,13 @@ struct ItemDetailView: View {
             ActionGrid {
                 if hasAudio, activeJob == nil {
                     ActionLink(
-                        title: transcript == nil
+                        title: iagoTranscript == nil
                             ? String(localized: "Trascrivi e conserva l'audio")
                             : String(localized: "Ritrascrivi e conserva l'audio"),
                         isPrimary: true
                     ) { transcribe(deleteAudio: false) }
                     ActionLink(
-                        title: transcript == nil
+                        title: iagoTranscript == nil
                             ? String(localized: "Trascrivi ed elimina l'audio")
                             : String(localized: "Ritrascrivi ed elimina l'audio"),
                         detail: String(localized: "L'audio si elimina dopo la verifica della trascrizione")
@@ -214,9 +233,11 @@ struct ItemDetailView: View {
                     ActionLink(
                         title: String(localized: "Allega trascrizione Teams…"),
                         detail: String(
-                            localized: "File .vtt o .docx scaricato da Teams: i nomi degli speaker sono quelli veri")
+                            localized:
+                                "File .vtt o .docx scaricato da Teams: si affianca a quella di IAGO, con i nomi veri degli speaker"
+                        )
                     ) {
-                        if transcript != nil { confirmAttachTranscript = true } else { chooseTranscript() }
+                        if teamsTranscript != nil { confirmAttachTranscript = true } else { chooseTranscript() }
                     }
                 }
             }
@@ -287,7 +308,11 @@ struct ItemDetailView: View {
     }
 
     private func transcribe(deleteAudio: Bool) {
-        if transcript != nil { confirmRetranscribe = deleteAudio } else { startTranscription(deleteAudio: deleteAudio) }
+        if iagoTranscript != nil {
+            confirmRetranscribe = deleteAudio
+        } else {
+            startTranscription(deleteAudio: deleteAudio)
+        }
     }
 
     private func startTranscription(deleteAudio: Bool) {
@@ -415,31 +440,49 @@ struct ItemDetailView: View {
 
     // MARK: Transcript
 
+    /// One or two transcripts (ADR-0078): with both, a tab each («IAGO», «Teams») and the Markdown of the shown one.
+    /// The main one is first and feeds summaries, proposals and search; the other can take its place or be removed.
     @ViewBuilder
     private func transcriptSection(_ item: Item) -> some View {
         SectionBox(
             String(localized: "Trascrizione"), systemImage: "text.alignleft", tint: .blue, collapseKey: "transcript"
         ) {
             if let transcript {
+                let shown = tab == .alternate ? (alternate ?? transcript) : transcript
                 Picker("", selection: $tab) {
-                    Text(String(localized: "Trascrizione")).tag(Tab.transcript)
+                    if let alternate {
+                        Text(Self.sourceName(transcript)).tag(Tab.transcript)
+                        Text(Self.sourceName(alternate)).tag(Tab.alternate)
+                    } else {
+                        Text(String(localized: "Trascrizione")).tag(Tab.transcript)
+                    }
                     Text(String(localized: "Markdown")).tag(Tab.markdown)
                 }
-                .pickerStyle(.segmented).labelsHidden().frame(maxWidth: 260)
-                if transcript.engine.asr == "teams" {
-                    Label(String(localized: "Trascrizione Teams importata"), systemImage: "person.2.wave.2")
-                        .font(.caption).foregroundStyle(.secondary)
+                .pickerStyle(.segmented).labelsHidden().frame(maxWidth: alternate == nil ? 260 : 340)
+                if alternate != nil {
+                    transcriptChoice(shown: shown, isMain: tab != .alternate)
+                } else if transcript.isImported {
+                    Label(
+                        String(
+                            localized: "Trascrizione Teams importata: i minuti sono quelli di Teams, non dell'audio"),
+                        systemImage: "person.2.wave.2"
+                    )
+                    .font(.caption).foregroundStyle(.secondary)
                 }
-                SpeakerNames(model: model, itemID: itemID, transcript: transcript, speakers: speakers)
+                SpeakerNames(model: model, itemID: itemID, transcript: shown, speakers: speakers)
                     .id("speakers")
                 switch tab {
-                case .transcript:
-                    CappedScroll(isLong: transcript.segments.count > 14) {
+                case .transcript, .alternate:
+                    CappedScroll(isLong: shown.segments.count > 14) {
                         LazyVStack(alignment: .leading, spacing: 8) {
-                            ForEach(Self.rows(transcript.segments, shots)) { row in
-                                switch row {
-                                case .shot(let shot): screenshotRow(shot)
-                                case .segment(let segment): segmentRow(segment)
+                            if shown.isImported {
+                                ForEach(shown.segments, id: \.id) { segment in segmentRow(segment, linked: false) }
+                            } else {
+                                ForEach(Self.rows(shown.segments, shots)) { row in
+                                    switch row {
+                                    case .shot(let shot): screenshotRow(shot)
+                                    case .segment(let segment): segmentRow(segment)
+                                    }
                                 }
                             }
                         }
@@ -458,6 +501,62 @@ struct ItemDetailView: View {
                 .foregroundStyle(.secondary)
             }
         }
+        .confirmationDialog(
+            String(localized: "Eliminare la trascrizione \(removingName)?"),
+            isPresented: Binding(get: { removingTranscript != nil }, set: { if !$0 { removingTranscript = nil } }),
+            titleVisibility: .visible
+        ) {
+            Button(String(localized: "Elimina"), role: .destructive) {
+                if let main = removingTranscript { model.removeTranscript(main: main, itemID: itemID) }
+                removingTranscript = nil
+            }
+        } message: {
+            Text(
+                String(
+                    localized:
+                        "Resta l'altra trascrizione, che diventa quella usata per sintesi, proposte e ricerca. Non si può annullare: la trascrizione si può rifare o allegare di nuovo."
+                ))
+        }
+    }
+
+    /// «IAGO» or «Teams».
+    static func sourceName(_ transcript: Transcript) -> String {
+        transcript.isImported ? String(localized: "Teams") : String(localized: "IAGO")
+    }
+
+    private var removingName: String {
+        let removed = removingTranscript == true ? transcript : alternate
+        return removed.map(Self.sourceName) ?? ""
+    }
+
+    /// Which transcript feeds summaries, proposals and search, and the actions on the one shown.
+    private func transcriptChoice(shown: Transcript, isMain: Bool) -> some View {
+        HStack(spacing: 10) {
+            if isMain {
+                Label(
+                    String(localized: "Usata per sintesi, proposte e ricerca"), systemImage: "checkmark.circle.fill"
+                )
+                .foregroundStyle(.green)
+            } else {
+                Button(String(localized: "Usa questa per sintesi, proposte e ricerca")) {
+                    model.useAlternateTranscript(itemID)
+                    tab = .transcript
+                }
+                .help(
+                    String(
+                        localized:
+                            "Una sintesi già fatta non cambia da sola: rigenerala per usare questa trascrizione."))
+            }
+            if shown.isImported {
+                Text(String(localized: "Minuti di Teams, senza collegamento all'audio")).foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button(String(localized: "Elimina questa trascrizione…"), role: .destructive) {
+                removingTranscript = isMain
+            }
+            .buttonStyle(.link)
+        }
+        .font(.caption)
     }
 
     /// The transcript with the screenshots at their minute (ADR-0072).
@@ -500,9 +599,18 @@ struct ItemDetailView: View {
         .help(String(localized: "L'immagine è nella sezione Schermate"))
     }
 
-    private func segmentRow(_ segment: Transcript.Segment) -> some View {
+    /// `linked`: the minute plays the audio; not on a Teams transcript, whose minutes are its own (ADR-0078).
+    private func segmentRow(_ segment: Transcript.Segment, linked: Bool = true) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            timestampButton(segment.start).frame(width: 64, alignment: .leading)
+            Group {
+                if linked {
+                    timestampButton(segment.start)
+                } else {
+                    Text(Format.clock(segment.start)).monospacedDigit().foregroundStyle(.secondary)
+                        .help(String(localized: "Minuto della trascrizione Teams: non corrisponde all'audio"))
+                }
+            }
+            .frame(width: 64, alignment: .leading)
             Text(label(segment.speaker)).fontWeight(.semibold).frame(
                 width: 110, alignment: .leading)
             Text(segment.text).textSelection(.enabled)
@@ -512,14 +620,19 @@ struct ItemDetailView: View {
             Button(String(localized: "Ascolta da qui")) {
                 Task { await listen(at: segment.start) }
             }
-            .disabled(!hasAudio)
+            .disabled(!hasAudio || !linked)
         }
     }
 
     private func label(_ speakerID: String) -> String {
         speakers.first { $0.speakerId == speakerID }?.label
-            ?? transcript?.speakers.first { $0.id == speakerID }?.label ?? speakerID
+            ?? (transcript?.speakers ?? []).first { $0.id == speakerID }?.label
+            ?? (alternate?.speakers ?? []).first { $0.id == speakerID }?.label ?? speakerID
     }
+
+    /// IAGO's transcript and Teams', whichever is the main one (ADR-0078).
+    private var iagoTranscript: Transcript? { [transcript, alternate].compactMap { $0 }.first { !$0.isImported } }
+    private var teamsTranscript: Transcript? { [transcript, alternate].compactMap { $0 }.first { $0.isImported } }
 
     private func document(_ item: Item, _ transcript: Transcript) -> ItemDocument {
         ItemDocument(
@@ -1064,6 +1177,7 @@ private struct AssetRow: View {
         case .originalImage: String(localized: "Immagine originale")
         case .contentMD: String(localized: "Contenuto (Markdown)")
         case .originalTranscript: String(localized: "Trascrizione originale (Teams)")
+        case .alternateTranscriptJSON: String(localized: "Seconda trascrizione (JSON)")
         case .noteAttachment: String(localized: "Allegato")
         case .originalEmail: String(localized: "Email originale (.eml)")
         case .contentMDAuto: String(localized: "Testo automatico (prima delle correzioni)")
@@ -1073,7 +1187,7 @@ private struct AssetRow: View {
 
     static func fileExtension(_ kind: Asset.Kind) -> String {
         switch kind {
-        case .transcriptJSON: "json"
+        case .transcriptJSON, .alternateTranscriptJSON: "json"
         case .transcriptTXT: "txt"
         case .transcriptMD, .contentMD, .contentMDAuto: "md"
         case .originalEmail: "eml"

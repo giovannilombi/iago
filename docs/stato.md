@@ -5,13 +5,13 @@
 > Ultimo aggiornamento: **29 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.4-beta su `main` (tag `v1.2.4-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.5-beta su `main` (tag `v1.2.5-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 307 nei pacchetti, tutti verdi (1.2.4-beta).
+- **Test automatici:** 309 nei pacchetti, tutti verdi (1.2.5-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -42,6 +42,10 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-30:** versione **1.2.5-beta**.
+- **2026-10-30, trascrizioni di IAGO e di Teams affiancate** (ADR-0078): allegare Teams non sostituisce più la trascrizione di IAGO. Le due stanno in due schede; i minuti di Teams sono solo testo, senza link all'audio. Una sola è la principale per sintesi, proposte e ricerca, si scambiano con un clic e ciascuna si elimina anche dopo. Prove 10o.1–10o.5.
+- **2026-10-30, consiglio «Usa Claude» sui Mac fino a 16 GB** (ADR-0078): sotto Sintesi e Proposte un riquadro copia la richiesta e apre Claude, dicendo cosa manca (collegamento, consenso, progetto) senza abilitare nulla da solo. Impostazioni › Motore › *Sintesi e proposte* può scegliere Claude per tutto. Prove 10o.6–10o.8.
+- **2026-10-30, ADR-0079 proposto:** analisi per usare anche Claude Code, Gemini, Gemini CLI, ChatGPT e Codex CLI, da cui partire. Solo strumenti che avviano IAGO in locale, consensi separati per assistente.
 - **2026-10-30:** versione **1.2.4-beta**.
 - **2026-10-30, Inbox con due bollini** (ADR-0076, modifica): il bollino rosso sommava scadenze e proposte, e le 38 proposte di prova non si vedevano nell'Inbox (solo un link a Punti chiave). Ora il **rosso** (!) conta ciò che chiede un'azione adesso, cioè in ritardo, oggi, senza responsabile e attese scadute. Il **giallo** (✦) conta le proposte da confermare. L'Inbox ha tre blocchi (Da fare ora, Proposte da confermare, Più avanti), con il numero nell'intestazione dello stesso colore, e le proposte si confermano o si scartano lì. Prove 10n.
 - **2026-10-30, nomi degli speaker** (ADR-0073, modifica; migrazione `v22-speaker-names`): un nome scritto e lasciato con un clic andava perso senza avviso. Ora si conferma con Invio o ⏎, e il campo non confermato è rosso e resta. Prima di applicarlo IAGO chiede dei nomi simili (errori, un nome dentro l'altro, diminutivi come Lello/Antonello) e ricorda le risposte. Lo stesso nome a due speaker propone *Unisci*, che si annulla con *Separa*. *Genera sintesi* e *Rigenera* chiedono se dare prima i nomi. Prove 10n.6–10n.9.

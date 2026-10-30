@@ -9,6 +9,16 @@ Puoi collegare **Claude Desktop** (o Claude Code) ai progetti che scegli. Claude
 
 ## Sintesi e proposte fatte da Claude
 Puoi chiedere a Claude la sintesi o le proposte di un elemento, al posto del motore del Mac.
+
+**Sui Mac fino a 16 GB** il motore locale è lento, e nella scheda, sotto *Sintesi* e *Proposte*, compare un **consiglio**: *Chiedi a Claude la sintesi* copia la richiesta e apre Claude, e tu la incolli con ⌘V. Il consiglio dice anche cosa manca:
+- Claude non ancora collegato a IAGO: *Collega Claude…* porta a Impostazioni › Claude;
+- collegamento limitato ad altri progetti: va aggiunto un collegamento che includa questo;
+- progetto non consultabile o non scrivibile da Claude: *Consenti e chiedi a Claude* lo abilita solo per quel progetto;
+- elemento senza progetto: Claude scrive solo nei progetti, quindi va assegnato prima.
+
+IAGO non abilita mai niente da solo. *Usa il motore del Mac* nasconde il consiglio su quel progetto, *Non mostrare più* su tutto il Mac. In **Impostazioni › Motore › Sintesi e proposte** puoi scegliere **Claude**: il motore del Mac non parte più da solo e il consiglio compare sempre, su qualsiasi Mac.
+
+In ogni momento puoi anche fare così:
 1. Nella scheda dell'elemento premi **Copia per Claude…** e scegli *Per la sintesi*, *Per le proposte* o *Solo il riferimento*. Se il progetto non è ancora consultabile (o scrivibile) da Claude, IAGO te lo dice e lo attiva con un clic.
 2. Incolla in Claude: lavora proprio su quell'elemento, senza cercarlo.
 3. Claude ti mostra un'anteprima; dopo il tuo OK la sintesi compare come **Sintetizzata da Claude** e le proposte come **Consigliata da Claude**, da confermare come quelle del motore. Claude propone anche punti da chiarire, rischi e richieste, con responsabile, scadenza e attese.

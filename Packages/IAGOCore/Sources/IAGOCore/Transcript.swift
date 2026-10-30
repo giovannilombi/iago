@@ -60,6 +60,10 @@ public struct Transcript: Codable, Sendable, Equatable {
     public var schemaVersion: Int
     public var itemId: String
     public var engine: Engine
+
+    /// A transcript made outside IAGO (Teams, ADR-0033): its minutes count from the start of that transcription, not
+    /// of the recording, so they are never links to the audio (ADR-0078).
+    public var isImported: Bool { engine.asr == "teams" }
     public var language: String?
     public var createdAt: Date
     public var speakers: [Speaker]

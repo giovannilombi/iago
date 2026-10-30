@@ -6,7 +6,7 @@ Tutto quello che non è una call entra da `IAGOIngest`, che dipende solo da `IAG
 | Ingresso | Cosa diventa | Come |
 |---|---|---|
 | Audio, video | elemento da trascrivere (del video si tiene solo l'audio) | AVFoundation, poi la coda di trascrizione |
-| Trascrizioni di Teams (`.vtt`, `.docx`) | trascrizione con i **nomi veri** degli speaker | parser del formato recente e di quello vecchio |
+| Trascrizioni di Teams (`.vtt`, `.docx`) | trascrizione con i **nomi veri** degli speaker; allegata a una call con la trascrizione di IAGO le si **affianca** (`alternate_transcript_json`, ADR-0078) e i suoi minuti non sono link all'audio (`Transcript.isImported`) | parser del formato recente e di quello vecchio |
 | PDF | documento | PDFKit; OCR per le pagine senza testo (`## Pagina N`) |
 | Immagini, screenshot | documento | OCR con Vision (`it-IT`, `en-US`, correzione linguistica) |
 | DOCX, RTF, ODT | documento | `NSAttributedString` → Markdown con titoli, elenchi e grassetti |
