@@ -55,4 +55,45 @@ import Testing
         let aside = try #require(try archive.transcripts(itemID: item.id).alternate)
         #expect(try Transcript.decode(from: archive.readAssetData(aside)).isImported)
     }
+
+    @Test func searchLooksInBothTranscriptsOnce() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let item = try fixture.makeItem()
+        let iago = transcript(item.id, asr: "whisper", speaker: "s1", text: "il preventivo lo manda Feretti")
+        let teams = transcript(item.id, asr: "teams", speaker: "t1", text: "il preventivo lo manda Ferretti")
+        try archive.storeAsset(try iago.encoded(), itemID: item.id, kind: .transcriptJSON, fileName: "transcript.json")
+        try archive.indexTranscript(iago, itemID: item.id)
+        try archive.attachAlternateTranscript(
+            try teams.encoded(), speakers: [("t1", "Anna Prova")], original: nil, to: item.id)
+
+        // Only in Teams': found, and marked.
+        let onlyTeams = try archive.search("Ferretti")
+        #expect(onlyTeams.count == 1)
+        #expect(onlyTeams.first?.alternate == "teams")
+        // In both: once, from the main one.
+        let both = try archive.search("preventivo")
+        #expect(both.count == 1)
+        #expect(both.first?.alternate == nil)
+        // Reindexing the main one keeps the other's passages.
+        try archive.indexTranscript(iago, itemID: item.id)
+        #expect(try archive.search("Ferretti").count == 1)
+        // After the swap IAGO's is the other one.
+        try archive.swapTranscripts(itemID: item.id)
+        try archive.indexTranscript(teams, itemID: item.id)
+        #expect(try archive.search("Feretti").first?.alternate == "iago")
+        // Removing the other one removes its passages.
+        try archive.removeTranscript(main: false, itemID: item.id)
+        #expect(try archive.search("Feretti").isEmpty)
+    }
+
+    @Test func summaryRemembersItsTranscript() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let item = try fixture.makeItem()
+        let teams = transcript(item.id, asr: "teams", speaker: "t1", text: "testo di Teams")
+        try archive.storeAsset(try teams.encoded(), itemID: item.id, kind: .transcriptJSON, fileName: "transcript.json")
+        try archive.saveSummary(itemID: item.id, categoryID: nil, templateID: nil, markdown: "Sintesi", model: "test")
+        #expect(try archive.summary(itemID: item.id)?.transcriptSource == "teams")
+    }
 }

@@ -3,6 +3,7 @@
 ## Search
 The field at the top right searches transcripts, notes, documents, emails, summaries and key points, in the project you are looking at or everywhere. Results can be filtered by type; a click on a passage of a call opens the audio at that point.
 - With the **search model** (Settings › Engine) it also finds sentences said with different words ("how much the company pays in" finds "the employer contribution").
+- In a call with both IAGO's and Teams' transcripts it searches both. The call shows once; if the words are only in the other transcript, the passage says «in the Teams transcript» (or IAGO) and opens that tab.
 - `#tag` and `category:Name` open a tag or a category.
 
 ## Ask IAGO

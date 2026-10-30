@@ -23,6 +23,9 @@ public struct ItemSummaryText: Codable, FetchableRecord, PersistableRecord, Send
     public var createdAt: Date
     public var updatedAt: Date
     public var origin: ResultOrigin = .engine
+    /// The transcript it was written from, `iago` or `teams` (ADR-0078); nil for summaries made before 1.2.6-beta and
+    /// for items without a transcript.
+    public var transcriptSource: String?
 }
 
 /// A category of the library (ADR-0054): name, family (nil: main) and template.
@@ -139,11 +142,12 @@ extension Archive {
         origin: ResultOrigin = .engine
     ) throws {
         let now = self.now()
+        let source = try mainTranscriptSource(itemID: itemID)
         try database.writer.write { db in
             let created = try ItemSummaryText.fetchOne(db, key: itemID)?.createdAt ?? now
             let summary = ItemSummaryText(
                 itemId: itemID, categoryId: categoryID, templateId: templateID, markdown: markdown, model: model,
-                edited: false, createdAt: created, updatedAt: now, origin: origin)
+                edited: false, createdAt: created, updatedAt: now, origin: origin, transcriptSource: source)
             try summary.save(db)
             try indexSummary(summary, db)
         }

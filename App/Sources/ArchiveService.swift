@@ -360,14 +360,16 @@ final class ArchiveService: Sendable {
     }
 
     static let searchIndexVersionKey = "search_index_version"
+    /// 2: also the other transcript of a call (ADR-0078).
+    static let searchIndexVersion = "2"
 
-    /// Builds the search index over the existing archive once (ADR-0036), in the background.
+    /// Builds the search index over the existing archive once per index version (ADR-0036), in the background.
     func buildSearchIndexIfNeeded() async {
         let archive = self.archive
-        guard (try? archive.setting(Self.searchIndexVersionKey)) != "1" else { return }
+        guard (try? archive.setting(Self.searchIndexVersionKey)) != Self.searchIndexVersion else { return }
         do {
             let count = try await background { try archive.rebuildSearchIndex() }
-            try archive.setSetting(Self.searchIndexVersionKey, "1")
+            try archive.setSetting(Self.searchIndexVersionKey, Self.searchIndexVersion)
             logger.notice("Search index built: \(count) items")
         } catch {
             logger.error("Search index build failed: \(error)")

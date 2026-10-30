@@ -2,16 +2,16 @@
 
 > Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
 > **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
-> Ultimo aggiornamento: **29 ottobre 2026**.
+> Ultimo aggiornamento: **30 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.5-beta su `main` (tag `v1.2.5-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.6-beta su `main` (tag `v1.2.6-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 309 nei pacchetti, tutti verdi (1.2.5-beta).
+- **Test automatici:** 311 nei pacchetti, tutti verdi (1.2.6-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -42,6 +42,8 @@ La descrizione completa è nel [README](../README.md). In sintesi:
    - rifiniture del grafo.
 
 ## Ultime modifiche
+- **2026-10-30:** versione **1.2.6-beta**.
+- **2026-10-30, trascrizione principale e ricerca in tutte e due** (ADR-0078, modifica; migrazione `v23-summary-transcript`): la ricerca guarda anche nella trascrizione secondaria, con la call una volta sola e l'etichetta «nella trascrizione Teams» quando le parole sono solo lì. La principale ha la ★ sulla sua scheda; *Rendi principale* chiede conferma se c'è già una sintesi, e la sintesi dice da quale trascrizione è fatta, con *Rigenera* se la principale è cambiata. Esportazioni, sintesi, proposte e Claude restano sulla principale. L'indice di ricerca si ricostruisce una volta all'avvio. Prove 10p.
 - **2026-10-30:** versione **1.2.5-beta**.
 - **2026-10-30, trascrizioni di IAGO e di Teams affiancate** (ADR-0078): allegare Teams non sostituisce più la trascrizione di IAGO. Le due stanno in due schede; i minuti di Teams sono solo testo, senza link all'audio. Una sola è la principale per sintesi, proposte e ricerca, si scambiano con un clic e ciascuna si elimina anche dopo. Prove 10o.1–10o.5.
 - **2026-10-30, consiglio «Usa Claude» sui Mac fino a 16 GB** (ADR-0078): sotto Sintesi e Proposte un riquadro copia la richiesta e apre Claude, dicendo cosa manca (collegamento, consenso, progetto) senza abilitare nulla da solo. Impostazioni › Motore › *Sintesi e proposte* può scegliere Claude per tutto. Prove 10o.6–10o.8.

@@ -504,10 +504,23 @@ struct SearchResultsView: View {
                             HStack(alignment: .firstTextBaseline, spacing: 8) {
                                 Image(systemName: icon(hit.source)).foregroundStyle(.secondary).frame(width: 16)
                                 if let at = hit.atSec {
-                                    Text(Format.clock(at)).monospacedDigit().foregroundStyle(.tint).frame(
-                                        width: 52, alignment: .leading)
+                                    // Teams' minutes are not the audio's (ADR-0078).
+                                    Text(Format.clock(at)).monospacedDigit()
+                                        .foregroundStyle(
+                                            hit.alternate == "teams" ? AnyShapeStyle(.secondary) : AnyShapeStyle(.tint)
+                                        )
+                                        .frame(width: 52, alignment: .leading)
                                 }
                                 highlighted(hit.snippet).lineLimit(3)
+                                if let other = hit.alternate {
+                                    Text(String(localized: "nella trascrizione \(ItemDetailView.sourceName(other))"))
+                                        .font(.caption2).foregroundStyle(.blue)
+                                        .help(
+                                            String(
+                                                localized:
+                                                    "Trovato solo nell'altra trascrizione della call: aprendolo si apre quella scheda"
+                                            ))
+                                }
                                 if hit.byMeaning {
                                     Text(String(localized: "per significato")).font(.caption2).foregroundStyle(.indigo)
                                         .help(

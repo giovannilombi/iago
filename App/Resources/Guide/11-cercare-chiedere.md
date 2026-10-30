@@ -4,6 +4,7 @@
 ## Cerca
 Il campo in alto a destra cerca in trascrizioni, note, documenti, email, sintesi e punti chiave, nel progetto che stai guardando o ovunque. I risultati si filtrano per tipo; un clic su un passaggio di una call apre l'audio in quel punto.
 - Con il **modello di ricerca** (Impostazioni › Motore) trova anche frasi dette con parole diverse ("quanto versa l'azienda" trova "il contributo del datore di lavoro").
+- In una call con la trascrizione di IAGO e quella di Teams cerca in tutte e due. La call compare una volta; se le parole sono solo nell'altra trascrizione, il passaggio dice «nella trascrizione Teams» (o IAGO) e apre quella scheda.
 - `#tag` e `categoria:Nome` aprono un tag o una categoria.
 
 ## Chiedi a IAGO

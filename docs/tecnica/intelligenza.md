@@ -7,6 +7,7 @@
 - **Per significato:** il testo viene diviso in pezzi (*chunk*) con l'elemento e il minuto d'origine, trasformati in vettori da **Qwen3 Embedding 0.6B** (MLX 4 bit, *last-token pooling*); la similarità è il coseno su una matrice in memoria (ADR-0049).
 - **Ricerca ibrida:** i due elenchi vengono uniti con *reciprocal rank fusion*. Senza il modello di embedding resta la ricerca per parole.
 - **Ambito:** tutta la memoria, un cliente, un progetto o uno stream.
+- **Due trascrizioni** (ADR-0078): la ricerca per parole guarda anche nella trascrizione secondaria di una call, ma solo per le call dove la principale non ha già trovato le parole (`SearchHit.alternate`), così lo stesso passaggio non compare due volte. I vettori restano della sola principale; gli strumenti MCP scartano i risultati della secondaria, perché Claude legge la principale.
 
 ## Punti chiave (ADR-0046, ADR-0052, ADR-0074)
 - **Sei tipi** (`Decision.Kind`): memoria (`decision`, `milestone`) e lavoro aperto (`action`, `open_question`, `risk`, `request`, `Kind.isWork`). Tutti con fonte (elemento e minuto, oppure nota), persone, data.

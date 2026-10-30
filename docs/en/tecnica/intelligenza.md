@@ -7,6 +7,7 @@
 - **Semantic:** the text is split into pieces (*chunks*) with the source item and minute, turned into vectors by **Qwen3 Embedding 0.6B** (MLX 4-bit, *last-token pooling*); similarity is the cosine over an in-memory matrix (ADR-0049).
 - **Hybrid search:** the two lists are merged with *reciprocal rank fusion*. Without the embedding model, keyword search remains.
 - **Scope:** the whole memory, a client, a project or a stream.
+- **Two transcripts** (ADR-0078): search by words also looks in a call's other transcript, but only for calls where the main one has not already matched the words (`SearchHit.alternate`), so the same passage does not show twice. The vectors stay of the main one only; the MCP tools drop the other transcript's results, since Claude reads the main one.
 
 ## Key points (ADR-0046, ADR-0052, ADR-0074)
 - **Six kinds** (`Decision.Kind`): memory (`decision`, `milestone`) and open work (`action`, `open_question`, `risk`, `request`, `Kind.isWork`). All with a source (item and minute, or note), people, date.

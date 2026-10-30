@@ -1,6 +1,6 @@
 # ADR-0078 — IAGO's and Teams' transcripts side by side, Claude suggested on slow Macs
 
-- Status: accepted (1.2.5-beta)
+- Status: accepted (1.2.5-beta), amended in 1.2.6-beta
 - Date: 2026-10-30
 - References: ADR-0033 (Teams transcripts), ADR-0043 (MCP server), ADR-0054 (summaries), ADR-0069 (single queue and memory), ADR-0071 (summaries and suggestions made by Claude), ADR-0058 (nothing leaves without the user's choice); user requests of 2026-10-30
 
@@ -33,7 +33,13 @@
   - **Settings › Engine › Summaries and suggestions: Mac's engine / Claude** (`intelligence.byClaude`). With Claude the Mac's engine no longer starts by itself, the automatic jobs are off and the tip appears on any Mac.
 - Claude Code's connections are not read: IAGO has no reliable file to find them in. Someone who uses only Claude Code sees «Connect Claude…», but can still copy the request from *Copy for Claude…*.
 
+## Amendment (1.2.6-beta, 2026-10-30)
+User request: search must also look in the other transcript, and the main one must be visible.
+- **Search in both:** the other transcript is in the index too. A call shows once: the other transcript's passages count only if the main one does not have the same words, with the label «in the Teams transcript» (or IAGO), and they open that tab. Search by meaning and Claude stay on the main one.
+- **The main one is visible:** ★ next to its tab's name, always the first, and below «Main · used for summaries, suggestions and exports». On the other one *Make main*, with a confirmation if the call already has a summary.
+- **Summary and transcript:** the summary remembers which transcript it was written from (`summary.transcript_source`, migration `v23-summary-transcript`). If the main one changes, above the summary appears «Written from the IAGO transcript; the main one is now Teams» with *Regenerate*; it does not regenerate by itself.
+
 ## Consequences
-- Search and exports contain only the main transcript. To search in the other one, make it the main one.
+- Exports, summaries, suggestions and Claude contain only the main transcript. Search, since 1.2.6-beta, looks in both.
 - Earlier calls with Teams instead of IAGO are recognized from the engine of the saved transcript (`asr = teams`): their minutes stop being links to the audio.
 - The tip prepares the ground for other assistants (ADR-0079): today it names Claude, tomorrow the chosen assistant.
