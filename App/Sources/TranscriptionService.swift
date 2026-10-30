@@ -82,7 +82,9 @@ final class TranscriptionService: Sendable {
         defer { try? FileManager.default.removeItem(at: workspace) }
         do {
             try FileManager.default.createDirectory(at: workspace, withIntermediateDirectories: true)
-            let input = try decryptInput(itemID: itemID, into: workspace, roomMode: payload.roomMode ?? false)
+            // «Più persone nella stanza» ticked: always; otherwise IAGO decides (ADR-0031).
+            let input = try decryptInput(
+                itemID: itemID, into: workspace, roomMode: payload.roomMode == true ? .on : .auto)
             var pipeline = try await pipeline.get(models, engine: engine)
             pipeline.meLabel = (try archive.setting(Self.meLabelKey)) ?? MeLabel.defaultName
             let language = (try archive.setting(Self.languageKey)) ?? "it"
@@ -131,8 +133,9 @@ final class TranscriptionService: Sendable {
 
     /// Decrypts the tracks to transcribe: mic + system for a recording, the single track for an import
     /// (or for a phase 0 recording without system track).
-    private func decryptInput(itemID: String, into workspace: URL, roomMode: Bool) throws -> TranscriptionPipeline.Input
-    {
+    private func decryptInput(
+        itemID: String, into workspace: URL, roomMode: TranscriptionPipeline.RoomMode
+    ) throws -> TranscriptionPipeline.Input {
         let assets = try archive.assets(itemID: itemID)
         func decrypt(_ kind: Asset.Kind) throws -> URL? {
             guard let asset = assets.first(where: { $0.kind == kind }) else { return nil }

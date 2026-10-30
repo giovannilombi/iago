@@ -15,12 +15,17 @@ public struct ItemDocument: Sendable {
     public var transcript: Transcript?
     /// The summary written with the category's template (ADR-0054), as plain Markdown (no app links).
     public var summary: String?
+    /// «Presenti» written by the user (ADR-0031).
+    public var attendees: [String] = []
 
     public init(
         item: Item, projectName: String? = nil, categoryName: String? = nil, tags: [String] = [],
-        speakerLabels: [String: String] = [:], notes: [Note] = [], transcript: Transcript? = nil, summary: String? = nil
+        speakerLabels: [String: String] = [:], notes: [Note] = [], transcript: Transcript? = nil,
+        summary: String? = nil,
+        attendees: [String] = []
     ) {
         self.summary = summary
+        self.attendees = attendees
         self.item = item
         self.projectName = projectName
         self.categoryName = categoryName
@@ -51,7 +56,8 @@ public struct ItemDocument: Sendable {
             speakerLabels: Dictionary(
                 uniqueKeysWithValues: try archive.speakers(itemID: itemID).map { ($0.speakerId, $0.label) }),
             notes: try archive.notes(itemID: itemID),
-            transcript: loaded, summary: try archive.summary(itemID: itemID).map { Self.plainSummary($0.markdown) })
+            transcript: loaded, summary: try archive.summary(itemID: itemID).map { Self.plainSummary($0.markdown) },
+            attendees: try archive.attendees(itemID: itemID))
     }
 
     /// The summary for files: minutes without the app link, headings one level down (`##` → `level`).

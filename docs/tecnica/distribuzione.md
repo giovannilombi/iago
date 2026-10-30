@@ -10,7 +10,7 @@
 ## Aggiornamenti con Sparkle (ADR-0056)
 - **Sparkle 2.10** legge `https://github.com/giovannilombi/iago/releases/latest/download/appcast.xml`.
 - Ogni release è un archivio firmato **EdDSA**; la chiave pubblica è nell'app (`SUPublicEDKey`), quella privata nel Portachiavi di chi pubblica. IAGO installa solo versioni firmate dalla stessa chiave.
-- **Versioni maggiori obbligatorie:** l'appcast le segna come *critical*; finché non sono installate IAGO non avvia nuove registrazioni (una in corso continua).
+- **Versioni maggiori obbligatorie:** l'appcast le segna come *critical*. Da quando IAGO le vede ci sono 2 giorni di margine (`UpdateService.mandatoryDeadline`, data in `update.mandatoryFirstSeen`), con il termine e *Aggiorna ora…* nel menu; poi IAGO non avvia nuove registrazioni, trascrizioni, sintesi e proposte (`AppModel.blockedByUpdate`). Una registrazione in corso continua.
 - Funziona solo con il repository **pubblico**: oggi è privato, quindi il controllo non trova nulla.
 
 ## Fare una release

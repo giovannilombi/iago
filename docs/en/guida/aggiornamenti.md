@@ -2,7 +2,7 @@
 
 IAGO checks on its own whether there is a new version (Settings › General › Updates).
 - **Minor** updates are offered: install now, later, or skip the version.
-- **Major** updates (a new major version) are **required**: IAGO installs them before recording again. A recording in progress is never interrupted.
+- **Major** updates (a new major version) are **required**. You have **2 days** to install them: IAGO's menu shows until when, and *Update now…*. After that IAGO starts no new recordings, transcriptions, summaries or suggestions until you update; just press *Update now* and IAGO reopens updated. The archive stays readable and a recording in progress is never interrupted.
 - Every update is signed: IAGO installs only versions signed by the same author.
 
 The notes for each version are on the releases page.

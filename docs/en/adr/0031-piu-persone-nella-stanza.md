@@ -17,3 +17,13 @@ The pipeline assigns the whole mic track to the "Me" speaker and diarizes only t
 - Deviation from spec 7.2 step 3 and from ADR-0006 only when the option is on.
 - The main voice is chosen by duration: if the user speaks less than the others present, it must be renamed by hand.
 - Extra diarization on the mic track: a few seconds per hour of audio.
+
+## Change of 2026-10-30 (1.2.8-beta)
+User request: often you do not know beforehand that there will be several people, and starting the recording must stay immediate.
+- **IAGO decides by itself** (`RoomMode.auto`, the new default): the microphone is always diarized. If the system track has less than 10 s of speech it is a meeting in person and the voices with at least 20 s of speech are separated by themselves. With a call they stay under «Me», because the call's echo confuses things, and the card offers *Separate the voices*, which transcribes again with the option on.
+- Voices shorter than 20 s stay with the user: usually they are the user's own voice split in two, or a noise.
+- **During the recording:** *Several people here in the room* in the icon's menu; the automatic transcription and the panel after Stop use it.
+- **Present** (migration `v24-attendees`): the user can write who was there, in the panel after Stop or later in the card. The names are offered for the speakers still without a name and go into the exports; they are not tied to the voices until the user gives a name.
+- The separated room voices have their own voice print (ADR-0073).
+- Nothing changes for people connected remotely: the system track was already split by voice, also with several people on the same computer.
+- Recording the microphone alone, without the Mac's audio, is left for later: with the Mac's audio silent the result is the same.

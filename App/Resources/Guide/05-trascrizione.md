@@ -18,13 +18,19 @@ La tua traccia è **Io** (il nome che hai dato all'inizio). Le voci degli altri 
 
 Il motore locale può anche proporre i nomi.
 
-Con più persone nella stessa stanza attiva **Più persone nella stanza** quando trascrivi: IAGO separa anche le voci della tua traccia.
+## Più persone nella stanza
+Le persone collegate da remoto si separano sempre, anche se sono in tanti dallo stesso computer. Per chi è nella stanza con te:
+- **Riunione in presenza** (l'audio del Mac è muto): IAGO separa da solo le voci del microfono. Tu resti «Io», gli altri diventano «Stanza 2», «Stanza 3»…
+- **Call con qualcuno accanto a te:** IAGO non separa da solo, perché il microfono sente anche l'eco della call. Se sente altre voci oltre alla tua, nella scheda compare «Nel microfono ho sentito altre voci» con **Separa le voci**, che ritrascrive la call.
+- Puoi deciderlo anche prima: **Più persone qui nella stanza** dal menu durante la registrazione, oppure **Più persone nella stanza** quando trascrivi.
+- **Presenti:** nella scheda, e nel pannello dopo lo Stop, scrivi chi c'era (un nome e Invio, o più nomi separati da virgole). Accanto a ogni speaker ancora senza nome compare un pulsante per sceglierlo tra i presenti. I presenti finiscono anche nelle esportazioni e in *Condividi*.
 
 ## Riconoscere le voci
 In **Impostazioni › Voci** puoi attivare *Riconosci le voci tra una call e l'altra* (spento di default). Quando dai un nome a uno speaker, IAGO ricorda la sua voce; nelle call successive propone il nome («Speaker 2 diventa Marco», *Riconosciuta dalla voce*) e tu confermi o scarti. Non assegna mai un nome da solo.
 
 - Vale per le call trascritte dopo l'attivazione; per una call già trascritta usa **Ritrascrivi**.
 - Servono almeno una decina di secondi di parlato per riconoscere una voce.
+- Valgono anche le voci della stanza, quando sono separate. La tua («Io») no.
 - Le voci restano solo sul Mac e non vanno mai a Claude né nelle esportazioni. Nello stesso pannello vedi le voci conosciute e le elimini una per una o tutte insieme.
 
 ## Glossario

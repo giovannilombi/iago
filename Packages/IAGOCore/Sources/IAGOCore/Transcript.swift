@@ -68,10 +68,13 @@ public struct Transcript: Codable, Sendable, Equatable {
     public var createdAt: Date
     public var speakers: [Speaker]
     public var segments: [Segment]
+    /// Voices heard on the microphone besides the user's and left together under «Io», because there was also a
+    /// call (ADR-0031): the card offers to separate them. Nil when there were none or they were separated.
+    public var otherMicVoices: Int?
 
     public init(
         itemId: String, engine: Engine, language: String?, createdAt: Date = Date(), speakers: [Speaker],
-        segments: [Segment]
+        segments: [Segment], otherMicVoices: Int? = nil
     ) {
         self.schemaVersion = Self.currentSchemaVersion
         self.itemId = itemId
@@ -80,6 +83,7 @@ public struct Transcript: Codable, Sendable, Equatable {
         self.createdAt = createdAt
         self.speakers = speakers
         self.segments = segments
+        self.otherMicVoices = otherMicVoices
     }
 
     public func encoded() throws -> Data {

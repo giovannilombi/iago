@@ -198,6 +198,7 @@ public enum ProjectExporter {
         if document.transcript != nil, !document.participants.isEmpty {
             facts.append("Partecipanti: \(document.participants.joined(separator: ", "))")
         }
+        if !document.attendees.isEmpty { facts.append("Presenti: \(document.attendees.joined(separator: ", "))") }
         if let email {
             if !email.to.isEmpty { facts.append("A: \(email.to.map(\.display).joined(separator: ", "))") }
             if !email.cc.isEmpty { facts.append("Cc: \(email.cc.map(\.display).joined(separator: ", "))") }

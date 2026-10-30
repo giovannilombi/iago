@@ -44,3 +44,5 @@
 - **Join and Separate:** the same name for two speakers of the same call offers to join them, because diarization often splits one person in two. The joined speaker takes the other's name and voice (`item_speaker.merged_into`), and so the person's fingerprint is made with all their sentences. «Separate» puts it back as it was, useful when they were two people after all. The saved transcript does not change.
 - **Before the summary:** with speakers still generic, *Generate summary* and *Regenerate* ask whether to name them first or go ahead, noting that the summary can be regenerated. Automatic summaries go ahead without asking.
 
+## Change of 2026-10-30 (1.2.8-beta)
+- The separated **room voices** too (ADR-0031, «Room 2», «Room 3»…) have their voice print and are recognized in later calls. The user's voice («Me») stays without one.

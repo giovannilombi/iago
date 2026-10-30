@@ -150,8 +150,9 @@ enum DemoMode {
                     Decision(
                         text: "Aggiungere la pagina FAQ", decidedAt: day(-1, 16), projectId: portal.id,
                         origin: .manual, kind: .request), people: ["Marta Rossi"])
-                // Proposals still to confirm, for the Inbox's yellow block (ADR-0076).
+                // Proposals still to confirm, for the Inbox's yellow block (ADR-0076), and who was there (ADR-0031).
                 if let sal = items["SAL settimanale portale"] {
+                    try archive.setAttendees(["Marta Rossi", "Luca Bianchi", "Paolo Neri"], itemID: sal.id)
                     try archive.replacePendingSuggestions(
                         itemID: sal.id, model: "qwen3.5-9b",
                         [

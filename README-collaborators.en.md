@@ -109,8 +109,8 @@ What remains to be done, in order, is in [`docs/stato.md`](docs/en/stato.md).
 
 ## 6. Testing
 - The manual tests are in [`docs/prove-tester.md`](docs/en/prove-tester.md), ordered and written for people who do not know the app.
-- **Each tester has an issue on GitHub**, "Prove 1.2.7-beta — Nome Cognome", with all the tests as checkboxes. Check the box when the test works; for a problem write a comment with the test number (e.g. "3h.4"), what you did and what you saw. All collaborators read the issues and comments.
-- A new round of tests (new beta, new tester) is opened with `scripts/new-test-round.sh "Nome Cognome" 1.2.7-beta`: the issue takes the tests from the current version of `docs/prove-tester.md`.
+- **Each tester has an issue on GitHub**, "Prove 1.2.8-beta — Nome Cognome", with all the tests as checkboxes. Check the box when the test works; for a problem write a comment with the test number (e.g. "3h.4"), what you did and what you saw. All collaborators read the issues and comments.
+- A new round of tests (new beta, new tester) is opened with `scripts/new-test-round.sh "Nome Cognome" 1.2.8-beta`: the issue takes the tests from the current version of `docs/prove-tester.md`.
 - A defect found becomes a separate issue, linked to the test; the fix comes with a PR that closes it.
 - Tests do not need real data. Whoever tests with their own calls keeps that content to themselves: comments describe the behavior, not the content.
 

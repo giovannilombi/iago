@@ -230,9 +230,10 @@ public enum TranscriptPostProcessing {
     }
 
     /// "Più persone nella stanza" (ADR-0031): the mic voice with the most speech is the user (`me`); the
-    /// others become `r2`, `r3`… in order of first appearance.
-    public static func roomSpeakers(_ labeled: [(speaker: String, segment: TranscribedSegment)])
-        -> (labeled: [(speaker: String, segment: TranscribedSegment)], others: [String])
+    /// others with at least `minimum` seconds of speech become `r2`, `r3`… in order of first appearance, and the
+    /// shorter ones stay with the user. `mapping` goes from the diarizer's IDs to these.
+    public static func roomSpeakers(_ labeled: [(speaker: String, segment: TranscribedSegment)], minimum: Double = 0)
+        -> (labeled: [(speaker: String, segment: TranscribedSegment)], others: [String], mapping: [String: String])
     {
         var talk: [String: Double] = [:]
         var order: [String] = []
@@ -240,14 +241,18 @@ public enum TranscriptPostProcessing {
             if talk[entry.speaker] == nil { order.append(entry.speaker) }
             talk[entry.speaker, default: 0] += entry.segment.end - entry.segment.start
         }
-        guard let main = order.max(by: { talk[$0]! < talk[$1]! }) else { return ([], []) }
+        guard let main = order.max(by: { talk[$0]! < talk[$1]! }) else { return ([], [], [:]) }
         var mapping = [main: "me"]
         var others: [String] = []
         for id in order where id != main {
+            guard talk[id]! >= minimum else {
+                mapping[id] = "me"
+                continue
+            }
             others.append("r\(others.count + 2)")
             mapping[id] = others.last
         }
-        return (labeled.map { (mapping[$0.speaker]!, $0.segment) }, others)
+        return (labeled.map { (mapping[$0.speaker]!, $0.segment) }, others, mapping)
     }
 
     /// Maps raw diarizer IDs to `s1`, `s2`… in order of first appearance.

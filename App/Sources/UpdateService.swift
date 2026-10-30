@@ -6,7 +6,8 @@ import os
 
 /// Updates from GitHub Releases through Sparkle (ADR-0056): a check once a day, signed with EdDSA. Minor versions are
 /// offered (install, later, skip); a new major version is mandatory: it is marked critical in the feed, Sparkle offers
-/// no "skip", and IAGO starts no new recording until it is installed. A recording going on is never interrupted.
+/// no "skip", and after `graceDays` from when IAGO first saw it, IAGO starts no new recording, transcription, summary
+/// or proposal until it is installed. A recording going on is never interrupted; the archive stays readable.
 @MainActor
 @Observable
 final class UpdateService: NSObject, SPUUpdaterDelegate {
@@ -14,7 +15,12 @@ final class UpdateService: NSObject, SPUUpdaterDelegate {
     private let archive: Archive
     private let logger = Logger(subsystem: "com.giovannilombi.iago", category: "update")
     /// A mandatory update is waiting: its version.
-    private(set) var mandatoryVersion: String?
+    private(set) var mandatoryVersion: String? {
+        didSet { if let mandatoryVersion { noteFirstSeen(mandatoryVersion) } }
+    }
+    /// Days of margin to install a mandatory update.
+    static let graceDays = 2
+    static let firstSeenKey = "update.mandatoryFirstSeen"
     /// The newest version found, if newer than this one.
     private(set) var availableVersion: String?
     private(set) var lastCheck: Date?
@@ -43,6 +49,24 @@ final class UpdateService: NSObject, SPUUpdaterDelegate {
     var automaticChecks: Bool {
         get { controller?.updater.automaticallyChecksForUpdates ?? false }
         set { controller?.updater.automaticallyChecksForUpdates = newValue }
+    }
+
+    /// When the margin of the mandatory update ends.
+    var mandatoryDeadline: Date? {
+        guard let mandatoryVersion,
+            let seen = (UserDefaults.standard.dictionary(forKey: Self.firstSeenKey)?[mandatoryVersion] as? Date)
+        else { return nil }
+        return Calendar.current.date(byAdding: .day, value: Self.graceDays, to: seen)
+    }
+
+    /// The margin is over: no new recordings or jobs until the update is installed.
+    var mandatoryOverdue: Bool { mandatoryDeadline.map { Date() >= $0 } ?? false }
+
+    private func noteFirstSeen(_ version: String) {
+        var seen = UserDefaults.standard.dictionary(forKey: Self.firstSeenKey) ?? [:]
+        guard seen[version] == nil else { return }
+        seen[version] = Date()
+        UserDefaults.standard.set(seen, forKey: Self.firstSeenKey)
     }
 
     /// "Controlla aggiornamenti…": Sparkle's own window, also when there is nothing new.

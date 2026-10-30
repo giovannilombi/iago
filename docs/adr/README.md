@@ -52,7 +52,7 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0028 | Master key nel Portachiavi e chiavi per elemento | accettato |
 | 0029 | Registrazioni della fase 0 importate nell'archivio cifrato | accettato |
 | 0030 | Cestino con eliminazione automatica dopo 30 giorni (decisione aperta D) | accettato |
-| 0031 | Opzione "Più persone nella stanza" | accettato |
+| 0031 | Opzione "Più persone nella stanza" | accettato (IAGO decide da solo e presenti: 1.2.8-beta) |
 | 0032 | "Scarta" durante la registrazione e "Scartate temporanee" | accettato |
 | 0033 | Import generico, trascrizioni Teams e allegati nelle note | accettato (trascrizione Teams affiancata: 0078) |
 | 0034 | Licenza di IAGO: Creative Commons BY-NC-SA 4.0 | accettato |
@@ -77,7 +77,7 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0053 | Cancellazione dell'eco di macOS sul microfono | ritirato |
 | 0054 | Sintesi in base alla categoria | accettato |
 | 0055 | Sezione "Attività" | accettato |
-| 0056 | Aggiornamenti dell'app | accettato |
+| 0056 | Aggiornamenti dell'app | accettato (2 giorni di margine per gli obbligatori: 1.2.8-beta) |
 | 0057 | Sincronizzazione tramite una cartella cloud condivisa | proposto |
 | 0058 | Il principio sui dati: niente esce senza la scelta dell'utente | accettato |
 | 0059 | Distribuzione senza notarizzazione | accettato (DMG dal 2026-10-27) |
@@ -94,7 +94,7 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0070 | Chi ha prodotto ogni risultato | accettato |
 | 0071 | Sintesi e proposte fatte da Claude | accettato |
 | 0072 | Segna momento con screenshot e scorciatoie in tutte le app | accettato |
-| 0073 | Riconoscere le stesse voci in call diverse | accettato |
+| 0073 | Riconoscere le stesse voci in call diverse | accettato (voci della stanza: 1.2.8-beta) |
 | 0074 | Lavoro aperto e due modalità: Traccia e Gestisci | accettato (1.1.0-beta; modalità ridefinite da 0076) |
 | 0075 | Viste di progetto: come guardare e cosa mostrare | accettato (1.1.0-beta; in parte sostituito da 0076) |
 | 0076 | Modalità Traccia semplice, Inbox ed Elementi | accettato (1.2.0-beta) |

@@ -5,13 +5,13 @@
 > Ultimo aggiornamento: **30 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.7-beta su `main` (tag `v1.2.7-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.8-beta su `main` (tag `v1.2.8-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 312 nei pacchetti, tutti verdi (1.2.7-beta).
+- **Test automatici:** 314 nei pacchetti, tutti verdi (1.2.8-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -26,7 +26,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
 ## Aperto, in ordine di priorità
 Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniCPM, rifiniture del grafo), accorpate le prove.
 0. **Subito (dal 30 ottobre):**
-   - **Modalità gruppo e riunioni in presenza** (ADR-0031, ADR-0073): si dice che ci sono più persone, volendo con i loro nomi; le voci della stanza hanno la loro impronta e vengono riconosciute nelle call successive; si registra dal solo microfono anche senza una call aperta.
+   - **Prova dal vivo della modalità gruppo** (1.2.8-beta, prove 10r): riunioni in presenza, voci della stanza, presenti. Da fare dopo: registrare solo il microfono, senza l'audio del Mac.
    - **Introduzione all'uso** per chi apre IAGO la prima volta, riapribile da Aiuto: prima la tavola, poi lo sviluppo. Va aggiornata fino alla distribuzione.
 1. **Prove, in un'unica sessione** (vedi [`docs/prove-tester.md`](prove-tester.md)):
    - versioni recenti: 10i (lavoro aperto), 10n (Inbox e nomi), 10o (due trascrizioni), 10p (trascrizione principale);
@@ -40,7 +40,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - estrazione unica per proposte e sintesi: solo se le prove su call vere mostrano la stessa qualità.
 4. **Distribuzione** (ADR-0059, ADR-0060, ADR-0065):
    - senza account Apple a pagamento l'app non è notarizzata: si distribuisce con il **DMG** di `scripts/release.sh`. **Da verificare prima** su un Mac pulito: «Apri comunque» una sola volta, aggiornamento con Sparkle senza nuovo blocco e con i permessi conservati, durata del certificato gratuito;
-   - **aggiornamenti obbligatori:** una versione segnata come obbligatoria lascia 2 giorni con un conto alla rovescia; poi IAGO non avvia nuove registrazioni né nuovi lavori finché non si aggiorna. L'archivio resta leggibile ed esportabile e una registrazione in corso non si interrompe mai;
+   - aggiornamenti obbligatori con 2 giorni di margine: fatti nella 1.2.8-beta (ADR-0056), da provare con una release di prova (10r.7);
    - numero della versione: si resta sulle 1.2.x-beta fino al repository pubblico, poi **1.3.0** senza `-beta` (salvo indicazioni diverse); quando si distribuisce Claude Code propone il numero e l'utente lo conferma;
    - repository pubblico (con la CI automatica, gratuita per i repository pubblici), tabella Versioni del README, GitHub Pages per il sito (ADR-0068) e `https://giovannilombi.github.io/iago/` come «Website» del repository.
 5. **Idee per più avanti:**
@@ -50,6 +50,9 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - abbinare gli speaker di Teams a quelli di IAGO (ADR-0078).
 
 ## Ultime modifiche
+- **2026-10-30:** versione **1.2.8-beta**.
+- **2026-10-30, più persone nella stanza senza saperlo prima** (ADR-0031, modifica; migrazione `v24-attendees`): il microfono viene sempre diarizzato. In una riunione in presenza (audio del Mac muto) IAGO separa da solo le voci; in una call le conta e la scheda propone *Separa le voci*. *Più persone qui nella stanza* nel menu durante la registrazione. *Presenti* nella scheda e dopo lo Stop, proposti come nomi degli speaker e nelle esportazioni. Le voci della stanza hanno la loro impronta (ADR-0073). Prove 10r.
+- **2026-10-30, aggiornamenti obbligatori con 2 giorni di margine** (ADR-0056, modifica): termine e *Aggiorna ora…* nel menu; poi niente nuove registrazioni, trascrizioni, sintesi e proposte finché non si aggiorna.
 - **2026-10-30:** versione **1.2.7-beta**.
 - **2026-10-30, condividere un elemento** (ADR-0080): *Condividi…* nella scheda fa scegliere cosa mandare (scheda Markdown con sintesi e punti chiave, trascrizioni, audio, tracce, originali, schermate) e lo passa al menu Condividi del Mac o a una cartella, anche in un solo zip. Nessuna rete da IAGO, mai le impronte delle voci, ogni condivisione nel registro accessi. Prove 10q.
 - **2026-10-30, diritti e versioni** (ADR-0065, modifica): diritti di Giovanni Lombi fino all'inizio della condivisione (fase 4), di Giovanni Lombi e Gianluca Sestito dalla prima versione con quel lavoro; si resta sulle 1.2.x-beta fino al repository pubblico, poi 1.3.0 senza `-beta`.

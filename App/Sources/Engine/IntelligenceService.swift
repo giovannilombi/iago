@@ -111,7 +111,8 @@ final class IntelligenceService {
         loop = Task { [weak self] in
             var iterator = stream.makeAsyncIterator()
             while !Task.isCancelled {
-                await self?.runOnce()
+                // A mandatory update past its margin (ADR-0056): no new background jobs either.
+                if self?.isBlocked?() != true { await self?.runOnce() }
                 // Work again when something changes, or every minute.
                 // Cancelled when woken earlier: it must not yield then, or each round would wake the next one at
                 // once and the loop would never rest.
@@ -125,19 +126,22 @@ final class IntelligenceService {
         }
     }
 
+    /// True when new jobs must wait: a mandatory update past its margin (ADR-0056). Set by the app model.
+    @ObservationIgnored var isBlocked: (() -> Bool)?
+
     /// Something changed (a transcription, an import, an engine): look for work.
     func poke() { wake?.yield() }
 
     /// "Cerca proposte" on one item, also an old one.
     func suggestNow(_ itemID: String) {
-        guard engine.engine(for: .suggestions) != nil else { return }
+        guard engine.engine(for: .suggestions) != nil, !(isBlocked?() ?? false) else { return }
         if !manual.contains(itemID) { manual.append(itemID) }
         poke()
     }
 
     /// "Genera sintesi" / "Rigenera": also for an old item, whatever was tried before.
     func summarize(_ itemID: String) {
-        guard engine.engine(for: .summary) != nil else { return }
+        guard engine.engine(for: .summary) != nil, !(isBlocked?() ?? false) else { return }
         summaryFailures[itemID] = nil
         if !summaryRequests.contains(itemID) { summaryRequests.append(itemID) }
         poke()

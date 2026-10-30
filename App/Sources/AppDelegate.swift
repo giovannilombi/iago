@@ -69,6 +69,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 archiveService: archive, transcription: transcription, recorder: controller, engine: engine,
                 intelligence: intelligence, folderImporter: folderImporter, calls: calls, activity: activity)
             model.updates = updates
+            model.intelligence.isBlocked = { [weak model] in model?.blockedByUpdate() ?? false }
             calls.start()
             // ADR-0074: the morning notification, and «Inbox» when it is clicked.
             let reminder = WorkReminder(archive: archive.archive)
@@ -319,6 +320,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     )
                     do {
                         let item = try await archive.archiveFinalized(recording.directory)
+                        // «Più persone qui» chosen during the recording (ADR-0031).
+                        let room = self?.windows?.model.roomModeForRecording ?? false
+                        if room { self?.windows?.model.roomModeItems.insert(item.id) }
+                        self?.windows?.model.roomModeForRecording = false
                         // ADR-0032: a discarded recording goes to "Scartate temporanee", no panel.
                         if self?.windows?.model.applyPendingDiscard(item.id) == true { continue }
                         // FR-20: classify right after Stop (not for sessions recovered after a crash).
@@ -327,9 +332,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                             switch (try? archive.archive.setting(TranscriptionService.defaultActionKey)) ?? "ask" {
                             case "audio": break
                             case "transcribe":
-                                self?.windows?.model.transcribe(item.id, deleteAudio: false, roomMode: false)
+                                self?.windows?.model.transcribe(item.id, deleteAudio: false, roomMode: room)
                             case "transcribe_delete":
-                                self?.windows?.model.transcribe(item.id, deleteAudio: true, roomMode: false)
+                                self?.windows?.model.transcribe(item.id, deleteAudio: true, roomMode: room)
                             default: self?.windows?.showPostRecording(itemID: item.id)
                             }
                         }

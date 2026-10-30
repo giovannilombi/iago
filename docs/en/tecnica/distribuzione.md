@@ -10,7 +10,7 @@
 ## Updates with Sparkle (ADR-0056)
 - **Sparkle 2.10** reads `https://github.com/giovannilombi/iago/releases/latest/download/appcast.xml`.
 - Every release is an **EdDSA**-signed archive; the public key is in the app (`SUPublicEDKey`), the private one in the publisher's Keychain. IAGO installs only versions signed with the same key.
-- **Mandatory major versions:** the appcast marks them as *critical*; until they are installed IAGO does not start new recordings (one in progress continues).
+- **Mandatory major versions:** the appcast marks them as *critical*. From when IAGO sees them there are 2 days of margin (`UpdateService.mandatoryDeadline`, date in `update.mandatoryFirstSeen`), with the deadline and *Update now…* in the menu; then IAGO starts no new recordings, transcriptions, summaries or suggestions (`AppModel.blockedByUpdate`). A recording in progress continues.
 - It works only with the **public** repository: today it is private, so the check finds nothing.
 
 ## Making a release

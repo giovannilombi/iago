@@ -42,9 +42,14 @@ struct PostRecordingView: View {
                     }
                 }
                 Divider()
+                AttendeesRow(model: model, itemID: itemID)
                 if item.source == .recording {
                     Toggle(String(localized: "Più persone nella stanza"), isOn: $roomMode)
-                        .help(String(localized: "Distingue le voci anche nel microfono del Mac"))
+                        .help(
+                            String(
+                                localized:
+                                    "Distingue sempre le voci nel microfono del Mac. Senza, IAGO le separa da solo quando non c'è una call."
+                            ))
                 }
                 ActionGrid {
                     ActionLink(title: String(localized: "Trascrivi e conserva l'audio"), isPrimary: true) {
@@ -71,6 +76,7 @@ struct PostRecordingView: View {
         .frame(width: 520)
         .sheet(item: $decision) { draft in DecisionEditor(model: model, draft: draft) }
         .task(id: model.revision) { markers = (try? model.archive.markers(itemID: itemID)) ?? [] }
+        .onAppear { roomMode = model.roomModeItems.contains(itemID) }
     }
 
     private func transcribe(deleteAudio: Bool) {

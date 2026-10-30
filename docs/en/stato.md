@@ -5,13 +5,13 @@
 > Last update: **October 30, 2026**.
 
 ## In brief
-- **Version:** 1.2.7-beta on `main` (tag `v1.2.7-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
+- **Version:** 1.2.8-beta on `main` (tag `v1.2.8-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
 - **Repositories:**
   - `giovannilombi/iago`, private, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi; from the versions after 1.0.0-beta, Giovanni Lombi and Gianluca Sestito (ADR-0065).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 312 in the packages, all green (1.2.7-beta).
+- **Automated tests:** 314 in the packages, all green (1.2.8-beta).
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -26,7 +26,7 @@ The full description is in the [README](../../README.en.md). In short:
 ## Open, in order of priority
 List reordered on October 30, 2026 with the user: outdated entries removed (MiniCPM, graph refinements), tests merged.
 0. **Now (from October 30):**
-   - **Group mode and in-person meetings** (ADR-0031, ADR-0073): you say there are several people, optionally with their names; room voices get their own voice print and are recognized in later calls; recording from the microphone alone, also without an open call.
+   - **Live test of group mode** (1.2.8-beta, tests 10r): meetings in person, room voices, those present. To do later: recording the microphone alone, without the Mac's audio.
    - **Getting-started introduction** for whoever opens IAGO the first time, reopenable from Help: first the mock-up, then the build. To be kept up to date until distribution.
 1. **Tests, in a single session** (see [`docs/prove-tester.md`](prove-tester.md)):
    - recent versions: 10i (open work), 10n (Inbox and names), 10o (two transcripts), 10p (main transcript);
@@ -40,7 +40,7 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - single extraction for suggestions and summaries: only if tests on real calls show the same quality.
 4. **Distribution** (ADR-0059, ADR-0060, ADR-0065):
    - without a paid Apple account the app is not notarized: it is distributed with the **DMG** from `scripts/release.sh`. **To be verified first** on a clean Mac: «Open Anyway» only once, Sparkle update without a new block and with permissions kept, duration of the free certificate;
-   - **mandatory updates:** a version marked as mandatory leaves 2 days with a countdown; then IAGO starts no new recordings or jobs until it is updated. The archive stays readable and exportable and a recording in progress is never interrupted;
+   - mandatory updates with 2 days of margin: done in 1.2.8-beta (ADR-0056), to be tried with a test release (10r.7);
    - version number: it stays on 1.2.x-beta until the repository is public, then **1.3.0** without `-beta` (unless decided otherwise); when distributing Claude Code proposes the number and the user confirms it;
    - public repository (with automatic CI, free for public repositories), README Versions table, GitHub Pages for the site (ADR-0068) and `https://giovannilombi.github.io/iago/` as the repository's «Website».
 5. **Ideas for later:**
@@ -50,6 +50,9 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - matching Teams' speakers with IAGO's (ADR-0078).
 
 ## Latest changes
+- **2026-10-30:** version **1.2.8-beta**.
+- **2026-10-30, several people in the room without knowing beforehand** (ADR-0031, change; migration `v24-attendees`): the microphone is always diarized. In a meeting in person (Mac's audio silent) IAGO separates the voices by itself; in a call it counts them and the card offers *Separate the voices*. *Several people here in the room* in the menu while recording. *Present* in the card and after Stop, offered as speaker names and in exports. Room voices have their own voice print (ADR-0073). Tests 10r.
+- **2026-10-30, mandatory updates with 2 days of margin** (ADR-0056, change): deadline and *Update now…* in the menu; then no new recordings, transcriptions, summaries or suggestions until updating.
 - **2026-10-30:** version **1.2.7-beta**.
 - **2026-10-30, sharing an item** (ADR-0080): *Share…* in the card lets you choose what to send (Markdown card with summary and key points, transcripts, audio, tracks, originals, screenshots) and hands it to the Mac's Share menu or a folder, also in a single zip. No network from IAGO, never voice prints, every share in the access log. Tests 10q.
 - **2026-10-30, rights and versions** (ADR-0065, change): rights of Giovanni Lombi until sharing starts (phase 4), of Giovanni Lombi and Gianluca Sestito from the first version with that work; versions stay on 1.2.x-beta until the repository is public, then 1.3.0 without `-beta`.

@@ -279,6 +279,16 @@ You need a call with IAGO's and Teams' transcripts (10o.1), and a word that is o
 - [ ] 10q.4 On an imported email: the parts are Card, Text and Original email (.eml); the `.eml` opens in Mail.
 - [ ] 10q.5 Settings › Privacy › access log: there is an export «share» row for each share. While the files are prepared, the share shows in Activity.
 
+## 10r. Several people in the room, those present and mandatory updates (1.2.8-beta)
+You need two real people in the same room (invented names in written tests).
+- [ ] 10r.1 Without any open call, *Start recording* and talk, two of you, for at least a minute each. Transcribe: whoever spoke more is «Me», the other voice is «Room 2», without turning anything on.
+- [ ] 10r.2 During a test call with another person next to you, without turning anything on: after the transcription the voice next to you is under «Me» and the card shows «On the microphone I heard another voice…» with *Separate the voices*. Press it: the call is transcribed again and «Room 2» appears.
+- [ ] 10r.3 During a recording, icon menu › *Several people here in the room* (it stays ticked). After Stop the panel has *Several people in the room* already on and the transcription separates the voices.
+- [ ] 10r.4 In the panel after Stop write in *Present* «Bruno Test, Carla Prova» and Return: two names appear. In the card, next to «Room 2», the button for those present offers the two names; choosing one renames the speaker. A known name written in lowercase takes the known spelling.
+- [ ] 10r.5 With *Recognize voices* on, name «Room 2»; in another meeting with the same person in the room the suggestion with that name arrives.
+- [ ] 10r.6 *Share* and *Export*: the Markdown card shows «Presenti: …».
+- [ ] 10r.7 (Only with a test release marked mandatory) the icon menu shows «Mandatory update …: install it by …» and *Update now…*; after 2 days *Start recording* asks to update and transcriptions, summaries and suggestions do not start.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

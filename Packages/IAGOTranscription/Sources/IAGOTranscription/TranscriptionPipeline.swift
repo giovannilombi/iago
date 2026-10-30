@@ -4,10 +4,21 @@ import IAGOCore
 /// Transcription pipeline (spec 7.2). Receives audio files, returns a `Transcript`; knows nothing of
 /// the database (spec 5.1).
 public struct TranscriptionPipeline: Sendable {
+    /// «Più persone nella stanza» (ADR-0031): whether the voices on the microphone are told apart.
+    public enum RoomMode: Sendable, Equatable {
+        /// Always: the user said so. The main voice is "Io", the others "Stanza 2", "Stanza 3"…
+        case on
+        /// IAGO decides: with the Mac's audio silent (a meeting in person) it separates the voices it hears; with a
+        /// call it leaves them under "Io" and counts them (`Transcript.otherMicVoices`), so the user can ask.
+        case auto
+        /// Never: the whole mic track is "Io".
+        case off
+    }
+
     public enum Input: Sendable {
-        /// A recording: mic track is "Io", only the system track is diarized. With `roomMode` ("più
-        /// persone nella stanza", ADR-0031) the mic track is diarized too: its main voice is "Io".
-        case recording(mic: URL, system: URL, roomMode: Bool = false)
+        /// A recording: the mic track is "Io" and the system track is diarized; `roomMode` decides about other
+        /// voices on the microphone.
+        case recording(mic: URL, system: URL, roomMode: RoomMode = .auto)
         /// An imported file: one track, diarized as a whole.
         case imported(URL)
     }
@@ -29,8 +40,8 @@ public struct TranscriptionPipeline: Sendable {
     public struct Output: Sendable {
         public var transcript: Transcript
         public var metrics: Metrics
-        /// The voices of the diarized speakers of the other side (or of an import), with their seconds of speech:
-        /// what recognises them in later calls (ADR-0073). The user's own track has none.
+        /// The voices of the diarized speakers of the other side (or of an import) and of the room, with their seconds
+        /// of speech: what recognises them in later calls (ADR-0073). The user's own voice has none.
         public var voices: [Voice] = []
     }
 
@@ -46,6 +57,11 @@ public struct TranscriptionPipeline: Sendable {
     public var meLabel = "Io"
     /// Shortest speaker run kept when splitting segments at speaker changes (seconds).
     public var minSpeakerRun: Double = 1.5
+    /// A voice on the microphone counts as another person from this much speech (seconds): shorter clusters are
+    /// usually the user's own voice split in two, or a noise.
+    public var roomVoiceMinimum: Double = 20
+    /// Below this much speech on the system track there was no call: a meeting in person.
+    public var callSpeechMinimum: Double = 10
 
     public init(
         engine: any TranscriptionEngine, vad: FluidAudioServices.VoiceActivityDetector,
@@ -64,37 +80,48 @@ public struct TranscriptionPipeline: Sendable {
         var metrics = Metrics()
         var speakers: [Transcript.Speaker] = []
         var labeled: [(speaker: String, segment: TranscribedSegment)] = []
-        var voiceTrack: TrackResult?
+        var voices: [Voice] = []
+        var otherMicVoices: Int?
 
         switch input {
         case .recording(let micURL, let systemURL, let roomMode):
             let mic = try await transcribeTrack(
-                micURL, options: options, diarize: roomMode, metrics: &metrics, progress: scaled(progress, 0, 0.5))
+                micURL, options: options, diarize: roomMode != .off, metrics: &metrics,
+                progress: scaled(progress, 0, 0.5))
             let system = try await transcribeTrack(
                 systemURL, options: options, diarize: true, metrics: &metrics, progress: scaled(progress, 0.5, 1))
             let echo = TranscriptPostProcessing.removeEcho(mic: mic.segments, system: system.segments)
             metrics.droppedEcho = echo.dropped
             metrics.audioDuration = max(mic.duration, system.duration)
-            voiceTrack = system
+            voices = Self.voices(system)
             speakers =
                 [.me(label: meLabel)]
                 + system.speakerIDs.enumerated().map { index, id in
                     Transcript.Speaker(id: id, label: "Speaker \(index + 1)", source: .system)
                 }
-            if roomMode {
-                // Echo filter on the speaker-split mic segments (spec 7.2 step 7).
-                let roomEcho = TranscriptPostProcessing.removeEcho(
-                    mic: mic.labeled.map(\.segment), system: system.segments)
+            // Echo filter on the speaker-split mic segments (spec 7.2 step 7).
+            let roomEcho = TranscriptPostProcessing.removeEcho(mic: mic.labeled.map(\.segment), system: system.segments)
+            let echoFree = mic.labeled.filter { entry in roomEcho.kept.contains(entry.segment) }
+            let room = TranscriptPostProcessing.roomSpeakers(echoFree, minimum: roomVoiceMinimum)
+            let inPerson = system.segments.reduce(0) { $0 + $1.end - $1.start } < callSpeechMinimum
+            let separate =
+                switch roomMode {
+                case .on: true
+                case .auto: inPerson && !room.others.isEmpty
+                case .off: false
+                }
+            if separate {
                 metrics.droppedEcho = roomEcho.dropped
-                let echoFree = mic.labeled.filter { entry in roomEcho.kept.contains(entry.segment) }
-                let room = TranscriptPostProcessing.roomSpeakers(echoFree)
                 speakers.insert(
                     contentsOf: room.others.enumerated().map { index, id in
                         Transcript.Speaker(id: id, label: "Stanza \(index + 2)", source: .mic)
                     }, at: 1)
                 labeled = room.labeled + system.labeled
+                // The room's voices are remembered like the other side's (ADR-0073); the user's is not.
+                voices += Self.voices(mic, renamed: room.mapping).filter { $0.speakerID != "me" }
             } else {
                 labeled = echo.kept.map { ("me", $0) } + system.labeled
+                if roomMode == .auto, !room.others.isEmpty { otherMicVoices = room.others.count }
             }
             if system.speakerIDs.isEmpty, !system.segments.isEmpty {
                 speakers.append(.init(id: "s1", label: "Speaker 1", source: .system))
@@ -103,7 +130,7 @@ public struct TranscriptionPipeline: Sendable {
             let track = try await transcribeTrack(
                 url, options: options, diarize: true, metrics: &metrics, progress: progress)
             metrics.audioDuration = track.duration
-            voiceTrack = track
+            voices = Self.voices(track)
             let ids = track.speakerIDs.isEmpty ? ["s1"] : track.speakerIDs
             speakers = ids.enumerated().map { Transcript.Speaker(id: $1, label: "Speaker \($0 + 1)", source: .import) }
             labeled = track.labeled
@@ -118,15 +145,19 @@ public struct TranscriptionPipeline: Sendable {
             itemId: itemId,
             engine: .init(
                 asr: engine.asrName, model: engine.modelName, diarization: diarizer == nil ? nil : "fluidaudio"),
-            language: options.language, speakers: speakers, segments: segments)
-        return Output(transcript: transcript, metrics: metrics, voices: voiceTrack.map(Self.voices) ?? [])
+            language: options.language, speakers: speakers, segments: segments, otherMicVoices: otherMicVoices)
+        return Output(transcript: transcript, metrics: metrics, voices: voices)
     }
 
-    private static func voices(_ track: TrackResult) -> [Voice] {
+    /// The track's voices with their seconds of speech; `renamed` maps the diarizer's IDs to the transcript's (the
+    /// room's `me`, `r2`…), dropping those it does not list.
+    private static func voices(_ track: TrackResult, renamed: [String: String]? = nil) -> [Voice] {
         var seconds: [String: Double] = [:]
         for entry in track.labeled { seconds[entry.speaker, default: 0] += entry.segment.end - entry.segment.start }
         return track.voices.keys.sorted().compactMap { id in
-            track.voices[id].map { Voice(speakerID: id, embedding: $0, seconds: seconds[id] ?? 0) }
+            guard let embedding = track.voices[id] else { return nil }
+            let name = renamed.map { $0[id] } ?? id
+            return name.map { Voice(speakerID: $0, embedding: embedding, seconds: seconds[id] ?? 0) }
         }
     }
 
