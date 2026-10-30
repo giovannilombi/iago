@@ -138,7 +138,7 @@ A script (`scripts/check-network-apis.sh`, run with the tests) fails if a connec
    - notifications;
    - model download.
 
-   Then a seven-screen welcome tour.
+   Then the introduction: ten steps with the app's screenshots and the first steps to take.
 4. In **Settings › Permissions** you see what is on and turn on the rest one item at a time.
 5. **Optional:**
    - the work calendar (Exchange or Google in *Internet Accounts*), for meeting titles;
@@ -331,7 +331,8 @@ The notes of each version are on the [releases page](https://github.com/giovanni
 
 | Version | Date | What it contains |
 |---|---|---|
-| **1.2.8-beta** | October 30, 2026 | On `main` (tag `v1.2.8-beta`; going back to previous versions: see below). **Several people in the room without knowing beforehand:** in meetings in person IAGO separates the microphone's voices by itself, in a call it offers *Separate the voices*, and while recording there is *Several people here in the room*. **Present** to write when you want, offered as speaker names; room voices are recognized in later calls. **Mandatory updates with 2 days of margin** |
+| **1.2.9-beta** | October 30, 2026 | On `main` (tag `v1.2.9-beta`; going back to previous versions: see below). **Getting-started introduction:** «IAGO, always on your shoulder. Meeting after meeting.», ten steps with the app's real screenshots and a button to try them, and first steps that tick themselves. Instead of the welcome tour |
+| **1.2.8-beta** | October 30, 2026 | Tag `v1.2.8-beta`. **Several people in the room without knowing beforehand:** in meetings in person IAGO separates the microphone's voices by itself, in a call it offers *Separate the voices*, and while recording there is *Several people here in the room*. **Present** to write when you want, offered as speaker names; room voices are recognized in later calls. **Mandatory updates with 2 days of margin** |
 | **1.2.7-beta** | October 30, 2026 | Tag `v1.2.7-beta`. **Share an item:** choose what to send (card with summary and key points, transcripts, audio, tracks, originals, screenshots) and hand it to the Mac's Share menu or a folder, also in a single zip. New Inbox screenshot in the guide |
 | **1.2.6-beta** | October 30, 2026 | Tag `v1.2.6-beta`. **Main transcript with the ★** on its tab and *Make main* with a confirmation; **search also looks in the other transcript**, with the call shown once and the label «in the Teams transcript»; the summary says which transcript it was written from and offers *Regenerate* when the main one changes |
 | **1.2.5-beta** | October 30, 2026 | Tag `v1.2.5-beta`. **IAGO's and Teams' transcripts side by side:** Teams is added without replacing, its minutes are not links to the audio, one of the two is the main one and each can be deleted. **«Use Claude» tip** for summaries and suggestions on Macs up to 16 GB, and Claude can be chosen in Settings › Engine. ADR-0079 (other assistants) proposed |
@@ -345,7 +346,7 @@ The notes of each version are on the [releases page](https://github.com/giovanni
 | **1.0.0-beta** | October 24, 2026 | Beta, not yet distributed: everything described here (phases 0-3). 1.0.0 will be the first distributable version |
 
 ### Going back to a previous version
-Every version has a tag on GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`, `v1.2.8-beta`…) with the list of features in the message: code, guide and documentation of that version are all there.
+Every version has a tag on GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`, `v1.2.8-beta`, `v1.2.9-beta`…) with the list of features in the message: code, guide and documentation of that version are all there.
 - **Code and documentation:** `git checkout v1.0.1-beta`, then `xcodegen generate` and a build; `npm run docs:dev` shows the site of that version. If a version is abandoned, development resumes from the branch of the previous version (for example `release/1.0.x`) with the numbers of that series (1.0.2-beta…).
 - **Archive:** database migrations only go forward. An older version may not read an archive already opened by a newer one. To go back, restore the **backup** made before the update (Settings › Backup and transfer), or try the new version on a **copy** of the archive (`scripts/try-branch.sh`).
 

@@ -10,6 +10,11 @@ Puoi chiedergli cosa si è deciso, chi deve fare cosa, com'è cambiata una scelt
 
 ![La finestra principale: progetti, timeline e scheda con la sintesi](img/finestra.png)
 
+## L'introduzione
+*IAGO, sempre sulla tua spalla. Riunione dopo riunione.* Dopo la configurazione del primo avvio si apre l'**introduzione**: dieci passi con le schermate dell'app, dalle riunioni riconosciute all'importazione, dalle viste del progetto a Claude. Ogni passo ha un pulsante che ti porta in quel punto dell'app.
+- A destra ci sono i **Primi passi**: registra una call, importa un'email o un documento, dai un nome a uno speaker, metti un elemento in un progetto, conferma una proposta, fai una domanda a IAGO. Si spuntano da soli quando li fai davvero.
+- Compare a ogni avvio finché non scegli *Non mostrare più* o completi i primi passi. La riapri da qui, con *Rivedi l'introduzione*, o da Impostazioni › Aiuto.
+
 ## Cosa fa per te
 1. **Raccoglie.** Registra le call dall'icona di IAGO {{icona}} nella barra dei menu (il nostro pappagallo con la memoria di ferro). Importa email, PDF, documenti, immagini, audio e trascrizioni di Teams, anche da sola da una cartella.
 2. **Ordina.** Ogni cosa trova il suo cliente, progetto e stream. La categoria dice che tipo di riunione era e i tag la rendono trasversale.

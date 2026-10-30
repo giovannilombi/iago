@@ -5,13 +5,13 @@
 > Last update: **October 30, 2026**.
 
 ## In brief
-- **Version:** 1.2.8-beta on `main` (tag `v1.2.8-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
+- **Version:** 1.2.9-beta on `main` (tag `v1.2.9-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
 - **Repositories:**
   - `giovannilombi/iago`, private, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi; from the versions after 1.0.0-beta, Giovanni Lombi and Gianluca Sestito (ADR-0065).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 314 in the packages, all green (1.2.8-beta).
+- **Automated tests:** 315 in the packages, all green (1.2.9-beta).
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -27,7 +27,7 @@ The full description is in the [README](../../README.en.md). In short:
 List reordered on October 30, 2026 with the user: outdated entries removed (MiniCPM, graph refinements), tests merged.
 0. **Now (from October 30):**
    - **Live test of group mode** (1.2.8-beta, tests 10r): meetings in person, room voices, those present. To do later: recording the microphone alone, without the Mac's audio.
-   - **Getting-started introduction** for whoever opens IAGO the first time, reopenable from Help: first the mock-up, then the build. To be kept up to date until distribution.
+   - **Getting-started introduction** (ADR-0081, 1.2.9-beta): done; to be tested (10s) and kept up to date with the guide until distribution. To decide: a demo archive with content inside the app (it would change ADR-0066).
 1. **Tests, in a single session** (see [`docs/prove-tester.md`](prove-tester.md)):
    - recent versions: 10i (open work), 10n (Inbox and names), 10o (two transcripts), 10p (main transcript);
    - live: Teams microphone while IAGO records, IAGO's icon in notifications, sections 10b–10h (memory on 16 GB, screenshots and shortcuts, summaries and suggestions from Claude Desktop, DMG and updates, voice threshold);
@@ -50,6 +50,8 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - matching Teams' speakers with IAGO's (ADR-0078).
 
 ## Latest changes
+- **2026-10-30:** version **1.2.9-beta**.
+- **2026-10-30, getting-started introduction** (ADR-0081): «IAGO, always on your shoulder. Meeting after meeting.» Ten steps with the app's real screenshots and a button that takes you there (recognized meetings and panels, importing, project views, Inbox, key points, Ask, Claude, privacy) and six first steps that tick themselves. It replaces the welcome tour. New guide screenshots: Graph, panel after Stop, Settings › Claude. Tests 10s.
 - **2026-10-30:** version **1.2.8-beta**.
 - **2026-10-30, several people in the room without knowing beforehand** (ADR-0031, change; migration `v24-attendees`): the microphone is always diarized. In a meeting in person (Mac's audio silent) IAGO separates the voices by itself; in a call it counts them and the card offers *Separate the voices*. *Several people here in the room* in the menu while recording. *Present* in the card and after Stop, offered as speaker names and in exports. Room voices have their own voice print (ADR-0073). Tests 10r.
 - **2026-10-30, mandatory updates with 2 days of margin** (ADR-0056, change): deadline and *Update now…* in the menu; then no new recordings, transcriptions, summaries or suggestions until updating.

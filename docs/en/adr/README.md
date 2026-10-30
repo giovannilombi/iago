@@ -102,3 +102,4 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0078 | IAGO's and Teams' transcripts side by side, Claude suggested on slow Macs | accepted (1.2.5-beta; search in both and ★ on the main one: 1.2.6-beta) |
 | 0079 | Assistants beyond Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposed |
 | 0080 | Sharing an item | accepted (1.2.7-beta) |
+| 0081 | Getting-started introduction | accepted (1.2.9-beta) |

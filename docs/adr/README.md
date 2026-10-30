@@ -102,3 +102,4 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0078 | Trascrizioni di IAGO e di Teams affiancate, Claude consigliato sui Mac lenti | accettato (1.2.5-beta; ricerca in tutte e due e ★ sulla principale: 1.2.6-beta) |
 | 0079 | Assistenti oltre Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposto |
 | 0080 | Condividere un elemento | accettato (1.2.7-beta) |
+| 0081 | Introduzione all'uso | accettato (1.2.9-beta) |

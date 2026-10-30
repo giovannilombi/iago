@@ -138,7 +138,7 @@ Uno script (`scripts/check-network-apis.sh`, lanciato con i test) fallisce se ne
    - notifiche;
    - download dei modelli.
 
-   Poi un tour di benvenuto di sette schermate.
+   Poi l'introduzione: dieci passi con le schermate dell'app e i primi passi da fare.
 4. In **Impostazioni › Permessi** vedi cosa è attivo e attivi il resto una voce alla volta.
 5. **Facoltativi:**
    - il calendario di lavoro (Exchange o Google in *Account Internet*), per i titoli delle riunioni;
@@ -331,7 +331,8 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
-| **1.2.8-beta** | 30 ottobre 2026 | Su `main` (tag `v1.2.8-beta`; si torna alle versioni precedenti: vedi sotto). **Più persone nella stanza senza saperlo prima:** nelle riunioni in presenza IAGO separa da solo le voci del microfono, in una call propone *Separa le voci*, e durante la registrazione c'è *Più persone qui nella stanza*. **Presenti** da scrivere quando vuoi, proposti come nomi degli speaker; le voci della stanza vengono riconosciute nelle call successive. **Aggiornamenti obbligatori con 2 giorni di margine** |
+| **1.2.9-beta** | 30 ottobre 2026 | Su `main` (tag `v1.2.9-beta`; si torna alle versioni precedenti: vedi sotto). **Introduzione all'uso:** «IAGO, sempre sulla tua spalla. Riunione dopo riunione.», dieci passi con le schermate vere dell'app e un pulsante per provarli, e i primi passi che si spuntano da soli. Al posto del tour di benvenuto |
+| **1.2.8-beta** | 30 ottobre 2026 | Tag `v1.2.8-beta`. **Più persone nella stanza senza saperlo prima:** nelle riunioni in presenza IAGO separa da solo le voci del microfono, in una call propone *Separa le voci*, e durante la registrazione c'è *Più persone qui nella stanza*. **Presenti** da scrivere quando vuoi, proposti come nomi degli speaker; le voci della stanza vengono riconosciute nelle call successive. **Aggiornamenti obbligatori con 2 giorni di margine** |
 | **1.2.7-beta** | 30 ottobre 2026 | Tag `v1.2.7-beta`. **Condividi un elemento:** scegli cosa mandare (scheda con sintesi e punti chiave, trascrizioni, audio, tracce, originali, schermate) e passalo al menu Condividi del Mac o a una cartella, anche in un solo zip. Nuova schermata dell'Inbox nella guida |
 | **1.2.6-beta** | 30 ottobre 2026 | Tag `v1.2.6-beta`. **Trascrizione principale con la ★** sulla sua scheda e *Rendi principale* con conferma; la **ricerca guarda anche nella trascrizione secondaria**, con la call una volta sola e l'etichetta «nella trascrizione Teams»; la sintesi dice da quale trascrizione è fatta e propone *Rigenera* quando la principale cambia |
 | **1.2.5-beta** | 30 ottobre 2026 | Tag `v1.2.5-beta`. **Trascrizioni di IAGO e di Teams affiancate:** Teams si aggiunge senza sostituire, i suoi minuti non sono link all'audio, una delle due è la principale e ciascuna si elimina. **Consiglio «Usa Claude»** per sintesi e proposte sui Mac fino a 16 GB, e scelta di Claude in Impostazioni › Motore. ADR-0079 (altri assistenti) proposto |
@@ -345,7 +346,7 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 | **1.0.0-beta** | 24 ottobre 2026 | Beta, non ancora distribuita: tutto quello che è descritto qui (fasi 0-3). La 1.0.0 sarà la prima versione distribuibile |
 
 ### Tornare a una versione precedente
-Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`, `v1.2.8-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
+Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`, `v1.2.8-beta`, `v1.2.9-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
 - **Codice e documentazione:** `git checkout v1.0.1-beta`, poi `xcodegen generate` e una build; `npm run docs:dev` mostra il sito di quella versione. Se si abbandona una versione, lo sviluppo riprende dal ramo della versione precedente (per esempio `release/1.0.x`) con i numeri di quella serie (1.0.2-beta…).
 - **Archivio:** le migrazioni del database vanno solo avanti. Una versione più vecchia potrebbe non leggere un archivio già aperto da una più nuova. Per tornare indietro si ripristina il **backup** fatto prima dell'aggiornamento (Impostazioni › Backup e trasferimento), oppure si prova la versione nuova su una **copia** dell'archivio (`scripts/try-branch.sh`).
 

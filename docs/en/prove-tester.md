@@ -77,10 +77,10 @@ The tests don't require real data: use test meetings and test files.
 - [ ] 3e.6 In an item's detail, clicking a tag opens all the items with that tag. Next to the category there is no icon: all the items of a category are opened from Categories and tags.
 
 ## 3f. Help, tour and glossary
-- [ ] 3f.1 At the first launch after setup the welcome tour appears (7 pages: memory, recording with the IAGO icon, imports, decisions and moments, summaries, Ask, data under your control). "Don't show again" turns it off; you can see it again from Help › Getting started.
+- [ ] 3f.1 At the first launch after setup the introduction appears (see 10s). "Don't show again" turns it off; you can see it again from Help › Getting started.
 - [ ] 3f.2 "IAGO Help" opens from the menu bar menu and from the "?" in the window; every topic can be read and the "Open Settings" buttons work.
 - [ ] 3f.2b The **? Guide** button at the top left, next to Settings, opens the full-page guide: chapters on the left, text and images, search, "← Previous / Next →".
-- [ ] 3f.2c Settings › **Help**: "Open the guide", "See the welcome tour again" and "Show the tour at launch" work.
+- [ ] 3f.2c Settings › **Help**: "Open the guide", "See the introduction again" and "Show the introduction at launch" work.
 - [ ] 3f.3 Settings › Transcription › Glossary: write a difficult name said in a call (e.g. a company), transcribe again: the name is spelled correctly.
 
 ## 3g. Updates and minimum engine for summaries
@@ -288,6 +288,13 @@ You need two real people in the same room (invented names in written tests).
 - [ ] 10r.5 With *Recognize voices* on, name «Room 2»; in another meeting with the same person in the room the suggestion with that name arrives.
 - [ ] 10r.6 *Share* and *Export*: the Markdown card shows «Presenti: …».
 - [ ] 10r.7 (Only with a test release marked mandatory) the icon menu shows «Mandatory update …: install it by …» and *Update now…*; after 2 days *Start recording* asks to update and transcriptions, summaries and suggestions do not start.
+
+## 10s. Introduction (1.2.9-beta)
+- [ ] 10s.1 With a new archive (`scripts/try-branch.sh --fresh` or a test user account), once the setup is done the introduction opens: at the top «IAGO, always on your shoulder. Meeting after meeting.», ten steps, «1 of 10».
+- [ ] 10s.2 Every step has its screenshot; step 2 has the «It recognizes the meeting» and «After Stop» tabs, step 5 Overview, Timeline, Kanban and Graph. In English the screenshots are the English ones.
+- [ ] 10s.3 The buttons take you to the right place: example project (on step 5 in the view of the chosen tab), Import, Inbox, Key points, Ask IAGO, Settings › Claude and › Privacy, guide.
+- [ ] 10s.4 First steps: import a document with the introduction open and the row ticks itself; «x of 6 done» goes up.
+- [ ] 10s.5 Close with *Start* without *Don't show again*: at the next launch it opens again. With *Don't show again*, or with all first steps done, it does not; *See the introduction again* in Help › Getting started and in Settings › Help reopens it.
 
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).

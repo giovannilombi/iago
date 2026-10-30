@@ -39,6 +39,10 @@ In **Impostazioni › Trascrizione › Glossario** scrivi nomi e sigle che vanno
 ## Dopo lo Stop
 In Impostazioni › Trascrizione scegli cosa succede a fine registrazione: **trascrivi subito**, **chiedi**, oppure **trascrivi e cancella l'audio** (l'audio viene eliminato solo dopo aver verificato la trascrizione). Puoi anche trascrivere solo quando il Mac è collegato alla corrente.
 
+Con *chiedi*, dopo lo Stop compare un pannello: progetto, categoria, tag, segnalibri, presenti e cosa fare dell'audio.
+
+![Il pannello dopo lo Stop, con i presenti](img/dopo-stop.png)
+
 ## Correggere
 Puoi ritrascrivere con l'altro motore, rinominare gli speaker, e per documenti ed email correggere il testo a mano (il testo automatico resta ripristinabile). Una trascrizione di Teams (.vtt o .docx) si può allegare a una registrazione.
 

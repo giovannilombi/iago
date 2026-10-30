@@ -42,6 +42,8 @@ Un progetto ha una storia sola (call, email, documenti, note, punti chiave); in 
 
 Riepilogo, Kanban e Grafo occupano tutta la finestra: ciò che apri compare nel pannello a destra, che chiudi con ✕ o Esc. IAGO ricorda per ogni progetto l'ultima vista scelta.
 
+![Il Grafo di un progetto: persone, elementi e punti chiave collegati](img/grafo.png)
+
 ## Aggiungere e importare in un progetto
 **Aggiungi**, accanto al nome del progetto, crea una nota o un punto chiave. L'ultima voce, **Importa file ed elementi…**, apre una finestra con un'area dove trascinare file, cartelle o email e il pulsante *Scegli dal Mac…*; sotto, *Dagli appunti*, *Da testo* (si apre il campo per scrivere o incollare) ed *Email senza file*. Tutto va nel progetto (e negli stream) indicati in *Vanno in*.
 

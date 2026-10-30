@@ -15,4 +15,4 @@
 - **Privacy:** what stays on the Mac, Time Machine, access log.
 - **Backup and transfer:** encrypted backup, restore on another Mac, audio export.
 - **Storage:** how much space the archive and models take.
-- **Help:** this guide and the welcome tour.
+- **Help:** this guide and the introduction.

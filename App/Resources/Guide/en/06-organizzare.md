@@ -42,6 +42,8 @@ A project has a single story (calls, emails, documents, notes, key points); at t
 
 Overview, Kanban and Graph fill the whole window: what you open appears in the panel on the right, which you close with ✕ or Esc. IAGO remembers the last view you chose for each project.
 
+![A project's Graph: people, items and key points linked together](img/grafo.png)
+
 ## Adding and importing into a project
 **Add**, next to the project name, creates a note or a key point. The last entry, **Import files and items…**, opens a window with an area where you drop files, folders or emails and the *Choose from Mac…* button; below it, *From clipboard*, *From text* (the field for typing or pasting opens) and *Email without files*. Everything goes into the project (and the streams) shown in *Goes to*.
 

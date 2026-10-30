@@ -38,6 +38,10 @@ In **Settings › Transcription › Glossary** write the names and acronyms that
 ## After Stop
 In Settings › Transcription choose what happens when a recording ends: **transcribe right away**, **ask**, or **transcribe and delete the audio** (the audio is deleted only after the transcript has been checked). You can also transcribe only when the Mac is plugged in.
 
+With *ask*, a panel appears after Stop: project, category, tags, bookmarks, those present and what to do with the audio.
+
+![The panel after Stop, with those present](img/dopo-stop.png)
+
 ## Correcting
 You can transcribe again with the other engine, rename the speakers, and for documents and emails correct the text by hand (the automatic text can be restored). A Teams transcript (.vtt or .docx) can be attached to a recording.
 

@@ -9,6 +9,11 @@ You can ask it what was decided, who has to do what, how a choice changed over t
 
 ![The main window: projects, timeline and item card with the summary](img/finestra.png)
 
+## The introduction
+*IAGO, always on your shoulder. Meeting after meeting.* After the first-launch setup the **introduction** opens: ten steps with the app's screenshots, from recognized meetings to importing, from the project's views to Claude. Every step has a button that takes you to that place in the app.
+- On the right there are the **First steps**: record a call, import an email or a document, name a speaker, put an item in a project, confirm a suggestion, ask IAGO a question. They tick themselves when you really do them.
+- It appears at every launch until you choose *Don't show again* or complete the first steps. You reopen it from here, with *See the introduction again*, or from Settings › Help.
+
 ## What it does for you
 1. **Collects.** It records calls from the IAGO icon ![icona di IAGO](/icona.svg) in the menu bar (our parrot with a memory of steel). It imports emails, PDFs, documents, images, audio and Teams transcripts, even on its own from a folder.
 2. **Sorts.** Everything finds its client, project and stream. The category says what kind of meeting it was, and tags cut across projects.

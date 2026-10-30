@@ -15,4 +15,4 @@
 - **Privacy:** cosa resta sul Mac, Time Machine, registro accessi.
 - **Backup e trasferimento:** backup cifrato, ripristino su un altro Mac, esportazione degli audio.
 - **Spazio:** quanto occupano archivio e modelli.
-- **Aiuto:** questa guida e il tour di benvenuto.
+- **Aiuto:** questa guida e l'introduzione.
