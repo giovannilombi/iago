@@ -11,6 +11,8 @@ final class ActivityCenter {
         case importFiles, backup, restore, exportAudio, modelDownload, tidy
         /// «Sintesi di stato» of a project, client or stream (ADR-0074).
         case statusReport
+        /// «Condividi…» on an item (ADR-0080): its files decrypted for the Share menu or a folder.
+        case share
 
         var label: String {
             switch self {
@@ -21,6 +23,7 @@ final class ActivityCenter {
             case .modelDownload: String(localized: "Download dei modelli di trascrizione")
             case .tidy: String(localized: "Riordino del testo")
             case .statusReport: String(localized: "Sintesi di stato")
+            case .share: String(localized: "Condivisione")
             }
         }
 
@@ -28,7 +31,7 @@ final class ActivityCenter {
             switch self {
             case .importFiles: "square.and.arrow.down"
             case .backup, .restore: "externaldrive"
-            case .exportAudio: "square.and.arrow.up"
+            case .exportAudio, .share: "square.and.arrow.up"
             case .modelDownload: "arrow.down.circle"
             case .tidy: "text.badge.checkmark"
             case .statusReport: "doc.text.magnifyingglass"

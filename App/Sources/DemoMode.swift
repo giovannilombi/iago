@@ -150,6 +150,31 @@ enum DemoMode {
                     Decision(
                         text: "Aggiungere la pagina FAQ", decidedAt: day(-1, 16), projectId: portal.id,
                         origin: .manual, kind: .request), people: ["Marta Rossi"])
+                // Proposals still to confirm, for the Inbox's yellow block (ADR-0076).
+                if let sal = items["SAL settimanale portale"] {
+                    try archive.replacePendingSuggestions(
+                        itemID: sal.id, model: "qwen3.5-9b",
+                        [
+                            (
+                                .activity,
+                                SuggestionPayload(
+                                    text: "Mandare ad Acme la stima per l'SSO", quote: "la stima la mando io",
+                                    atSec: 152, owner: "Luca Bianchi")
+                            ),
+                            (
+                                .decision,
+                                SuggestionPayload(
+                                    text: "Testi definitivi entro venerdì", quote: "i testi entro venerdì", atSec: 188)
+                            ),
+                            (
+                                .risk,
+                                SuggestionPayload(
+                                    text: "Il certificato SSO può slittare",
+                                    quote: "il certificato arriva tra due settimane",
+                                    atSec: 140, severity: "medium")
+                            ),
+                        ])
+                }
                 _ = try archive.addNote(
                     itemID: nil, projectID: portal.id,
                     body: "Ricordarsi di chiedere ad Acme i testi definitivi delle pagine prodotto.",

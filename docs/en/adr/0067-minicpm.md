@@ -1,6 +1,6 @@
 # ADR-0067 — MiniCPM: instead of Qwen 3.5 4B or in addition to it
 
-- Status: proposed (to be evaluated with tests; no change to the catalog until it is decided)
+- Status: rejected (user's decision of 2026-10-30: MiniCPM is not added to the catalog)
 - Date: 2026-10-24
 - References: ADR-0048 (MLX local engine, model catalog), ADR-0054 (summaries, 9B minimum)
 

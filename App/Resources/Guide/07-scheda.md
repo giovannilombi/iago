@@ -4,7 +4,7 @@
 Un elemento è una **call**, un'**email** o un **documento**. La scheda raccoglie tutto:
 
 - **Intestazione:** titolo, data, progetto, stream, categoria, tag. Tutto modificabile.
-- **Azioni:** trascrivi, ritrascrivi, esporta, elimina, **Copia per Claude** (vedi il capitolo *Claude*).
+- **Azioni:** trascrivi, ritrascrivi, **Condividi…**, esporta, elimina, **Copia per Claude** (vedi il capitolo *Claude*).
 - **Sintesi:** vedi il capitolo *Sintesi*.
 - **Proposte:** ciò che il motore suggerisce, da confermare o scartare.
 - **Audio:** lettore con scelta della traccia (entrambe, solo microfono, solo sistema).
@@ -18,6 +18,13 @@ Un elemento è una **call**, un'**email** o un **documento**. La scheda raccogli
 - **File:** gli asset dell'elemento, con dimensione.
 
 Le sezioni si possono chiudere (la scelta vale per tutte le schede).
+
+## Condividere un elemento
+*Condividi…* tra le azioni apre l'elenco di ciò che l'elemento ha, con la dimensione: spunta cosa mandare.
+- **Scheda (Markdown):** data, progetto, sintesi, punti chiave e note.
+- **Trascrizione** (o il testo di email e documenti), l'**altra trascrizione** se la call ne ha due, l'**audio**, le **tracce separate**, il **file originale** (email, documento, trascrizione di Teams) e le **schermate**.
+- *Condividi…* apre il menu Condividi del Mac: Mail, Messaggi, AirDrop e le altre app. *Salva in una cartella…* li copia dove scegli. Con *Un solo file .zip* arriva tutto in un file.
+- I file condivisi non sono cifrati: chi li riceve può leggerli e ascoltarli. Le impronte delle voci non escono mai, e ogni condivisione resta nel registro accessi.
 
 ## La barra di ascolto
 

@@ -4,7 +4,7 @@
 An item is a **call**, an **email** or a **document**. The card gathers everything:
 
 - **Header:** title, date, project, stream, category, tags. All editable.
-- **Actions:** transcribe, transcribe again, export, delete, **Copy for Claude** (see the chapter *Claude*).
+- **Actions:** transcribe, transcribe again, **Share…**, export, delete, **Copy for Claude** (see the chapter *Claude*).
 - **Summary:** see the chapter *Summary*.
 - **Suggestions:** what the engine suggests, to confirm or dismiss.
 - **Audio:** player with a choice of track (both, microphone only, system only).
@@ -18,6 +18,13 @@ An item is a **call**, an **email** or a **document**. The card gathers everythi
 - **Files:** the item's assets, with their size.
 
 Sections can be collapsed (the choice applies to all cards).
+
+## Sharing an item
+*Share…* among the actions opens the list of what the item has, with the size: tick what to send.
+- **Card (Markdown):** date, project, summary, key points and notes.
+- **Transcript** (or the text of emails and documents), the **other transcript** if the call has two, the **audio**, the **separate tracks**, the **original file** (email, document, Teams transcript) and the **screenshots**.
+- *Share…* opens the Mac's Share menu: Mail, Messages, AirDrop and the other apps. *Save to a folder…* copies them where you choose. With *A single .zip file* everything arrives in one file.
+- Shared files are not encrypted: whoever receives them can read and listen to them. Voice prints never leave, and every share stays in the access log.
 
 ## The listening bar
 

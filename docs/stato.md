@@ -5,13 +5,13 @@
 > Ultimo aggiornamento: **30 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.6-beta su `main` (tag `v1.2.6-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.7-beta su `main` (tag `v1.2.7-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 311 nei pacchetti, tutti verdi (1.2.6-beta).
+- **Test automatici:** 312 nei pacchetti, tutti verdi (1.2.7-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -24,24 +24,36 @@ La descrizione completa è nel [README](../README.md). In sintesi:
 - barra di registrazione e barra di ascolto, Attività, guida integrata, tour, aggiornamenti con Sparkle.
 
 ## Aperto, in ordine di priorità
-0. **Prova della 1.2.0-beta** (lavoro aperto, ADR-0074 e ADR-0076, [`docs/design/lavoro-aperto.md`](design/lavoro-aperto.md)): prove 10i di [`docs/prove-tester.md`](prove-tester.md) sul Mac dell'utente (installata il 29 ottobre), poi rifiniture. In attesa, da riaprire: sincronizzazione con i calendari (Mac, Google, Microsoft, servirà un ADR di rete), Pianifica la giornata, invio di attività ad altri prima della fase 4, taratura delle proposte del lavoro aperto su call vere.
-1. **Revisione tecnica** del collega e decisione sulla distribuzione.
-2. **Prove di accettazione** con [`docs/prove-tester.md`](prove-tester.md), una issue "Prove" per tester (vedi [README-collaborators](../README-collaborators.md#6-prove)).
-3. **Verifiche dal vivo ancora da fare:**
-   - il microfono di Teams funziona mentre IAGO registra (dopo il ritiro di ADR-0053);
-   - l'icona di IAGO nelle notifiche di macOS;
-   - le novità del 27 ottobre, sezioni 10b-10h di [`docs/prove-tester.md`](prove-tester.md), con la taratura della soglia delle voci su call vere (10h): coda del motore e memoria su un Mac da 16 GB, schermate e scorciatoie nell'app vera (con il permesso Registrazione schermo dato a IAGO), sintesi e proposte fatte da Claude Desktop, DMG e aggiornamenti.
-4. **ADR proposti, da decidere:**
-   - ADR-0057, progetti condivisi tramite una cartella cloud (progetto in [`docs/design/sync-cartella-condivisa.md`](design/sync-cartella-condivisa.md)); quando accettato supera il backend di ADR-0012 e si apre la fase 4;
-   - ADR-0067, MiniCPM al posto di Qwen 3.5 4B o in aggiunta: servono prove. Un modello visivo locale (MiniCPM-V) si valuta solo se l'OCR delle schermate non basta (ADR-0072).
-   - Estrazione unica per proposte e sintesi (oggi la stessa call si legge due volte): solo se il banco di prova su call vere mostra la stessa qualità.
-5. **Distribuzione** (ADR-0059, ADR-0060, ADR-0065): senza account Apple a pagamento l'app non è notarizzata e chi la installa deve fare "Apri comunque". Si distribuisce con il **DMG** di `scripts/release.sh`. **Da verificare prima** su un Mac o un account utente pulito: "Apri comunque" una sola volta, aggiornamento con Sparkle senza un nuovo blocco e con i permessi conservati, durata del certificato gratuito e cosa succede alla scadenza. Per distribuire: repository pubblico, `scripts/release.sh 1.0.0 --github`, tabella Versioni del README, attivazione di GitHub Pages per il sito (ADR-0068) e `https://giovannilombi.github.io/iago/` come "Website" nella sezione About del repository.
-6. **Dopo:**
-   - prove approfondite della qualità della trascrizione su call vere (motori, diarizzazione);
-   - voci della stanza (ADR-0031) nel riconoscimento delle voci;
-   - rifiniture del grafo.
+Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniCPM, rifiniture del grafo), accorpate le prove.
+0. **Subito (dal 30 ottobre):**
+   - **Modalità gruppo e riunioni in presenza** (ADR-0031, ADR-0073): si dice che ci sono più persone, volendo con i loro nomi; le voci della stanza hanno la loro impronta e vengono riconosciute nelle call successive; si registra dal solo microfono anche senza una call aperta.
+   - **Introduzione all'uso** per chi apre IAGO la prima volta, riapribile da Aiuto: prima la tavola, poi lo sviluppo. Va aggiornata fino alla distribuzione.
+1. **Prove, in un'unica sessione** (vedi [`docs/prove-tester.md`](prove-tester.md)):
+   - versioni recenti: 10i (lavoro aperto), 10n (Inbox e nomi), 10o (due trascrizioni), 10p (trascrizione principale);
+   - dal vivo: microfono di Teams mentre IAGO registra, icona di IAGO nelle notifiche, sezioni 10b–10h (memoria su 16 GB, schermate e scorciatoie, sintesi e proposte da Claude Desktop, DMG e aggiornamenti, soglia delle voci);
+   - rimandate a fine app: 5 call vere con la prova di deriva di 2 ore, lista della fase 2, «Riordina testo»;
+   - qualità su call vere: trascrizione (motori, diarizzazione), sintesi per categoria con il modello predefinito, taratura delle proposte del lavoro aperto.
+2. **Revisione tecnica** del collega, poi le prove dei tester esterni (una issue per tester, [README-collaborators](../README-collaborators.md#6-prove)).
+3. **ADR proposti, da decidere:**
+   - ADR-0057, progetti condivisi tramite una cartella cloud ([`docs/design/sync-cartella-condivisa.md`](design/sync-cartella-condivisa.md)): apre la fase 4, primo lavoro con Gianluca Sestito: da lì i diritti sono di entrambi (ADR-0065);
+   - ADR-0079, assistenti oltre Claude;
+   - estrazione unica per proposte e sintesi: solo se le prove su call vere mostrano la stessa qualità.
+4. **Distribuzione** (ADR-0059, ADR-0060, ADR-0065):
+   - senza account Apple a pagamento l'app non è notarizzata: si distribuisce con il **DMG** di `scripts/release.sh`. **Da verificare prima** su un Mac pulito: «Apri comunque» una sola volta, aggiornamento con Sparkle senza nuovo blocco e con i permessi conservati, durata del certificato gratuito;
+   - **aggiornamenti obbligatori:** una versione segnata come obbligatoria lascia 2 giorni con un conto alla rovescia; poi IAGO non avvia nuove registrazioni né nuovi lavori finché non si aggiorna. L'archivio resta leggibile ed esportabile e una registrazione in corso non si interrompe mai;
+   - numero della versione: si resta sulle 1.2.x-beta fino al repository pubblico, poi **1.3.0** senza `-beta` (salvo indicazioni diverse); quando si distribuisce Claude Code propone il numero e l'utente lo conferma;
+   - repository pubblico (con la CI automatica, gratuita per i repository pubblici), tabella Versioni del README, GitHub Pages per il sito (ADR-0068) e `https://giovannilombi.github.io/iago/` come «Website» del repository.
+5. **Idee per più avanti:**
+   - **ClickUp:** ticket dalle attività, stato di ritorno, registro delle liste seguite, ticket nella memoria ([`docs/design/clickup.md`](design/clickup.md));
+   - calendari Google e Microsoft: oggi funzionano tramite Impostazioni di Sistema › Account Internet; una sync diretta servirebbe un ADR di rete;
+   - Pianifica la giornata;
+   - abbinare gli speaker di Teams a quelli di IAGO (ADR-0078).
 
 ## Ultime modifiche
+- **2026-10-30:** versione **1.2.7-beta**.
+- **2026-10-30, condividere un elemento** (ADR-0080): *Condividi…* nella scheda fa scegliere cosa mandare (scheda Markdown con sintesi e punti chiave, trascrizioni, audio, tracce, originali, schermate) e lo passa al menu Condividi del Mac o a una cartella, anche in un solo zip. Nessuna rete da IAGO, mai le impronte delle voci, ogni condivisione nel registro accessi. Prove 10q.
+- **2026-10-30, diritti e versioni** (ADR-0065, modifica): diritti di Giovanni Lombi fino all'inizio della condivisione (fase 4), di Giovanni Lombi e Gianluca Sestito dalla prima versione con quel lavoro; si resta sulle 1.2.x-beta fino al repository pubblico, poi 1.3.0 senza `-beta`.
+- **2026-10-30, pulizia delle cose aperte:** elenco riordinato con l'utente. MiniCPM non entra (ADR-0067 rifiutato), tolte le rifiniture del grafo, prove raccolte in un'unica sessione; aggiunte le idee ClickUp e «Condividi un elemento», gli aggiornamenti obbligatori con 2 giorni di margine e, in cima, modalità gruppo, riunioni in presenza e introduzione all'uso. Schermata dell'Inbox della guida rifatta.
 - **2026-10-30:** versione **1.2.6-beta**.
 - **2026-10-30, trascrizione principale e ricerca in tutte e due** (ADR-0078, modifica; migrazione `v23-summary-transcript`): la ricerca guarda anche nella trascrizione secondaria, con la call una volta sola e l'etichetta «nella trascrizione Teams» quando le parole sono solo lì. La principale ha la ★ sulla sua scheda; *Rendi principale* chiede conferma se c'è già una sintesi, e la sintesi dice da quale trascrizione è fatta, con *Rigenera* se la principale è cambiata. Esportazioni, sintesi, proposte e Claude restano sulla principale. L'indice di ricerca si ricostruisce una volta all'avvio. Prove 10p.
 - **2026-10-30:** versione **1.2.5-beta**.

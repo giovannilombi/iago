@@ -31,6 +31,8 @@ struct ItemDetailView: View {
     @State private var originalImage: NSImage?
     @State private var attachingTranscript = false
     @State private var confirmAttachTranscript = false
+    /// «Condividi…» (ADR-0080).
+    @State private var sharing = false
     @State private var activeJob: Job?
     @State private var tab = Tab.transcript
     @State private var roomMode = false
@@ -125,6 +127,9 @@ struct ItemDetailView: View {
                 content = nil
                 model.refreshTextAssets(itemID)
             }
+        }
+        .sheet(isPresented: $sharing) {
+            if let item { ShareItemSheet(model: model, item: item) }
         }
         .sheet(item: $editingNote) { draft in
             NoteEditor(model: model, draft: draft) { saved in save(saved) }
@@ -239,6 +244,10 @@ struct ItemDetailView: View {
                     ) { transcribe(deleteAudio: true) }
                 }
                 CopyForClaudeLink(model: model, item: item)
+                ActionLink(
+                    title: String(localized: "Condividi…"),
+                    detail: String(localized: "Scegli cosa mandare: scheda, trascrizione, audio, originali, schermate")
+                ) { sharing = true }
                 if hasAudio {
                     ActionLink(
                         title: String(localized: "Allega trascrizione Teams…"),

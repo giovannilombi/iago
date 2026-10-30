@@ -1823,6 +1823,16 @@
         }
       }
     },
+    "Altra trascrizione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other transcript"
+          }
+        }
+      }
+    },
     "Altre azioni" : {
       "localizations" : {
         "en" : {
@@ -4154,12 +4164,42 @@
         }
       }
     },
+    "Condividi «%@»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share «%@»"
+          }
+        }
+      }
+    },
     "Condividi con Claude anche le immagini delle schermate" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Also share screenshot images with Claude"
+          }
+        }
+      }
+    },
+    "Condividi…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share…"
+          }
+        }
+      }
+    },
+    "Condivisione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharing"
           }
         }
       }
@@ -5140,6 +5180,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Date"
+          }
+        }
+      }
+    },
+    "Data, progetto, sintesi, punti chiave e note" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date, project, summary, key points and notes"
           }
         }
       }
@@ -7641,6 +7691,16 @@
         }
       }
     },
+    "I file condivisi non sono cifrati: chi li riceve può leggerli e ascoltarli. Le impronte delle voci non escono mai. La condivisione viene annotata nel registro di IAGO." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared files are not encrypted: whoever receives them can read and listen to them. Voice prints never leave. The share is noted in IAGO's log."
+          }
+        }
+      }
+    },
     "I file esportati non sono cifrati: chi li riceve può ascoltarli. L'esportazione viene annotata nel registro di IAGO." : {
       "localizations" : {
         "en" : {
@@ -8006,6 +8066,16 @@
         }
       }
     },
+    "Il file così come è arrivato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The file as it arrived"
+          }
+        }
+      }
+    },
     "Il file esportato non è cifrato: trattalo con la stessa cura dei documenti originali." : {
       "localizations" : {
         "en" : {
@@ -8212,6 +8282,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The text and the original file"
+          }
+        }
+      }
+    },
+    "Il testo estratto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The extracted text"
           }
         }
       }
@@ -9586,6 +9666,16 @@
         }
       }
     },
+    "La seconda trascrizione della call (IAGO o Teams)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The call's second transcript (IAGO or Teams)"
+          }
+        }
+      }
+    },
     "La sintesi è stata cambiata dopo questa modifica di Claude: annullarla farebbe perdere quel lavoro." : {
       "localizations" : {
         "en" : {
@@ -9612,6 +9702,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The current transcript and unused speaker names will be replaced (FR-55)."
+          }
+        }
+      }
+    },
+    "La trascrizione principale, con i nomi degli speaker" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The main transcript, with the speakers' names"
           }
         }
       }
@@ -9763,6 +9863,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Recording prompts stay until you respond (5 minutes at most)"
+          }
+        }
+      }
+    },
+    "Le schermate catturate durante la call, con il loro minuto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The screenshots captured during the call, with their minute"
           }
         }
       }
@@ -10103,6 +10213,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Microphone"
+          }
+        }
+      }
+    },
+    "Microfono e audio del Mac, in due file" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Microphone and the Mac's audio, in two files"
           }
         }
       }
@@ -14989,6 +15109,26 @@
         }
       }
     },
+    "Salva in una cartella…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to a folder…"
+          }
+        }
+      }
+    },
+    "Salva qui" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save here"
+          }
+        }
+      }
+    },
     "Salva…" : {
       "localizations" : {
         "en" : {
@@ -15249,6 +15389,26 @@
         }
       }
     },
+    "Scegli cosa mandare: scheda, trascrizione, audio, originali, schermate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose what to send: card, transcript, audio, originals, screenshots"
+          }
+        }
+      }
+    },
+    "Scegli cosa mandare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose what to send."
+          }
+        }
+      }
+    },
     "scegli dal Mac…" : {
       "localizations" : {
         "en" : {
@@ -15395,6 +15555,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose…"
+          }
+        }
+      }
+    },
+    "Scheda (Markdown)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Card (Markdown)"
           }
         }
       }
@@ -16927,6 +17097,16 @@
         }
       }
     },
+    "Testo (Markdown)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Text (Markdown)"
+          }
+        }
+      }
+    },
     "Testo automatico" : {
       "localizations" : {
         "en" : {
@@ -17367,6 +17547,16 @@
         }
       }
     },
+    "Tracce separate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Separate tracks"
+          }
+        }
+      }
+    },
     "Traccia" : {
       "localizations" : {
         "en" : {
@@ -17644,6 +17834,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Imported Teams transcript: the minutes are Teams', not the audio's"
+          }
+        }
+      }
+    },
+    "Trascrizione Teams originale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Original Teams transcript"
           }
         }
       }
@@ -18069,6 +18269,16 @@
         }
       }
     },
+    "Un file .m4a da ascoltare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An .m4a file to listen to"
+          }
+        }
+      }
+    },
     "Un file cifrato dell'archivio è danneggiato o illeggibile." : {
       "localizations" : {
         "en" : {
@@ -18095,6 +18305,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A small model that finds passages that say the same thing in other words, also for chat and links. It downloads with the first engine; texts stay on the Mac."
+          }
+        }
+      }
+    },
+    "Un solo file .zip" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A single .zip file"
           }
         }
       }
