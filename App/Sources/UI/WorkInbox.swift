@@ -1,18 +1,23 @@
 import IAGOStore
 import SwiftUI
 
-/// «Inbox» (ADR-0074, ADR-0076): the open work of every project in one place, whatever the project's mode. My entries by due date, the ones without an
-/// owner, what I am waiting for from others, the engine's proposals to confirm, the pinned checklists. In «Traccia»
-/// the minimal inbox; in «Gestisci» also priority ordering and a person filter. Projects kept in «Traccia» are here
-/// too: entries assigned to me always are.
+/// «Inbox» (ADR-0074, ADR-0076): the open work of every project in one place, whatever the project's mode, in three
+/// blocks. «Da fare ora» (the red count): my entries late or due today, the ones without an owner, the waits past
+/// their date. «Proposte da confermare» (the yellow count): the engine's proposals, each one here to confirm or
+/// dismiss. «Più avanti», counted by neither: the next days, the waits not yet due, the pinned checklists. In
+/// «Traccia» the minimal inbox; in «Gestisci» also priority ordering and a person filter. Projects kept in «Traccia»
+/// are here too: entries assigned to me always are.
 struct WorkInbox: View {
     @Bindable var model: AppModel
     @State private var open: [DecisionSummary] = []
     @State private var closed: [DecisionSummary] = []
-    @State private var proposals = 0
+    @State private var proposals: [ProposalGroup] = []
     @State private var checklists: [Checklist] = []
     /// The user as a person («Il tuo nome», «Io»), read once per reload.
     @State private var me: Set<String> = []
+    /// Items whose proposals are all shown, not only the first ones.
+    @State private var expanded: Set<String> = []
+    @State private var confirmsDismissAll = false
     @AppStorage("inbox.showsClosed") private var showsClosed = false
     @AppStorage("inbox.byPriority") private var byPriority = true
     /// «Gestisci»: whose entries; nil = mine.
@@ -23,44 +28,25 @@ struct WorkInbox: View {
         case person(String)
     }
 
+    /// The proposals of one item, in the order of the archive (most recent item first).
+    struct ProposalGroup: Identifiable {
+        let item: Item
+        let suggestions: [Suggestion]
+        var id: String { item.id }
+    }
+
+    /// Proposals shown per item before «Mostra le altre».
+    private static let proposalsShown = 3
+
     private var mode: WorkMode { model.workViewsMode }
     private var filter: PersonFilter { mode == .manage ? person : .me }
 
     var body: some View {
         ScrollView {
             LazyVStack(alignment: .leading, spacing: 2) {
-                ForEach(dueGroups, id: \.due) { group in
-                    WorkSectionTitle(
-                        title: group.due.title, count: group.entries.count,
-                        color: group.due == .overdue ? .red : .primary)
-                    rows(group.entries, showsOwner: filter == .everyone)
-                }
-                if !unassigned.isEmpty {
-                    WorkSectionTitle(title: String(localized: "Senza responsabile"), count: unassigned.count)
-                    rows(unassigned, showsOwner: false)
-                }
-                if !waiting.isEmpty {
-                    WorkSectionTitle(title: String(localized: "Aspetto da altri"), count: waiting.count)
-                    rows(waiting, showsOwner: filter != .me)
-                }
-                if proposals > 0 {
-                    WorkSectionTitle(title: String(localized: "Proposte da confermare"), count: proposals)
-                    Button {
-                        model.select(.decisions)
-                    } label: {
-                        Label(
-                            String(localized: "Rivedile in «Punti chiave»: diventano voci solo se le confermi"),
-                            systemImage: "cpu")
-                    }
-                    .buttonStyle(.link).padding(.leading, 8)
-                }
-                if !checklists.isEmpty {
-                    WorkSectionTitle(title: String(localized: "Checklist fissate"), count: checklists.count)
-                    ForEach(checklists) { list in
-                        ChecklistCard(model: model, checklist: list, showsProject: true, editable: false)
-                            .padding(.vertical, 3)
-                    }
-                }
+                if actionCount > 0 { actionBlock }
+                if proposalCount > 0 { proposalBlock }
+                if laterCount > 0 { laterBlock }
                 if showsClosed {
                     WorkSectionTitle(
                         title: String(localized: "Chiuse negli ultimi \(Archive.boardArchiveDays) giorni"),
@@ -90,7 +76,103 @@ struct WorkInbox: View {
                 }
             }
         }
-        .task(id: "\(model.revision)-\(showsClosed)") { load() }
+        .confirmationDialog(
+            String(localized: "Scartare tutte le \(proposalCount) proposte?"), isPresented: $confirmsDismissAll
+        ) {
+            Button(String(localized: "Scarta tutte"), role: .destructive) {
+                model.dismiss(proposals.flatMap(\.suggestions))
+            }
+        } message: {
+            Text(String(localized: "Nessuna diventa un punto chiave. Il motore non le propone di nuovo."))
+        }
+        .task(id: "\(model.revision)-\(model.intelligence.revision)-\(showsClosed)") { load() }
+    }
+
+    // MARK: Blocks
+
+    private var actionBlock: some View {
+        Group {
+            InboxBlockHeader(
+                title: String(localized: "Da fare ora"), systemImage: InboxCount.action.systemImage,
+                count: actionCount, kind: .action)
+            ForEach(urgentGroups, id: \.due) { group in
+                WorkSubsectionTitle(
+                    title: group.due.title, count: group.entries.count,
+                    color: group.due == .overdue ? .red : .secondary)
+                rows(group.entries, showsOwner: filter == .everyone)
+            }
+            if !unassigned.isEmpty {
+                WorkSubsectionTitle(title: String(localized: "Senza responsabile"), count: unassigned.count)
+                rows(unassigned, showsOwner: false)
+            }
+            if !waitingLate.isEmpty {
+                WorkSubsectionTitle(title: String(localized: "Attese scadute"), count: waitingLate.count)
+                rows(waitingLate, showsOwner: filter != .me)
+            }
+        }
+    }
+
+    private var proposalBlock: some View {
+        Group {
+            InboxBlockHeader(
+                title: String(localized: "Proposte da confermare"), systemImage: InboxCount.proposals.systemImage,
+                count: proposalCount, kind: .proposals
+            ) {
+                Button(String(localized: "Scarta tutte…")) { confirmsDismissAll = true }
+                    .buttonStyle(.link).font(.callout).foregroundStyle(.secondary)
+            }
+            Text(String(localized: "Diventano punti chiave solo se le confermi."))
+                .font(.caption).foregroundStyle(.secondary).padding(.leading, 8).padding(.top, 4)
+            ForEach(proposals) { group in
+                HStack {
+                    Button(group.item.title) { model.selectedItemID = group.item.id }
+                        .buttonStyle(.link).font(.callout.weight(.semibold)).lineLimit(1)
+                    Text(group.item.occurredAt.formatted(.dateTime.day().month(.abbreviated)))
+                        .font(.caption).foregroundStyle(.secondary)
+                    Text("\(group.suggestions.count)").font(.caption).monospacedDigit().foregroundStyle(.secondary)
+                    Spacer()
+                    Button(String(localized: "Scarta queste")) { model.dismiss(group.suggestions) }
+                        .buttonStyle(.link).font(.caption).foregroundStyle(.secondary)
+                }
+                .padding(.top, 12).padding(.leading, 8)
+                let all = expanded.contains(group.id)
+                ForEach(all ? group.suggestions : Array(group.suggestions.prefix(Self.proposalsShown))) {
+                    suggestion in
+                    SuggestionRow(model: model, item: group.item, suggestion: suggestion)
+                        .padding(.horizontal, 10).padding(.vertical, 6)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(Color.yellow.opacity(0.06)))
+                }
+                if !all, group.suggestions.count > Self.proposalsShown {
+                    Button(String(localized: "Mostra le altre \(group.suggestions.count - Self.proposalsShown)")) {
+                        expanded.insert(group.id)
+                    }
+                    .buttonStyle(.link).font(.callout).padding(.leading, 8)
+                }
+            }
+        }
+    }
+
+    private var laterBlock: some View {
+        Group {
+            InboxBlockHeader(title: String(localized: "Più avanti"), systemImage: "clock", count: laterCount)
+            ForEach(laterGroups, id: \.due) { group in
+                WorkSubsectionTitle(
+                    title: group.due == .later ? String(localized: "Dopo questa settimana") : group.due.title,
+                    count: group.entries.count)
+                rows(group.entries, showsOwner: filter == .everyone)
+            }
+            if !waiting.isEmpty {
+                WorkSubsectionTitle(title: String(localized: "Aspetto da altri"), count: waiting.count)
+                rows(waiting, showsOwner: filter != .me)
+            }
+            if !checklists.isEmpty {
+                WorkSubsectionTitle(title: String(localized: "Checklist fissate"), count: checklists.count)
+                ForEach(checklists) { list in
+                    ChecklistCard(model: model, checklist: list, showsProject: true, editable: false)
+                        .padding(.vertical, 3)
+                }
+            }
+        }
     }
 
     // MARK: Header
@@ -163,28 +245,44 @@ struct WorkInbox: View {
         }
     }
 
-    private var dueGroups: [(due: OpenWork.Due, entries: [DecisionSummary])] {
+    private func dueGroups(_ dues: [OpenWork.Due]) -> [(due: OpenWork.Due, entries: [DecisionSummary])] {
         let mine = open.filter { $0.decision.status != .waiting && matches($0.decision) }
-        return OpenWork.Due.allCases.compactMap { due in
+        return dues.compactMap { due in
             let entries = sorted(mine.filter { OpenWork.due($0.decision.dueAt) == due })
             return entries.isEmpty ? nil : (due, entries)
         }
     }
 
-    /// With «Le mie», the entries nobody owns yet, apart.
+    /// «Da fare ora»: late and due today.
+    private var urgentGroups: [(due: OpenWork.Due, entries: [DecisionSummary])] { dueGroups([.overdue, .today]) }
+
+    /// «Più avanti»: this week, later, without a date.
+    private var laterGroups: [(due: OpenWork.Due, entries: [DecisionSummary])] {
+        dueGroups([.thisWeek, .later, .none])
+    }
+
+    /// With «Le mie», the entries nobody owns yet, apart: they ask to be assigned, so they are in «Da fare ora».
     private var unassigned: [DecisionSummary] {
         guard filter == .me else { return [] }
         return sorted(open.filter { $0.decision.status != .waiting && $0.decision.ownerId == nil })
     }
 
     /// Waiting for someone else: my entries and those without an owner, the most late first.
-    private var waiting: [DecisionSummary] {
+    private var allWaiting: [DecisionSummary] {
         open.filter { summary in
             summary.decision.status == .waiting
                 && (filter == .me ? OpenWork.isMine(summary.decision, me: me) : matches(summary.decision))
         }
         .sorted { ($0.decision.waitingUntil ?? .distantFuture) < ($1.decision.waitingUntil ?? .distantFuture) }
     }
+
+    private func isLate(_ summary: DecisionSummary) -> Bool {
+        summary.decision.waitingUntil.map { $0 < Calendar.current.startOfDay(for: Date()) } ?? false
+    }
+
+    /// Waits past the promised day: time to ask again.
+    private var waitingLate: [DecisionSummary] { allWaiting.filter(isLate) }
+    private var waiting: [DecisionSummary] { allWaiting.filter { !isLate($0) } }
 
     private var closedShown: [DecisionSummary] {
         closed.filter {
@@ -196,10 +294,17 @@ struct WorkInbox: View {
         OpenWork.sorted(entries, byPriority: mode == .manage && byPriority)
     }
 
-    private var isEmpty: Bool {
-        dueGroups.isEmpty && unassigned.isEmpty && waiting.isEmpty && proposals == 0 && checklists.isEmpty
-            && !showsClosed
+    private var actionCount: Int {
+        urgentGroups.reduce(0) { $0 + $1.entries.count } + unassigned.count + waitingLate.count
     }
+
+    private var proposalCount: Int { proposals.reduce(0) { $0 + $1.suggestions.count } }
+
+    private var laterCount: Int {
+        laterGroups.reduce(0) { $0 + $1.entries.count } + waiting.count + checklists.count
+    }
+
+    private var isEmpty: Bool { actionCount == 0 && proposalCount == 0 && laterCount == 0 && !showsClosed }
 
     private func load() {
         let archive = model.archive
@@ -218,39 +323,57 @@ struct WorkInbox: View {
         } else {
             closed = []
         }
-        proposals = (try? archive.pendingKeyPointSuggestions(.all).count) ?? 0
+        let pending = (try? archive.pendingKeyPointSuggestions(.all)) ?? []
+        var order: [String] = []
+        var byItem: [String: [Suggestion]] = [:]
+        for suggestion in pending {
+            if byItem[suggestion.itemId] == nil { order.append(suggestion.itemId) }
+            byItem[suggestion.itemId, default: []].append(suggestion)
+        }
+        proposals = order.compactMap { id in
+            model.item(id).map { ProposalGroup(item: $0, suggestions: byItem[id] ?? []) }
+        }
         checklists = (try? archive.checklists(pinnedOnly: true)) ?? []
     }
 }
 
-/// The «Inbox» row of the sidebar (ADR-0076): first, in bold, with its sign in the accent colour and a red badge with
-/// what asks for an action: my entries late or due today, and the proposals to confirm.
+/// A group inside a block of «Inbox» («In ritardo», «Oggi», …).
+struct WorkSubsectionTitle: View {
+    let title: String
+    let count: Int
+    var color: Color = .secondary
+
+    var body: some View {
+        Text(verbatim: "\(title.uppercased()) · \(count)").font(.caption.weight(.bold)).foregroundStyle(color)
+            .padding(.top, 10).padding(.bottom, 2).padding(.leading, 8)
+    }
+}
+
+/// The «Inbox» row of the sidebar (ADR-0076): first, in bold, with its sign in the accent colour and two counts, red
+/// for what asks an action now and yellow for the proposals to confirm. Each is the count of its block in «Inbox».
 struct WorkInboxSidebarLabel: View {
     let model: AppModel
-    @State private var count = 0
+    @State private var actions = 0
+    @State private var proposals = 0
 
     var body: some View {
         Label {
-            HStack {
+            HStack(spacing: 4) {
                 Text(String(localized: "Inbox")).fontWeight(.semibold)
                 Spacer()
-                if count > 0 {
-                    Text("\(count)").font(.caption.weight(.bold)).monospacedDigit().foregroundStyle(.white)
-                        .padding(.horizontal, 6).padding(.vertical, 1)
-                        .background(Capsule().fill(Color.red))
-                        .help(String(localized: "Tue voci in ritardo o in scadenza oggi, e proposte da confermare"))
-                }
+                if actions > 0 { InboxCountBadge(kind: .action, count: actions) }
+                if proposals > 0 { InboxCountBadge(kind: .proposals, count: proposals) }
             }
         } icon: {
             Image(systemName: "tray").foregroundStyle(.tint)
         }
-        .task(id: model.revision) {
+        .task(id: "\(model.revision)-\(model.intelligence.revision)") {
             let open =
                 (try? model.archive.decisions(
                     DecisionQuery(scope: .all, statuses: DecisionQuery.current, kinds: Set(Decision.Kind.work)))) ?? []
-            let counts = OpenWork.counts(open.map(\.decision), me: model.meIDs)
-            let proposals = (try? model.archive.pendingKeyPointSuggestions(.all).count) ?? 0
-            count = counts.today + counts.overdue + proposals
+            let me = model.meIDs
+            actions = open.filter { OpenWork.needsAction($0.decision, me: me) }.count
+            proposals = (try? model.archive.pendingKeyPointSuggestions(.all).count) ?? 0
         }
     }
 }

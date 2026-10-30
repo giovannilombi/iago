@@ -37,3 +37,10 @@
 - Spazio trascurabile: circa 1 KB per speaker per call. Tempo trascurabile: il confronto con decine di voci richiede meno di un millisecondo.
 - Con audio compresso, più persone su un microfono di sala o voci simili il riconoscimento può sbagliare; per questo propone soltanto.
 - La qualità dipende dalla separazione delle voci: se la diarizzazione unisce due persone, anche l'impronta le mescola.
+
+## Modifica del 2026-10-30 (1.2.4-beta)
+- **Il nome si conferma:** si applica solo con Invio o con il pulsante ⏎. Prima un nome scritto e lasciato con un clic andava perso; ora il campo non confermato è rosso e il testo resta finché IAGO è aperto.
+- **Nomi simili:** prima di applicare un nome IAGO chiede se è una persona già nota con un nome simile. Considera errori di battitura, un nome dentro l'altro e i diminutivi italiani («Lello» e «Antonello»). La risposta «sì» resta come alias (`name_alias`) e la volta dopo il nome noto viene proposto subito. Chiede soltanto: non rinomina mai da solo.
+- **Unisci e Separa:** lo stesso nome a due speaker della stessa call propone di unirli, perché spesso la diarizzazione divide una persona in due. Lo speaker unito prende nome e voce dell'altro (`item_speaker.merged_into`), e così l'impronta della persona si fa con tutte le sue frasi. «Separa» lo riporta com'era, utile quando invece erano due persone. La trascrizione salvata non cambia.
+- **Prima della sintesi:** con speaker ancora generici, *Genera sintesi* e *Rigenera* chiedono se dare prima i nomi o procedere, ricordando che la sintesi si può rigenerare. Le sintesi automatiche procedono senza chiedere.
+

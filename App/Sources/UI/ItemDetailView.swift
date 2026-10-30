@@ -37,48 +37,62 @@ struct ItemDetailView: View {
     enum Tab: Hashable { case transcript, markdown }
 
     var body: some View {
-        ScrollView {
-            if let item {
-                VStack(alignment: .leading, spacing: 20) {
-                    MetadataEditor(model: model, item: item)
-                    ViaClaudeBadge(model: model, entity: .item, id: item.id)
-                    actions(item)
-                    if let job = activeJob { jobProgress(job) }
-                    SummarySection(
-                        model: model, item: item,
-                        hasText: item.type == .call ? transcript != nil : content?.isEmpty == false
-                    ) { seconds in
-                        tab = .transcript
-                        Task { await listen(at: seconds) }
-                    }
-                    SuggestionsSection(model: model, item: item)
-                    if hasAudio {
-                        PlayerSection(
-                            player: player, isLoaded: isMine, duration: item.durationSec,
-                            tracks: assets.filter { $0.kind.isAudio }
-                        ) { Task { await listen() } }
-                    }
-                    if !markers.isEmpty { markersSection }
-                    if item.type == .call {
-                        ScreenshotsSection(model: model, itemID: itemID) { seconds in
+        ScrollViewReader { proxy in
+            ScrollView {
+                if let item {
+                    VStack(alignment: .leading, spacing: 20) {
+                        MetadataEditor(model: model, item: item)
+                        ViaClaudeBadge(model: model, entity: .item, id: item.id)
+                        actions(item)
+                        if let job = activeJob { jobProgress(job) }
+                        SummarySection(
+                            model: model, item: item,
+                            hasText: item.type == .call ? transcript != nil : content?.isEmpty == false
+                        ) { seconds in
                             tab = .transcript
                             Task { await listen(at: seconds) }
                         }
+                        SuggestionsSection(model: model, item: item)
+                        if hasAudio {
+                            PlayerSection(
+                                player: player, isLoaded: isMine, duration: item.durationSec,
+                                tracks: assets.filter { $0.kind.isAudio }
+                            ) { Task { await listen() } }
+                        }
+                        if !markers.isEmpty { markersSection }
+                        if item.type == .call {
+                            ScreenshotsSection(model: model, itemID: itemID) { seconds in
+                                tab = .transcript
+                                Task { await listen(at: seconds) }
+                            }
+                        }
+                        switch item.type {
+                        case .document: documentSection
+                        case .email:
+                            EmailHeaderSection(model: model, itemID: itemID)
+                            documentSection
+                        case .call: transcriptSection(item)
+                        }
+                        notesSection(item)
+                        decisionsSection(item)
+                        LinksSection(model: model, itemID: itemID)
+                        assetsSection
                     }
-                    switch item.type {
-                    case .document: documentSection
-                    case .email:
-                        EmailHeaderSection(model: model, itemID: itemID)
-                        documentSection
-                    case .call: transcriptSection(item)
-                    }
-                    notesSection(item)
-                    decisionsSection(item)
-                    LinksSection(model: model, itemID: itemID)
-                    assetsSection
+                    .padding(20)
+                    .frame(minWidth: 0, maxWidth: 820, alignment: .leading)
                 }
-                .padding(20)
-                .frame(minWidth: 0, maxWidth: 820, alignment: .leading)
+            }
+            // «Dai prima i nomi» before a summary: the transcript open, its speaker names in view.
+            .onChange(of: model.namingSpeakersFor, initial: true) { _, wanted in
+                guard wanted == itemID else { return }
+                UserDefaults.standard.set(false, forKey: "section.collapsed.transcript")
+                tab = .transcript
+                Task {
+                    try? await Task.sleep(for: .milliseconds(150))
+                    withAnimation { proxy.scrollTo("speakers", anchor: .center) }
+                    try? await Task.sleep(for: .milliseconds(300))
+                    if model.namingSpeakersFor == itemID { model.namingSpeakersFor = nil }
+                }
             }
         }
         .task(id: model.revision) { await load() }
@@ -417,6 +431,7 @@ struct ItemDetailView: View {
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 SpeakerNames(model: model, itemID: itemID, transcript: transcript, speakers: speakers)
+                    .id("speakers")
                 switch tab {
                 case .transcript:
                     CappedScroll(isLong: transcript.segments.count > 14) {
@@ -715,35 +730,216 @@ private struct DeleteNoteButton: View {
 }
 
 /// Speaker names, renameable per item (FR-41). Renames never rewrite `transcript.json` (spec 7.3).
+/// - A name applies with Return or the ⏎ button, never by leaving the field: until then the field is red, and what was
+///   typed stays (`AppModel.speakerDrafts`) while IAGO is open, also after moving to another item.
+/// - Before applying it IAGO asks about similar names already known ("Lello" / "Antonello") and remembers the answer;
+///   the same name as another speaker of the call offers to join them ("Unisci", undone by "Separa").
 private struct SpeakerNames: View {
     let model: AppModel
     let itemID: String
     let transcript: Transcript
     let speakers: [ItemSpeaker]
-    @State private var names: [String: String] = [:]
+    @FocusState private var focused: String?
+    @State private var question: Question?
 
-    var body: some View {
-        let ids = transcript.speakers.map(\.id).filter { id in transcript.segments.contains { $0.speaker == id } }
-        HStack(spacing: 8) {
-            Text(String(localized: "Speaker:")).foregroundStyle(.secondary)
-            ForEach(ids, id: \.self) { id in
-                TextField(
-                    "", text: Binding(get: { names[id] ?? current(id) }, set: { names[id] = $0 })
-                )
-                .textFieldStyle(.roundedBorder).frame(width: 130)
-                .onSubmit { rename(id) }
+    enum Question: Identifiable {
+        /// Names already known that may be the one typed.
+        case similar(speakerID: String, typed: String, known: [String])
+        /// Another speaker of this call has this name already.
+        case sameName(speakerID: String, name: String, other: String)
+
+        var id: String {
+            switch self {
+            case .similar(let id, _, _), .sameName(let id, _, _): id
             }
         }
-        .onChange(of: speakers) { names = [:] }
     }
+
+    /// The speakers who talk, but not those joined to another.
+    private var ids: [String] {
+        transcript.speakers.map(\.id).filter { id in
+            transcript.segments.contains { $0.speaker == id } && merged(id) == nil
+        }
+    }
+
+    private var joined: [ItemSpeaker] { speakers.filter { $0.mergedInto != nil } }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            FlowLayout(spacing: 8, lineSpacing: 6) {
+                Text(String(localized: "Speaker:")).foregroundStyle(.secondary)
+                ForEach(ids, id: \.self) { id in field(id) }
+            }
+            ForEach(joined, id: \.speakerId) { speaker in
+                HStack(spacing: 6) {
+                    Image(systemName: "arrow.triangle.merge").foregroundStyle(.secondary)
+                    Text(
+                        String(
+                            localized: "\(original(speaker.speakerId)) unito a \(speaker.label)")
+                    )
+                    .font(.caption).foregroundStyle(.secondary)
+                    Button(String(localized: "Separa")) { separate(speaker.speakerId) }
+                        .buttonStyle(.link).font(.caption)
+                        .help(String(localized: "Torna uno speaker a sé, come dopo la trascrizione"))
+                }
+            }
+            if ids.contains(where: isPending) {
+                Text(String(localized: "Non salvato · ⏎ per salvare, Esc per annullare"))
+                    .font(.caption).foregroundStyle(.red)
+            }
+        }
+        .confirmationDialog(
+            title, isPresented: Binding(get: { question != nil }, set: { if !$0 { question = nil } }),
+            titleVisibility: .visible, presenting: question
+        ) { question in
+            switch question {
+            case .similar(let id, let typed, let known):
+                ForEach(known, id: \.self) { name in
+                    Button(String(localized: "Sì, è «\(name)»")) {
+                        model.perform { try model.archive.setNameAlias(typed, for: name) }
+                        proceed(id, name)
+                    }
+                }
+                Button(String(localized: "No, è un'altra persona")) { proceed(id, typed) }
+                Button(String(localized: "Annulla"), role: .cancel) {}
+            case .sameName(let id, let name, let other):
+                Button(String(localized: "Unisci")) { join(id, into: other) }
+                Button(String(localized: "Tieni separati, stesso nome")) { apply(id, name) }
+                Button(String(localized: "Annulla"), role: .cancel) {}
+            }
+        } message: { question in
+            switch question {
+            case .similar:
+                Text(
+                    String(
+                        localized:
+                            "Se è la stessa persona, IAGO usa il nome già noto e se lo ricorda: la prossima volta lo propone subito."
+                    ))
+            case .sameName:
+                Text(
+                    String(
+                        localized:
+                            "Unendoli resta un solo speaker, con tutte le frasi e una sola impronta della voce. «Separa» lo annulla."
+                    ))
+            }
+        }
+        .onChange(of: model.namingSpeakersFor, initial: true) { _, wanted in
+            guard wanted == itemID else { return }
+            focused = ids.first { !Archive.isVoiceName(current($0)) && $0 != "me" } ?? ids.first
+        }
+    }
+
+    private func field(_ id: String) -> some View {
+        let pending = isPending(id)
+        return HStack(spacing: 4) {
+            TextField("", text: draft(id))
+                .textFieldStyle(.roundedBorder).frame(width: 130)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 5).stroke(Color.red, lineWidth: pending ? 1.5 : 0)
+                        .allowsHitTesting(false)
+                )
+                .focused($focused, equals: id)
+                .onSubmit { confirm(id) }
+                .onExitCommand { discard(id) }
+            if pending {
+                Button {
+                    confirm(id)
+                } label: {
+                    Image(systemName: "return")
+                }
+                .buttonStyle(.borderless).foregroundStyle(.red)
+                .help(String(localized: "Salva il nome (Invio)"))
+            }
+        }
+    }
+
+    private var title: String {
+        switch question {
+        case .similar(_, let typed, let known):
+            known.count == 1
+                ? String(localized: "Esiste già «\(known[0])». «\(typed)» è la stessa persona?")
+                : String(localized: "Esistono già nomi simili a «\(typed)». È una di queste persone?")
+        case .sameName(_, let name, let other):
+            String(localized: "\(original(other)) si chiama già «\(name)»: sono la stessa persona?")
+        case nil: ""
+        }
+    }
+
+    // MARK: Names
 
     private func current(_ id: String) -> String {
-        speakers.first { $0.speakerId == id }?.label ?? transcript.speakers.first { $0.id == id }?.label ?? id
+        speakers.first { $0.speakerId == id }?.label ?? original(id)
     }
 
-    private func rename(_ id: String) {
-        guard let name = names[id]?.trimmingCharacters(in: .whitespaces), !name.isEmpty else { return }
+    /// The label the transcription gave ("Speaker 3").
+    private func original(_ id: String) -> String {
+        transcript.speakers.first { $0.id == id }?.label ?? id
+    }
+
+    private func merged(_ id: String) -> String? {
+        speakers.first { $0.speakerId == id }?.mergedInto
+    }
+
+    private func draft(_ id: String) -> Binding<String> {
+        Binding(
+            get: { model.speakerDrafts[itemID]?[id] ?? current(id) },
+            set: { model.speakerDrafts[itemID, default: [:]][id] = $0 })
+    }
+
+    private func typed(_ id: String) -> String? {
+        model.speakerDrafts[itemID]?[id]?.trimmingCharacters(in: .whitespaces)
+    }
+
+    private func isPending(_ id: String) -> Bool {
+        guard let typed = typed(id) else { return false }
+        return typed != current(id)
+    }
+
+    private func discard(_ id: String) {
+        model.speakerDrafts[itemID]?[id] = nil
+    }
+
+    /// Return or ⏎: similar names first, then the same name as another speaker, then the name.
+    private func confirm(_ id: String) {
+        guard let typed = typed(id), !typed.isEmpty else {
+            discard(id)
+            return
+        }
+        guard typed != current(id) else {
+            discard(id)
+            return
+        }
+        let known = ((try? model.archive.similarPersonNames(to: typed)) ?? []).filter { $0 != current(id) }
+        if !known.isEmpty {
+            question = .similar(speakerID: id, typed: typed, known: known)
+        } else {
+            proceed(id, typed)
+        }
+    }
+
+    private func proceed(_ id: String, _ name: String) {
+        let wanted = TagNormalizer.normalize(name)
+        if let other = ids.first(where: { $0 != id && TagNormalizer.normalize(current($0)) == wanted }) {
+            question = .sameName(speakerID: id, name: name, other: other)
+        } else {
+            apply(id, name)
+        }
+    }
+
+    private func apply(_ id: String, _ name: String) {
         model.perform { try model.archive.renameSpeaker(id, of: itemID, to: name) }
+        discard(id)
+        model.refreshTextAssets(itemID)
+    }
+
+    private func join(_ id: String, into other: String) {
+        model.perform { try model.archive.mergeSpeaker(id, into: other, of: itemID) }
+        discard(id)
+        model.refreshTextAssets(itemID)
+    }
+
+    private func separate(_ id: String) {
+        model.perform { try model.archive.separateSpeaker(id, of: itemID, label: original(id)) }
         model.refreshTextAssets(itemID)
     }
 }

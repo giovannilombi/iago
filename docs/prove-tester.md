@@ -223,7 +223,7 @@ Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-bran
 - [ ] 10i.17 Con Claude Desktop: «elenca il lavoro aperto del progetto», «crea un'attività per Anna entro il 10 novembre con checklist…», poi annulla da Impostazioni › Claude.
 - [ ] 10i.18 Barra delle viste: *Riepilogo* ed *Elementi*, ognuno a sé, poi Timeline · Kanban · Grafo, tutti con un'icona. *Elementi* mostra le call, le email e i documenti del progetto. *Mostra* (Tutto, Elementi, Punti chiave) compare solo con Timeline e Grafo; con la Kanban si legge «Mostra: Lavoro aperto». In Traccia la pillola ha *Mostra il Grafo*: spento, il Grafo sparisce dalla barra.
 - [ ] 10i.19 Scegli Grafo in un progetto e Kanban in un altro, cambia progetto e torna: ognuno riapre l'ultima vista.
-- [ ] 10i.20 Barra laterale: in cima **Inbox** in grassetto, con l'icona del vassoio e, se hai voci in ritardo o di oggi o proposte da confermare, il bollino rosso con il loro numero; sotto una linea e **Elementi da classificare**.
+- [ ] 10i.20 Barra laterale: in cima **Inbox** in grassetto, con l'icona del vassoio e, se hai voci in ritardo o di oggi o proposte da confermare, i bollini con il loro numero (vedi 10n); sotto una linea e **Elementi da classificare**.
 - [ ] 10i.21 *Aggiungi › Importa file ed elementi…* in un progetto: trascina un PDF nell'area, poi *Da testo* (si apre il campo) con un testo breve. Entrambi finiscono nel progetto, non in Elementi da classificare. *Email senza file* apre la finestra dell'email con il progetto già scelto.
 - [ ] 10i.22 Apri un cliente per la prima volta: la finestra chiede la modalità dei suoi progetti. Scegli Traccia: i progetti a cui non avevi scelto una modalità passano in Traccia, e un progetto nuovo del cliente nasce in Traccia.
 - [ ] 10i.23 Con il Riepilogo (o la Kanban) aperto, apri «Chiedi a IAGO»: la barra laterale resta al suo posto, con l'Inbox sotto i pulsanti della finestra. Nella Kanban apri una scheda: nel pannello a destra i pulsanti («Segna come fatta», «Modifica…») sono interi e la data sta sotto.
@@ -241,6 +241,17 @@ Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-bran
 - [ ] 10m.2 La finestra di IAGO si trascina fluida come quella del Finder, e il passaggio tra Inbox, progetti e viste è immediato.
 - [ ] 10m.3 Con la lettura del mute di Teams attiva, entra in una riunione di Teams: la call viene riconosciuta entro una ventina di secondi e il mute si legge come prima.
 - [ ] 10m.4 Con alcuni tag già usati in altre call, registra una call su un altro tema e chiedi *Cerca proposte*: i tag proposti riguardano solo questa call, ognuno con la frase da cui viene (o una parola detta nella call); nessun tag delle altre call senza appiglio.
+
+## 10n. Inbox con due bollini (1.2.4-beta)
+- [ ] 10n.1 Con una voce tua in ritardo, una senza responsabile e qualche proposta da confermare: accanto a **Inbox** ci sono un bollino **rosso** con «!» e uno **giallo** con la stellina. Il passaggio del mouse su ciascuno dice cosa conta.
+- [ ] 10n.2 Apri l'Inbox: il blocco **Da fare ora** ha nell'intestazione lo stesso numero rosso della barra laterale, e le sue righe (in ritardo, oggi, senza responsabile, attese scadute) sono esattamente quel numero.
+- [ ] 10n.3 Il blocco **Proposte da confermare** ha lo stesso numero giallo e mostra le proposte per elemento, tre per elemento con *Mostra le altre*. *Conferma* su una proposta: il numero giallo scende di uno, nell'Inbox e nella barra laterale.
+- [ ] 10n.4 *Scarta queste* su un elemento toglie solo le sue; *Scarta tutte…* chiede conferma e le toglie tutte. Il bollino giallo sparisce.
+- [ ] 10n.5 Le voci di questa settimana, senza data e le attese non scadute stanno in **Più avanti**, con il numero grigio, e non entrano in nessun bollino.
+- [ ] 10n.6 Apri una call con «Speaker 1» e scrivi un nome nel suo campo: il bordo diventa rosso, compaiono ⏎ e «Non salvato»; la trascrizione non cambia ancora. Passa a un altro elemento e torna: il testo è ancora lì, rosso. *Esc* lo annulla; *Invio* (o ⏎) lo salva e la trascrizione mostra il nome.
+- [ ] 10n.7 Dai a uno speaker il nome «Antonello Prova», poi in un'altra call scrivi «Lello»: IAGO chiede se è «Antonello Prova». Rispondi *Sì*: lo speaker prende quel nome. In una terza call scrivi di nuovo «Lello»: propone subito «Antonello Prova». Con un nome senza somiglianze («Bruno Test») non chiede nulla.
+- [ ] 10n.8 In una call con tre speaker dai a Speaker 3 lo stesso nome di Speaker 1: IAGO propone *Unisci*. Unisci: resta un campo, la trascrizione mostra quel nome anche sulle frasi di Speaker 3, e sotto c'è «Speaker 3 unito a …» con *Separa*. Rinomina Speaker 1: cambia anche sulle frasi di Speaker 3. *Separa*: Speaker 3 torna com'era.
+- [ ] 10n.9 Su una call con speaker ancora «Speaker N» premi *Genera sintesi* (o *Rigenera*): IAGO chiede se dare prima i nomi. *Dai prima i nomi* apre la trascrizione con il cursore nel primo campo senza nome; *Procedi così* avvia la sintesi. Con tutti gli speaker con un nome la domanda non compare.
 
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).

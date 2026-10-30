@@ -3,7 +3,7 @@
 ![The sidebar](img/barra-laterale.png)
 
 ## The sidebar
-- **At the top, the Inbox**, in bold and set apart from the rest: the open work waiting for you. The red badge counts your entries that are overdue or due today and the suggestions to confirm (see Key points and open work).
+- **At the top, the Inbox**, in bold and set apart from the rest: the open work waiting for you. It has two badges: the **red** one (!) counts what needs action now, the **yellow** one (✦) the suggestions to confirm (see Key points and open work).
 - **Below, always there:** *Unfiled items*, *Recent*, *Key points*, *Import*, *Activity*, *Categories and tags*.
 - **Projects** (the only part that scrolls):
   - **Pinned** (red pin): projects, streams, categories and tags you pin.

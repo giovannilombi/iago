@@ -521,6 +521,16 @@
         }
       }
     },
+    "%@ compaiono così nella sintesi. Puoi dare prima i nomi, così la sintesi li usa, oppure procedere ora: la sintesi si può rigenerare più avanti, quando avrai individuato gli speaker." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ will appear like this in the summary. You can name them first, so the summary uses the names, or go ahead now: the summary can be regenerated later, once you have identified the speakers."
+          }
+        }
+      }
+    },
     "%@ diventa «%@»" : {
       "localizations" : {
         "en" : {
@@ -669,6 +679,38 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$@ richiede più memoria di quella di questo Mac: IAGO usa %2$@."
+          }
+        }
+      }
+    },
+    "%@ si chiama già «%@»: sono la stessa persona?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ is already called «%@»: are they the same person?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ si chiama già «%2$@»: sono la stessa persona?"
+          }
+        }
+      }
+    },
+    "%@ unito a %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ joined to %@"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ unito a %2$@"
           }
         }
       }
@@ -1621,6 +1663,16 @@
         }
       }
     },
+    "Alcuni speaker non hanno ancora un nome" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Some speakers don't have a name yet"
+          }
+        }
+      }
+    },
     "All." : {
       "localizations" : {
         "en" : {
@@ -2319,6 +2371,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waiting on others"
+          }
+        }
+      }
+    },
+    "Attese scadute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overdue waits"
           }
         }
       }
@@ -4812,6 +4874,26 @@
         }
       }
     },
+    "Da fare ora" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do now"
+          }
+        }
+      }
+    },
+    "Da fare ora: tue voci in ritardo o in scadenza oggi, voci senza responsabile, attese scadute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do now: your entries late or due today, entries with no owner, overdue waits"
+          }
+        }
+      }
+    },
     "Da file…" : {
       "localizations" : {
         "en" : {
@@ -4888,6 +4970,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "From clipboard"
+          }
+        }
+      }
+    },
+    "Dai prima i nomi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Name them first"
           }
         }
       }
@@ -5318,6 +5410,16 @@
         }
       }
     },
+    "Diventano punti chiave solo se le confermi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They become key points only if you confirm them."
+          }
+        }
+      }
+    },
     "Diventata attività" : {
       "localizations" : {
         "en" : {
@@ -5550,6 +5652,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "After each transcription or import it suggests decisions, tasks, speaker names, tags, project and links, each with the sentence it comes from. Nothing is applied without your confirmation."
+          }
+        }
+      }
+    },
+    "Dopo questa settimana" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "After this week"
           }
         }
       }
@@ -6496,12 +6608,38 @@
         }
       }
     },
+    "Esiste già «%@». «%@» è la stessa persona?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«%@» already exists. Is «%@» the same person?"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Esiste già «%1$@». «%2$@» è la stessa persona?"
+          }
+        }
+      }
+    },
     "Esistenti:" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Existing:"
+          }
+        }
+      }
+    },
+    "Esistono già nomi simili a «%@». È una di queste persone?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "There are already names similar to «%@». Is it one of these people?"
           }
         }
       }
@@ -10211,6 +10349,16 @@
         }
       }
     },
+    "Mostra le altre %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the other %lld"
+          }
+        }
+      }
+    },
     "Mostra nel Finder" : {
       "localizations" : {
         "en" : {
@@ -10807,6 +10955,16 @@
         }
       }
     },
+    "Nessuna diventa un punto chiave. Il motore non le propone di nuovo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None of them becomes a key point. The engine does not suggest them again."
+          }
+        }
+      }
+    },
     "Nessuna domanda in sospeso." : {
       "localizations" : {
         "en" : {
@@ -11023,6 +11181,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No, “%@” is a new person"
+          }
+        }
+      }
+    },
+    "No, è un'altra persona" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No, it's another person"
           }
         }
       }
@@ -11333,6 +11501,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "failed"
+          }
+        }
+      }
+    },
+    "Non salvato · ⏎ per salvare, Esc per annullare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not saved · ⏎ to save, Esc to cancel"
           }
         }
       }
@@ -12749,6 +12927,16 @@
         }
       }
     },
+    "Procedi così" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go ahead as is"
+          }
+        }
+      }
+    },
     "Progetti" : {
       "localizations" : {
         "en" : {
@@ -12925,6 +13113,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Suggestions from the local engine based on calls, emails and documents. They become key points only if you confirm them."
+          }
+        }
+      }
+    },
+    "Proposte del motore da confermare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Engine suggestions to confirm"
           }
         }
       }
@@ -14382,6 +14580,7 @@
       }
     },
     "Rivedile in «Punti chiave»: diventano voci solo se le confermi" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -14437,6 +14636,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save the name"
+          }
+        }
+      }
+    },
+    "Salva il nome (Invio)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save the name (Return)"
           }
         }
       }
@@ -14611,6 +14820,16 @@
         }
       }
     },
+    "Scarta queste" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss these"
+          }
+        }
+      }
+    },
     "Scarta registrazione…" : {
       "localizations" : {
         "en" : {
@@ -14621,12 +14840,42 @@
         }
       }
     },
+    "Scarta tutte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss all"
+          }
+        }
+      }
+    },
+    "Scarta tutte…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss all…"
+          }
+        }
+      }
+    },
     "Scartare la registrazione?" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Discard the recording?"
+          }
+        }
+      }
+    },
+    "Scartare tutte le %lld proposte?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss all %lld suggestions?"
           }
         }
       }
@@ -14941,6 +15190,16 @@
         }
       }
     },
+    "Se è la stessa persona, IAGO usa il nome già noto e se lo ricorda: la prossima volta lo propone subito." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If it's the same person, IAGO uses the name it already knows and remembers it: next time it suggests it right away."
+          }
+        }
+      }
+    },
     "Se questa decisione ne sostituisce una, collegale: quella vecchia diventa superata e nasce l'evoluzione." : {
       "localizations" : {
         "en" : {
@@ -15211,6 +15470,16 @@
         }
       }
     },
+    "Separa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Separate"
+          }
+        }
+      }
+    },
     "Serve ⌃ o ⌥ nella combinazione: le scorciatoie con solo ⌘ appartengono alle altre app." : {
       "localizations" : {
         "en" : {
@@ -15333,6 +15602,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An error occurred"
+          }
+        }
+      }
+    },
+    "Sì, è «%@»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes, it's «%@»"
           }
         }
       }
@@ -16289,6 +16568,16 @@
         }
       }
     },
+    "Tieni separati, stesso nome" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep separate, same name"
+          }
+        }
+      }
+    },
     "Time Machine" : {
       "localizations" : {
         "en" : {
@@ -16615,6 +16904,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Back to the conversation"
+          }
+        }
+      }
+    },
+    "Torna uno speaker a sé, come dopo la trascrizione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Makes it a speaker of its own again, as after the transcription"
           }
         }
       }
@@ -16970,6 +17269,7 @@
       }
     },
     "Tue voci in ritardo o in scadenza oggi, e proposte da confermare" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17415,6 +17715,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An entry can't supersede itself or an entry that already supersedes it. Choose another entry in the “Supersedes” field."
+          }
+        }
+      }
+    },
+    "Unendoli resta un solo speaker, con tutte le frasi e una sola impronta della voce. «Separa» lo annulla." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Joining them leaves a single speaker, with all the sentences and a single voice fingerprint. «Separate» undoes it."
+          }
+        }
+      }
+    },
+    "Unisci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join"
           }
         }
       }

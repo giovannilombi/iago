@@ -9,7 +9,14 @@ La trascrizione avviene sul Mac. Due motori:
 | Parakeet | circa 4 volte più veloce | meno preciso sui nomi |
 
 ## Chi parla
-La tua traccia è **Io** (il nome che hai dato all'inizio). Le voci degli altri vengono separate per persona ("Speaker 1", "Speaker 2"…). **Rinomina gli speaker** nella scheda: i nomi tornano in sintesi, punti chiave ed esportazioni. Il motore locale può anche proporre i nomi.
+La tua traccia è **Io** (il nome che hai dato all'inizio). Le voci degli altri vengono separate per persona ("Speaker 1", "Speaker 2"…). **Rinomina gli speaker** nella scheda, nel campo accanto a *Speaker:*.
+- Il nome si salva con **Invio** o con il pulsante **⏎** accanto al campo, e solo allora cambia nella trascrizione. Finché non lo salvi il campo ha il **bordo rosso**: il testo resta lì anche se passi a un altro elemento, ed **Esc** lo annulla.
+- **Nomi simili:** se esiste già un nome simile, IAGO chiede se è la stessa persona, per esempio «Esiste già *Antonello*. *Lello* è la stessa persona?». Riconosce i nomi scritti in modo diverso (*Marco* e *Marco Rossi*), gli errori di battitura e i diminutivi più comuni (*Lello* e *Antonello*, *Peppe* e *Giuseppe*). Se rispondi di sì usa il nome già noto e se lo ricorda: la volta dopo lo propone subito, anche per i soprannomi che non conosceva.
+- **Stesso nome a due speaker:** a volte la stessa voce viene divisa in due. Se dai a uno speaker il nome di un altro della stessa call, IAGO propone di **unirli**: resta un solo speaker, con tutte le sue frasi. Sotto i campi compare «Speaker 3 unito ad Antonello» con **Separa**, che lo riporta com'era.
+- I nomi valgono per le esportazioni e per ciò che il motore scrive da lì in poi. Una sintesi già fatta resta com'è: *Rigenera* la riscrive con i nomi nuovi.
+- **Prima della sintesi:** se chiedi *Genera sintesi* o *Rigenera* e qualche speaker si chiama ancora «Speaker 1», IAGO chiede se vuoi **dare prima i nomi** (ti porta ai campi) o **procedere così**. La sintesi si può sempre rigenerare più avanti. Le sintesi automatiche non chiedono.
+
+Il motore locale può anche proporre i nomi.
 
 Con più persone nella stessa stanza attiva **Più persone nella stanza** quando trascrivi: IAGO separa anche le voci della tua traccia.
 

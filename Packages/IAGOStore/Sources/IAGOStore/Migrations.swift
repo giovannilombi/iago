@@ -421,6 +421,16 @@ enum Migrations {
             // A project kept in "Traccia" while the app is in "Gestisci".
             try db.alter(table: "project") { t in t.add(column: "work_mode", .text) }
         }
+        migrator.registerMigration("v22-speaker-names") { db in
+            // FR-41: a speaker joined to another of the same call (the same person split in two); nil = on its own.
+            try db.alter(table: "item_speaker") { t in t.add(column: "merged_into", .text) }
+            // "Lello" is "Antonello": the names the user said are the same person, by their normalized form.
+            try db.create(table: "name_alias") { t in
+                t.primaryKey("alias", .text)
+                t.column("name", .text).notNull()
+                t.column("created_at", .datetime).notNull()
+            }
+        }
         return migrator
     }
 

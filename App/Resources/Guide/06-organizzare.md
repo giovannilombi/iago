@@ -4,7 +4,7 @@
 ![La barra laterale](img/barra-laterale.png)
 
 ## La barra laterale
-- **In cima, l'Inbox**, in grassetto e separata dal resto: il lavoro aperto che aspetta te. Il bollino rosso conta le tue voci in ritardo o di oggi e le proposte da confermare (vedi Punti chiave e lavoro aperto).
+- **In cima, l'Inbox**, in grassetto e separata dal resto: il lavoro aperto che aspetta te. Ha due bollini: il **rosso** (!) conta ciò che chiede un'azione adesso, il **giallo** (✦) le proposte da confermare (vedi Punti chiave e lavoro aperto).
 - **Sotto, fisse:** *Elementi da classificare*, *Recenti*, *Punti chiave*, *Importa*, *Attività*, *Categorie e tag*.
 - **Progetti** (l'unica parte che scorre):
   - **In evidenza** (pin rosso): progetti, stream, categorie e tag che fissi.

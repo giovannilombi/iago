@@ -52,11 +52,15 @@ Una voce può **chiuderne altre**, anche di tipo diverso: una tappa «Firmato il
 - Una voce chiusa da un'altra dello stesso giorno sta sotto di lei.
 
 ## Inbox
-L'**Inbox**, in cima alla barra laterale, raccoglie il lavoro aperto di tutti i progetti, in qualsiasi modalità. Il **bollino rosso** conta ciò che chiede un'azione: le tue voci in ritardo o di oggi e le proposte da confermare.
-- le tue voci, per scadenza: in ritardo, oggi, questa settimana, più avanti, senza data; poi quelle *Senza responsabile*;
-- **Aspetto da altri:** le voci in attesa, con la data promessa e il ritardo;
-- le **proposte da confermare**;
-- le **checklist fissate** dei progetti, da spuntare qui.
+L'**Inbox**, in cima alla barra laterale, raccoglie il lavoro aperto di tutti i progetti, in qualsiasi modalità. Accanto al nome ha due bollini, e ognuno conta un blocco dell'Inbox, con lo stesso colore e lo stesso segno nell'intestazione:
+- **Da fare ora**, bollino **rosso** con il punto esclamativo: ciò che chiede un'azione adesso.
+  - le tue voci **in ritardo** e quelle di **oggi**;
+  - le voci **senza responsabile**, da assegnare;
+  - le **attese scadute**: hai aspettato oltre la data promessa, è il momento di sollecitare.
+- **Proposte da confermare**, bollino **giallo** con la stellina: le proposte del motore, raggruppate per l'elemento da cui vengono. Ognuna ha la frase da cui viene e il minuto, e la confermi, la modifichi o la scarti lì. Per ogni elemento se ne vedono tre, poi *Mostra le altre*. *Scarta queste* scarta quelle di un elemento, *Scarta tutte…* tutte.
+- **Più avanti**, senza bollino: le tue voci di questa settimana, dopo e senza data, **Aspetto da altri** (le attese non ancora scadute) e le **checklist fissate** dei progetti, da spuntare qui.
+
+Un bollino a zero non compare, e un blocco vuoto nemmeno.
 
 *Mostra chiuse* fa vedere anche le voci chiuse da poco. In Gestisci puoi ordinare per priorità e filtrare per persona.
 

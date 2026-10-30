@@ -223,7 +223,7 @@ First of all, if you are testing a build not yet merged into `main`: `scripts/tr
 - [ ] 10i.17 With Claude Desktop: «list the project's open work», «create a task for Anna by November 10 with checklist…», then undo from Settings › Claude.
 - [ ] 10i.18 Views bar: *Overview* and *Items*, each on its own, then Timeline · Kanban · Graph, all with an icon. *Items* shows the project's calls, emails and documents. *Show* (Everything, Items, Key points) appears only with Timeline and Graph; with the Kanban it reads «Show: Open work». In Track the pill has *Show the Graph*: when off, the Graph disappears from the bar.
 - [ ] 10i.19 Choose Graph in one project and Kanban in another, switch project and come back: each reopens its last view.
-- [ ] 10i.20 Sidebar: at the top **Inbox** in bold, with the tray icon and, if you have entries overdue or due today or suggestions to confirm, the red badge with their number; below it a line and **Unfiled items**.
+- [ ] 10i.20 Sidebar: at the top **Inbox** in bold, with the tray icon and, if you have entries overdue or due today or suggestions to confirm, the badges with their number (see 10n); below it a line and **Unfiled items**.
 - [ ] 10i.21 *Add › Import files and items…* in a project: drag a PDF into the area, then *From text* (the field opens) with a short text. Both end up in the project, not in Unfiled items. *Email without a file* opens the email window with the project already chosen.
 - [ ] 10i.22 Open a client for the first time: the window asks for the mode of its projects. Choose Track: the projects for which you hadn't chosen a mode switch to Track, and a new project of the client is created in Track.
 - [ ] 10i.23 With the Overview (or the Kanban) open, open «Ask IAGO»: the sidebar stays in place, with the Inbox below the window buttons. In the Kanban open a card: in the panel on the right the buttons («Mark as done», «Edit…») are whole and the date sits below.
@@ -241,6 +241,17 @@ First of all, if you are testing a build not yet merged into `main`: `scripts/tr
 - [ ] 10m.2 The IAGO window drags as smoothly as the Finder's, and moving between Inbox, projects and views is immediate.
 - [ ] 10m.3 With Teams mute reading on, join a Teams meeting: the call is recognized within about twenty seconds and the mute is read as before.
 - [ ] 10m.4 With some tags already used in other calls, record a call on another topic and ask *Find suggestions*: the suggested tags concern only this call, each with the sentence it comes from (or a word said in the call); no tag of the other calls without ground.
+
+## 10n. Inbox with two badges (1.2.4-beta)
+- [ ] 10n.1 With one of your entries late, one with no owner and a few suggestions to confirm: next to **Inbox** there are a **red** badge with «!» and a **yellow** one with the sparkle. Hovering over each says what it counts.
+- [ ] 10n.2 Open the Inbox: the **Do now** block has in its header the same red number as the sidebar, and its rows (late, today, no owner, overdue waits) are exactly that number.
+- [ ] 10n.3 The **Suggestions to confirm** block has the same yellow number and shows the suggestions by item, three per item with *Show the other*. *Confirm* on a suggestion: the yellow number drops by one, in the Inbox and in the sidebar.
+- [ ] 10n.4 *Dismiss these* on an item removes only its own; *Dismiss all…* asks for confirmation and removes them all. The yellow badge disappears.
+- [ ] 10n.5 The entries for this week, with no date and the waits not yet overdue are in **Later**, with the grey number, and count in neither badge.
+- [ ] 10n.6 Open a call with «Speaker 1» and type a name in its field: the border turns red, ⏎ and «Not saved» appear; the transcript does not change yet. Move to another item and back: the text is still there, red. *Esc* cancels it; *Return* (or ⏎) saves it and the transcript shows the name.
+- [ ] 10n.7 Give a speaker the name «Antonello Prova», then in another call type «Lello»: IAGO asks whether it is «Antonello Prova». Answer *Yes*: the speaker takes that name. In a third call type «Lello» again: it suggests «Antonello Prova» right away. With a name with no similarities («Bruno Test») it asks nothing.
+- [ ] 10n.8 In a call with three speakers give Speaker 3 the same name as Speaker 1: IAGO offers *Join*. Join: one field remains, the transcript shows that name also on Speaker 3's sentences, and below there is «Speaker 3 joined to …» with *Separate*. Rename Speaker 1: it changes on Speaker 3's sentences too. *Separate*: Speaker 3 goes back as it was.
+- [ ] 10n.9 On a call with speakers still «Speaker N» press *Generate summary* (or *Regenerate*): IAGO asks whether to name them first. *Name them first* opens the transcript with the cursor in the first unnamed field; *Go ahead as is* starts the summary. With all speakers named, the question does not appear.
 
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).

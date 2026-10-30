@@ -20,6 +20,7 @@ The database is excluded from Time Machine (it contains the search index in plai
 - **Open work** (ADR-0074): in `decision` owner and wait (`owner_id`, `waiting_on_id` pointing to `entity`), `due_at`, `waiting_until`, `priority`, `starts_at`, `estimate`, `severity`, `happened_at`, `outcome`, `outcome_kind`, `derived_from_id`, `recurrence`, `closed_at`; tables `decision_dependency`, `checklist` and `checklist_item` (sub-items of a task or project lists), `board_column` and `board_place` (free columns of each board); `project.work_mode`.
 - **Suggestions** from the engine or from Claude, always to be confirmed (ADR-0009). Summaries and suggestions have `origin` (`engine`, `claude` or, for speaker names, `voice`) and `model`; a key point confirmed from a suggestion keeps `model` (ADR-0070). **Links** between items (`ItemLink`).
 - **Voices** (ADR-0073, only if enabled): `item_voice` holds the voiceprint of each speaker of a call, encrypted with the item's key; `voice` only the person's name. A person's voiceprint is the average of their calls, computed on the fly: deleting a call removes it. Voices do not enter the `change_log` or exports.
+- **Speaker names** (migration `v22-speaker-names`): `item_speaker.merged_into`, the speaker of the same call one was joined to; `name_alias` (normalized `alias` → `name`), the nicknames the user said are the same person («Lello» → «Antonello»).
 - **Ready for sync** (ADR-0008): every row has `created_at`, `updated_at`, `deleted_at`, `version`, `device_id`; every change ends up in `change_log`.
 
 ## Migrations

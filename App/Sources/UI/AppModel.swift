@@ -154,6 +154,11 @@ final class AppModel {
     var searchSource: SearchHit.Source? { didSet { if searchSource != oldValue { scheduleSearch() } } }
     /// Set when a search result is opened: the item view starts the audio there.
     var pendingSeek: (itemID: String, atSec: Double)?
+    /// Speaker names typed and not saved yet, by item and speaker: they stay while IAGO is open, also after moving to
+    /// another item, and the field shows them in red until Return.
+    var speakerDrafts: [String: [String: String]] = [:]
+    /// «Dai prima i nomi» before a summary: the item whose speaker names to bring into view and focus.
+    var namingSpeakersFor: String?
     @ObservationIgnored private var searchTask: Task<Void, Never>?
 
     private func scheduleSearch() {
@@ -999,6 +1004,14 @@ final class AppModel {
     // MARK: Items
 
     func item(_ id: String) -> Item? { try? archive.item(id) }
+
+    /// The speakers of a call still with the label of the transcription («Speaker 1», «Stanza»), not joined to another;
+    /// the user's own track is never one of them.
+    func unnamedSpeakers(_ itemID: String) -> [String] {
+        ((try? archive.speakers(itemID: itemID)) ?? [])
+            .filter { $0.speakerId != "me" && $0.mergedInto == nil && !Archive.isVoiceName($0.label) }
+            .map(\.label).sorted { $0.localizedStandardCompare($1) == .orderedAscending }
+    }
 
     func update(_ id: String, _ change: @escaping @Sendable (inout Item) -> Void) {
         perform {

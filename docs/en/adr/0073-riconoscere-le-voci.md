@@ -37,3 +37,10 @@
 - Negligible space: about 1 KB per speaker per call. Negligible time: comparing against dozens of voices takes less than a millisecond.
 - With compressed audio, several people on a room microphone or similar voices, recognition can be wrong; this is why it only suggests.
 - Quality depends on voice separation: if diarization merges two people, the fingerprint mixes them too.
+
+## Amendment of 2026-10-30 (1.2.4-beta)
+- **The name is confirmed:** it applies only with Return or with the ⏎ button. Before, a name typed and left with a click was lost; now the unconfirmed field is red and the text stays while IAGO is open.
+- **Similar names:** before applying a name IAGO asks whether it is an already known person with a similar name. It considers typos, one name inside the other and Italian nicknames («Lello» and «Antonello»). A «yes» answer stays as an alias (`name_alias`) and next time the known name is suggested right away. It only asks: it never renames by itself.
+- **Join and Separate:** the same name for two speakers of the same call offers to join them, because diarization often splits one person in two. The joined speaker takes the other's name and voice (`item_speaker.merged_into`), and so the person's fingerprint is made with all their sentences. «Separate» puts it back as it was, useful when they were two people after all. The saved transcript does not change.
+- **Before the summary:** with speakers still generic, *Generate summary* and *Regenerate* ask whether to name them first or go ahead, noting that the summary can be regenerated. Automatic summaries go ahead without asking.
+
