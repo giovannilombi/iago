@@ -28,6 +28,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
 0. **Subito (dal 30 ottobre):**
    - **Prova dal vivo della modalità gruppo** (1.2.8-beta, prove 10r): riunioni in presenza, voci della stanza, presenti. Da fare dopo: registrare solo il microfono, senza l'audio del Mac.
    - **Introduzione all'uso** (ADR-0081, 1.2.9-beta): fatta; da provare (10s) e da aggiornare con la guida fino alla distribuzione.
+   - **Progetti di esempio** (ADR-0066, 1.2.10-beta): da provare su un archivio nuovo (3e.7, con `scripts/try-branch.sh --fresh` o un utente macOS di prova): l'archivio dell'utente non li riceve.
 1. **Prove, in un'unica sessione** (vedi [`docs/prove-tester.md`](prove-tester.md)):
    - versioni recenti: 10i (lavoro aperto), 10n (Inbox e nomi), 10o (due trascrizioni), 10p (trascrizione principale);
    - dal vivo: microfono di Teams mentre IAGO registra, icona di IAGO nelle notifiche, sezioni 10b–10h (memoria su 16 GB, schermate e scorciatoie, sintesi e proposte da Claude Desktop, DMG e aggiornamenti, soglia delle voci);
