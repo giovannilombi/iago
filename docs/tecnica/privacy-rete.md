@@ -28,5 +28,5 @@ Le **impronte delle voci** (ADR-0073) sono dati biometrici: si salvano solo se l
 - I **log** di sistema (`subsystem com.giovannilombi.iago`) non contengono contenuti delle trascrizioni, dei documenti o delle note.
 
 ## Contenuti e repository
-- L'app **non contiene contenuti**: un archivio nuovo ha solo l'esempio di struttura (ADR-0066).
+- L'app **non contiene i contenuti di nessuno**: un archivio nuovo ha solo i progetti di esempio di un'agenzia inventata, che si rimuovono con un clic (ADR-0066).
 - Il repository non contiene **mai** dati reali: un controllo prima di ogni commit blocca audio, archivi, trascrizioni, email e i nomi reali elencati localmente (ADR-0065). Test ed esempi usano nomi inventati.

@@ -72,7 +72,7 @@ The tests don't require real data: use test meetings and test files.
 - [ ] 3e.3 "Categories and tags" shows the categories with the number of items and the tags; clicking opens the list across all projects.
 - [ ] 3e.4 Right-click a category or a tag › "Pin to «Pinned»": it appears at the top of the sidebar.
 - [ ] 3e.5 In the search field type `#` or `category:`: the tags or categories to open appear.
-- [ ] 3e.7 On a Mac without IAGO (or with a new archive): at first launch the sidebar shows **Test Client** with **Test Pj. 1** (streams *Pj1 - Stream 1* and *Pj1 - Stream 2*) and **Test Pj. 2**; in "Pinned" there are *Pj1 - Stream 1* and *Test Pj. 2*. Once the client is deleted, the example doesn't come back after a restart. It doesn't appear on an archive already in use.
+- [ ] 3e.7 On a Mac without IAGO (or with a new archive): once the setup is done, the sidebar shows **Atoms**, **Poldo S.p.A.** and **Sanna TheBest s.r.l.** with their projects, and *Headless customer portal* pinned, full of calls, emails, documents and key points. *Settings › Projects › Remove the example* removes them all and they don't come back after a restart. They don't appear on an archive already in use.
 - [ ] 3e.8 Right-click a stream › **Pin to top**: it appears in "Pinned" with the project name below; **Unpin from top** removes it.
 - [ ] 3e.6 In an item's detail, clicking a tag opens all the items with that tag. Next to the category there is no icon: all the items of a category are opened from Categories and tags.
 
@@ -229,7 +229,7 @@ First of all, if you are testing a build not yet merged into `main`: `scripts/tr
 - [ ] 10i.23 With the Overview (or the Kanban) open, open «Ask IAGO»: the sidebar stays in place, with the Inbox below the window buttons. In the Kanban open a card: in the panel on the right the buttons («Mark as done», «Edit…») are whole and the date sits below.
 
 ## 10l. Italian and English (1.2.2-beta)
-- [ ] 10l.1 With a new archive (`scripts/try-branch.sh --fresh`), the first screen asks «Lingua · Language». Choose English: IAGO restarts in English and setup starts again from the welcome screen, in English. The initial example is called Test Client, Test Pj. 1 and Test Pj. 2.
+- [ ] 10l.1 With a new archive (`scripts/try-branch.sh --fresh`), the first screen asks «Lingua · Language». Choose English: IAGO restarts in English and setup starts again from the welcome screen, in English. The example projects are in English (Headless customer portal…).
 - [ ] 10l.2 Settings › General › Language: switch to Italiano. «Restart IAGO?» appears; *Restart now* reopens IAGO in Italian, with the initial example and the categories Progress review, Internal and Other back in Italian (SAL, Interna, Altro) (if you had not renamed them).
 - [ ] 10l.3 In English, the guide (? Guide) is in English, with English screenshots.
 - [ ] 10l.4 In English, generate the summary of a call and look for suggestions: summary and suggestions are in English, with English headings («In brief»), while quotes stay as they were spoken.

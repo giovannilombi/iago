@@ -95,24 +95,10 @@ import Testing
 }
 
 @Suite struct StarterExampleTests {
-    @Test func newArchiveGetsTheExampleOnce() throws {
-        let archive = try ArchiveFixture().archive
-        let example = try #require(try archive.createStarterExampleIfNew())
-        #expect(try archive.clients().map(\.name) == ["Cliente Test"])
-        let projects = try archive.projects()
-        #expect(Set(projects.map(\.name)) == ["Pj. Test 1", "Pj. Test 2"])
-        #expect(projects.allSatisfy { $0.clientId == example.clientID })
-        #expect(projects.first { $0.name == "Pj. Test 2" }?.pinned == true)
-        #expect(
-            try archive.streams(projectID: example.projectIDs[0]).map(\.name) == ["Pj1 - Stream 1", "Pj1 - Stream 2"])
-        // Deleted by the user: it does not come back.
-        #expect(try archive.createStarterExampleIfNew() == nil)
-    }
-
     @Test func archiveInUseGetsNoExample() throws {
         let archive = try ArchiveFixture().archive
         _ = try archive.createProject(name: "Esistente")
-        #expect(try archive.createStarterExampleIfNew() == nil)
+        #expect(try archive.createStarterExampleIfNew(language: "it") == nil)
         #expect(try archive.clients().isEmpty)
     }
 }

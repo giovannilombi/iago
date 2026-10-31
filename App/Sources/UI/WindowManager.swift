@@ -61,6 +61,7 @@ final class WindowManager: NSObject, NSWindowDelegate {
             window.title = String(localized: "Benvenuto in IAGO")
             window.contentView = NSHostingView(
                 rootView: OnboardingView(model: model) { [weak self] in
+                    self?.createExampleIfNew()
                     self?.model.perform { try self?.model.archive.setSetting(Self.onboardingKey, "1") }
                     self?.onboardingWindow?.close()
                     self?.showTour()
@@ -71,6 +72,14 @@ final class WindowManager: NSObject, NSWindowDelegate {
             onboardingWindow = window
         }
         present(onboardingWindow!)
+    }
+
+    /// The example projects of a new archive (ADR-0066), in the app's language; its first stream pinned in the sidebar.
+    func createExampleIfNew() {
+        guard let example = try? model.archive.createStarterExampleIfNew(language: AppLanguage.current.rawValue)
+        else { return }
+        try? model.archive.setSetting(AppModel.pinnedLabelsKey, "stream:\(example.firstStreamID)")
+        model.reload()
     }
 
     static let tourHiddenKey = "help.tourHidden"

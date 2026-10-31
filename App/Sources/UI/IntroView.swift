@@ -257,10 +257,9 @@ struct IntroView: View {
     private func perform(_ action: Action) {
         switch action {
         case .example:
-            // The starter example (ADR-0066), in either language.
-            let names = StarterExample.projectNames + ["Test Pj. 1", "Test Pj. 2"]
-            let example = model.projects.first { names.contains($0.name) } ?? model.projects.first
-            if let example { model.select(.library(.project(example.id))) }
+            // The example projects (ADR-0066); without them, the first project.
+            let example = ((try? model.archive.exampleMainProjectID()) ?? nil) ?? model.projects.first?.id
+            if let example { model.select(.library(.project(example))) }
             // On the «Ogni progetto» step the tab shown is the view that opens.
             if Self.pages[page].images.count == 4 {
                 model.viewMode = [.overview, .timeline, .board, .map][min(tab, 3)]

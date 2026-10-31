@@ -87,7 +87,7 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0063 | Sidebar and cross-cutting access to categories and tags | accepted |
 | 0064 | Echo cleanup after recording | rejected |
 | 0065 | Clean repository, 1.0.0-beta and no real data in commits | accepted |
-| 0066 | Initial example in a new archive | accepted |
+| 0066 | Initial example in a new archive | accepted (example projects with content: 1.2.10-beta) |
 | 0067 | MiniCPM: instead of Qwen 3.5 4B or in addition | rejected |
 | 0068 | Documentation site with VitePress on GitHub Pages | accepted (online when the repository is public) |
 | 0069 | Single engine queue and memory | accepted |

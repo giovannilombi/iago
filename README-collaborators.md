@@ -7,7 +7,7 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 ## 1. Cos'è IAGO, in una pagina
 - Un'app nativa per macOS (menu bar) che fa da **memoria interrogabile del lavoro**: registra e trascrive le call, raccoglie email, documenti e note, ne estrae decisioni e attività, e risponde alle domande citando le fonti.
 - **I dati sono dell'utente.** Restano sul Mac di base; escono solo se l'utente lo sceglie (Claude, o in futuro uno spazio condiviso che controlla). Nessuna telemetria.
-- **L'app non contiene contenuti.** Chi la installa trova un archivio vuoto con un solo esempio di struttura (ADR-0066). Tutto quello che ognuno di noi registra o importa resta suo e non entra mai nel repository.
+- **L'app non contiene i contenuti di nessuno.** Chi la installa trova solo i progetti di esempio di un'agenzia inventata (ADR-0066), che si rimuovono con un clic. Tutto quello che ognuno di noi registra o importa resta suo e non entra mai nel repository.
 - Il [README](README.md) descrive funzioni, architettura, motori, numeri misurati, installazione e crediti.
 
 ## 2. I documenti e a cosa servono
@@ -109,8 +109,8 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 
 ## 6. Prove
 - Le prove manuali sono in [`docs/prove-tester.md`](docs/prove-tester.md), ordinate e scritte per chi non conosce l'app.
-- **Ogni tester ha una issue su GitHub**, "Prove 1.2.9-beta — Nome Cognome", con tutte le prove come caselle da spuntare. Si spunta la casella quando la prova funziona; per un problema si scrive un commento con il numero della prova (es. "3h.4"), cosa si è fatto e cosa si è visto. Tutti i collaboratori leggono le issue e i commenti.
-- Una nuova tornata di prove (nuova beta, nuovo tester) si apre con `scripts/new-test-round.sh "Nome Cognome" 1.2.9-beta`: la issue prende le prove dalla versione attuale di `docs/prove-tester.md`.
+- **Ogni tester ha una issue su GitHub**, "Prove 1.2.10-beta — Nome Cognome", con tutte le prove come caselle da spuntare. Si spunta la casella quando la prova funziona; per un problema si scrive un commento con il numero della prova (es. "3h.4"), cosa si è fatto e cosa si è visto. Tutti i collaboratori leggono le issue e i commenti.
+- Una nuova tornata di prove (nuova beta, nuovo tester) si apre con `scripts/new-test-round.sh "Nome Cognome" 1.2.10-beta`: la issue prende le prove dalla versione attuale di `docs/prove-tester.md`.
 - Un difetto trovato diventa una issue a parte, collegata alla prova; la correzione arriva con una PR che la chiude.
 - Per le prove non servono dati reali. Chi prova con le proprie call tiene quei contenuti per sé: nei commenti si descrive il comportamento, non il contenuto.
 

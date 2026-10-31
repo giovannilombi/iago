@@ -7,7 +7,7 @@ This guide is for people who join the project without knowing its history. It ex
 ## 1. What IAGO is, in one page
 - A native macOS app (menu bar) that acts as a **queryable work memory**: it records and transcribes calls, collects emails, documents and notes, extracts decisions and tasks from them, and answers questions citing the sources.
 - **The data belongs to the user.** It stays on the Mac by default; it leaves only if the user chooses so (Claude, or in the future a shared space they control). No telemetry.
-- **The app contains no content.** Whoever installs it finds an empty archive with a single structure example (ADR-0066). Everything each of us records or imports stays theirs and never enters the repository.
+- **The app contains nobody's content.** Whoever installs it finds only the example projects of an invented agency (ADR-0066), removed with one click. Everything each of us records or imports stays theirs and never enters the repository.
 - The [README](README.en.md) describes features, architecture, engines, measured numbers, installation and credits.
 
 ## 2. The documents and what they are for
@@ -109,8 +109,8 @@ What remains to be done, in order, is in [`docs/stato.md`](docs/en/stato.md).
 
 ## 6. Testing
 - The manual tests are in [`docs/prove-tester.md`](docs/en/prove-tester.md), ordered and written for people who do not know the app.
-- **Each tester has an issue on GitHub**, "Prove 1.2.9-beta — Nome Cognome", with all the tests as checkboxes. Check the box when the test works; for a problem write a comment with the test number (e.g. "3h.4"), what you did and what you saw. All collaborators read the issues and comments.
-- A new round of tests (new beta, new tester) is opened with `scripts/new-test-round.sh "Nome Cognome" 1.2.9-beta`: the issue takes the tests from the current version of `docs/prove-tester.md`.
+- **Each tester has an issue on GitHub**, "Prove 1.2.10-beta — Nome Cognome", with all the tests as checkboxes. Check the box when the test works; for a problem write a comment with the test number (e.g. "3h.4"), what you did and what you saw. All collaborators read the issues and comments.
+- A new round of tests (new beta, new tester) is opened with `scripts/new-test-round.sh "Nome Cognome" 1.2.10-beta`: the issue takes the tests from the current version of `docs/prove-tester.md`.
 - A defect found becomes a separate issue, linked to the test; the fix comes with a PR that closes it.
 - Tests do not need real data. Whoever tests with their own calls keeps that content to themselves: comments describe the behavior, not the content.
 

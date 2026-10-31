@@ -42,7 +42,7 @@ Al primo avvio IAGO ti chiede:
 - le notifiche;
 - il download dei modelli di trascrizione.
 
-Poi un tour di sette pagine spiega come si usa; lo ritrovi in **Impostazioni › Aiuto**. Nella barra laterale trovi un esempio vuoto di struttura (**Cliente Test** con due progetti): rinominalo per usarlo, oppure eliminalo.
+Poi si apre l'introduzione, che ritrovi in **Impostazioni › Aiuto**. Nella barra laterale trovi i progetti di esempio di un'agenzia inventata (Poldo S.p.A., Sanna TheBest s.r.l., Atoms) da esplorare; li togli con **Impostazioni › Progetti › Rimuovi l'esempio**.
 
 ## 4. Permessi di macOS
 In **IAGO › Impostazioni › Permessi** trovi l'elenco con lo stato di ogni voce. **Attiva quelli che mancano** ti accompagna una voce alla volta.

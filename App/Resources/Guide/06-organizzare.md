@@ -17,7 +17,7 @@
 Un progetto appartiene a un cliente (o a nessuno). Uno **stream** è una linea di lavoro dentro il progetto (es. Design, Sviluppo, Legale): elementi, note e punti chiave possono appartenere a uno o più stream. Trascina un progetto su un cliente per spostarlo. Tasto destro: impostazioni, nuovo stream, rinomina, sposta, fissa. Anche uno stream si fissa in alto con il tasto destro.
 
 ## L'esempio iniziale
-In un archivio nuovo IAGO crea un esempio di come si organizza il lavoro: il cliente **Cliente Test** con i progetti **Pj. Test 1** (con gli stream **Pj1 - Stream 1** e **Pj1 - Stream 2**) e **Pj. Test 2**. *Pj1 - Stream 1* e *Pj. Test 2* sono in evidenza. È vuoto: rinominalo per usarlo, oppure eliminalo (tasto destro sul cliente). Non ricompare.
+In un archivio nuovo IAGO crea dei **progetti di esempio** di un'agenzia digitale inventata, per far vedere ogni parte dell'app: i clienti **Poldo S.p.A.** (*Portale clienti headless*, con gli stream *UX/UI* e *Sviluppo*, e *Design system*), **Sanna TheBest s.r.l.** (*Rebranding*) e **Atoms** (*Product discovery*), con call trascritte, email, documenti, sintesi, punti chiave e proposte. Gli esempi non contano nei primi passi dell'introduzione. Quando non ti servono più, **Impostazioni › Progetti › Rimuovi l'esempio** li elimina con tutto il loro contenuto. Non ricompaiono.
 
 ## Elementi da classificare
 Tutte le call, le email e i documenti che non hanno ancora un progetto. Le proposte del motore possono suggerire il progetto giusto. Se importi da dentro un progetto (*Aggiungi › Importa file ed elementi…*), gli elementi vanno direttamente lì e non passano da qui.
