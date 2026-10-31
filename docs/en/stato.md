@@ -28,6 +28,7 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
 0. **Now (from October 30):**
    - **Live test of group mode** (1.2.8-beta, tests 10r): meetings in person, room voices, those present. To do later: recording the microphone alone, without the Mac's audio.
    - **Getting-started introduction** (ADR-0081, 1.2.9-beta): done; to be tested (10s) and kept up to date with the guide until distribution.
+   - **Example projects** (ADR-0066, 1.2.10-beta): to be tested on a new archive (3e.7, with `scripts/try-branch.sh --fresh` or a test macOS user): the user's archive does not get them.
 1. **Tests, in a single session** (see [`docs/prove-tester.md`](prove-tester.md)):
    - recent versions: 10i (open work), 10n (Inbox and names), 10o (two transcripts), 10p (main transcript);
    - live: Teams microphone while IAGO records, IAGO's icon in notifications, sections 10b–10h (memory on 16 GB, screenshots and shortcuts, summaries and suggestions from Claude Desktop, DMG and updates, voice threshold);
