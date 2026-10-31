@@ -14,7 +14,7 @@
 - **Primi passi**, a lato: registrare una call, importare un'email o un documento, dare un nome a uno speaker, mettere un elemento in un progetto, confermare una proposta, fare una domanda. Si spuntano da soli leggendo l'archivio (`Archive.firstSteps`); collegare Claude è facoltativo e non conta.
 - Compare dopo la configurazione del primo avvio e a ogni avvio, finché l'utente non sceglie *Non mostrare più* o completa i primi passi. Si riapre da Aiuto (capitolo Primi passi) e da Impostazioni › Aiuto.
 - Le schermate sono quelle della guida, rifatte dal tour dimostrativo in italiano e inglese: aggiornare la guida aggiorna anche l'introduzione. Il tour aggiunge *grafo*, *dopo-stop* e *claude*.
-- «Apri il progetto di esempio» apre l'esempio di struttura di ADR-0066 (Pj. Test 1): l'app continua a non contenere contenuti. Un archivio dimostrativo con contenuti dentro l'app richiederebbe di cambiare ADR-0066.
+- «Apri il progetto di esempio» apre il progetto principale dei progetti di esempio (ADR-0066, modifica del 2026-10-31), gli stessi delle schermate.
 
 ## Conseguenze
 - Va aggiornata fino alla distribuzione, insieme alla guida (`docs/stato.md`).

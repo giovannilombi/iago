@@ -17,7 +17,7 @@
 A project belongs to a client (or to none). A **stream** is a line of work inside the project (e.g. Design, Development, Legal): items, notes and key points can belong to one or more streams. Drag a project onto a client to move it. Right-click: settings, new stream, rename, move, pin. A stream can also be pinned at the top with a right-click.
 
 ## The starting example
-In a new archive IAGO creates an example of how to organize your work: the client **Test Client** with the projects **Test Pj. 1** (with the streams **Pj1 - Stream 1** and **Pj1 - Stream 2**) and **Test Pj. 2**. *Pj1 - Stream 1* and *Test Pj. 2* are pinned. It is empty: rename it to use it, or delete it (right-click the client). It does not come back.
+In a new archive IAGO creates **example projects** of an invented digital agency, to show every part of the app: the clients **Poldo S.p.A.** (*Headless customer portal*, with the streams *UX/UI* and *Development*, and *Design system*), **Sanna TheBest s.r.l.** (*Rebranding*) and **Atoms** (*Product discovery*), with transcribed calls, emails, documents, summaries, key points and suggestions. The examples do not count in the introduction's first steps. When you no longer need them, **Settings › Projects › Remove the example** deletes them with all their content. They do not come back.
 
 ## Unfiled items
 All the calls, emails and documents that do not have a project yet. The engine's suggestions can point to the right project. If you import from inside a project (*Add › Import files and items…*), the items go straight there and do not pass through here.

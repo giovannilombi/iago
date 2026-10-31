@@ -401,6 +401,8 @@ private struct TranscriptionPane: View {
 /// DELETE, final warning.
 private struct ProjectsPane: View {
     let model: AppModel
+    @State private var hasExample = false
+    @State private var removingExample = false
     @State private var projects: [Project] = []
     @State private var names: [String: String] = [:]
     @State private var deleting: Project?
@@ -409,6 +411,31 @@ private struct ProjectsPane: View {
     @State private var typed = ""
 
     var body: some View {
+        if hasExample {
+            SettingsGroup(
+                title: String(localized: "Progetti di esempio"),
+                footnote: String(
+                    localized:
+                        "Poldo S.p.A., Sanna TheBest s.r.l. e Atoms sono clienti inventati, con call, email, documenti e punti chiave di prova. Rimuovendoli se ne vanno con tutto il loro contenuto; quello che hai spostato in altri progetti resta."
+                )
+            ) {
+                Button(String(localized: "Rimuovi l'esempio…"), role: .destructive) { removingExample = true }
+            }
+            .confirmationDialog(
+                String(localized: "Rimuovere i progetti di esempio?"), isPresented: $removingExample,
+                titleVisibility: .visible
+            ) {
+                Button(String(localized: "Rimuovi l'esempio"), role: .destructive) {
+                    model.perform { try model.archive.removeExample() }
+                    model.reload()
+                    reload()
+                }
+            } message: {
+                Text(
+                    String(
+                        localized: "Clienti, progetti e contenuti di esempio vengono eliminati. Non si può annullare."))
+            }
+        }
         SettingsGroup(
             title: String(localized: "Progetti"),
             footnote: String(
@@ -515,6 +542,7 @@ private struct ProjectsPane: View {
 
     private func reload() {
         projects = (try? model.archive.projects(includeArchived: true)) ?? []
+        hasExample = (try? model.archive.hasExample()) ?? false
         names = [:]
         model.reload()
     }

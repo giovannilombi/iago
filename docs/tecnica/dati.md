@@ -42,4 +42,4 @@ Ventuno finora, da `v1` a `v21-work` (lavoro aperto, ADR-0074: solo colonne e ta
 - **Registro accessi:** download, letture e scritture di Claude, esportazioni, backup e aggiornamenti.
 
 ## Esempio iniziale
-Un archivio nuovo e vuoto riceve una sola volta una struttura d'esempio senza contenuti (Cliente Test, Pj. Test 1 con due stream, Pj. Test 2), per mostrare come si organizza il lavoro (ADR-0066). L'app non contiene altri dati.
+Un archivio nuovo e vuoto riceve una sola volta, finita la scelta della lingua, i **progetti di esempio** (`IAGOStore/ExampleArchive.swift`, ADR-0066): tre clienti inventati con call trascritte, email, documenti, sintesi, punti chiave, proposte e note, nella lingua dell'app e datati intorno al giorno di creazione. Gli elementi hanno `capture_meta = example` e non contano nei primi passi; gli ID stanno nell'impostazione `example_ids` e `Archive.removeExample` li elimina. Gli archivi creati prima della 1.2.10-beta tengono la vecchia struttura «Cliente Test».

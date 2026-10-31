@@ -4039,6 +4039,16 @@
         }
       }
     },
+    "Clienti, progetti e contenuti di esempio vengono eliminati. Non si può annullare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The example's clients, projects and content are deleted. This can't be undone."
+          }
+        }
+      }
+    },
     "Coglie meno le sfumature: nella prova circa 1 proposta su 6 era sbagliata" : {
       "localizations" : {
         "en" : {
@@ -13608,6 +13618,16 @@
         }
       }
     },
+    "Poldo S.p.A., Sanna TheBest s.r.l. e Atoms sono clienti inventati, con call, email, documenti e punti chiave di prova. Rimuovendoli se ne vanno con tutto il loro contenuto; quello che hai spostato in altri progetti resta." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Poldo S.p.A., Sanna TheBest s.r.l. and Atoms are invented clients, with sample calls, emails, documents and key points. Removing them takes away all their content; what you moved to other projects stays."
+          }
+        }
+      }
+    },
     "Porta dentro tutto il resto" : {
       "localizations" : {
         "en" : {
@@ -13854,6 +13874,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Projects available to Claude"
+          }
+        }
+      }
+    },
+    "Progetti di esempio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Example projects"
           }
         }
       }
@@ -15192,12 +15222,42 @@
         }
       }
     },
+    "Rimuovere i progetti di esempio?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove the example projects?"
+          }
+        }
+      }
+    },
     "Rimuovi" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remove"
+          }
+        }
+      }
+    },
+    "Rimuovi l'esempio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove the example"
+          }
+        }
+      }
+    },
+    "Rimuovi l'esempio…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove the example…"
           }
         }
       }

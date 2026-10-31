@@ -42,7 +42,7 @@ On first launch IAGO asks for:
 - notifications;
 - the download of the transcription models.
 
-Then a seven-page tour explains how to use it; you can find it again in **Settings › Help**. In the sidebar there is an empty example structure (**Test Client** with two projects): rename it to use it, or delete it.
+Then the introduction opens; you can find it again in **Settings › Help**. In the sidebar there are the example projects of an invented agency (Poldo S.p.A., Sanna TheBest s.r.l., Atoms) to explore; you remove them with **Settings › Projects › Remove the example**.
 
 ## 4. macOS permissions
 In **IAGO › Settings › Permissions** you find the list with the status of each item. **Turn on the missing ones** walks you through them one at a time.

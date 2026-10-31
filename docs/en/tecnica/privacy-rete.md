@@ -28,5 +28,5 @@ The **screenshots** from *Mark moment with screenshot* stay encrypted on the Mac
 - System **logs** (`subsystem com.giovannilombi.iago`) do not contain the content of transcripts, documents or notes.
 
 ## Content and repository
-- The app **contains no content**: a new archive has only the example structure (ADR-0066).
+- The app **contains nobody's content**: a new archive has only the example projects of an invented agency, removed with one click (ADR-0066).
 - The repository **never** contains real data: a check before every commit blocks audio, archives, transcripts, emails and the real names listed locally (ADR-0065). Tests and examples use made-up names.

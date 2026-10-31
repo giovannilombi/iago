@@ -26,3 +26,11 @@
 ## Consequences
 - Those who do not want the example delete it with one click on the client; those who do, rename it and use it.
 - The demo archive with made-up content (ADR-0061) remains only in the Debug build, for screenshots: it is not in the distributed app.
+
+## Change of 2026-10-31 (1.2.10-beta)
+User request: a freshly opened app must have example projects with content, to show right away how to work.
+- A new archive receives, only once and after the language is chosen, the **example projects** of an invented digital agency: **Poldo S.p.A.** (Headless customer portal with the UX/UI and Development streams, Design system), **Sanna TheBest s.r.l.** (Rebranding), **Atoms** (Product discovery) and an internal project. Inside there are transcribed calls with summaries, emails, documents, decisions with their history, tasks, risks, open questions, requests, notes, those present and suggestions to confirm, about UX, UI, product design, branding and headless development.
+- Everything is invented, in the app's language, dated around the day of creation, without audio. The same content feeds the demo tour: guide, introduction and app show the same example.
+- The example's items are marked (`capture_meta = example`) and do not count in the introduction's first steps (ADR-0081).
+- **Settings › Projects › Remove the example** deletes the example's clients, projects and content; what the user moved elsewhere stays. It does not come back.
+- It supersedes the «A demo archive with content» option discarded above: removal with one click solves the problem of fake data to delete. Archives created earlier keep the old «Test Client» structure.

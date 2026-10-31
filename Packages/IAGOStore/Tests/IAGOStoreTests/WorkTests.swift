@@ -288,7 +288,11 @@ import Testing
     @Test func relabelFollowsTheLanguageAndLeavesUserNamesAlone() throws {
         let fixture = try ArchiveFixture()
         let archive = fixture.archive
-        _ = try archive.createStarterExampleIfNew()
+        // The structure example of the earlier versions, still in some archives.
+        let client = try archive.createClient(name: StarterExample.clientName)
+        for name in StarterExample.projectNames {
+            try archive.setProjectClient(try archive.createProject(name: name).id, client.id)
+        }
         let mine = try archive.createProject(name: "Portale")
         try archive.relabelDefaults(to: "en")
         let names = Set(try archive.projects().map(\.name))

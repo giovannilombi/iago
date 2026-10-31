@@ -14,7 +14,7 @@
 - **First steps**, on the side: record a call, import an email or a document, name a speaker, put an item in a project, confirm a suggestion, ask a question. They tick themselves by reading the archive (`Archive.firstSteps`); connecting Claude is optional and does not count.
 - It appears after the first-launch setup and at every launch, until the user chooses *Don't show again* or completes the first steps. It is reopened from Help (Getting started chapter) and from Settings › Help.
 - The screenshots are the guide's, retaken by the demo tour in Italian and English: updating the guide updates the introduction too. The tour adds *grafo*, *dopo-stop* and *claude*.
-- «Open the example project» opens the ADR-0066 structure example (Pj. Test 1): the app still contains no content. A demo archive with content inside the app would require changing ADR-0066.
+- «Open the example project» opens the main project of the example projects (ADR-0066, change of 2026-10-31), the same as in the screenshots.
 
 ## Consequences
 - It is kept up to date until distribution, together with the guide (`docs/stato.md`).

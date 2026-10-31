@@ -118,13 +118,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 #if DEBUG
                     await DemoMode.seedIfNeeded(archive)
                 #endif
-                // A brand-new archive starts with a neutral example of the structure (ADR-0066).
-                if (try? archive.archive.setting(WindowManager.onboardingKey)) != "1",
-                    let example = try? archive.archive.createStarterExampleIfNew(),
-                    let stream = example.streamIDs.first
-                {
-                    try? archive.archive.setSetting(AppModel.pinnedLabelsKey, "stream:\(stream)")
-                    model.reload()
+                // A brand-new archive starts with the example projects (ADR-0066), once the language is chosen: the
+                // first step of the setup restarts IAGO in the language picked.
+                if (try? archive.archive.setting(WindowManager.onboardingKey)) != "1", AppLanguage.wasChosen {
+                    windows.createExampleIfNew()
                 }
                 // ADR-0077: names IAGO gave by itself in the app's language, and the engine writing in it.
                 AppLanguage.applyAtLaunch(archive: archive.archive)

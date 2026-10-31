@@ -42,4 +42,4 @@ Twenty-one so far, from `v1` to `v21-work` (open work, ADR-0074: only new column
 - **Access log:** downloads, Claude reads and writes, exports, backups and updates.
 
 ## Starter example
-A new, empty archive receives, only once, an example structure without content (Test Client, Test Pj. 1 with two streams, Test Pj. 2), to show how work is organized (ADR-0066). The app contains no other data.
+A new, empty archive receives, only once, after the language is chosen, the **example projects** (`IAGOStore/ExampleArchive.swift`, ADR-0066): three invented clients with transcribed calls, emails, documents, summaries, key points, suggestions and notes, in the app's language and dated around the day of creation. The items have `capture_meta = example` and do not count in the first steps; the IDs are in the `example_ids` setting and `Archive.removeExample` deletes them. Archives created before 1.2.10-beta keep the old «Test Client» structure.

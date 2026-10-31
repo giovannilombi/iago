@@ -72,7 +72,7 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 3e.3 "Categorie e tag" mostra le categorie con il numero di elementi e i tag; il clic apre l'elenco su tutti i progetti.
 - [ ] 3e.4 Con il tasto destro su una categoria o un tag "Fissa in «In evidenza»": compare in cima alla barra laterale.
 - [ ] 3e.5 Nel campo di ricerca scrivi `#` o `categoria:`: compaiono i tag o le categorie da aprire.
-- [ ] 3e.7 Su un Mac senza IAGO (o con un archivio nuovo): al primo avvio la barra laterale mostra **Cliente Test** con **Pj. Test 1** (stream *Pj1 - Stream 1* e *Pj1 - Stream 2*) e **Pj. Test 2**; in "In evidenza" ci sono *Pj1 - Stream 1* e *Pj. Test 2*. Eliminato il cliente, l'esempio non ricompare al riavvio. Su un archivio già in uso non compare.
+- [ ] 3e.7 Su un Mac senza IAGO (o con un archivio nuovo): finita la configurazione, la barra laterale mostra **Atoms**, **Poldo S.p.A.** e **Sanna TheBest s.r.l.** con i loro progetti, e *Portale clienti headless* in evidenza, pieno di call, email, documenti e punti chiave. *Impostazioni › Progetti › Rimuovi l'esempio* li toglie tutti e al riavvio non ricompaiono. Su un archivio già in uso non compaiono.
 - [ ] 3e.8 Tasto destro su uno stream › **Fissa in alto**: compare in "In evidenza" con sotto il nome del progetto; **Togli dall'alto** lo toglie.
 - [ ] 3e.6 Nella scheda di un elemento, il clic su un tag apre tutti gli elementi con quel tag. Accanto alla categoria non c'è nessuna icona: tutti gli elementi di una categoria si aprono da Categorie e tag.
 
@@ -229,7 +229,7 @@ Prima di tutto, se provi una build non ancora unita su `main`: `scripts/try-bran
 - [ ] 10i.23 Con il Riepilogo (o la Kanban) aperto, apri «Chiedi a IAGO»: la barra laterale resta al suo posto, con l'Inbox sotto i pulsanti della finestra. Nella Kanban apri una scheda: nel pannello a destra i pulsanti («Segna come fatta», «Modifica…») sono interi e la data sta sotto.
 
 ## 10l. Italiano e inglese (1.2.2-beta)
-- [ ] 10l.1 Con un archivio nuovo (`scripts/try-branch.sh --fresh`), la prima schermata chiede «Lingua · Language». Scegli English: IAGO si riavvia in inglese e la configurazione riparte dal benvenuto, in inglese. L'esempio iniziale si chiama Test Client, Test Pj. 1 e Test Pj. 2.
+- [ ] 10l.1 Con un archivio nuovo (`scripts/try-branch.sh --fresh`), la prima schermata chiede «Lingua · Language». Scegli English: IAGO si riavvia in inglese e la configurazione riparte dal benvenuto, in inglese. I progetti di esempio sono in inglese (Headless customer portal…).
 - [ ] 10l.2 Impostazioni › Generale › Lingua: passa a Italiano. Compare «Riavviare IAGO?»; *Riavvia ora* riapre IAGO in italiano, con l'esempio iniziale e le categorie SAL, Interna e Altro di nuovo in italiano (se non li avevi rinominati).
 - [ ] 10l.3 In inglese, la guida (? Guida) è in inglese, con le schermate in inglese.
 - [ ] 10l.4 In inglese, genera la sintesi di una call e cerca le proposte: sintesi e proposte sono in inglese, con titoli inglesi («In brief»), mentre le citazioni restano come sono state dette.

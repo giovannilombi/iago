@@ -87,7 +87,7 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0063 | Barra laterale e accesso trasversale a categorie e tag | accettato |
 | 0064 | Pulizia dell'eco dopo la registrazione | rifiutato |
 | 0065 | Repository pulito, 1.0.0-beta e niente dati reali nei commit | accettato |
-| 0066 | Esempio iniziale in un archivio nuovo | accettato |
+| 0066 | Esempio iniziale in un archivio nuovo | accettato (progetti di esempio con contenuti: 1.2.10-beta) |
 | 0067 | MiniCPM: al posto di Qwen 3.5 4B o in aggiunta | rifiutato |
 | 0068 | Sito di documentazione con VitePress su GitHub Pages | accettato (online quando il repository è pubblico) |
 | 0069 | Coda unica del motore e memoria | accettato |
