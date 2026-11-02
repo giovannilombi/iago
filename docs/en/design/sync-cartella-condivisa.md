@@ -60,6 +60,11 @@ IAGO will also be distributed outside the company, so administration can't rely 
 - "Ask IAGO" conversations, unless they are saved as a note.
 - Recordings made in a shared project become the space's when they are saved. Before that, it's still possible to discard them.
 
+## Process rules, outside the app
+Decided at the review board of 2026-11-02 (ADR-0082, ADR-0083). They are written into the company's processes, not implemented, so the app doesn't become less standard:
+- **Client projects are shared from day one**, so whoever inherits them (a manager of a PM who leaves the company, for example) loses nothing. The data of shared projects belongs to the company.
+- **The lead's deputy** is chosen by the main PM, as part of managing the project: the app has no hierarchy and doesn't model it. In the app there is only the lead, whose choice wins in a conflict (ADR-0082).
+
 ## Space used
 - Texts: a few MB per project.
 - Audio: about 30 MB per hour of call. Per space you choose "audio too" or "text only"; with OneDrive the audio can be kept "online-only" and downloaded on demand.

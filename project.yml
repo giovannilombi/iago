@@ -108,7 +108,7 @@ targets:
       path: App/Info.plist
       properties:
         CFBundleDisplayName: IAGO
-        CFBundleShortVersionString: "1.2.10-beta"
+        CFBundleShortVersionString: "1.2.11-beta"
         CFBundleVersion: "1"
         LSUIElement: true
         LSApplicationCategoryType: public.app-category.productivity

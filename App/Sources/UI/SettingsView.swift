@@ -161,6 +161,7 @@ private struct GeneralPane: View {
                 .onChange(of: name) { save() }
         }
         WorkViewsSettings(model: model)
+        ItemDetailSettings()
         SettingsGroup(title: String(localized: "Avvio")) {
             Toggle(String(localized: "Apri IAGO all'avvio del Mac"), isOn: $launchAtLogin)
                 .onChange(of: launchAtLogin) { _, enabled in

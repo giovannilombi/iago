@@ -139,6 +139,10 @@ final class AppModel {
 
     /// "Chiedi" (ADR-0049): the side panel and what it looks at.
     var showsChat = false
+    /// «Torna su» of the item view, set while its sticky bar is shown (ADR-0084).
+    var backToTop: (@MainActor () -> Void)?
+    /// Asks the item view to open a section and scroll to it (`top`: back to the title); used by the demo tour.
+    var openDetailSection: String?
     var chatScope: SearchScope { currentSearchScope }
 
     /// The sidebar selection as a search scope.

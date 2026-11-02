@@ -11,12 +11,12 @@ IAGO registra **due tracce separate**: l'audio del Mac (le voci degli altri in T
 - **Più persone nella stanza durante una call:** se ti accorgi che con te ci sono altre persone, scegli **Più persone qui nella stanza** dal menu durante la registrazione. La call verrà trascritta con le loro voci separate.
 
 ## Segna momento
-Durante la call scegli **Segna momento** dal menu: IAGO mette un segnalibro qualche secondo prima di adesso, con una nota facoltativa. Nella scheda lo ritrovi tra i *Segnalibri* e un clic ti porta in quel punto dell'audio. Da un segnalibro puoi creare direttamente un punto chiave.
+Durante la call scegli **Segna momento** dal menu: IAGO mette un segnalibro qualche secondo prima di adesso, con una nota facoltativa. Nella scheda lo ritrovi tra i *Segnalibri*, nella trascrizione al suo minuto e come tacca sul player: un clic ti porta in quel punto dell'audio. Da un segnalibro puoi creare direttamente un punto chiave.
 
 ## Segna momento con screenshot
 Quando qualcuno condivide una slide, una tabella o un grafico, scegli **Segna momento con screenshot** (o premi **⌃⌥S**): IAGO cattura lo schermo su cui c'è il puntatore, senza le sue finestre, e lo mette nella call **in quel minuto**.
 - Il Mac legge il testo della schermata: lo ritrovi nella trascrizione al suo minuto, nella ricerca e nelle sintesi, che possono citare una slide.
-- Nella scheda le schermate stanno nella sezione **Schermate**: un clic apre l'immagine con il testo letto, e da lì ascolti la call da quel punto.
+- Nella scheda le schermate stanno nella sezione **Schermate** e sul player, tra i momenti della call: un clic apre l'immagine con il testo letto, e da lì ascolti la call da quel punto.
 - Serve il permesso **Registrazione schermo** (Impostazioni › Permessi). IAGO cattura lo schermo solo quando lo chiedi tu, mai da solo. macOS chiede ogni tanto di confermare il permesso.
 - In Impostazioni › Generale puoi scegliere di catturare tutti gli schermi.
 

@@ -296,6 +296,14 @@ You need two real people in the same room (invented names in written tests).
 - [ ] 10s.4 First steps: import a document with the introduction open and the row ticks itself; «x of 6 done» goes up.
 - [ ] 10s.5 Close with *Start* without *Don't show again*: at the next launch it opens again. With *Don't show again*, or with all first steps done, it does not; *See the introduction again* in Help › Getting started and in Settings › Help reopens it.
 
+## 10t. Item detail (1.2.11-beta)
+- [ ] 10t.1 Open a call: under the title client › project and date · duration · type, then the tiles. Each tile has one value only; Transcript says IAGO, Teams or IAGO + Teams; the tiles of empty sections are dashed.
+- [ ] 10t.2 A click on a tile opens the section (even if it was closed) and takes you there, with its title just under the sticky bar.
+- [ ] 10t.3 Scroll down: the sticky bar appears (title, below it client › project · date · duration, tiles in miniature) with the section you are in highlighted; at the bottom right ↑ above «Ask IAGO», without overlapping. Hide «Ask IAGO» with its ✕: ↑ moves down to its place. ↑ goes back to the top and bar and ↑ disappear.
+- [ ] 10t.4 Close the Transcript in one call and leave it open in another: each stays as it was. In Settings › General › Item detail set Transcript to Closed: a call never touched opens it closed; *Reapply to all items…* brings every call back to this choice. Files is always open.
+- [ ] 10t.5 A call without bookmarks, notes or links: those sections are just a dashed header with the sentence; *Add note* and *Link to…* work from there.
+- [ ] 10t.6 A call with bookmarks and screenshots: coloured ticks on the player; below one moment at a time with ‹ › and «N of M»; the minute plays the audio from there; while listening the moment follows the audio. The same moments are in the transcript at their minute. Turning off the two checkboxes in Settings makes them disappear.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

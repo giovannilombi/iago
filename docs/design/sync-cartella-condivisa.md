@@ -60,6 +60,11 @@ IAGO sarà distribuito anche fuori dall'azienda, quindi la regia non può contar
 - Le conversazioni di "Chiedi a IAGO", a meno di salvarle come nota.
 - Le registrazioni fatte in un progetto condiviso diventano dello spazio quando sono salvate. Prima resta la possibilità di scartarle.
 
+## Regole di processo, fuori dall'app
+Decise nella review board del 2026-11-02 (ADR-0082, ADR-0083). Si scrivono nei processi aziendali, non si implementano, per non rendere l'app meno standard:
+- **I progetti dei clienti si condividono dal primo giorno**, così chi li eredita (per esempio il manager di un PM che lascia l'azienda) non perde nulla. Il dato dei progetti condivisi è dell'azienda.
+- **Il vice del referente** lo sceglie il PM principale, nella gestione del progetto: l'app non ha una gerarchia e non lo modella. Nell'app esiste solo il referente, la cui scelta vale in caso di conflitto (ADR-0082).
+
 ## Spazio occupato
 - Testi: pochi MB per progetto.
 - Audio: circa 30 MB per ora di call. Per spazio si sceglie "anche gli audio" oppure "solo testi"; con OneDrive gli audio si possono tenere "solo online" e scaricare su richiesta.

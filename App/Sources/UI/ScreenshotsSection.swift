@@ -14,10 +14,17 @@ struct ScreenshotsSection: View {
 
     var body: some View {
         Group {
-            if !shots.isEmpty {
+            if shots.isEmpty {
                 SectionBox(
-                    String(localized: "Schermate (\(shots.count))"), systemImage: "camera.viewfinder", tint: .teal,
-                    collapseKey: "screenshots"
+                    String(localized: "Schermate"), systemImage: "camera.viewfinder", tint: .teal,
+                    collapseKey: "screenshots",
+                    emptyText: String(
+                        localized: "Nessuna schermata: durante la call usa «Segna momento con screenshot»")
+                ) { EmptyView() }
+            } else {
+                SectionBox(
+                    String(localized: "Schermate"), systemImage: "camera.viewfinder", tint: .teal,
+                    collapseKey: "screenshots", detail: "\(shots.count)"
                 ) {
                     LazyVGrid(columns: [GridItem(.adaptive(minimum: 150), spacing: 12)], alignment: .leading) {
                         ForEach(shots) { shot in
