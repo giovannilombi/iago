@@ -26,7 +26,7 @@ You can ask it what was decided, who has to do what, how a choice changed over t
   - a click opens the menu: *Start recording*, *Mark moment*, *Voice note*, *Import files…*, Guide, Settings;
   - a right-click (or Control-click) starts, pauses and resumes a recording on the fly;
   - while recording, the icon shows the time; while transcribing, the percentage.
-- **Main window:** on the left, the **Inbox** at the top, then the other views and the projects; in the middle, the project (Overview, Items, Timeline, Kanban or Graph); on the right, the item card.
+- **Main window:** on the left, the **Inbox** at the top, then the other views and the projects; in the middle, the project (Overview, Items, Timeline, Kanban or Graph); on the right, the item card. At the top, next to Settings, choose the **appearance**: *Automatic* (like the Mac, the starting choice), *Light* or *Dark*.
 - **Settings** (⌘,): everything you can configure, including **Permissions**.
 - **Guide:** the **? Guide** button at the top left of the window, next to Settings, or the menu of the IAGO icon ![icona di IAGO](/icona.svg).
 

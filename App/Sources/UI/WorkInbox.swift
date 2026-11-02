@@ -62,7 +62,7 @@ struct WorkInbox: View {
             .frame(maxWidth: 900)
             .frame(maxWidth: .infinity)
         }
-        .safeAreaInset(edge: .top, spacing: 0) { header.background(.bar) }
+        .safeAreaInset(edge: .top, spacing: 0) { header.iagoBar() }
         .overlay {
             if isEmpty {
                 ContentUnavailableView {
@@ -183,7 +183,7 @@ struct WorkInbox: View {
                 Label {
                     Text(String(localized: "Inbox"))
                 } icon: {
-                    Image(systemName: "tray").foregroundStyle(.tint)
+                    Image(systemName: "tray")
                 }
                 .font(.headline)
                 Spacer(minLength: 8)
@@ -365,7 +365,7 @@ struct WorkInboxSidebarLabel: View {
                 if proposals > 0 { InboxCountBadge(kind: .proposals, count: proposals) }
             }
         } icon: {
-            Image(systemName: "tray").foregroundStyle(.tint)
+            Image(systemName: "tray")
         }
         .task(id: "\(model.revision)-\(model.intelligence.revision)") {
             let open =

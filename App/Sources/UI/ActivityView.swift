@@ -19,8 +19,8 @@ struct ActivityView: View {
     @State private var archiveSize: Int64 = 0
     @State private var width: CGFloat = 1000
 
-    /// The side column (last 7 days, ready to work) beside the lists when there is room, under them otherwise.
-    private var sideBySide: Bool { width >= 1000 }
+    /// The summary (last 7 days, ready to work) side by side above the lists when there is room (layout A2).
+    private var sideBySide: Bool { width >= 700 }
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -32,18 +32,15 @@ struct ActivityView: View {
                         withAnimation { proxy.scrollTo("activity.\(key == "failed" ? "recent" : key)", anchor: .top) }
                     }
                     if sideBySide {
-                        HStack(alignment: .top, spacing: 20) {
-                            lists.frame(maxWidth: 760, alignment: .leading)
-                            side.frame(width: 340)
-                        }
+                        HStack(alignment: .top, spacing: 16) { summary }.fixedSize(horizontal: false, vertical: true)
                     } else {
-                        lists
-                        side
+                        VStack(alignment: .leading, spacing: 14) { summary }
                     }
+                    lists
                 }
                 .padding(20)
-                .frame(maxWidth: 1140, alignment: .leading)
-                .frame(maxWidth: .infinity, alignment: .leading)
+                .frame(maxWidth: 900, alignment: .leading)
+                .frame(maxWidth: .infinity)
             }
             .onGeometryChange(for: CGFloat.self) {
                 $0.size.width
@@ -109,11 +106,14 @@ struct ActivityView: View {
         }
     }
 
-    // MARK: Side column
+    // MARK: Summary
 
-    private var side: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            SectionBox(String(localized: "Ultimi 7 giorni"), systemImage: "chart.bar", tint: .blue) {
+    @ViewBuilder
+    private var summary: some View {
+        Group {
+            SectionBox(
+                String(localized: "Ultimi 7 giorni"), systemImage: "chart.bar", tint: .blue, fillsHeight: sideBySide
+            ) {
                 WeekBars(counts: week)
                 Text(
                     String(
@@ -122,7 +122,10 @@ struct ActivityView: View {
                 )
                 .font(.caption).foregroundStyle(.secondary)
             }
-            SectionBox(String(localized: "Pronto per lavorare"), systemImage: "checkmark.seal", tint: .gray) {
+            SectionBox(
+                String(localized: "Pronto per lavorare"), systemImage: "checkmark.seal", tint: .gray,
+                fillsHeight: sideBySide
+            ) {
                 readiness(
                     String(localized: "Motore del Mac"), value: model.engine.activeModel?.name,
                     missing: String(localized: "non scelto"))
@@ -137,7 +140,7 @@ struct ActivityView: View {
     private func readiness(_ title: String, value: String?, missing: String) -> some View {
         HStack(spacing: 8) {
             Image(systemName: value == nil ? "exclamationmark.circle" : "checkmark.circle.fill")
-                .foregroundStyle(value == nil ? Color.orange : Color.green)
+                .foregroundStyle(value == nil ? Color.orange : Color.secondary)
             Text(title)
             Spacer(minLength: 8)
             Text(value ?? missing).foregroundStyle(.secondary).lineLimit(1)

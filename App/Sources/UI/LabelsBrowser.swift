@@ -27,6 +27,7 @@ struct LabelsBrowser: View {
                 tagsSection
             }
             .padding(20)
+            .frame(maxWidth: 900, alignment: .leading)
             .frame(maxWidth: .infinity, alignment: .leading)
         }
         .task(id: model.revision) { counts = (try? model.archive.labelCounts()) ?? ([:], [:]) }
@@ -42,7 +43,9 @@ struct LabelsBrowser: View {
             header(String(localized: "Categorie"))
             tiles(main)
             ForEach(families, id: \.self) { family in
-                Text(CategoryFamilyName.display(family)).font(.subheadline.weight(.semibold)).foregroundStyle(.secondary).padding(.top, 4)
+                Text(CategoryFamilyName.display(family)).font(.subheadline.weight(.semibold)).foregroundStyle(
+                    .secondary
+                ).padding(.top, 4)
                 tiles(categories.filter { $0.family == family })
             }
         }
@@ -67,8 +70,8 @@ struct LabelsBrowser: View {
                         Text("\(counts.categories[category.id] ?? 0)").monospacedDigit().foregroundStyle(.secondary)
                     }
                     .padding(.horizontal, 12).padding(.vertical, 10)
-                    .background(RoundedRectangle(cornerRadius: 9).fill(Color(nsColor: .controlBackgroundColor)))
-                    .overlay(RoundedRectangle(cornerRadius: 9).stroke(Color.secondary.opacity(0.18)))
+                    // An empty category is dashed, like an empty tile (style A).
+                    .background(TileShape(isEmpty: (counts.categories[category.id] ?? 0) == 0, radius: 9))
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)

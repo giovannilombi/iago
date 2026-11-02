@@ -183,7 +183,7 @@ struct SuggestionRow: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
                 Text(Self.kindLabel(suggestion.kind, content)).font(.caption.weight(.semibold))
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(.secondary)
                 Text(content.text).fontWeight(.semibold).fixedSize(horizontal: false, vertical: true)
                 if let owner = content.owner { Text("— \(owner)").foregroundStyle(.secondary) }
                 Spacer()

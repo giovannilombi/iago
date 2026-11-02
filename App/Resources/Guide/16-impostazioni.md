@@ -1,6 +1,8 @@
 <!-- icona: gearshape -->
 # Impostazioni
 
+L'**aspetto** (automatico, chiaro o scuro) non è qui: si sceglie dall'icona accanto alle Impostazioni, nella finestra principale.
+
 - **Generale:** lingua (italiano o inglese: IAGO si riavvia per cambiarla, e anche sintesi e proposte passano alla nuova lingua), nome ("Io"), Kanban, dettaglio elemento (sezioni aperte o chiuse all'inizio, momenti nella trascrizione e sul player), notifica del mattino, avvio al login, aggiornamenti, scorciatoie in tutte le app, schermate (uno o tutti gli schermi).
 - **Permessi:** cosa è attivo e cosa manca, con l'attivazione guidata.
 - **Audio:** microfono, riunioni (proposte, calendario, mute di Teams).

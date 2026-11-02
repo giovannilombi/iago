@@ -31,6 +31,8 @@ Inbox, Key points and the all-projects Kanban gather the work of **all projects*
 ## Creating them
 From a bookmark, from a sentence in the transcript (right-click), from a document, from a note (*Promote*), by hand (*Add* in the timeline), or by confirming a **suggestion** from the engine or from Claude. Each one has a title, description, date, people, tags, streams and the **source** (with the minute of the call).
 
+*Add* opens the sheet with the kind you chose in a tile, next to the title: a click on the tile changes it. Status, owner and due date appear only for open work. In **People** and **Tags** you add as many as you like: type and press Return or a comma.
+
 For the **owner**, choose among the people IAGO knows, or type a new one; if it looks like a known name IAGO asks "Did you mean Marco Rossi?". When you write someone in **Waiting for**, the entry moves to *Waiting*.
 
 ## Closing them

@@ -35,6 +35,7 @@ struct MainView: View {
                 }
                 .help(String(localized: "Impostazioni (⌘,)"))
             }
+            ToolbarItem(placement: .navigation) { AppearanceMenu() }
             // Next to Settings, far from the search: an icon everyone reads as help, with its name.
             ToolbarItem(placement: .navigation) {
                 Button {
@@ -167,6 +168,7 @@ struct MainView: View {
                 }
             }
             .safeAreaInset(edge: .top, spacing: 0) { backToSearch }
+            .background(IAGOColor.page)
             .navigationSplitViewColumnWidth(min: contentWidth.min, ideal: contentWidth.ideal)
         } detail: {
             // "Chiedi a IAGO" sits next to the detail as a plain pane: the system inspector looped AppKit's
@@ -179,6 +181,7 @@ struct MainView: View {
                     if model.showsChat { chatPane(chat, available: geometry.size.width) }
                 }
             }
+            .background(IAGOColor.page)
         }
     }
 
@@ -194,6 +197,7 @@ struct MainView: View {
                 let inspector = shown ? min(480, (geometry.size.width - chat) * 0.45) : 0
                 HStack(spacing: 0) {
                     wideContent.safeAreaInset(edge: .top, spacing: 0) { backToSearch }
+                        .background(IAGOColor.page)
                         .frame(width: geometry.size.width - chat - inspector).clipped()
                     if shown {
                         inspectorPane.frame(width: inspector)
@@ -208,9 +212,12 @@ struct MainView: View {
 
     @ViewBuilder
     private var wideContent: some View {
-        // «Attività» has nothing to select: it takes the whole space, «Apri» shows the item in the inspector.
+        // «Attività» and «Categorie e tag» have nothing to select: they take the whole space; what they open shows in
+        // the inspector or in its own list.
         if model.sidebar == .activity {
             ActivityView(model: model)
+        } else if model.sidebar == .labels {
+            LabelsBrowser(model: model)
         } else {
             wideViews
         }
@@ -254,7 +261,7 @@ struct MainView: View {
                 detail
             }
         }
-        .background(Color(nsColor: .windowBackgroundColor))
+        .background(IAGOColor.panel)
     }
 
     private func chatPane(_ width: CGFloat, available: CGFloat) -> some View {
@@ -266,7 +273,7 @@ struct MainView: View {
     @ViewBuilder
     private var backToSearch: some View {
         if !model.showsSearch, !model.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
-            BackToSearchBar(model: model).background(.bar)
+            BackToSearchBar(model: model).iagoBar()
         }
     }
 
@@ -400,6 +407,8 @@ private struct Sidebar: View {
     @State private var topHeight: CGFloat = 320
     @State private var topListY: CGFloat?
     @State private var lastRowBottom: CGFloat?
+    /// The next measure may make the fixed part shorter: set when a row comes or goes.
+    @State private var allowsShrink = true
     /// Shared with the floating "Chiedi a IAGO": hidden there, shown here.
     @AppStorage("askButtonHidden") private var askButtonHidden = false
     /// Past this many projects a "Filtra progetti" field appears.
@@ -412,7 +421,9 @@ private struct Sidebar: View {
     /// Three parts: the views (fixed), clients and projects (the only part that scrolls), the bar at the bottom.
     var body: some View {
         VStack(spacing: 0) {
-            List(selection: selection) { views }
+            // Grey icons, white on the selected row (style A): colour stays on badges, clients and modes. The tint is
+            // a row modifier: on the list itself it does nothing.
+            List(selection: selection) { Group { views }.listItemTint(.monochrome) }
                 .listStyle(.sidebar).scrollDisabled(true).scrollContentBackground(.hidden)
                 .onGeometryChange(for: CGFloat.self) {
                     $0.frame(in: .global).minY
@@ -437,7 +448,8 @@ private struct Sidebar: View {
             Hairline()
             bottomBar
         }
-        .background(SidebarMaterial().ignoresSafeArea())
+        .background(SidebarMaterial().overlay(IAGOColor.sidebarTint).ignoresSafeArea())
+        .onChange(of: askButtonHidden) { allowsShrink = true }
         .task(id: model.revision) { trashCount = (try? model.archive.trashedItems().count) ?? 0 }
         .sheet(isPresented: $creatingClient) {
             NewClientSheet(model: model) { client in
@@ -504,10 +516,15 @@ private struct Sidebar: View {
     }
 
     /// The fixed part as tall as its rows (they follow the sidebar icon size of System Settings).
+    /// Grows at once; shrinks only when «Chiedi a IAGO» leaves the list. A measure taken mid-layout (opening
+    /// «Punti chiave») was smaller than the rows and cut «Attività» and «Categorie e tag», which stopped responding.
     private func fitTop() {
         guard let top = topListY, let bottom = lastRowBottom, bottom > top else { return }
         let wanted = bottom - top + 10
-        if abs(wanted - topHeight) > 1 { topHeight = wanted }
+        if wanted > topHeight + 1 || (allowsShrink && abs(wanted - topHeight) > 1) {
+            topHeight = wanted
+            allowsShrink = false
+        }
     }
 
     /// "＋" for a new project or client on the left, the trash on the right: always there, never in the way.
@@ -805,14 +822,15 @@ struct WorkModePill: View {
         Button {
             open.toggle()
         } label: {
+            // Colour only in the mode's sign (style A).
             HStack(spacing: 4) {
-                Image(systemName: WorkModeText.icon(mode))
+                Image(systemName: WorkModeText.icon(mode)).foregroundStyle(WorkModeText.color(mode))
                 Text(WorkModeText.fullTitle(mode))
-                Image(systemName: "chevron.down").font(.system(size: 8, weight: .bold))
+                Image(systemName: "chevron.down").font(.system(size: 8, weight: .bold)).foregroundStyle(.secondary)
             }
-            .font(.caption.weight(.semibold)).foregroundStyle(WorkModeText.color(mode))
+            .font(.caption.weight(.semibold))
             .padding(.horizontal, 8).padding(.vertical, 2)
-            .background(Capsule().fill(WorkModeText.color(mode).opacity(0.14)))
+            .background(Capsule().fill(Color.secondary.opacity(0.12)))
             .contentShape(Capsule())
         }
         .buttonStyle(.plain).fixedSize()
@@ -872,9 +890,9 @@ struct WorkModeChoice: View {
                 HStack(spacing: 6) {
                     Text(WorkModeText.fullTitle(mode)).font(.body.weight(.semibold))
                     Text(WorkModeText.level(mode)).font(.caption.weight(.medium))
-                        .foregroundStyle(WorkModeText.color(mode))
+                        .foregroundStyle(.secondary)
                         .padding(.horizontal, 6).padding(.vertical, 1)
-                        .background(Capsule().fill(WorkModeText.color(mode).opacity(0.14)))
+                        .background(Capsule().fill(Color.secondary.opacity(0.15)))
                     Spacer(minLength: 0)
                     if selected { Image(systemName: "checkmark").foregroundStyle(.secondary) }
                 }
@@ -896,12 +914,14 @@ private struct ItemList: View {
             ItemRow(summary: summary, suggestions: model.pendingSuggestions[summary.id] ?? 0).tag(summary.id)
                 .contextMenu { ItemContextMenu(model: model, summary: summary) }
         }
+        // The page's grey shows through (no full white in light).
+        .scrollContentBackground(.hidden)
         .safeAreaInset(edge: .top, spacing: 0) {
             VStack(spacing: 0) {
                 ViewModePicker(model: model)
                 FilterBar(model: model)
             }
-            .background(.bar)
+            .iagoBar()
         }
         .overlay {
             if model.summaries.isEmpty {

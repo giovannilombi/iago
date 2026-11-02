@@ -41,7 +41,7 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 
 ### I dati
 - **Mai dati reali nel repository**: niente audio, archivi, trascrizioni, email, nomi di persone, clienti o domini reali. Negli esempi e nei test si usano nomi inventati e neutri (Cliente Test, Acme, Rossi…).
-- Gli screenshot della guida si fanno solo dall'archivio dimostrativo della build Debug (ADR-0061), mai dal proprio archivio.
+- Gli screenshot della guida si fanno solo dall'archivio dimostrativo della build Debug (ADR-0061), mai dal proprio archivio: `scripts/guide-screenshots.sh` li rifà tutti, in italiano e inglese, con il tour dimostrativo (durante il giro non usare il Mac: il tour porta la sua finestra davanti). Si rifanno quando la grafica è stabile, non a ogni ritocco.
 - Un controllo automatico prima di ogni commit (`scripts/check-private-data.sh`) blocca file e parole vietate. Aggiungi a `Config/private-terms.local` i nomi reali che usi nel tuo lavoro: il file resta sul tuo Mac.
 
 ### Autori e attribuzione

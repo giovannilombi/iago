@@ -89,6 +89,7 @@ Respect the graph: no dependencies outside the listed ones.
 ## Commands
 - `scripts/bootstrap.sh` — installs the git hooks (real data, email addresses, co-author) and generates `IAGO.xcodeproj` with XcodeGen (the `.xcodeproj` is not committed and not edited by hand: you change `project.yml`).
 - `scripts/test-packages.sh` — `swift test` on all packages.
+- `scripts/guide-screenshots.sh [languages] [shots]` — retakes the guide's screenshots with the demo tour (Debug build, invented archive), in Italian and English, and retakes those taken with the window inactive. Only when the look is settled.
 - `npm install` then `npm run docs:dev` / `npm run docs:build` — VitePress documentation site (ADR-0068); the build fails on broken links.
 - `scripts/release.sh x.y.z --notes "…" --github` — signed release, Sparkle appcast and publication on GitHub (ADR-0056).
 - `scripts/i18n.py check | missing | apply | record` — Italian and English alignment (ADR-0077).

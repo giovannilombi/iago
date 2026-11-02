@@ -536,6 +536,7 @@ struct SearchResultsView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
         .safeAreaInset(edge: .top, spacing: 0) {
             VStack(spacing: 0) {
                 SearchScopeBar(model: model)
@@ -558,7 +559,7 @@ struct SearchResultsView: View {
                     .padding(.horizontal, 12).padding(.vertical, 4)
                 }
             }
-            .background(.bar)
+            .iagoBar()
         }
         .overlay {
             if model.searchHits.isEmpty {

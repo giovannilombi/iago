@@ -25,6 +25,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // The Dock shows the icon while a window is open: set it explicitly, so a stale icon cache
         // never shows the generic one.
         if let icon = NSImage(named: "AppIcon") { NSApp.applicationIconImage = icon }
+        AppAppearance.current.apply()
         do {
             // DEBUG: a demo archive elsewhere, for the guide's screenshots, or a copy of the archive to try a branch.
             let paths =

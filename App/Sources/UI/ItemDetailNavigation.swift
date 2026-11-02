@@ -84,10 +84,14 @@ struct DetailTiles: View {
                     open(tile.key)
                 } label: {
                     HStack(spacing: 10) {
-                        Text(tile.title).fontWeight(.semibold).foregroundStyle(tile.isEmpty ? .secondary : tile.tint)
+                        // The section's colour only in the dot (style A).
+                        HStack(spacing: 7) {
+                            TileDot(color: tile.isEmpty ? .secondary.opacity(0.5) : tile.tint)
+                            Text(tile.title).fontWeight(.semibold).foregroundStyle(tile.isEmpty ? .secondary : .primary)
+                        }
                         Spacer(minLength: 0)
                         Text(tile.value).fontWeight(.semibold).monospacedDigit()
-                            .foregroundStyle(tile.isEmpty ? Color.secondary : tile.value == "✓" ? tile.tint : .primary)
+                            .foregroundStyle(tile.isEmpty ? Color.secondary : .primary)
                     }
                     .font(.callout)
                     .padding(.horizontal, 10).padding(.vertical, 5)
@@ -102,6 +106,16 @@ struct DetailTiles: View {
     }
 }
 
+/// The small dot that gives a tile, a pill or a menu entry the colour of its kind (style A).
+struct TileDot: View {
+    let color: Color
+    var size: CGFloat = 7
+
+    var body: some View {
+        Circle().fill(color).frame(width: size, height: size)
+    }
+}
+
 /// White with a thin border; dashed and grey when the section is empty.
 struct TileShape: View {
     let isEmpty: Bool
@@ -113,7 +127,7 @@ struct TileShape: View {
         shape.fill(
             highlighted
                 ? Color.accentColor.opacity(0.12)
-                : isEmpty ? Color.secondary.opacity(0.06) : Color(nsColor: .controlBackgroundColor)
+                : isEmpty ? Color.secondary.opacity(0.06) : IAGOColor.card
         )
         .overlay(
             shape.strokeBorder(
@@ -145,12 +159,12 @@ struct DetailStickyBar: View {
                     Button {
                         open(tile.key)
                     } label: {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 5) {
+                            TileDot(color: tile.isEmpty ? .secondary.opacity(0.5) : tile.tint, size: 6)
                             Text(tile.title).fontWeight(.semibold)
-                                .foregroundStyle(tile.isEmpty ? .secondary : tile.tint)
+                                .foregroundStyle(tile.isEmpty ? .secondary : .primary)
                             Text(tile.value).fontWeight(.semibold).monospacedDigit()
-                                .foregroundStyle(
-                                    tile.isEmpty ? Color.secondary : tile.value == "✓" ? tile.tint : .primary)
+                                .foregroundStyle(tile.isEmpty ? Color.secondary : .primary)
                         }
                         .font(.caption)
                         .padding(.horizontal, 7).padding(.vertical, 2)

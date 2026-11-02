@@ -242,7 +242,7 @@ struct DecisionsView: View {
                 ViewModePicker(model: model)
                 DecisionFilterBar(model: model)
             }
-            .background(.bar)
+            .iagoBar()
         }
         .overlay {
             if model.decisions.isEmpty, model.pendingSuggestions.isEmpty {
@@ -255,7 +255,7 @@ struct DecisionsView: View {
                                 "Decisioni, attività e tappe: creale da un segnalibro, dal tasto destro su una frase della trascrizione, da una nota oppure qui."
                         ))
                 } actions: {
-                    NewKeyPointMenu(model: model, projectID: model.scopeProjectID, title: String(localized: "Nuovo"))
+                    NewKeyPointMenu(model: model, projectID: model.scopeProjectID)
                 }
             }
         }
@@ -345,15 +345,9 @@ private struct DecisionTimelineEntry: View {
                 )
                 .padding(.horizontal, 12).padding(.vertical, 8)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(
-                    RoundedRectangle(cornerRadius: 10).fill(
-                        decision.status.isOpen
-                            ? DecisionRow.tint(decision.kind).opacity(0.07) : Color(nsColor: .controlBackgroundColor))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 10).stroke(
-                        decision.status.isOpen
-                            ? DecisionRow.tint(decision.kind).opacity(0.35) : Color.secondary.opacity(0.2)))
+                // Neutral cards (style A): the kind's colour is on the rail icon beside them.
+                .background(RoundedRectangle(cornerRadius: 10).fill(IAGOColor.card))
+                .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.2)))
             }
             .padding(.leading, nested ? 18 : 0)
             .padding(.vertical, 5)
@@ -445,7 +439,7 @@ private struct DecisionFilterBar: View {
                 model.decisionQuery = DecisionQuery()
             }
             .disabled(model.decisionQuery == DecisionQuery())
-            NewKeyPointMenu(model: model, projectID: model.scopeProjectID, title: String(localized: "Nuovo"))
+            NewKeyPointMenu(model: model, projectID: model.scopeProjectID)
                 .padding(.horizontal, 10).padding(.vertical, 4)
                 .background(Capsule().stroke(Color.accentColor.opacity(0.6)))
         }
@@ -523,7 +517,7 @@ struct DecisionRow: View {
         HStack(alignment: .top, spacing: 10) {
             if showsIcon {
                 Image(systemName: Self.icon(summary))
-                    .foregroundStyle(Self.color(summary)).font(.title3)
+                    .foregroundStyle(Self.signal(decision)).font(.title3)
                     .help("\(Self.kindLabel(decision.kind)) · \(Self.label(summary, mode: mode))")
             }
             VStack(alignment: .leading, spacing: 5) {
@@ -584,10 +578,11 @@ struct DecisionRow: View {
         )
         .font(.caption.weight(.semibold))
         .padding(.horizontal, 8).padding(.vertical, 3)
+        // Neutral (style A); orange only when the entry has no project yet, which is something to fix.
         .background(
-            Capsule().fill(summary.projectName == nil ? Color.orange.opacity(0.18) : Color.accentColor.opacity(0.18))
+            Capsule().fill(summary.projectName == nil ? Color.orange.opacity(0.18) : Color.secondary.opacity(0.15))
         )
-        .foregroundStyle(summary.projectName == nil ? Color.orange : Color.accentColor)
+        .foregroundStyle(summary.projectName == nil ? Color.orange : Color.secondary)
     }
 
     private func descriptionView(_ description: String) -> some View {
@@ -734,11 +729,17 @@ struct NewKeyPointMenu: View {
 
     var body: some View {
         Menu {
+            // Memory first, then open work (style A).
             ForEach(DecisionRow.allKinds, id: \.self) { kind in
+                if kind == .action { Divider() }
                 Button {
                     model.newKeyPoint(kind, projectID: projectID)
                 } label: {
-                    Label(DecisionRow.kindLabel(kind), systemImage: DecisionRow.kindIcon(kind))
+                    Label {
+                        Text(DecisionRow.kindLabel(kind))
+                    } icon: {
+                        Image(nsImage: KindDot.image(DecisionRow.tint(kind)))
+                    }
                 }
             }
         } label: {
@@ -779,12 +780,12 @@ struct DecisionEditor: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
-            HStack(spacing: 8) {
-                Label(
-                    Self.title(draft), systemImage: DecisionRow.kindIcon(draft.kind)
-                )
-                .font(.title2).bold()
-                .foregroundStyle(DecisionRow.tint(draft.kind))
+            // «Aggiungi» (as the button just pressed) or «Modifica», and the kind as one tile that opens the choice (style A): the kind was already
+            // chosen in the menu, the sheet does not show all six again.
+            HStack(spacing: 10) {
+                Text(draft.existingID == nil ? String(localized: "Aggiungi") : String(localized: "Modifica"))
+                    .font(.title2).bold()
+                KindMenu(kind: $draft.kind)
                 if mode == .track, draft.kind.isWork, hasManageDetails {
                     Image(systemName: "slider.horizontal.3").foregroundStyle(.secondary)
                         .help(
@@ -794,8 +795,6 @@ struct DecisionEditor: View {
                             ))
                 }
             }
-            // Pills that wrap, not a segmented control: six kinds did not fit the sheet and pushed it off its edges.
-            KindChooser(kind: $draft.kind)
             Text(Self.explanation(draft.kind)).font(.caption).foregroundStyle(.secondary)
             if let source = draft.sourceLabel {
                 Label(source, systemImage: draft.sourceAtSec != nil ? "waveform" : "doc.text")
@@ -907,6 +906,7 @@ struct DecisionEditor: View {
         }
         .padding(20)
         .frame(width: 640)
+        .presentationBackground(IAGOColor.sheet)
         .onChange(of: draft.projectID) { _, projectID in
             let valid = Set(model.streams(of: projectID).map(\.id))
             draft.streamIDs.removeAll { !valid.contains($0) }
@@ -1609,28 +1609,66 @@ struct PendingKeyPoints: View {
     }
 }
 
-/// The kind of a key point as pills that wrap: the chosen one filled with its colour.
-private struct KindChooser: View {
+/// The kind of a key point as a tile (dot, name, chevron) that opens the six kinds, each with its line of explanation.
+struct KindMenu: View {
     @Binding var kind: Decision.Kind
+    @State private var open = false
 
     var body: some View {
-        FlowLayout(spacing: 6, lineSpacing: 6) {
-            ForEach(DecisionRow.allKinds, id: \.self) { option in
-                let chosen = option == kind
-                let tint = DecisionRow.tint(option)
-                Button {
-                    kind = option
-                } label: {
-                    Label(DecisionRow.kindLabel(option), systemImage: DecisionRow.kindIcon(option))
-                        .font(.callout.weight(chosen ? .semibold : .regular))
-                        .foregroundStyle(chosen ? Color.white : tint)
-                        .padding(.horizontal, 10).padding(.vertical, 5)
-                        .background(Capsule().fill(chosen ? tint : tint.opacity(0.12)))
-                        .contentShape(Capsule())
-                }
-                .buttonStyle(.plain)
-                .accessibilityAddTraits(chosen ? .isSelected : [])
+        Button {
+            open = true
+        } label: {
+            HStack(spacing: 8) {
+                TileDot(color: DecisionRow.tint(kind), size: 9)
+                Text(DecisionRow.kindLabel(kind)).font(.title3.weight(.semibold))
+                Image(systemName: "chevron.down").font(.system(size: 10, weight: .bold)).foregroundStyle(.secondary)
             }
+            .padding(.horizontal, 10).padding(.vertical, 4)
+            .background(TileShape(isEmpty: false, radius: 8))
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
+        .help(String(localized: "Cambia il tipo"))
+        .popover(isPresented: $open, arrowEdge: .bottom) {
+            VStack(alignment: .leading, spacing: 2) {
+                ForEach(DecisionRow.allKinds, id: \.self) { option in
+                    if option == .action { Divider().padding(.vertical, 3) }
+                    Button {
+                        kind = option
+                        open = false
+                    } label: {
+                        HStack(alignment: .top, spacing: 10) {
+                            TileDot(color: DecisionRow.tint(option), size: 8).padding(.top, 5)
+                            VStack(alignment: .leading, spacing: 1) {
+                                Text(DecisionRow.kindLabel(option)).fontWeight(.semibold)
+                                Text(DecisionEditor.explanation(option)).font(.caption).foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            Spacer(minLength: 8)
+                            if option == kind { Image(systemName: "checkmark").foregroundStyle(.tint) }
+                        }
+                        .padding(.horizontal, 8).padding(.vertical, 6)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(6)
+            .frame(width: 380)
+        }
+    }
+}
+
+/// A coloured dot for menus (macOS draws menu symbols in one colour; a non-template image keeps its colour).
+enum KindDot {
+    @MainActor
+    static func image(_ color: Color) -> NSImage {
+        let image = NSImage(size: NSSize(width: 10, height: 10), flipped: false) { rect in
+            NSColor(color).setFill()
+            NSBezierPath(ovalIn: rect.insetBy(dx: 1, dy: 1)).fill()
+            return true
+        }
+        image.isTemplate = false
+        return image
     }
 }

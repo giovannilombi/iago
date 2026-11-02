@@ -157,6 +157,15 @@ enum DemoMode {
                 await shot("importa", main?.attachedSheet)
                 model.importing = nil
             }
+            // Only for design reviews, not in the guide: «Punti chiave» with an entry open, and a new key point.
+            model.select(.decisions)
+            model.viewMode = .timeline
+            model.selectedDecisionID = (try? model.archive.setting(ssoKey)) ?? nil
+            await shot("pk-dettaglio", main)
+            model.editingDecision = DecisionDraft(projectID: portal?.id, kind: .openQuestion)
+            try? await Task.sleep(for: .seconds(0.5))
+            await shot("nuovo-punto", main)
+            model.editingDecision = nil
             model.select(.inbox)
             model.viewMode = .list
             await shot("inbox", main)

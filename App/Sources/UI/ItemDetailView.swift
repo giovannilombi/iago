@@ -912,31 +912,37 @@ struct ItemDetailView: View {
         return rows + pending
     }
 
+    /// Moments in the transcript (style M2): a faint veil of their colour and a thread on the left, normal text.
     private func markerRow(_ marker: Marker) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
             timestampButton(marker.atSec).frame(width: 64, alignment: .leading)
-            Label(String(localized: "Segnalibro"), systemImage: "bookmark.fill").foregroundStyle(.orange)
-                .frame(width: 110, alignment: .leading)
-            Text(marker.note ?? String(localized: "Momento segnato")).foregroundStyle(.secondary).lineLimit(2)
+            momentLabel(String(localized: "Segnalibro"), systemImage: "bookmark.fill", tint: .orange)
+            Text(marker.note ?? String(localized: "Momento segnato")).lineLimit(2)
         }
-        .padding(.vertical, 3).padding(.horizontal, 4)
-        .background(RoundedRectangle(cornerRadius: 6).fill(Color.orange.opacity(0.08)))
+        .modifier(MomentRowStyle(tint: .orange))
     }
 
     private func screenshotRow(_ shot: Asset) -> some View {
-        HStack(alignment: .firstTextBaseline, spacing: 8) {
+        HStack(alignment: .center, spacing: 8) {
             timestampButton(shot.atSec ?? 0).frame(width: 64, alignment: .leading)
-            Label(String(localized: "Schermata"), systemImage: "camera.viewfinder").foregroundStyle(.teal)
-                .frame(width: 110, alignment: .leading)
+            momentLabel(String(localized: "Schermata"), systemImage: "camera.viewfinder", tint: .teal)
+            ShotThumbnail(model: model, shot: shot)
             Text(
                 shot.text.map { $0.replacingOccurrences(of: "\n", with: " · ") }
                     ?? String(localized: "(nessun testo letto)")
             )
-            .foregroundStyle(.secondary).lineLimit(2).textSelection(.enabled)
+            .lineLimit(2).textSelection(.enabled)
         }
-        .padding(.vertical, 3).padding(.horizontal, 4)
-        .background(RoundedRectangle(cornerRadius: 6).fill(Color.teal.opacity(0.08)))
+        .modifier(MomentRowStyle(tint: .teal))
         .help(String(localized: "L'immagine è nella sezione Schermate"))
+    }
+
+    private func momentLabel(_ title: String, systemImage: String, tint: Color) -> some View {
+        HStack(spacing: 5) {
+            Image(systemName: systemImage).foregroundStyle(tint)
+            Text(title).fontWeight(.medium)
+        }
+        .frame(width: 110, alignment: .leading)
     }
 
     /// `linked`: the minute plays the audio; not on a Teams transcript, whose minutes are its own (ADR-0078).
@@ -1112,6 +1118,8 @@ struct SectionBox<Content: View>: View {
     var emptyText: String?
     var emptyAction: (title: String, action: () -> Void)?
     let anchor: String?
+    /// Takes the height it is offered: two boxes side by side end at the same line.
+    var fillsHeight = false
     let content: Content
     /// Outside an item: remembered per kind of section (all transcripts, all notes…).
     @AppStorage private var storedCollapsed: Bool
@@ -1120,8 +1128,9 @@ struct SectionBox<Content: View>: View {
     init(
         _ title: String, systemImage: String, tint: Color = .accentColor, collapseKey: String? = nil,
         detail: String? = nil, emptyText: String? = nil, emptyAction: (title: String, action: () -> Void)? = nil,
-        anchor: String? = nil, @ViewBuilder content: () -> Content
+        anchor: String? = nil, fillsHeight: Bool = false, @ViewBuilder content: () -> Content
     ) {
+        self.fillsHeight = fillsHeight
         self.title = title
         self.systemImage = systemImage
         self.tint = tint
@@ -1152,7 +1161,7 @@ struct SectionBox<Content: View>: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .overlay(alignment: .leading) {
-            UnevenRoundedRectangle(topLeadingRadius: 10, bottomLeadingRadius: 10).fill(tint).frame(width: 4)
+            UnevenRoundedRectangle(topLeadingRadius: 10, bottomLeadingRadius: 10).fill(tint).frame(width: 3)
         }
         // Where the card starts: the tiles and the sticky bar scroll there.
         .background {
@@ -1182,21 +1191,30 @@ struct SectionBox<Content: View>: View {
                 }
                 .buttonStyle(.plain)
                 .help(collapsed ? String(localized: "Apri") : String(localized: "Chiudi"))
-                if !collapsed { content }
+                if !collapsed {
+                    BoxTitleDivider(padding: 14)
+                    content
+                }
             } else {
                 heading
+                BoxTitleDivider(padding: 14)
                 content
             }
         }
         .padding(14)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: 10).fill(Color(nsColor: .controlBackgroundColor)))
+        .frame(maxWidth: .infinity, maxHeight: fillsHeight ? .infinity : nil, alignment: .topLeading)
+        .background(RoundedRectangle(cornerRadius: 10).fill(IAGOColor.card))
         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.18)))
     }
 
+    /// Colour as a signal (style A): the icon and the bar carry the section's colour, the title stays neutral.
     private var heading: some View {
         HStack(spacing: 8) {
-            Label(title, systemImage: systemImage).font(.headline).foregroundStyle(tint)
+            HStack(spacing: 6) {
+                Image(systemName: systemImage).foregroundStyle(tint)
+                Text(title).foregroundStyle(.primary)
+            }
+            .font(.headline)
             if let detail { Text(detail).foregroundStyle(.secondary) }
         }
     }
@@ -1739,5 +1757,46 @@ struct MarkdownEditSheet: View {
         }
         .padding(20)
         .frame(width: 720)
+    }
+}
+
+/// A moment row of the transcript: a veil of its colour and a thread on the left.
+private struct MomentRowStyle: ViewModifier {
+    let tint: Color
+
+    func body(content: Content) -> some View {
+        content
+            .padding(.vertical, 4).padding(.leading, 6).padding(.trailing, 4)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                UnevenRoundedRectangle(bottomTrailingRadius: 6, topTrailingRadius: 6).fill(tint.opacity(0.07))
+            )
+            .overlay(alignment: .leading) { Rectangle().fill(tint).frame(width: 2) }
+            .padding(.leading, -8)
+    }
+}
+
+/// A small thumbnail of a screenshot in the transcript, decrypted in memory only.
+private struct ShotThumbnail: View {
+    let model: AppModel
+    let shot: Asset
+    @State private var image: NSImage?
+
+    var body: some View {
+        Group {
+            if let image {
+                Image(nsImage: image).resizable().scaledToFill()
+            } else {
+                Rectangle().fill(.quaternary)
+            }
+        }
+        .frame(width: 44, height: 26)
+        .clipShape(RoundedRectangle(cornerRadius: 4))
+        .task(id: shot.id) {
+            let archive = model.archive
+            let shot = shot
+            let data = await Task.detached { try? archive.readAssetData(shot) }.value
+            image = data.flatMap(NSImage.init(data:))
+        }
     }
 }

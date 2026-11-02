@@ -234,6 +234,15 @@ extension DecisionRow {
         color(summary.decision, closedBy: summary.supersededBy?.kind)
     }
 
+    /// The icon colour inside rows and cards (style A): grey, red only for what asks for attention (late, blocked,
+    /// a high risk). The kind's own colour stays on the timeline rail, the tiles' dots and the boxes' bars.
+    static func signal(_ decision: Decision) -> Color {
+        guard decision.kind.isWork, decision.status.isOpen else { return .secondary }
+        let late = decision.status != .waiting && OpenWork.due(decision.dueAt) == .overdue
+        if late || decision.status == .blocked || (decision.kind == .risk && decision.severity == .high) { return .red }
+        return .secondary
+    }
+
     /// Open work past its due date (by day).
     static func isOverdue(_ decision: Decision, now: Date = Date()) -> Bool {
         guard decision.kind.isWork, decision.status.isOpen, let due = decision.dueAt else { return false }
@@ -507,7 +516,7 @@ struct WorkCheckbox: View {
             model.setDecisionStatus(decision.id, done ? (decision.waitingOnId != nil ? .waiting : .active) : .done)
         } label: {
             Image(systemName: done ? "checkmark.square.fill" : "square")
-                .foregroundStyle(done ? Color.green : DecisionRow.tint(.action))
+                .foregroundStyle(done ? Color.green : Color.secondary)
         }
         .buttonStyle(.borderless)
         .help(done ? String(localized: "Fatta: clicca per riaprirla") : String(localized: "Segna come fatta"))
@@ -578,8 +587,12 @@ struct KeyPointClosingSheet: View {
     var body: some View {
         let summary = closing.summary
         VStack(alignment: .leading, spacing: 14) {
-            Label(title, systemImage: DecisionRow.kindIcon(summary.decision.kind))
-                .font(.title2).bold().foregroundStyle(DecisionRow.tint(summary.decision.kind))
+            HStack(spacing: 8) {
+                Image(systemName: DecisionRow.kindIcon(summary.decision.kind))
+                    .foregroundStyle(DecisionRow.tint(summary.decision.kind))
+                Text(title)
+            }
+            .font(.title2).bold()
             Text(summary.decision.text).font(.headline).fixedSize(horizontal: false, vertical: true)
             switch closing {
             case .clarify:

@@ -66,7 +66,7 @@ struct WorkBoard: View {
                 }
                 filterBar
             }
-            .background(.bar)
+            .iagoBar()
         }
         .task(id: "\(model.revision)-\(scope.key)") { load() }
     }
@@ -348,6 +348,7 @@ private struct BoardColumnView<Content: View>: View {
     var menu: AnyView?
     @ViewBuilder let content: () -> Content
     @State private var targeted = false
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -358,20 +359,25 @@ private struct BoardColumnView<Content: View>: View {
                 Spacer(minLength: 0)
                 if let menu { menu }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 4).padding(.bottom, 6)
+            // The state's colour under the title, edge to edge of the box (style K3).
+            .overlay(alignment: .bottom) { Rectangle().fill(tint).frame(height: 2).padding(.horizontal, -8) }
             VStack(alignment: .leading, spacing: 6) { content() }
             Spacer(minLength: 40)
         }
         .padding(8)
         .frame(width: WorkBoard.columnWidth, alignment: .top)
         .frame(minHeight: 300, alignment: .top)
+        // A box a little deeper than the window, so the cards stand out (style K3).
         .background(
             RoundedRectangle(cornerRadius: 10).fill(
-                targeted ? Color.accentColor.opacity(0.10) : Color.secondary.opacity(0.06))
+                targeted ? Color.accentColor.opacity(0.10) : Color.black.opacity(scheme == .dark ? 0.2 : 0.04))
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 10).stroke(targeted ? Color.accentColor.opacity(0.6) : .clear, lineWidth: 2)
+            RoundedRectangle(cornerRadius: 10).strokeBorder(
+                targeted ? Color.accentColor.opacity(0.6) : Color.secondary.opacity(0.2), lineWidth: targeted ? 2 : 1)
         )
+        .clipShape(RoundedRectangle(cornerRadius: 10))
         .dropDestination(for: String.self) { values, _ in
             let ids = values.compactMap(BoardCard.decisionID)
             guard !ids.isEmpty else { return false }
@@ -465,7 +471,7 @@ struct BoardCard: View {
         let decision = summary.decision
         VStack(alignment: .leading, spacing: 5) {
             HStack(alignment: .firstTextBaseline, spacing: 6) {
-                Image(systemName: WorkStyle.icon(decision)).foregroundStyle(WorkStyle.color(decision))
+                Image(systemName: WorkStyle.icon(decision)).foregroundStyle(DecisionRow.signal(decision))
                     .help(WorkStyle.label(decision.kind))
                 Text(decision.text).font(.callout).lineLimit(3)
                     .foregroundStyle(decision.status.isOpen ? .primary : .secondary)
@@ -508,11 +514,11 @@ struct BoardCard: View {
         .background(
             RoundedRectangle(cornerRadius: 8).fill(
                 model.selectedDecisionID == decision.id
-                    ? Color.accentColor.opacity(0.15) : Color(nsColor: .controlBackgroundColor))
+                    ? Color.accentColor.opacity(0.15) : IAGOColor.card)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 8).stroke(
-                model.selectedDecisionID == decision.id ? Color.accentColor.opacity(0.6) : Color.secondary.opacity(0.2))
+                model.selectedDecisionID == decision.id ? Color.accentColor.opacity(0.7) : Color.secondary.opacity(0.4))
         )
         .overlay(alignment: .leading) {
             if let priority = decision.priority, priority == 1, decision.status.isOpen {

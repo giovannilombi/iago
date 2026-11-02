@@ -54,6 +54,7 @@ struct TrashView: View {
                 }
             }
         }
+        .scrollContentBackground(.hidden)
         .overlay {
             if model.trashedItems.isEmpty && model.trashedAssets.isEmpty && model.discardedItems.isEmpty {
                 ContentUnavailableView(

@@ -989,7 +989,7 @@ struct EmailBatchSheet: View {
             }
             .padding(14)
             .frame(maxWidth: .infinity, minHeight: 110, alignment: .topLeading)
-            .background(RoundedRectangle(cornerRadius: 10).fill(Color(nsColor: .controlBackgroundColor)))
+            .background(RoundedRectangle(cornerRadius: 10).fill(IAGOColor.card))
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.25)))
             .contentShape(Rectangle())
         }

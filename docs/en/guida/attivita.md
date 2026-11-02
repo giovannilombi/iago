@@ -10,7 +10,7 @@ At the top the **tiles** (In progress, Queued, Last 24 hours, Failed) take you t
 - **Queued:** the jobs waiting, with **Do this first** and **Cancel**.
 - **Last 24 hours:** done, cancelled and failed (with the reason), with **Open** and **Retry**.
 
-On the right, or below with a narrow window:
+At the top, side by side (one under the other with a narrow window):
 - **Last 7 days:** calls, emails and documents of each day, and how many transcriptions were done.
 - **Ready to work:** the Mac engine chosen, the space of the archive and that of the models.
 

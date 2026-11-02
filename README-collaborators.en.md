@@ -41,7 +41,7 @@ This guide is for people who join the project without knowing its history. It ex
 
 ### Data
 - **Never real data in the repository**: no audio, archives, transcripts, emails, names of real people, clients or domains. Examples and tests use made-up, neutral names (Test Client, Acme, Rossi…).
-- Guide screenshots are taken only from the demo archive of the Debug build (ADR-0061), never from your own archive.
+- Guide screenshots are taken only from the demo archive of the Debug build (ADR-0061), never from your own archive: `scripts/guide-screenshots.sh` retakes them all, in Italian and English, with the demo tour (do not use the Mac during the run: the tour brings its window to the front). Retake them when the look is settled, not at every tweak.
 - An automatic check before every commit (`scripts/check-private-data.sh`) blocks forbidden files and words. Add to `Config/private-terms.local` the real names you use in your work: the file stays on your Mac.
 
 ### Authors and attribution

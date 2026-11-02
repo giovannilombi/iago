@@ -312,6 +312,14 @@ Servono due persone vere nella stessa stanza (nomi inventati nelle prove scritte
 - [ ] 10u.5 Barra laterale: l'icona della modalità è verde (Traccia) o blu (Gestisci); un clic apre la scelta e cambiarla cambia il progetto. «Categorie e tag» si apre al clic.
 - [ ] 10u.6 *Nuovo* in Punti chiave, con la finestra non a tutto schermo: il foglio si vede tutto, i tipi sono pillole su più righe, le etichette in una colonna.
 
+## 10v. Stile, chiaro e scuro (1.2.13-beta)
+- [ ] 10v.1 Accanto alle Impostazioni c'è il menu dell'aspetto: *Automatico* segue il Mac, *Chiaro* e *Scuro* cambiano subito tutte le finestre e restano dopo il riavvio.
+- [ ] 10v.2 In chiaro non ci sono grandi zone bianche: pagine, liste (Recenti, Elementi da classificare), barre in alto e box sono grigi chiari; la barra laterale è più scura delle pagine.
+- [ ] 10v.3 Titoli e testi sono neutri; il colore del tipo è nella barretta, nell'icona del box e nel puntino delle tile; nelle righe le icone sono grigie e diventano rosse solo per scaduto, bloccato o rischio alto. Sotto il titolo di ogni box c'è un filo sottile.
+- [ ] 10v.4 *Aggiungi* in Punti chiave: il foglio dice «Aggiungi» e il tipo in una tile; un clic sulla tile cambia tipo; il menu ha i puntini e una linea tra decisioni/tappe e lavoro aperto.
+- [ ] 10v.5 Una call con segnalibri e schermate: nella trascrizione stanno su un velo del loro colore con un filo a sinistra, la schermata con la miniatura.
+- [ ] 10v.6 Kanban con colonne in box e la riga dello stato sotto il titolo; Attività in una colonna con *Ultimi 7 giorni* e *Pronto per lavorare* affiancati; Categorie e tag a tutta finestra.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

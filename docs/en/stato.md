@@ -5,13 +5,13 @@
 > Last update: **October 30, 2026**.
 
 ## In brief
-- **Version:** 1.2.12-beta on `main` (tag `v1.2.12-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
+- **Version:** 1.2.13-beta on `main` (tag `v1.2.13-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
 - **Repositories:**
   - `giovannilombi/iago`, private, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi; from the versions after 1.0.0-beta, Giovanni Lombi and Gianluca Sestito (ADR-0065).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 315 in the packages, all green (1.2.12-beta).
+- **Automated tests:** 315 in the packages, all green (1.2.13-beta).
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -31,6 +31,7 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - **Example projects** (ADR-0066, 1.2.10-beta): to be tested on a new archive (3e.7, with `scripts/try-branch.sh --fresh` or a test macOS user): the user's archive does not get them.
    - **Item detail** (ADR-0084, 1.2.11-beta): done; to be tested on real calls (10t), above all the sticky bar with many open sections and the moments on a long call.
    - **Overview and Activity** (ADR-0085, 1.2.12-beta): done; to be tested on real projects with many entries (10u).
+   - **Style A, light and dark** (ADR-0086, 1.2.13-beta): done; to be tested in both appearances on a real archive (10v). Your archive has the test project «Sito e app Officina Lume (prova)», to delete (project and client) when no longer needed.
 1. **Tests, in a single session** (see [`docs/prove-tester.md`](prove-tester.md)):
    - recent versions: 10i (open work), 10n (Inbox and names), 10o (two transcripts), 10p (main transcript);
    - live: Teams microphone while IAGO records, IAGO's icon in notifications, sections 10b–10h (memory on 16 GB, screenshots and shortcuts, summaries and suggestions from Claude Desktop, DMG and updates, voice threshold);
@@ -54,6 +55,8 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-02:** version **1.2.13-beta**.
+- **2026-11-02, "colour as a signal" style, light and dark** (ADR-0086, on proposals approved by the user): neutral text and the kind's colour only in the bar, icon, tile dots and timeline rail; grey icons, red only for urgency; grey sidebar; a thread under every box title; the "Add" sheet with the kind in a tile; bookmarks and screenshots in the transcript on a veil of their colour; Kanban with columns in boxes; Activity in one column with the summary on top; Categories and tags across the window; appearance menu (Automatic, Light, Dark) next to Settings; light with cool grey, no full white. New `scripts/guide-screenshots.sh` to retake the guide's screenshots; all retaken in Italian and English.
 - **2026-11-02:** version **1.2.12-beta**.
 - **2026-11-02, Overview, Activity and fixes** (ADR-0085, on proposals approved by the user): in **Manage** the Overview is made of boxes in two "masonry" columns (each in the shorter one), with the boxes' tiles always at the top taking you to the box and making it glow; *Latest decisions and milestones* is there too; empty boxes are reduced to their header; with the panel open the boxes go in one column. In **Track** the Short overview has the page already split, with the empty panel on the right. **Activity** across the window with tiles, sections in the style of the item card, *Last 7 days* and *Ready to work*. The mode icon in the sidebar is blue for Manage and opens the mode choice. The Key points column starts wider. **Fixes:** «Categories and tags» in the sidebar could not be selected; the sheet of a new key point was wider than the window and cut off (now the kinds are pills that wrap, labels aligned). Guide screenshots retaken.
 - **2026-11-02:** version **1.2.11-beta**.
@@ -119,3 +122,4 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
 1. Read [`CLAUDE.md`](../../CLAUDE.en.md), this file and [`README-collaborators.md`](../../README-collaborators.en.md).
 2. `git status`, `git log --oneline -5`, `gh pr list`: work on a new branch from an up-to-date `main`.
 3. Before working on an area, read the related ADRs (index in [`docs/adr/README.md`](adr/README.md)).
+4. For the look: the style is in ADR-0086 (colour as a signal, light and dark) and the colours in `IAGOColor` (`App/Sources/UI/AppAppearance.swift`); the guide's screenshots are retaken with `scripts/guide-screenshots.sh`, only when the look is settled.

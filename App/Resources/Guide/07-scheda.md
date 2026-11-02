@@ -12,7 +12,7 @@ Un elemento è una **call**, un'**email** o un **documento**. La scheda raccogli
 - **Audio:** lettore con scelta della traccia (entrambe, solo microfono, solo sistema) e i **momenti** della call (vedi sotto).
 - **Segnalibri** dei momenti segnati durante la call.
 - **Schermate** catturate con *Segna momento con screenshot*, con il minuto e il testo letto.
-- **Trascrizione** con chi parla e il minuto: un clic su un minuto fa partire l'audio da lì; tasto destro su una frase per farne un punto chiave. Segnalibri e schermate compaiono al loro minuto, con il loro colore.
+- **Trascrizione** con chi parla e il minuto: un clic su un minuto fa partire l'audio da lì; tasto destro su una frase per farne un punto chiave. Segnalibri e schermate compaiono al loro minuto, su un velo leggero del loro colore (per le schermate anche la miniatura).
 - **Contenuto** per documenti ed email (con immagine originale e testo riconosciuto).
 - **Note** datate, anche dettate a voce.
 - **Punti chiave** nati da questo elemento.
