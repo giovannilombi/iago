@@ -395,7 +395,8 @@ final class AppModel {
     /// Kanban, «Riepilogo» and graph take the space of the list and of the detail; what is opened from them shows in
     /// an inspector on the right.
     var isWide: Bool {
-        switch viewMode {
+        if sidebar == .activity { return true }
+        return switch viewMode {
         case .board: workScope != nil || sidebar == .inbox || sidebar == .decisions
         case .overview: workScope != nil
         case .map: showsGraph

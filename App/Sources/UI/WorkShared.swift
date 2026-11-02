@@ -40,6 +40,13 @@ extension AppModel {
         }
     }
 
+    /// «Riepilogo breve» in «Traccia» is one column: the page stays split, with the empty inspector on the right until
+    /// something is opened.
+    var keepsInspector: Bool {
+        guard viewMode == .overview, let scope = workScope else { return false }
+        return workViewsMode(for: scope.query) == .track
+    }
+
     /// The user as a person: the name of «Il tuo nome» (Impostazioni › Generale), and «Io».
     var meIDs: Set<String> {
         let label = ((try? archive.setting(TranscriptionService.meLabelKey)) ?? nil) ?? MeLabel.defaultName

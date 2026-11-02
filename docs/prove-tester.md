@@ -304,6 +304,14 @@ Servono due persone vere nella stessa stanza (nomi inventati nelle prove scritte
 - [ ] 10t.5 Una call senza segnalibri, note o collegamenti: quelle sezioni sono solo un'intestazione tratteggiata con la frase; *Aggiungi nota* e *Collega a…* funzionano da lì.
 - [ ] 10t.6 Una call con segnalibri e schermate: tacche colorate sul player; sotto un momento alla volta con ‹ › e «N di M»; il minuto fa partire l'audio da lì; durante l'ascolto il momento segue l'audio. Gli stessi momenti sono nella trascrizione al loro minuto. Spegnendo le due caselle in Impostazioni spariscono.
 
+## 10u. Riepilogo, Attività e correzioni (1.2.12-beta)
+- [ ] 10u.1 Riepilogo di un progetto in Gestisci: box su due colonne senza buchi anche se un box ha molte più voci; le tile in alto restano visibili scorrendo; un clic su una tile porta al box e lo fa brillare, anche se è già in vista; i box vuoti sono un'intestazione tratteggiata; c'è *Ultime decisioni e tappe*.
+- [ ] 10u.2 Un clic su una voce apre il pannello a destra e i box passano a una colonna; ✕ o Esc lo chiude e tornano due colonne. A finestra stretta una colonna e le tile vanno a capo, senza testi tagliati.
+- [ ] 10u.3 Un progetto in Traccia: il Riepilogo breve ha subito il pannello a destra con il logo, senza ✕; aprendo una voce il pannello la mostra.
+- [ ] 10u.4 Attività: a tutta finestra, nessun «Nessun elemento selezionato»; tile in alto che portano alle sezioni; *Ultimi 7 giorni* e *Pronto per lavorare* a destra (sotto con la finestra stretta); *Apri* mostra l'elemento nel pannello.
+- [ ] 10u.5 Barra laterale: l'icona della modalità è verde (Traccia) o blu (Gestisci); un clic apre la scelta e cambiarla cambia il progetto. «Categorie e tag» si apre al clic.
+- [ ] 10u.6 *Nuovo* in Punti chiave, con la finestra non a tutto schermo: il foglio si vede tutto, i tipi sono pillole su più righe, le etichette in una colonna.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

@@ -1115,6 +1115,22 @@
         }
       }
     },
+    "%lld tra call, email e documenti · %lld trascrizioni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld calls, emails and documents · %lld transcriptions"
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld tra call, email e documenti · %2$lld trascrizioni"
+          }
+        }
+      }
+    },
     "%lld." : {
       "localizations" : {
         "en" : {
@@ -2126,6 +2142,7 @@
       }
     },
     "aperte · %lld chiuse" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2503,6 +2520,7 @@
       }
     },
     "aspettano altre voci" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3180,6 +3198,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Call %1$@ rilevata alle %2$@, mentre stavi già registrando"
+          }
+        }
+      }
+    },
+    "Call, email e documenti negli ultimi 7 giorni: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calls, emails and documents in the last 7 days: %@"
           }
         }
       }
@@ -5249,6 +5277,16 @@
         }
       }
     },
+    "Da fare e scadenze" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To do and due dates"
+          }
+        }
+      }
+    },
     "Da fare oggi" : {
       "localizations" : {
         "en" : {
@@ -5555,7 +5593,18 @@
         }
       }
     },
+    "Decisioni e tappe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Decisions and milestones"
+          }
+        }
+      }
+    },
     "Decisioni e tappe recenti" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11665,6 +11714,26 @@
         }
       }
     },
+    "Nessun lavoro finito nelle ultime 24 ore" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No jobs finished in the last 24 hours"
+          }
+        }
+      }
+    },
+    "Nessun lavoro in attesa" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No jobs waiting"
+          }
+        }
+      }
+    },
     "Nessun microfono disponibile." : {
       "localizations" : {
         "en" : {
@@ -11736,11 +11805,22 @@
       }
     },
     "Nessun rischio aperto." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No open risks."
+          }
+        }
+      }
+    },
+    "Nessun rischio o punto da chiarire aperto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No open risks or questions"
           }
         }
       }
@@ -11875,7 +11955,18 @@
         }
       }
     },
+    "Nessuna decisione o tappa recente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No recent decisions or milestones"
+          }
+        }
+      }
+    },
     "Nessuna decisione o tappa recente." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -11896,6 +11987,7 @@
       }
     },
     "Nessuna domanda in sospeso." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12006,6 +12098,7 @@
       }
     },
     "Nessuna voce aperta con una scadenza." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12021,6 +12114,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No recently closed entries."
+          }
+        }
+      }
+    },
+    "nessuna voce in attesa di un'altra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "no entry waiting on another"
           }
         }
       }
@@ -12095,7 +12198,18 @@
         }
       }
     },
+    "Niente in corso: IAGO è libero" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing in progress: IAGO is free"
+          }
+        }
+      }
+    },
     "Niente in corso." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12456,12 +12570,32 @@
         }
       }
     },
+    "Non riuscite" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed"
+          }
+        }
+      }
+    },
     "Non salvato · ⏎ per salvare, Esc per annullare" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Not saved · ⏎ to save, Esc to cancel"
+          }
+        }
+      }
+    },
+    "non scelto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "not chosen"
           }
         }
       }
@@ -14084,6 +14218,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Promote to…"
+          }
+        }
+      }
+    },
+    "Pronto per lavorare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready to work"
           }
         }
       }
@@ -15955,6 +16099,7 @@
       }
     },
     "Scadenze" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15965,6 +16110,7 @@
       }
     },
     "scadenze passate" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -17340,6 +17486,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Storage"
+          }
+        }
+      }
+    },
+    "Spazio dei modelli" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Models space"
+          }
+        }
+      }
+    },
+    "Spazio dell'archivio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Archive space"
           }
         }
       }
@@ -19125,6 +19291,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Latest decisions and milestones"
+          }
+        }
+      }
+    },
+    "Ultimi 7 giorni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last 7 days"
           }
         }
       }
