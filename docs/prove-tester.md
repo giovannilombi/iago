@@ -296,6 +296,14 @@ Servono due persone vere nella stessa stanza (nomi inventati nelle prove scritte
 - [ ] 10s.4 Primi passi: importa un documento con l'introduzione aperta e la riga si spunta da sola; «x di 6 fatti» sale.
 - [ ] 10s.5 Chiudi con *Inizia* senza *Non mostrare più*: al prossimo avvio si riapre. Con *Non mostrare più*, o con tutti i primi passi fatti, non si riapre; *Rivedi l'introduzione* in Aiuto › Primi passi e in Impostazioni › Aiuto la riapre.
 
+## 10t. Dettaglio dell'elemento (1.2.11-beta)
+- [ ] 10t.1 Apri una call: sotto il titolo cliente › progetto e data · durata · tipo, poi le tile. Ogni tile ha un solo dato; Trascrizione dice IAGO, Teams o IAGO + Teams; le tile delle sezioni vuote sono tratteggiate.
+- [ ] 10t.2 Un clic su una tile apre la sezione (anche se era chiusa) e ci porta lì, con il titolo appena sotto la barra fissa.
+- [ ] 10t.3 Scendi: compare la barra fissa (titolo, sotto cliente › progetto · data · durata, tile in miniatura) con evidenziata la sezione in cui sei; in basso a destra ↑ sopra «Chiedi a IAGO», senza sovrapporsi. Nascondi «Chiedi a IAGO» con la ✕: ↑ scende al suo posto. ↑ riporta in cima e barra e ↑ spariscono.
+- [ ] 10t.4 Chiudi la Trascrizione in una call e lasciala aperta in un'altra: ognuna resta com'era. In Impostazioni › Generale › Dettaglio elemento metti Trascrizione su Chiusa: una call mai toccata la apre chiusa; *Riapplica a tutti gli elementi…* riporta tutte le call a questa scelta. File è sempre aperta.
+- [ ] 10t.5 Una call senza segnalibri, note o collegamenti: quelle sezioni sono solo un'intestazione tratteggiata con la frase; *Aggiungi nota* e *Collega a…* funzionano da lì.
+- [ ] 10t.6 Una call con segnalibri e schermate: tacche colorate sul player; sotto un momento alla volta con ‹ › e «N di M»; il minuto fa partire l'audio da lì; durante l'ascolto il momento segue l'audio. Gli stessi momenti sono nella trascrizione al loro minuto. Spegnendo le due caselle in Impostazioni spariscono.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

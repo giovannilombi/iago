@@ -51,10 +51,12 @@ enum DemoMode {
                 let folder = FileManager.default.temporaryDirectory.appendingPathComponent(
                     "iago-demo", isDirectory: true)
                 try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-                if let audio = try? silentAudio(seconds: 1_860, in: folder) {
+                // As long as the call's transcript, so the moments fall along the whole bar.
+                let seconds = Int(try archive.item(example.kickoffID)?.durationSec ?? 240)
+                if let audio = try? silentAudio(seconds: seconds, in: folder) {
                     try archive.storeAsset(audio, itemID: example.kickoffID, kind: .audioMix, fileName: "mix.m4a")
-                    _ = try archive.updateItem(example.kickoffID) { $0.durationSec = 1_860 }
                 }
+                try seedMoments(archive, itemID: example.kickoffID)
                 if let tag = try archive.tags(for: example.kickoffID).first {
                     try archive.setSetting(AppModel.pinnedLabelsKey, "tag:\(tag.id)")
                 }
@@ -85,6 +87,9 @@ enum DemoMode {
             }
             func shot(_ name: String, _ window: NSWindow?) async {
                 guard let window, only?.contains(name) ?? true else { return }
+                // In front and active, even while the user works in another app: the guide shows an active window.
+                NSApp.activate(ignoringOtherApps: true)
+                (window.sheetParent ?? window).makeKeyAndOrderFront(nil)
                 try? await Task.sleep(for: .seconds(1.5))
                 try? "\(window.windowNumber)".write(
                     to: out.appendingPathComponent("\(name).ready"), atomically: true, encoding: .utf8)
@@ -101,6 +106,18 @@ enum DemoMode {
             model.viewContent = .all
             model.selectedItemID = kickoff
             await shot("finestra", main)
+            // ADR-0084: the item detail on its own, then scrolled with the sticky bar and «torna su».
+            model.viewMode = .list
+            await shot("scheda", main)
+            try? await Task.sleep(for: .seconds(1))
+            model.openDetailSection = "transcript"
+            try? await Task.sleep(for: .seconds(1))
+            await shot("scheda-barra", main)
+            model.openDetailSection = "audio"
+            try? await Task.sleep(for: .seconds(1))
+            await shot("scheda-momenti", main)
+            model.openDetailSection = "top"
+            model.viewMode = .timeline
             model.selectedItemID = progress
             await shot("sintesi", main)
             // The playback bar: an audio started in an item stays reachable from another section.
@@ -108,7 +125,7 @@ enum DemoMode {
                 let mix = (try? model.archive.assets(itemID: id))?.first(where: { $0.kind == .audioMix })
             {
                 await model.player.load(mix, itemID: id)
-                model.player.seek(to: 494)
+                model.player.seek(to: model.player.duration * 0.4)
                 model.select(.activity)
                 await shot("ascolto", main)
                 model.player.close()
@@ -180,6 +197,57 @@ enum DemoMode {
         }
 
         // MARK: Content (invented)
+
+        /// Two bookmarks and two slides on the kickoff, for the moments on the player and in the transcript.
+        static func seedMoments(_ archive: Archive, itemID: String) throws {
+            let en = AppLanguage.current == .en
+            func t(_ it: String, _ english: String) -> String { en ? english : it }
+            let starts =
+                ((try? archive.assets(itemID: itemID))?.first { $0.kind == .transcriptJSON })
+                .flatMap { try? Transcript.decode(from: archive.readAssetData($0)) }?.segments.map(\.start) ?? []
+            /// A few seconds into the segment at `fraction` of the call.
+            func at(_ fraction: Double) -> Double {
+                starts.isEmpty ? fraction * 600 : starts[Int(Double(starts.count - 1) * fraction)] + 4
+            }
+            _ = try archive.addMarker(
+                itemID: itemID, atSec: at(0.2), note: t("Budget da confermare", "Budget to confirm"))
+            _ = try archive.addMarker(itemID: itemID, atSec: at(0.65), note: t("Chi segue l'SSO", "Who owns SSO"))
+            let slides = [
+                (
+                    at(0.4), t("Roadmap del portale", "Portal roadmap"),
+                    t("Q1 · Discovery · Wireframe · SSO", "Q1 · Discovery · Wireframes · SSO")
+                ),
+                (
+                    at(0.85), t("Architettura headless", "Headless architecture"),
+                    t("CMS · API · Frontend · CDN", "CMS · API · Front end · CDN")
+                ),
+            ]
+            for (seconds, title, body) in slides {
+                if let png = slide(title: title, body: body) {
+                    _ = try archive.addScreenshot(itemID: itemID, png: png, atSec: seconds, text: "\(title)\n\(body)")
+                }
+            }
+        }
+
+        /// An invented slide, drawn here: never a real screen.
+        static func slide(title: String, body: String) -> Data? {
+            let size = NSSize(width: 960, height: 540)
+            let image = NSImage(size: size, flipped: false) { rect in
+                NSColor(red: 0.95, green: 0.96, blue: 0.98, alpha: 1).setFill()
+                rect.fill()
+                NSColor(red: 0.19, green: 0.69, blue: 0.78, alpha: 1).setFill()
+                NSRect(x: 0, y: rect.height - 14, width: rect.width, height: 14).fill()
+                (title as NSString).draw(
+                    at: NSPoint(x: 64, y: 360),
+                    withAttributes: [.font: NSFont.boldSystemFont(ofSize: 54), .foregroundColor: NSColor.black])
+                (body as NSString).draw(
+                    at: NSPoint(x: 64, y: 260),
+                    withAttributes: [.font: NSFont.systemFont(ofSize: 32), .foregroundColor: NSColor.darkGray])
+                return true
+            }
+            guard let tiff = image.tiffRepresentation, let bitmap = NSBitmapImageRep(data: tiff) else { return nil }
+            return bitmap.representation(using: .png, properties: [:])
+        }
 
         static func silentAudio(seconds: Int, in folder: URL) throws -> URL {
             let url = folder.appendingPathComponent("silence.m4a")

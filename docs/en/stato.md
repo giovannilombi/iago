@@ -5,13 +5,13 @@
 > Last update: **October 30, 2026**.
 
 ## In brief
-- **Version:** 1.2.10-beta on `main` (tag `v1.2.10-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
+- **Version:** 1.2.11-beta on `main` (tag `v1.2.11-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
 - **Repositories:**
   - `giovannilombi/iago`, private, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi; from the versions after 1.0.0-beta, Giovanni Lombi and Gianluca Sestito (ADR-0065).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 315 in the packages, all green (1.2.10-beta).
+- **Automated tests:** 314 in the packages, all green (1.2.11-beta).
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -29,6 +29,7 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - **Live test of group mode** (1.2.8-beta, tests 10r): meetings in person, room voices, those present. To do later: recording the microphone alone, without the Mac's audio.
    - **Getting-started introduction** (ADR-0081, 1.2.9-beta): done; to be tested (10s) and kept up to date with the guide until distribution.
    - **Example projects** (ADR-0066, 1.2.10-beta): to be tested on a new archive (3e.7, with `scripts/try-branch.sh --fresh` or a test macOS user): the user's archive does not get them.
+   - **Item detail** (ADR-0084, 1.2.11-beta): done; to be tested on real calls (10t), above all the sticky bar with many open sections and the moments on a long call.
 1. **Tests, in a single session** (see [`docs/prove-tester.md`](prove-tester.md)):
    - recent versions: 10i (open work), 10n (Inbox and names), 10o (two transcripts), 10p (main transcript);
    - live: Teams microphone while IAGO records, IAGO's icon in notifications, sections 10b–10h (memory on 16 GB, screenshots and shortcuts, summaries and suggestions from Claude Desktop, DMG and updates, voice threshold);
@@ -48,9 +49,12 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - **ClickUp:** tickets from tasks, status coming back, log of followed lists, tickets in the memory ([`docs/design/clickup.md`](design/clickup.md));
    - Google and Microsoft calendars: today they work through System Settings › Internet Accounts; a direct sync would need a network ADR;
    - Plan the day;
-   - matching Teams' speakers with IAGO's (ADR-0078).
+   - matching Teams' speakers with IAGO's (ADR-0078);
+   - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-02:** version **1.2.11-beta**.
+- **2026-11-02, item detail** (ADR-0084, decided with the review board on a prototype): under the title client › project and date · duration · type, then small **tiles** with one value each (the transcript says IAGO, Teams or IAGO + Teams) that open the section and take you there; when scrolling, a **sticky bar** with title, project and the tiles in miniature with the current section; **↑** at the bottom right above «Ask IAGO»; open or closed sections **remembered per item**, with defaults in Settings › General › Item detail and *Reapply to all items…*; empty sections reduced to a dashed header with their action; **moments** (bookmarks and screenshots) as ticks on the player with one moment at a time below, and in the transcript at their minute. The demo tour adds invented bookmarks and screenshots; every guide screenshot retaken, new `scheda.png`, `scheda-barra.png`, `scheda-momenti.png`. In the same version: ADR-0082 (sync for every client), ADR-0083 (structured project metadata), notes for Windows and process rules for sharing.
 - **2026-10-31:** version **1.2.10-beta**.
 - **2026-10-31, example projects** (ADR-0066, change): a new archive starts with an invented digital agency, Poldo S.p.A., Sanna TheBest s.r.l. and Atoms, with transcribed calls, emails, documents, summaries, key points, those present and suggestions about UX, UI, product design, branding and headless development, in the chosen language. They do not count in the first steps; *Settings › Projects › Remove the example* removes them. The demo tour uses the same content: every guide screenshot retaken, in Italian and English.
 - **2026-10-30:** version **1.2.9-beta**.

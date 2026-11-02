@@ -2,21 +2,41 @@
 
 An item is a **call**, an **email** or a **document**. The card gathers everything:
 
-- **Header:** title, date, project, stream, category, tags. All editable.
+![The card of a call: under the title, client and project, then the tiles](img/scheda.png)
+
+- **Header:** title, below it client › project and date · duration · type; then date, project, stream, category, tags, all editable.
 - **Actions:** transcribe, transcribe again, **Share…**, export, delete, **Copy for Claude** (see the chapter *Claude*).
 - **Summary:** see the chapter *Summary*.
 - **Suggestions:** what the engine suggests, to confirm or dismiss.
-- **Audio:** player with a choice of track (both, microphone only, system only).
+- **Audio:** player with a choice of track (both, microphone only, system only) and the call's **moments** (see below).
 - **Bookmarks** of the moments marked during the call.
 - **Screenshots** captured with *Mark moment with screenshot*, with the minute and the text that was read.
-- **Transcript** with who is speaking and the minute: a click on a minute plays the audio from there; right-click a sentence to turn it into a key point. Screenshots appear at their minute, with the text that was read.
+- **Transcript** with who is speaking and the minute: a click on a minute plays the audio from there; right-click a sentence to turn it into a key point. Bookmarks and screenshots appear at their minute, in their colour.
 - **Content** for documents and emails (with the original image and the recognized text).
 - Dated **notes**, dictated by voice too.
 - **Key points** that came from this item.
 - **Links** to other items (replies, attachments, related documents).
 - **Files:** the item's assets, with their size.
 
-Sections can be collapsed (the choice applies to all cards).
+## Tiles and sticky bar
+Under the title are the **tiles**: one per section, with a single value. The number of bookmarks, screenshots, notes, key points, suggestions, links and files; **✓** if there is a summary; for the transcript, where it comes from: **IAGO**, **Teams** or **IAGO + Teams** («…» while transcribing). A click opens the section and takes you there. A dashed tile is an empty section.
+
+When you scroll down, a **sticky bar** appears at the top: title, client › project · date · duration and the same tiles in small, with the section you are in highlighted. At the bottom right, above *Ask IAGO*, **↑** appears to go back to the top.
+
+![After scrolling: the sticky bar at the top and ↑ at the bottom right](img/scheda-barra.png)
+
+## Open and closed sections
+- A click on the title opens or closes a section. **Each item remembers** its open and closed sections.
+- How they start in an item you have not touched yet is chosen in **Settings › General › Item detail**; *Reapply to all items…* forgets the choices made in single items.
+- **Files** is always open, at the bottom.
+- An **empty** section is just a dashed header, with a sentence saying what is missing and, when useful, the button to add (for example *Add note* or *Link to…*).
+
+## Moments on the player
+Bookmarks and screenshots are the call's **moments**. On the player each moment is a coloured **tick** (orange for bookmarks, light blue for screenshots). Below there is **one moment at a time**, with the thumbnail, the title and the minute: on opening it is the next one after where you are, while listening it follows the audio, and with **‹ ›** you move to the others. A click on the minute plays the audio from there. Without moments only the player remains.
+
+![The player with the ticks of the moments and one moment below](img/scheda-momenti.png)
+
+Ticks on the player and moments in the transcript can be turned off in Settings › General › Item detail.
 
 ## Sharing an item
 *Share…* among the actions opens the list of what the item has, with the size: tick what to send.

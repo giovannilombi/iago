@@ -47,13 +47,19 @@ struct MainView: View {
             }
         }
         .overlay(alignment: .bottomTrailing) {
-            ZStack {
+            // «Torna su» sits above «Chiedi a IAGO» at a fixed distance, or in its place when it is hidden (ADR-0084).
+            VStack(alignment: .trailing, spacing: 10) {
+                if !model.showsChat, let backToTop = model.backToTop {
+                    BackToTopButton(action: backToTop)
+                        .transition(.scale.combined(with: .opacity))
+                }
                 if !model.showsChat, !askButtonHidden {
                     AskIAGOButton(model: model) { askButtonHidden = true }
-                        .padding(.trailing, 22).padding(.bottom, 20)
                         .transition(.scale.combined(with: .opacity))
                 }
             }
+            .padding(.trailing, 22).padding(.bottom, 20)
+            .animation(.easeOut(duration: 0.15), value: model.backToTop == nil)
             // Only the floating button animates: an animated split view moved the sidebar under the title bar when
             // «Chiedi a IAGO» opened on a wide view.
             .animation(.easeOut(duration: 0.2), value: model.showsChat)

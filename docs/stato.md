@@ -5,13 +5,13 @@
 > Ultimo aggiornamento: **30 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.10-beta su `main` (tag `v1.2.10-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.11-beta su `main` (tag `v1.2.11-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 315 nei pacchetti, tutti verdi (1.2.10-beta).
+- **Test automatici:** 314 nei pacchetti, tutti verdi (1.2.11-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -29,6 +29,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - **Prova dal vivo della modalità gruppo** (1.2.8-beta, prove 10r): riunioni in presenza, voci della stanza, presenti. Da fare dopo: registrare solo il microfono, senza l'audio del Mac.
    - **Introduzione all'uso** (ADR-0081, 1.2.9-beta): fatta; da provare (10s) e da aggiornare con la guida fino alla distribuzione.
    - **Progetti di esempio** (ADR-0066, 1.2.10-beta): da provare su un archivio nuovo (3e.7, con `scripts/try-branch.sh --fresh` o un utente macOS di prova): l'archivio dell'utente non li riceve.
+   - **Dettaglio dell'elemento** (ADR-0084, 1.2.11-beta): fatto; da provare su call vere (10t), soprattutto la barra fissa con molte sezioni aperte e i momenti su una call lunga.
 1. **Prove, in un'unica sessione** (vedi [`docs/prove-tester.md`](prove-tester.md)):
    - versioni recenti: 10i (lavoro aperto), 10n (Inbox e nomi), 10o (due trascrizioni), 10p (trascrizione principale);
    - dal vivo: microfono di Teams mentre IAGO registra, icona di IAGO nelle notifiche, sezioni 10b–10h (memoria su 16 GB, schermate e scorciatoie, sintesi e proposte da Claude Desktop, DMG e aggiornamenti, soglia delle voci);
@@ -48,9 +49,12 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - **ClickUp:** ticket dalle attività, stato di ritorno, registro delle liste seguite, ticket nella memoria ([`docs/design/clickup.md`](design/clickup.md));
    - calendari Google e Microsoft: oggi funzionano tramite Impostazioni di Sistema › Account Internet; una sync diretta servirebbe un ADR di rete;
    - Pianifica la giornata;
-   - abbinare gli speaker di Teams a quelli di IAGO (ADR-0078).
+   - abbinare gli speaker di Teams a quelli di IAGO (ADR-0078);
+   - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-02:** versione **1.2.11-beta**.
+- **2026-11-02, dettaglio dell'elemento** (ADR-0084, deciso con la review board su un prototipo): sotto il titolo cliente › progetto e data · durata · tipo, poi le **tile** piccole con un solo dato (la trascrizione dice IAGO, Teams o IAGO + Teams) che aprono la sezione e ci portano; scorrendo, una **barra fissa** con titolo, progetto e le tile in miniatura con la sezione corrente; **↑** in basso a destra sopra «Chiedi a IAGO»; sezioni aperte o chiuse **ricordate per elemento**, con i default in Impostazioni › Generale › Dettaglio elemento e *Riapplica a tutti gli elementi…*; sezioni vuote ridotte a un'intestazione tratteggiata con la loro azione; **momenti** (segnalibri e schermate) come tacche sul player con un momento alla volta sotto, e nella trascrizione al loro minuto. Il tour dimostrativo aggiunge segnalibri e schermate inventati; tutte le schermate della guida rifatte, nuove `scheda.png`, `scheda-barra.png`, `scheda-momenti.png`. Nella stessa versione: ADR-0082 (sync per tutti i client), ADR-0083 (metadati strutturati del progetto), note per Windows e regole di processo della condivisione.
 - **2026-10-31:** versione **1.2.10-beta**.
 - **2026-10-31, progetti di esempio** (ADR-0066, modifica): un archivio nuovo parte con un'agenzia digitale inventata, Poldo S.p.A., Sanna TheBest s.r.l. e Atoms, con call trascritte, email, documenti, sintesi, punti chiave, presenti e proposte su UX, UI, product design, branding e sviluppo headless, nella lingua scelta. Non contano nei primi passi; *Impostazioni › Progetti › Rimuovi l'esempio* li toglie. Il tour dimostrativo usa gli stessi contenuti: tutte le schermate della guida rifatte, in italiano e inglese.
 - **2026-10-30:** versione **1.2.9-beta**.

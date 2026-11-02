@@ -207,6 +207,16 @@
         }
       }
     },
+    "· un clic fa partire l'audio da lì" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "· a click plays the audio from there"
+          }
+        }
+      }
+    },
     "›" : {
       "localizations" : {
         "en" : {
@@ -1025,6 +1035,16 @@
         }
       }
     },
+    "%lld momenti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld moments"
+          }
+        }
+      }
+    },
     "%lld non riuscite" : {
       "localizations" : {
         "en" : {
@@ -1305,6 +1325,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 wait overdue"
+          }
+        }
+      }
+    },
+    "1 momento" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 moment"
           }
         }
       }
@@ -4259,6 +4289,16 @@
         }
       }
     },
+    "Come si aprono le sezioni in un elemento che non hai ancora toccato. Ogni elemento poi ricorda cosa apri e chiudi lì dentro." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How sections open in an item you have not touched yet. Each item then remembers what you open and close in it."
+          }
+        }
+      }
+    },
     "Come ti chiami nelle trascrizioni?" : {
       "localizations" : {
         "en" : {
@@ -5636,6 +5676,16 @@
         }
       }
     },
+    "Dettaglio elemento" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Item detail"
+          }
+        }
+      }
+    },
     "Di default IAGO è escluso dai backup: l'archivio contiene i testi delle trascrizioni. I file nel backup restano cifrati, ma il database con i testi no." : {
       "localizations" : {
         "en" : {
@@ -5682,6 +5732,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Forget the match"
+          }
+        }
+      }
+    },
+    "Dimentica le scelte fatte nei singoli elementi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forgets the choices made in single items."
           }
         }
       }
@@ -10258,6 +10318,16 @@
         }
       }
     },
+    "Le sezioni aperte e chiuse nei singoli elementi tornano come indicato qui. Non si può annullare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sections opened and closed in single items go back to what is set here. This cannot be undone."
+          }
+        }
+      }
+    },
     "Le sintesi richiedono almeno Qwen 3.5 9B: il motore attivo è troppo piccolo per riassumere bene. Scegline uno in Impostazioni › Motore." : {
       "localizations" : {
         "en" : {
@@ -10988,12 +11058,42 @@
         }
       }
     },
+    "Momenti sul player audio" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moments on the audio player"
+          }
+        }
+      }
+    },
+    "Momento precedente" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Previous moment"
+          }
+        }
+      }
+    },
     "Momento segnato" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Moment marked"
+          }
+        }
+      }
+    },
+    "Momento successivo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next moment"
           }
         }
       }
@@ -11475,6 +11575,16 @@
         }
       }
     },
+    "Nessun collegamento ad altri elementi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No links to other items"
+          }
+        }
+      }
+    },
     "Nessun contenuto" : {
       "localizations" : {
         "en" : {
@@ -11631,6 +11741,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No open risks."
+          }
+        }
+      }
+    },
+    "Nessun segnalibro: durante la call usa «Segna momento»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No bookmarks: during the call use «Mark moment»"
           }
         }
       }
@@ -11795,6 +11915,16 @@
         }
       }
     },
+    "Nessuna nota" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No notes"
+          }
+        }
+      }
+    },
     "Nessuna persona" : {
       "localizations" : {
         "en" : {
@@ -11831,6 +11961,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No screenshots captured."
+          }
+        }
+      }
+    },
+    "Nessuna schermata: durante la call usa «Segna momento con screenshot»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No screenshots: during the call use «Mark moment with screenshot»"
           }
         }
       }
@@ -14866,6 +15006,36 @@
         }
       }
     },
+    "Riapplica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reapply"
+          }
+        }
+      }
+    },
+    "Riapplica a tutti gli elementi…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reapply to all items…"
+          }
+        }
+      }
+    },
+    "Riapplicare queste scelte a tutti gli elementi?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reapply these choices to all items?"
+          }
+        }
+      }
+    },
     "Riapri" : {
       "localizations" : {
         "en" : {
@@ -16215,6 +16385,7 @@
       }
     },
     "Schermate (%lld)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16465,6 +16636,26 @@
         }
       }
     },
+    "Segnalibri e schermate anche nella trascrizione, nel loro momento" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bookmarks and screenshots in the transcript too, at their moment"
+          }
+        }
+      }
+    },
+    "Segnalibro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bookmark"
+          }
+        }
+      }
+    },
     "segue" : {
       "localizations" : {
         "en" : {
@@ -16541,6 +16732,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "simple and quick"
+          }
+        }
+      }
+    },
+    "Sempre aperta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always open"
           }
         }
       }
@@ -18195,6 +18396,16 @@
         }
       }
     },
+    "Torna su" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to top"
+          }
+        }
+      }
+    },
     "Torna uno speaker a sé, come dopo la trascrizione" : {
       "localizations" : {
         "en" : {
@@ -18412,6 +18623,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Transcribing note…"
+          }
+        }
+      }
+    },
+    "Trascrizione e contenuto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transcript and content"
           }
         }
       }
@@ -19234,6 +19455,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Non-commercial use, with attribution; modified versions must be shared under the same license."
+          }
+        }
+      }
+    },
+    "Vai a %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to %@"
           }
         }
       }

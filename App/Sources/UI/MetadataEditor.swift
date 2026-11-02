@@ -7,6 +7,8 @@ struct MetadataEditor: View {
     let model: AppModel
     let item: Item
     var compact = false
+    /// Under the title, one line each (ADR-0084): client › project, then date · duration · type.
+    var subtitle: [String] = []
 
     @State private var title = ""
     @State private var date = Date()
@@ -21,6 +23,12 @@ struct MetadataEditor: View {
                 .font(compact ? .title3 : .title).textFieldStyle(.plain)
                 .onSubmit(saveTitle)
                 .onChange(of: title) { scheduleTitleSave() }
+            if !subtitle.isEmpty {
+                VStack(alignment: .leading, spacing: 2) {
+                    ForEach(subtitle, id: \.self) { Text($0) }
+                }
+                .font(.callout).foregroundStyle(.secondary).padding(.top, -6)
+            }
             Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 8) {
                 GridRow {
                     Text(String(localized: "Data")).foregroundStyle(.secondary)

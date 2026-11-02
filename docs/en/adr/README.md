@@ -103,3 +103,6 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0079 | Assistants beyond Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposed |
 | 0080 | Sharing an item | accepted (1.2.7-beta) |
 | 0081 | Getting-started introduction | accepted (1.2.9-beta) |
+| 0082 | Sync usable by every client | accepted (principle, phase 4) |
+| 0083 | Structured project metadata | accepted (principle, phase 4) |
+| 0084 | Item detail: tiles, sticky bar and moments | accepted (1.2.11-beta) |

@@ -10,12 +10,12 @@ IAGO records **two separate tracks**: the Mac's audio (the voices of the others 
 - **Several people in the room during a call:** if you notice other people are with you, choose **Several people here in the room** from the menu while recording. The call will be transcribed with their voices apart.
 
 ## Mark moment
-During the call, choose **Mark moment** from the menu: IAGO places a bookmark a few seconds before now, with an optional note. In the item card you find it under *Bookmarks*, and a click takes you to that point in the audio. You can create a key point directly from a bookmark.
+During the call, choose **Mark moment** from the menu: IAGO places a bookmark a few seconds before now, with an optional note. In the item card you find it under *Bookmarks*, in the transcript at its minute and as a tick on the player: a click takes you to that point in the audio. You can create a key point directly from a bookmark.
 
 ## Mark moment with screenshot
 When someone shares a slide, a table or a chart, choose **Mark moment with screenshot** (or press **⌃⌥S**): IAGO captures the screen the pointer is on, without its own windows, and adds it to the call **at that minute**.
 - The Mac reads the text in the screenshot: you find it in the transcript at its minute, in search and in summaries, which can cite a slide.
-- In the item card, screenshots are in the **Screenshots** section: a click opens the image with the text that was read, and from there you can listen to the call from that point.
+- In the item card, screenshots are in the **Screenshots** section and on the player, among the call's moments: a click opens the image with the text that was read, and from there you can listen to the call from that point.
 - It needs the **Screen Recording** permission (Settings › Permissions). IAGO captures the screen only when you ask, never on its own. Every now and then macOS asks you to confirm the permission.
 - In Settings › General you can choose to capture all screens.
 

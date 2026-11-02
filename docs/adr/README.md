@@ -103,3 +103,6 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0079 | Assistenti oltre Claude: Claude, Claude Code, Gemini, Gemini CLI, ChatGPT, Codex CLI | proposto |
 | 0080 | Condividere un elemento | accettato (1.2.7-beta) |
 | 0081 | Introduzione all'uso | accettato (1.2.9-beta) |
+| 0082 | Sincronizzazione utilizzabile da tutti i client | accettato (principio, fase 4) |
+| 0083 | Metadati strutturati del progetto | accettato (principio, fase 4) |
+| 0084 | Dettaglio dell'elemento: tile, barra fissa e momenti | accettato (1.2.11-beta) |

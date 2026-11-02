@@ -47,68 +47,50 @@ struct ItemDetailView: View {
 
     enum Tab: Hashable { case transcript, alternate, markdown }
 
+    /// The scrolling content's coordinate space: where the sections start (ADR-0084).
+    static let space = "itemDetail"
+    /// Open and closed sections of this item.
+    @State private var memory: SectionMemory
+    @State private var hasSummary = false
+    @State private var suggestionCount = 0
+    @State private var linkCount = 0
+    /// Bottom of the tiles and top of each section, in `space`.
+    @State private var tilesBottom: CGFloat = 0
+    @State private var sectionTops: [String: CGFloat] = [:]
+    @State private var showsSticky = false
+    @State private var activeSection: String?
+    /// The moment chosen with ‹ › under the player; nil follows the audio.
+    @State private var chosenMoment: String?
+    @State private var position = ScrollPosition(edge: .top)
+    @AppStorage(DetailMoments.inTranscriptKey) private var momentsInTranscript = true
+    @AppStorage(DetailMoments.onPlayerKey) private var momentsOnPlayer = true
+
+    init(model: AppModel, itemID: String) {
+        self.model = model
+        self.itemID = itemID
+        _memory = State(initialValue: SectionMemory(itemID: itemID))
+    }
+
+    /// Height of the sticky bar, to tell which section is under it.
+    private static let stickyHeight: CGFloat = 96
+
     var body: some View {
         ScrollViewReader { proxy in
-            ScrollView {
-                if let item {
-                    VStack(alignment: .leading, spacing: 20) {
-                        MetadataEditor(model: model, item: item)
-                        ViaClaudeBadge(model: model, entity: .item, id: item.id)
-                        actions(item)
-                        if let job = activeJob { jobProgress(job) }
-                        SummarySection(
-                            model: model, item: item,
-                            hasText: item.type == .call ? transcript != nil : content?.isEmpty == false,
-                            mainTranscript: alternate == nil ? nil : transcript.map { $0.isImported ? "teams" : "iago" }
-                        ) { seconds in
-                            tab = .transcript
-                            // Minutes of a Teams transcript are not minutes of the audio (ADR-0078).
-                            if transcript?.isImported != true { Task { await listen(at: seconds) } }
-                        }
-                        SuggestionsSection(model: model, item: item)
-                        if hasAudio {
-                            PlayerSection(
-                                player: player, isLoaded: isMine, duration: item.durationSec,
-                                tracks: assets.filter { $0.kind.isAudio }
-                            ) { Task { await listen() } }
-                        }
-                        if !markers.isEmpty { markersSection }
-                        if item.type == .call {
-                            ScreenshotsSection(model: model, itemID: itemID) { seconds in
-                                tab = .transcript
-                                Task { await listen(at: seconds) }
-                            }
-                        }
-                        switch item.type {
-                        case .document: documentSection
-                        case .email:
-                            EmailHeaderSection(model: model, itemID: itemID)
-                            documentSection
-                        case .call: transcriptSection(item)
-                        }
-                        notesSection(item)
-                        decisionsSection(item)
-                        LinksSection(model: model, itemID: itemID)
-                        assetsSection
+            scroller
+                // «Dai prima i nomi» before a summary: the transcript open, its speaker names in view.
+                .onChange(of: model.namingSpeakersFor, initial: true) { _, wanted in
+                    guard wanted == itemID else { return }
+                    memory.setCollapsed("transcript", false)
+                    tab = .transcript
+                    Task {
+                        try? await Task.sleep(for: .milliseconds(150))
+                        withAnimation { proxy.scrollTo("speakers", anchor: .center) }
+                        try? await Task.sleep(for: .milliseconds(300))
+                        if model.namingSpeakersFor == itemID { model.namingSpeakersFor = nil }
                     }
-                    .padding(20)
-                    .frame(minWidth: 0, maxWidth: 820, alignment: .leading)
                 }
-            }
-            // «Dai prima i nomi» before a summary: the transcript open, its speaker names in view.
-            .onChange(of: model.namingSpeakersFor, initial: true) { _, wanted in
-                guard wanted == itemID else { return }
-                UserDefaults.standard.set(false, forKey: "section.collapsed.transcript")
-                tab = .transcript
-                Task {
-                    try? await Task.sleep(for: .milliseconds(150))
-                    withAnimation { proxy.scrollTo("speakers", anchor: .center) }
-                    try? await Task.sleep(for: .milliseconds(300))
-                    if model.namingSpeakersFor == itemID { model.namingSpeakersFor = nil }
-                }
-            }
         }
-        .task(id: model.revision) { await load() }
+        .task(id: "\(model.revision)-\(model.intelligence.revision)") { await load() }
         // Audio that was only prepared is released; audio being listened to keeps going (playback bar).
         .onDisappear { if isMine, !player.isActive { player.close() } }
         .alert(String(localized: "Sostituire la trascrizione Teams?"), isPresented: $confirmAttachTranscript) {
@@ -138,6 +120,222 @@ struct ItemDetailView: View {
         }
     }
 
+    /// The scrolling page; past the tiles, the sticky bar, the section under it and «torna su» (ADR-0084).
+    private var scroller: some View {
+        ScrollView {
+            if let item {
+                page(item)
+                    .padding(20)
+                    .frame(minWidth: 0, maxWidth: 820, alignment: .leading)
+                    .coordinateSpace(.named(Self.space))
+                    .environment(\.sectionMemory, memory)
+                    .onPreferenceChange(SectionTopsKey.self) { tops in
+                        Task { @MainActor in sectionTops = tops }
+                    }
+            }
+        }
+        .scrollPosition($position)
+        .onScrollGeometryChange(for: CGFloat.self) { geometry in
+            geometry.contentOffset.y + geometry.contentInsets.top
+        } action: { _, y in
+            scrolled(to: y)
+        }
+        .overlay(alignment: .top) { stickyBar }
+        .animation(.easeOut(duration: 0.15), value: showsSticky)
+        .onChange(of: showsSticky, initial: true) { _, shown in
+            if shown {
+                model.backToTop = { withAnimation { position.scrollTo(edge: .top) } }
+            } else {
+                model.backToTop = nil
+            }
+        }
+        .onDisappear { model.backToTop = nil }
+        .onChange(of: model.openDetailSection) { _, key in
+            guard let key else { return }
+            model.openDetailSection = nil
+            if key == "top" {
+                withAnimation { position.scrollTo(edge: .top) }
+            } else {
+                go(to: key)
+            }
+        }
+    }
+
+    private func scrolled(to y: CGFloat) {
+        let sticky = tilesBottom > 0 && y > tilesBottom
+        if sticky != showsSticky { showsSticky = sticky }
+        // A section counts once its title reaches the bar's lower edge (a tile scrolls it 12 points below).
+        let active = sticky ? section(at: y + Self.stickyHeight + 24) : nil
+        if active != activeSection { activeSection = active }
+    }
+
+    @ViewBuilder
+    private var stickyBar: some View {
+        if showsSticky, let item {
+            DetailStickyBar(
+                title: item.title, subtitle: stickySubtitle(item), tiles: tiles(item), active: activeSection
+            ) { key in go(to: key) }
+            .transition(.move(edge: .top).combined(with: .opacity))
+        }
+    }
+
+    private func page(_ item: Item) -> some View {
+        VStack(alignment: .leading, spacing: 20) {
+            header(item)
+            ViaClaudeBadge(model: model, entity: .item, id: item.id)
+            actions(item)
+            if let job = activeJob { jobProgress(job) }
+            SummarySection(
+                model: model, item: item,
+                hasText: item.type == .call ? transcript != nil : content?.isEmpty == false,
+                mainTranscript: alternate == nil ? nil : transcript.map { $0.isImported ? "teams" : "iago" }
+            ) { seconds in
+                tab = .transcript
+                // Minutes of a Teams transcript are not minutes of the audio (ADR-0078).
+                if transcript?.isImported != true { Task { await listen(at: seconds) } }
+            }
+            SuggestionsSection(model: model, item: item)
+            if hasAudio { playerSection(item) }
+            if item.type == .call {
+                markersSection
+                ScreenshotsSection(model: model, itemID: itemID) { seconds in
+                    tab = .transcript
+                    Task { await listen(at: seconds) }
+                }
+            }
+            textSection(item)
+            notesSection(item)
+            decisionsSection(item)
+            LinksSection(model: model, itemID: itemID)
+            assetsSection
+        }
+    }
+
+    private func header(_ item: Item) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            MetadataEditor(model: model, item: item, subtitle: subtitle(item))
+            DetailTiles(tiles: tiles(item)) { key in go(to: key) }
+                .onGeometryChange(for: CGFloat.self) { geometry in
+                    geometry.frame(in: .named(Self.space)).maxY
+                } action: { bottom in
+                    tilesBottom = bottom
+                }
+        }
+    }
+
+    private func playerSection(_ item: Item) -> some View {
+        PlayerSection(
+            model: model, player: player, isLoaded: isMine, duration: item.durationSec,
+            tracks: assets.filter { $0.kind.isAudio }, moments: momentsOnPlayer ? moments : [],
+            chosen: $chosenMoment, play: { Task { await listen() } }
+        ) { seconds in
+            Task { await listen(at: seconds) }
+        }
+    }
+
+    @ViewBuilder
+    private func textSection(_ item: Item) -> some View {
+        switch item.type {
+        case .document: documentSection
+        case .email:
+            EmailHeaderSection(model: model, itemID: itemID)
+            documentSection
+        case .call: transcriptSection(item)
+        }
+    }
+
+    // MARK: Navigation (ADR-0084)
+
+    /// Client › project, then date · duration · type.
+    private func subtitle(_ item: Item) -> [String] {
+        let project = model.project(item.projectId)
+        let place = [model.client(project?.clientId)?.name, project?.name].compactMap { $0 }.joined(separator: " › ")
+        let when = [
+            item.occurredAt.formatted(date: .abbreviated, time: .shortened),
+            item.durationSec.map(Format.duration), Self.typeName(item.type),
+        ].compactMap { $0 }.joined(separator: " · ")
+        return [place, when].filter { !$0.isEmpty }
+    }
+
+    private func stickySubtitle(_ item: Item) -> String {
+        let project = model.project(item.projectId)
+        return [
+            [model.client(project?.clientId)?.name, project?.name].compactMap { $0 }.joined(separator: " › "),
+            item.occurredAt.formatted(.dateTime.day().month(.abbreviated)),
+            item.durationSec.map(Format.duration) ?? "",
+        ].filter { !$0.isEmpty }.joined(separator: " · ")
+    }
+
+    static func typeName(_ type: Item.Kind) -> String {
+        switch type {
+        case .call: String(localized: "Call")
+        case .email: String(localized: "Email")
+        case .document: String(localized: "Documento")
+        }
+    }
+
+    /// The tiles, in the order approved with the prototype; each one names a section's anchor.
+    private func tiles(_ item: Item) -> [DetailTile] {
+        func count(_ key: String, _ title: String, _ value: Int, _ tint: Color) -> DetailTile {
+            DetailTile(key: key, title: title, value: "\(value)", tint: tint, isEmpty: value == 0)
+        }
+        var tiles = [
+            DetailTile(
+                key: "summary", title: String(localized: "Sintesi"), value: hasSummary ? "✓" : "—", tint: .indigo,
+                isEmpty: !hasSummary),
+            count("decisions", String(localized: "Punti chiave"), decisions.count, .green),
+            count("suggestions", String(localized: "Proposte"), suggestionCount, .indigo),
+            count("notes", String(localized: "Note"), notes.count, .yellow),
+        ]
+        switch item.type {
+        case .call:
+            tiles.append(
+                DetailTile(
+                    key: "transcript", title: String(localized: "Trascrizione"), value: transcriptSources,
+                    tint: .blue, isEmpty: transcript == nil && activeJob == nil))
+            tiles.append(count("markers", String(localized: "Segnalibri"), markers.count, .orange))
+            tiles.append(count("screenshots", String(localized: "Schermate"), shots.count, .teal))
+        case .email:
+            tiles.append(DetailTile(key: "email", title: String(localized: "Email"), value: "✓", tint: .indigo))
+        case .document:
+            let has = content?.isEmpty == false || originalImage != nil
+            tiles.append(
+                DetailTile(
+                    key: "content", title: String(localized: "Contenuto"), value: has ? "✓" : "—", tint: .teal,
+                    isEmpty: !has))
+        }
+        tiles.append(count("links", String(localized: "Collegamenti"), linkCount, .mint))
+        tiles.append(count("files", String(localized: "File"), assets.count, .gray))
+        return tiles
+    }
+
+    /// «IAGO», «Teams», «IAGO + Teams»; «…» while transcribing, «—» without.
+    private var transcriptSources: String {
+        let sources = [iagoTranscript.map { _ in "iago" }, teamsTranscript.map { _ in "teams" }].compactMap { $0 }
+        if sources.isEmpty { return activeJob != nil ? "…" : "—" }
+        return sources.map(Self.sourceName).joined(separator: " + ")
+    }
+
+    /// A tile: open its section here and go there.
+    private func go(to key: String) {
+        // Transcript and document text share the «Trascrizione» default; the tile opens the one this item has.
+        if key != "files" { memory.setCollapsed(key, false) }
+        Task {
+            // The section just opened: its height, not its top, changes; the top is already known.
+            try? await Task.sleep(for: .milliseconds(60))
+            guard let top = sectionTops[key] else { return }
+            // Its title right under the sticky bar.
+            withAnimation(.easeInOut(duration: 0.3)) { position.scrollTo(y: max(top - Self.stickyHeight - 12, 0)) }
+        }
+    }
+
+    /// The last section whose top is above `y` (the bottom of the sticky bar).
+    private func section(at y: CGFloat) -> String? {
+        sectionTops.filter { $0.value <= y }.max { $0.value < $1.value }?.key
+    }
+
+    private var moments: [DetailMoment] { DetailMoment.from(markers: markers, shots: shots) }
+
     // MARK: Loading
 
     private func load() async {
@@ -154,6 +352,9 @@ struct ItemDetailView: View {
         notes = (try? archive.notes(itemID: itemID)) ?? []
         speakers = (try? archive.speakers(itemID: itemID)) ?? []
         attendees = (try? archive.attendees(itemID: itemID)) ?? []
+        hasSummary = (try? archive.summary(itemID: itemID)) != nil
+        suggestionCount = (try? archive.suggestions(itemID: itemID))?.count ?? 0
+        linkCount = (try? archive.links(itemID: itemID))?.count ?? 0
         activeJob = (try? archive.jobs(itemID: itemID))?.first { $0.isActive }
         if let md = assets.first(where: { $0.kind == .contentMD }), content == nil {
             content = await Task.detached { try? String(decoding: archive.readAssetData(md), as: UTF8.self) }.value
@@ -362,7 +563,12 @@ struct ItemDetailView: View {
     // MARK: Bookmarks
 
     private var markersSection: some View {
-        SectionBox(String(localized: "Segnalibri"), systemImage: "bookmark", tint: .orange, collapseKey: "markers") {
+        SectionBox(
+            String(localized: "Segnalibri"), systemImage: "bookmark", tint: .orange, collapseKey: "markers",
+            detail: markers.isEmpty ? nil : "\(markers.count)",
+            emptyText: markers.isEmpty
+                ? String(localized: "Nessun segnalibro: durante la call usa «Segna momento»") : nil
+        ) {
             ForEach(markers) { marker in
                 HStack(alignment: .firstTextBaseline) {
                     timestampButton(marker.atSec)
@@ -421,7 +627,13 @@ struct ItemDetailView: View {
 
     private func decisionsSection(_ item: Item) -> some View {
         SectionBox(
-            String(localized: "Punti chiave"), systemImage: "checkmark.seal", tint: .green, collapseKey: "decisions"
+            String(localized: "Punti chiave"), systemImage: "checkmark.seal", tint: .green, collapseKey: "decisions",
+            detail: decisions.isEmpty ? nil : "\(decisions.count)",
+            emptyText: decisions.isEmpty ? String(localized: "Nessun punto chiave") : nil,
+            emptyAction: (
+                String(localized: "Aggiungi…"),
+                { model.editingDecision = DecisionDraft(item: item, atSec: nil, text: "", origin: .manual) }
+            )
         ) {
             ForEach(decisions) { summary in
                 DecisionRow(model: model, summary: summary, showsProject: false, compact: true)
@@ -471,7 +683,8 @@ struct ItemDetailView: View {
     @ViewBuilder
     private func transcriptSection(_ item: Item) -> some View {
         SectionBox(
-            String(localized: "Trascrizione"), systemImage: "text.alignleft", tint: .blue, collapseKey: "transcript"
+            String(localized: "Trascrizione"), systemImage: "text.alignleft", tint: .blue, collapseKey: "transcript",
+            detail: transcript == nil ? nil : transcriptSources
         ) {
             if item.type == .call { AttendeesRow(model: model, itemID: itemID) }
             if let transcript {
@@ -511,9 +724,14 @@ struct ItemDetailView: View {
                             if shown.isImported {
                                 ForEach(shown.segments, id: \.id) { segment in segmentRow(segment, linked: false) }
                             } else {
-                                ForEach(Self.rows(shown.segments, shots)) { row in
+                                ForEach(
+                                    Self.rows(
+                                        shown.segments, momentsInTranscript ? shots : [],
+                                        momentsInTranscript ? markers.filter { $0.status != .dismissed } : [])
+                                ) { row in
                                     switch row {
                                     case .shot(let shot): screenshotRow(shot)
+                                    case .marker(let marker): markerRow(marker)
                                     case .segment(let segment): segmentRow(segment)
                                     }
                                 }
@@ -655,30 +873,54 @@ struct ItemDetailView: View {
         .font(.caption)
     }
 
-    /// The transcript with the screenshots at their minute (ADR-0072).
+    /// The transcript with the screenshots (ADR-0072) and the bookmarks (ADR-0084) at their minute.
     enum TranscriptRow: Identifiable {
         case segment(Transcript.Segment)
         case shot(Asset)
+        case marker(Marker)
 
         var id: String {
             switch self {
             case .segment(let segment): "s\(segment.id)"
             case .shot(let shot): "p\(shot.id)"
+            case .marker(let marker): "m\(marker.id)"
+            }
+        }
+
+        var atSec: Double {
+            switch self {
+            case .segment(let segment): segment.start
+            case .shot(let shot): shot.atSec ?? 0
+            case .marker(let marker): marker.atSec
             }
         }
     }
 
-    static func rows(_ segments: [Transcript.Segment], _ shots: [Asset]) -> [TranscriptRow] {
+    static func rows(_ segments: [Transcript.Segment], _ shots: [Asset], _ markers: [Marker] = []) -> [TranscriptRow] {
+        let moments = (shots.map { TranscriptRow.shot($0) } + markers.map { .marker($0) }).sorted {
+            $0.atSec < $1.atSec
+        }
         var rows: [TranscriptRow] = []
-        var pending = shots[...]
+        var pending = moments[...]
         for segment in segments {
-            while let shot = pending.first, (shot.atSec ?? 0) < segment.start {
-                rows.append(.shot(shot))
+            while let moment = pending.first, moment.atSec < segment.start {
+                rows.append(moment)
                 pending = pending.dropFirst()
             }
             rows.append(.segment(segment))
         }
-        return rows + pending.map { .shot($0) }
+        return rows + pending
+    }
+
+    private func markerRow(_ marker: Marker) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            timestampButton(marker.atSec).frame(width: 64, alignment: .leading)
+            Label(String(localized: "Segnalibro"), systemImage: "bookmark.fill").foregroundStyle(.orange)
+                .frame(width: 110, alignment: .leading)
+            Text(marker.note ?? String(localized: "Momento segnato")).foregroundStyle(.secondary).lineLimit(2)
+        }
+        .padding(.vertical, 3).padding(.horizontal, 4)
+        .background(RoundedRectangle(cornerRadius: 6).fill(Color.orange.opacity(0.08)))
     }
 
     private func screenshotRow(_ shot: Asset) -> some View {
@@ -692,6 +934,8 @@ struct ItemDetailView: View {
             )
             .foregroundStyle(.secondary).lineLimit(2).textSelection(.enabled)
         }
+        .padding(.vertical, 3).padding(.horizontal, 4)
+        .background(RoundedRectangle(cornerRadius: 6).fill(Color.teal.opacity(0.08)))
         .help(String(localized: "L'immagine è nella sezione Schermate"))
     }
 
@@ -788,7 +1032,12 @@ struct ItemDetailView: View {
     // MARK: Notes (FR-170…173)
 
     private func notesSection(_ item: Item) -> some View {
-        SectionBox(String(localized: "Note"), systemImage: "note.text", tint: .yellow, collapseKey: "notes") {
+        SectionBox(
+            String(localized: "Note"), systemImage: "note.text", tint: .yellow, collapseKey: "notes",
+            detail: notes.isEmpty ? nil : "\(notes.count)",
+            emptyText: notes.isEmpty ? String(localized: "Nessuna nota") : nil,
+            emptyAction: (String(localized: "Aggiungi nota"), { editingNote = NoteDraft(itemID: itemID) })
+        ) {
             ForEach(notes) { note in
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
@@ -836,7 +1085,9 @@ struct ItemDetailView: View {
     // MARK: Assets (FR-53, FR-60)
 
     private var assetsSection: some View {
-        SectionBox(String(localized: "File"), systemImage: "doc", tint: .gray) {
+        SectionBox(
+            String(localized: "File"), systemImage: "doc", tint: .gray, detail: "\(assets.count)", anchor: "files"
+        ) {
             ForEach(assets) { asset in
                 AssetRow(model: model, asset: asset)
             }
@@ -847,40 +1098,84 @@ struct ItemDetailView: View {
 // MARK: - Subviews
 
 /// A visually separate card for each part of the item view.
+/// - Collapsible with `collapseKey` (accordion). Inside an item (`sectionMemory`) open and closed are remembered for
+///   that item, with the defaults of Settings; elsewhere per kind of section (ADR-0084).
+/// - `emptyText`: the section has nothing yet and shows only its header, dashed and grey, with that sentence and
+///   `emptyAction` when there is something useful to do.
+/// - `anchor` (or the collapse key) is where the tiles and the sticky bar scroll to.
 struct SectionBox<Content: View>: View {
     let title: String
     let systemImage: String
     let tint: Color
-    let collapsible: Bool
+    let collapseKey: String?
+    var detail: String?
+    var emptyText: String?
+    var emptyAction: (title: String, action: () -> Void)?
+    let anchor: String?
     let content: Content
-    /// Remembered per kind of section (all transcripts, all notes…), not per item.
-    @AppStorage private var collapsed: Bool
+    /// Outside an item: remembered per kind of section (all transcripts, all notes…).
+    @AppStorage private var storedCollapsed: Bool
+    @Environment(\.sectionMemory) private var memory
 
-    /// `collapseKey` makes the section collapsible with a chevron on the left of its title (accordion).
     init(
         _ title: String, systemImage: String, tint: Color = .accentColor, collapseKey: String? = nil,
-        @ViewBuilder content: () -> Content
+        detail: String? = nil, emptyText: String? = nil, emptyAction: (title: String, action: () -> Void)? = nil,
+        anchor: String? = nil, @ViewBuilder content: () -> Content
     ) {
         self.title = title
         self.systemImage = systemImage
         self.tint = tint
-        self.collapsible = collapseKey != nil
+        self.collapseKey = collapseKey
+        self.detail = detail
+        self.emptyText = emptyText
+        self.emptyAction = emptyAction
+        self.anchor = anchor ?? collapseKey
         self.content = content()
-        _collapsed = AppStorage(wrappedValue: false, "section.collapsed.\(collapseKey ?? "fixed")")
+        _storedCollapsed = AppStorage(wrappedValue: false, SectionMemory.defaultKey(collapseKey ?? "fixed"))
+    }
+
+    private var collapsed: Bool {
+        guard let collapseKey else { return false }
+        return memory?.isCollapsed(collapseKey) ?? storedCollapsed
+    }
+
+    private func toggle() {
+        guard let collapseKey else { return }
+        withAnimation(.easeInOut(duration: 0.15)) {
+            if let memory { memory.setCollapsed(collapseKey, !collapsed) } else { storedCollapsed.toggle() }
+        }
     }
 
     var body: some View {
+        Group {
+            if let emptyText { empty(emptyText) } else { full }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .overlay(alignment: .leading) {
+            UnevenRoundedRectangle(topLeadingRadius: 10, bottomLeadingRadius: 10).fill(tint).frame(width: 4)
+        }
+        // Where the card starts: the tiles and the sticky bar scroll there.
+        .background {
+            if let anchor {
+                GeometryReader { geometry in
+                    Color.clear.preference(
+                        key: SectionTopsKey.self,
+                        value: [anchor: geometry.frame(in: .named(ItemDetailView.space)).minY])
+                }
+            }
+        }
+    }
+
+    private var full: some View {
         VStack(alignment: .leading, spacing: 10) {
-            if collapsible {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.15)) { collapsed.toggle() }
-                } label: {
+            if collapseKey != nil {
+                Button(action: toggle) {
                     HStack(spacing: 6) {
                         Image(systemName: "chevron.right").font(.system(size: 10, weight: .bold))
                             .foregroundStyle(.secondary)
                             .rotationEffect(.degrees(collapsed ? 0 : 90))
                             .frame(width: 12)
-                        Label(title, systemImage: systemImage).font(.headline).foregroundStyle(tint)
+                        heading
                         Spacer(minLength: 0)
                     }
                     .contentShape(Rectangle())
@@ -889,17 +1184,40 @@ struct SectionBox<Content: View>: View {
                 .help(collapsed ? String(localized: "Apri") : String(localized: "Chiudi"))
                 if !collapsed { content }
             } else {
-                Label(title, systemImage: systemImage).font(.headline).foregroundStyle(tint)
+                heading
                 content
             }
         }
         .padding(14)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(RoundedRectangle(cornerRadius: 10).fill(Color(nsColor: .controlBackgroundColor)))
-        .overlay(alignment: .leading) {
-            UnevenRoundedRectangle(topLeadingRadius: 10, bottomLeadingRadius: 10).fill(tint).frame(width: 4)
-        }
         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.18)))
+    }
+
+    private var heading: some View {
+        HStack(spacing: 8) {
+            Label(title, systemImage: systemImage).font(.headline).foregroundStyle(tint)
+            if let detail { Text(detail).foregroundStyle(.secondary) }
+        }
+    }
+
+    /// Only the header: dashed, grey, no chevron.
+    private func empty(_ text: String) -> some View {
+        HStack(spacing: 8) {
+            Label(title, systemImage: systemImage).font(.headline).foregroundStyle(.secondary)
+            Text("· \(text)").foregroundStyle(.secondary).lineLimit(2)
+            Spacer(minLength: 8)
+            if let emptyAction {
+                Button(emptyAction.title, action: emptyAction.action).controlSize(.small)
+            }
+        }
+        .padding(.horizontal, 14).padding(.vertical, 9)
+        .padding(.leading, 0)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color.secondary.opacity(0.05)))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10).strokeBorder(
+                Color.secondary.opacity(0.35), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
     }
 }
 
@@ -1170,15 +1488,29 @@ private struct SpeakerNames: View {
 }
 
 private struct PlayerSection: View {
+    let model: AppModel
     @Bindable var player: AudioPlayerModel
     /// False while the player holds another item: the controls show this item at rest.
     let isLoaded: Bool
     let duration: Double?
     let tracks: [Asset]
+    /// Bookmarks and screenshots (ADR-0084): ticks on the bar, one at a time below.
+    let moments: [DetailMoment]
+    @Binding var chosen: String?
     let play: () -> Void
+    let listen: (Double) -> Void
+
+    private var total: Double { isLoaded ? player.duration : duration ?? 0 }
+    private var now: Double { isLoaded ? player.currentTime : 0 }
 
     var body: some View {
-        SectionBox(String(localized: "Audio"), systemImage: "waveform", tint: .purple) {
+        SectionBox(
+            String(localized: "Audio"), systemImage: "waveform", tint: .purple,
+            detail: moments.isEmpty
+                ? nil
+                : moments.count == 1 ? String(localized: "1 momento") : String(localized: "\(moments.count) momenti"),
+            anchor: "audio"
+        ) {
             ViewThatFits(in: .horizontal) {
                 HStack(spacing: 12) {
                     playButton
@@ -1199,7 +1531,12 @@ private struct PlayerSection: View {
                 }
             }
             if let error = player.error { Text(error).foregroundStyle(.red).font(.caption) }
+            if !moments.isEmpty {
+                MomentCard(model: model, moments: moments, currentTime: now, listen: listen, chosen: $chosen)
+            }
         }
+        // The audio passing a moment takes over from ‹ ›.
+        .onChange(of: moments.firstIndex { $0.atSec >= now - 0.5 }) { if player.isPlaying { chosen = nil } }
     }
 
     private var playButton: some View {
@@ -1214,9 +1551,16 @@ private struct PlayerSection: View {
     private var slider: some View {
         Slider(
             value: Binding(get: { isLoaded ? player.currentTime : 0 }, set: { player.seek(to: $0, play: false) }),
-            in: 0...max(isLoaded ? player.duration : duration ?? 0, 1)
+            in: 0...max(total, 1)
         )
         .disabled(!isLoaded)
+        .overlay {
+            if !moments.isEmpty {
+                MomentTicks(
+                    moments: moments, duration: total,
+                    selected: chosen ?? moments.first { $0.atSec >= now - 0.5 }?.id ?? moments.last?.id)
+            }
+        }
     }
 
     private var timeLabel: some View {

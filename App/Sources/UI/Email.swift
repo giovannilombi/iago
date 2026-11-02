@@ -443,7 +443,12 @@ struct LinksSection: View {
     @State private var picking = false
 
     var body: some View {
-        SectionBox(String(localized: "Collegamenti"), systemImage: "link", tint: .mint, collapseKey: "links") {
+        SectionBox(
+            String(localized: "Collegamenti"), systemImage: "link", tint: .mint, collapseKey: "links",
+            detail: links.isEmpty ? nil : "\(links.count)",
+            emptyText: links.isEmpty ? String(localized: "Nessun collegamento ad altri elementi") : nil,
+            emptyAction: (String(localized: "Collega a…"), { picking = true })
+        ) {
             ForEach(links) { linked in
                 HStack(spacing: 8) {
                     Image(systemName: ItemIcon.name(linked.item)).foregroundStyle(.secondary).frame(width: 16)
