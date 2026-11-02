@@ -12,7 +12,7 @@ An item is a **call**, an **email** or a **document**. The card gathers everythi
 - **Audio:** player with a choice of track (both, microphone only, system only) and the call's **moments** (see below).
 - **Bookmarks** of the moments marked during the call.
 - **Screenshots** captured with *Mark moment with screenshot*, with the minute and the text that was read.
-- **Transcript** with who is speaking and the minute: a click on a minute plays the audio from there; right-click a sentence to turn it into a key point. Bookmarks and screenshots appear at their minute, in their colour.
+- **Transcript** with who is speaking and the minute: a click on a minute plays the audio from there; right-click a sentence to turn it into a key point. Bookmarks and screenshots appear at their minute, on a faint veil of their colour (screenshots with their thumbnail too).
 - **Content** for documents and emails (with the original image and the recognized text).
 - Dated **notes**, dictated by voice too.
 - **Key points** that came from this item.

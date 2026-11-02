@@ -228,7 +228,7 @@ struct WorkEntryRow: View {
             if WorkCheckbox.applies(decision, mode: mode) {
                 WorkCheckbox(model: model, decision: decision)
             } else {
-                Image(systemName: WorkStyle.icon(decision)).foregroundStyle(WorkStyle.color(decision))
+                Image(systemName: WorkStyle.icon(decision)).foregroundStyle(DecisionRow.signal(decision))
                     .help(WorkStyle.label(decision.kind))
             }
             VStack(alignment: .leading, spacing: 2) {
@@ -446,7 +446,7 @@ struct ChecklistCard: View {
             }
         }
         .padding(10)
-        .background(RoundedRectangle(cornerRadius: 8).fill(Color(nsColor: .controlBackgroundColor)))
+        .background(RoundedRectangle(cornerRadius: 8).fill(IAGOColor.card))
         .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.secondary.opacity(0.18)))
         .task(id: model.revision) { items = (try? model.archive.checklistItems(checklistID: checklist.id)) ?? [] }
         .confirmationDialog(
@@ -673,7 +673,7 @@ struct InboxBlockHeader<Trailing: View>: View {
                     Text("\(count)").font(.callout).monospacedDigit().foregroundStyle(.secondary)
                 }
             }
-            Rectangle().fill((kind?.color ?? .secondary).opacity(0.25)).frame(height: 1)
+            Rectangle().fill((kind?.color ?? .secondary).opacity(0.5)).frame(height: 1)
         }
         .padding(.top, 18).padding(.bottom, 2)
     }

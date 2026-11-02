@@ -134,7 +134,7 @@ struct SettingsGroup<Content: View>: View {
             VStack(alignment: .leading, spacing: 10) { content }
                 .padding(14)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .background(RoundedRectangle(cornerRadius: 10).fill(Color(nsColor: .controlBackgroundColor)))
+                .background(RoundedRectangle(cornerRadius: 10).fill(IAGOColor.card))
                 .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.18)))
             if let footnote { Text(footnote).font(.caption).foregroundStyle(.secondary) }
         }

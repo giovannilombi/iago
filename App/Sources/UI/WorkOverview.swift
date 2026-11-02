@@ -47,7 +47,7 @@ struct WorkOverview: View {
                             .padding(.horizontal, 24).padding(.bottom, 10)
                     }
                 }
-                .background(.bar)
+                .iagoBar()
             }
         }
         .task(id: model.revision) { load() }
@@ -262,6 +262,7 @@ struct WorkOverview: View {
                 Spacer(minLength: 8)
                 accessory()
             }
+            BoxTitleDivider(padding: 14)
             if let empty, count == 0 {
                 Text(empty).font(.callout).foregroundStyle(.secondary)
             } else {
@@ -271,7 +272,7 @@ struct WorkOverview: View {
         .padding(14)
         // Side by side, two cards take the height of the taller one.
         .frame(maxWidth: .infinity, maxHeight: fills ? .infinity : nil, alignment: .topLeading)
-        .background(RoundedRectangle(cornerRadius: 10).fill(Color(nsColor: .controlBackgroundColor)))
+        .background(RoundedRectangle(cornerRadius: 10).fill(IAGOColor.card))
         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.15)))
     }
 

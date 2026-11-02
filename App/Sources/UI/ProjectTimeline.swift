@@ -45,7 +45,7 @@ struct ProjectTimeline: View {
                     ViewModePicker(model: model)
                     if model.shownContent != .keyPoints { FilterBar(model: model) }
                 }
-                .background(.bar)
+                .iagoBar()
             }
         }
     }
@@ -220,7 +220,6 @@ private struct TimelineDecision: View {
         let decision = summary.decision
         let mode = model.workMode(for: decision.projectId)
         let look = DecisionRow.look(decision, closedBy: summary.supersededBy?.kind)
-        let tint = DecisionRow.tint(decision.kind)
         HStack(alignment: .top, spacing: 0) {
             Text(decision.decidedAt.formatted(.dateTime.day().month(.abbreviated)))
                 .font(.caption).foregroundStyle(.secondary)
@@ -248,7 +247,7 @@ private struct TimelineDecision: View {
                 }
                 VStack(alignment: .leading, spacing: 3) {
                     HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text(DecisionRow.kindLabel(decision.kind)).font(.caption).bold().foregroundStyle(tint)
+                        Text(DecisionRow.kindLabel(decision.kind)).font(.caption).bold().foregroundStyle(.secondary)
                         if let name = summary.chainName { ChainNameBadge(name: name) }
                         ViaClaudeBadge(model: model, entity: .decision, id: decision.id, compact: true)
                         Text(decision.text).font(.callout).lineLimit(2)
@@ -274,10 +273,11 @@ private struct TimelineDecision: View {
                 }
             }
             .padding(.horizontal, 10).padding(.vertical, 6)
-            .background(RoundedRectangle(cornerRadius: 8).fill(tint.opacity(decision.status.isOpen ? 0.08 : 0.03)))
+            // Neutral cards (style A): the kind's colour stays on the rail icon.
+            .background(RoundedRectangle(cornerRadius: 8).fill(IAGOColor.card))
             .overlay(
                 RoundedRectangle(cornerRadius: 8).stroke(
-                    model.selectedDecisionID == decision.id ? Color.accentColor : tint.opacity(0.35),
+                    model.selectedDecisionID == decision.id ? Color.accentColor : Color.secondary.opacity(0.2),
                     lineWidth: model.selectedDecisionID == decision.id ? 2 : 1)
             )
             .padding(.leading, nested ? 18 : 0)
@@ -393,7 +393,7 @@ private struct TimelineEntry: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 10).fill(
-                isSelected ? Color.accentColor.opacity(0.12) : Color(nsColor: .controlBackgroundColor))
+                isSelected ? Color.accentColor.opacity(0.12) : IAGOColor.card)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 10).stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.2))

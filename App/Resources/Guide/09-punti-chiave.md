@@ -31,6 +31,8 @@ Inbox, Punti chiave e la Kanban di tutti raccolgono il lavoro di **tutti i proge
 ## Crearli
 Da un segnalibro, da una frase della trascrizione (tasto destro), da un documento, da una nota (*Promuovi*), a mano (*Aggiungi* nella timeline), oppure confermando una **proposta** del motore o di Claude. Ognuno ha titolo, descrizione, data, persone, tag, stream e la **fonte** (con il minuto della call).
 
+*Aggiungi* apre il foglio con il tipo che hai scelto in una tile, accanto al titolo: un clic sulla tile lo cambia. Stato, responsabile e scadenza compaiono solo per il lavoro aperto. In **Persone** e **Tag** ne aggiungi quante vuoi: scrivi e premi Invio o una virgola.
+
 Per il **responsabile** scegli tra le persone che IAGO conosce, oppure ne scrivi una nuova; se somiglia a un nome noto IAGO chiede «Intendi Marco Rossi?». Quando scrivi qualcuno in **In attesa di**, la voce passa *In attesa*.
 
 ## Chiudere

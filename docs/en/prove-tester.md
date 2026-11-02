@@ -312,6 +312,14 @@ You need two real people in the same room (invented names in written tests).
 - [ ] 10u.5 Sidebar: the mode icon is green (Track) or blue (Manage); a click opens the choice and changing it changes the project. «Categories and tags» opens on click.
 - [ ] 10u.6 *New* in Key points, with the window not full screen: the sheet is fully visible, the kinds are pills on several lines, the labels in one column.
 
+## 10v. Style, light and dark (1.2.13-beta)
+- [ ] 10v.1 Next to Settings there is the appearance menu: *Automatic* follows the Mac, *Light* and *Dark* change every window at once and stay after a restart.
+- [ ] 10v.2 In light there are no large white areas: pages, lists (Recent, Unfiled items), top bars and boxes are light greys; the sidebar is darker than the pages.
+- [ ] 10v.3 Titles and text are neutral; the kind's colour is in the bar, the box icon and the tile dot; in rows icons are grey and turn red only for overdue, blocked or high risk. A thin thread sits under every box title.
+- [ ] 10v.4 *Add* in Key points: the sheet says "Add" and the kind in a tile; a click on the tile changes kind; the menu has the dots and a line between decisions/milestones and open work.
+- [ ] 10v.5 A call with bookmarks and screenshots: in the transcript they sit on a veil of their colour with a thread on the left, the screenshot with its thumbnail.
+- [ ] 10v.6 Kanban with columns in boxes and the status line under the title; Activity in one column with *Last 7 days* and *Ready to work* side by side; Categories and tags across the window.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

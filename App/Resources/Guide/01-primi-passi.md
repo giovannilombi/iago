@@ -27,7 +27,7 @@ Puoi chiedergli cosa si è deciso, chi deve fare cosa, com'è cambiata una scelt
   - un clic apre il menu: *Avvia registrazione*, *Segna momento*, *Nota vocale*, *Importa file…*, Guida, Impostazioni;
   - con il clic destro (o ctrl-clic) avvii, metti in pausa e riprendi una registrazione al volo;
   - durante una registrazione l'icona mostra il tempo, durante una trascrizione la percentuale.
-- **Finestra principale:** a sinistra l'**Inbox** in cima, poi le altre viste e i progetti; al centro il progetto (Riepilogo, Elementi, Timeline, Kanban o Grafo); a destra la scheda dell'elemento.
+- **Finestra principale:** a sinistra l'**Inbox** in cima, poi le altre viste e i progetti; al centro il progetto (Riepilogo, Elementi, Timeline, Kanban o Grafo); a destra la scheda dell'elemento. In alto, accanto alle Impostazioni, scegli l'**aspetto**: *Automatico* (come il Mac, la scelta iniziale), *Chiaro* o *Scuro*.
 - **Impostazioni** (⌘,): tutto ciò che si configura, compresi i **Permessi**.
 - **Guida:** il pulsante **? Guida** in alto a sinistra nella finestra, accanto alle Impostazioni, o il menu dell'icona di IAGO {{icona}}.
 

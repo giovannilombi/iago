@@ -157,7 +157,7 @@ struct ImportView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 10).fill(
-                    selected ? Color.accentColor.opacity(0.08) : Color(nsColor: .controlBackgroundColor))
+                    selected ? Color.accentColor.opacity(0.08) : IAGOColor.card)
             )
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.18)))
             .contentShape(Rectangle())

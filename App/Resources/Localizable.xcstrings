@@ -2530,12 +2530,32 @@
         }
       }
     },
+    "Aspetto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance"
+          }
+        }
+      }
+    },
     "Aspetto da altri" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Waiting on others"
+          }
+        }
+      }
+    },
+    "Aspetto: automatico (come il Mac), chiaro o scuro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appearance: automatic (like the Mac), light or dark"
           }
         }
       }
@@ -2879,6 +2899,16 @@
       }
     },
     "Automatica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatic"
+          }
+        }
+      }
+    },
+    "Automatico" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3262,6 +3292,16 @@
         }
       }
     },
+    "Cambia il tipo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change the kind"
+          }
+        }
+      }
+    },
     "Cambia l'ordine" : {
       "localizations" : {
         "en" : {
@@ -3616,6 +3656,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Answered by"
+          }
+        }
+      }
+    },
+    "Chiaro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
           }
         }
       }
@@ -13011,6 +13061,7 @@
       }
     },
     "Nuovo" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -16617,6 +16668,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Write a status report to send by email: read the key points with list_decisions (open, recently closed, risks, open questions, waits, due dates) and, if needed, the latest calls with get_item. Use only facts present in IAGO: In brief, Progress, Risks and open points, Next steps."
+          }
+        }
+      }
+    },
+    "Scuro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark"
           }
         }
       }

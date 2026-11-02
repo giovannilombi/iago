@@ -33,10 +33,11 @@ struct DecisionDetailView: View {
             // Kind, state and actions on one line; the date below, so a narrow pane (the inspector of the kanban)
             // never cuts the buttons.
             HStack(spacing: 8) {
-                Text(DecisionRow.kindLabel(decision.kind)).font(.callout.weight(.bold))
-                    .foregroundStyle(DecisionRow.tint(decision.kind)).fixedSize()
-                Label(DecisionRow.label(summary, mode: mode), systemImage: DecisionRow.icon(summary))
-                    .font(.callout.weight(.semibold)).foregroundStyle(DecisionRow.color(summary)).lineLimit(1)
+                // The kind's colour only in the dot (style A).
+                TileDot(color: DecisionRow.tint(decision.kind), size: 8)
+                Text(DecisionRow.kindLabel(decision.kind)).font(.callout.weight(.semibold)).fixedSize()
+                Text("· \(DecisionRow.label(summary, mode: mode))")
+                    .font(.callout).foregroundStyle(.secondary).lineLimit(1)
                 Spacer(minLength: 8)
                 KeyPointPrimaryAction(model: model, summary: summary).fixedSize()
                 Button(String(localized: "Modifica…")) { model.editingDecision = DecisionDraft(summary) }
