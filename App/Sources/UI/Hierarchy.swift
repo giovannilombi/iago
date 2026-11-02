@@ -390,11 +390,9 @@ private struct ProjectRow: View {
             }
             AccessMark(model: model, project: project)
             Spacer(minLength: 4)
-            // The project's mode at a glance (ADR-0076): a notebook for «Traccia», kanban columns for «Gestisci».
-            let mode = project.workMode ?? .manage
-            Image(systemName: WorkModeText.icon(mode)).font(.system(size: 10))
-                .foregroundStyle(mode == .track ? WorkModeText.color(mode) : Color.secondary.opacity(0.7))
-                .help(WorkModeText.fullTitle(mode))
+            // The project's mode at a glance (ADR-0076): a green notebook for «Traccia», blue kanban columns for
+            // «Gestisci». A click offers the choice, like the pill next to the project's name.
+            ModeMark(model: model, project: project)
             Button {
                 model.setPinned(project, !project.pinned)
             } label: {
@@ -740,5 +738,29 @@ private struct GroupLabel: View {
         Text(text).font(.caption.weight(.medium)).foregroundStyle(.tertiary)
             .padding(.leading, ProjectTree.indent + 4).padding(.top, 6)
             .selectionDisabled()
+    }
+}
+
+/// The mode icon of a project in the sidebar: its colour, and the choice between the two modes on click.
+private struct ModeMark: View {
+    let model: AppModel
+    let project: Project
+    @State private var open = false
+
+    var body: some View {
+        let mode = project.workMode ?? .manage
+        Button {
+            open = true
+        } label: {
+            Image(systemName: WorkModeText.icon(mode)).font(.system(size: 10))
+                .foregroundStyle(WorkModeText.color(mode))
+                .frame(width: 16, height: 16).contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .help(WorkModeText.fullTitle(mode))
+        .accessibilityLabel(WorkModeText.fullTitle(mode))
+        .popover(isPresented: $open, arrowEdge: .trailing) {
+            WorkModeMenu(model: model, project: project) { open = false }
+        }
     }
 }

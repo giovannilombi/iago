@@ -71,16 +71,17 @@ Se vuoi, una **notifica al mattino** (Impostazioni › Generale) ti dice quante 
 ## Riepilogo
 Ogni progetto, cliente e stream ha il **Riepilogo**, il primo pulsante in alto: la prima volta il progetto si apre lì.
 
-In **Modalità Traccia** è il **Riepilogo breve**, una colonna con tre blocchi: *Da fare* (le attività aperte, da spuntare lì), *Da tenere d'occhio* (rischi, punti da chiarire e richieste aperti) e *Ultime decisioni e tappe*. Un blocco vuoto non compare.
+In **Modalità Traccia** è il **Riepilogo breve**, una colonna con tre blocchi: *Da fare* (le attività aperte, da spuntare lì), *Da tenere d'occhio* (rischi, punti da chiarire e richieste aperti) e *Ultime decisioni e tappe*. Un blocco vuoto non compare. A destra c'è sempre il pannello: vuoto finché non apri una voce.
 
 ![Riepilogo breve](img/riepilogo-breve.png)
 
-In **Modalità Gestisci** occupa tutta la finestra: in alto i numeri (aperte e chiuse per tipo, in ritardo, bloccate); a sinistra ciò su cui agire (scadenze, bloccate, attese, rischi, punti da chiarire, prossime tappe); a destra cosa è cambiato, la sintesi di stato e le checklist. Un clic su una voce la apre nel pannello a destra.
+In **Modalità Gestisci** occupa tutta la finestra ed è fatto di **box**: *Da fare e scadenze*, *Da tenere d'occhio* (rischi per gravità e punti da chiarire), *Attese da altri*, *Ultime decisioni e tappe*, *Prossime tappe*, *Sintesi di stato*, *Cosa è cambiato*, *Checklist* e *Bloccate*.
 
 ![Riepilogo di un progetto](img/riepilogo.png)
-- voci aperte per tipo, prossime scadenze, decisioni e tappe recenti, attese;
-- le **checklist del progetto** (per esempio «Consegna finale»): le crei, le fissi in alto e le spunti;
-- in Gestisci anche l'avanzamento, i bloccati, i rischi per gravità, *Cosa è cambiato* dall'ultima volta che l'hai aperto e la **Sintesi di stato**: un testo scritto dal motore locale a partire dai punti chiave, da copiare in una mail o da passare a Claude.
+- I box stanno su due colonne e ognuno va nella più corta: un box lungo non lascia buchi accanto. Con la finestra stretta, o con il pannello a destra aperto, diventano una colonna.
+- In alto, sempre visibili, le **tile** dei box con il loro numero: un clic porta al box e lo fa brillare un attimo. Una tile tratteggiata è un box vuoto, ridotto alla sua intestazione.
+- Un clic su una voce la apre nel pannello a destra; il tasto destro ne cambia lo stato.
+- La **Sintesi di stato** è un testo scritto dal motore locale a partire dai punti chiave, da copiare in una mail o da passare a Claude. *Cosa è cambiato* parte dall'ultima volta che hai aperto il riepilogo. Le **checklist del progetto** (per esempio «Consegna finale») le crei, le fissi in alto e le spunti.
 
 ## Kanban
 In Gestisci, la **Kanban** di un progetto, cliente o stream (o di tutti, dall'Inbox e da Punti chiave) occupa tutta la finestra e mette il lavoro aperto in colonne: *Da fare*, *In corso*, *In attesa*, *Bloccata*, *Fatta*. Trascinare una scheda in un'altra colonna ne cambia lo stato; in *In attesa* IAGO chiede da chi e fino a quando.

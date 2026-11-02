@@ -7,7 +7,7 @@
 - **Below, always there:** *Unfiled items*, *Recent*, *Key points*, *Import*, *Activity*, *Categories and tags*.
 - **Projects** (the only part that scrolls):
   - **Pinned** (red pin): projects, streams, categories and tags you pin.
-  - **Clients**, each with its projects. Next to each project a small icon shows its mode: a green notebook for *Track mode*, three columns for *Manage mode*. A click on the name opens or closes the client; **⌥-click** opens only that one and closes the others. On hover: **→** opens all the client's items, **+** creates a project.
+  - **Clients**, each with its projects. Next to each project a small icon shows its mode: a green notebook for *Track mode*, three blue columns for *Manage mode*; a click on the icon lets you choose the other, like the pill next to the project's name. A click on the name opens or closes the client; **⌥-click** opens only that one and closes the others. On hover: **→** opens all the client's items, **+** creates a project.
   - **No client** (small gray square), always last, with **Undefined** at the bottom: items filed without a project.
 - **At the bottom:** **＋** for a new project or client, and the **Trash** with the number of items.
 - With more than 15 projects, **Filter projects** appears.

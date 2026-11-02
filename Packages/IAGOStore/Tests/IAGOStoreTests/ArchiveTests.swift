@@ -392,3 +392,21 @@ struct ArchiveFixture {
         #expect(!FileManager.default.fileExists(atPath: fixture.archive.itemsRoot.appendingPathComponent(item.id).path))
     }
 }
+
+@Suite struct ItemDatesTests {
+    @Test func onlyRecentItemsOutsideTheTrash() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let now = fixture.clock.now
+        let old = try archive.createItem(
+            title: "Old", occurredAt: now.addingTimeInterval(-10 * 86_400), source: .recording, status: .recorded)
+        let recent = try archive.createItem(
+            title: "Recent", occurredAt: now.addingTimeInterval(-86_400), source: .recording, status: .recorded)
+        let trashed = try archive.createItem(title: "Trashed", occurredAt: now, source: .recording, status: .recorded)
+        try archive.trashItem(trashed.id)
+        let dates = try archive.itemDates(since: now.addingTimeInterval(-7 * 86_400))
+        #expect(dates.count == 1)
+        #expect(abs(dates[0].timeIntervalSince(recent.occurredAt)) < 1)
+        #expect(!dates.contains { abs($0.timeIntervalSince(old.occurredAt)) < 1 })
+    }
+}

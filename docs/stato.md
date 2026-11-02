@@ -5,13 +5,13 @@
 > Ultimo aggiornamento: **30 ottobre 2026**.
 
 ## In breve
-- **Versione:** 1.2.11-beta su `main` (tag `v1.2.11-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.12-beta su `main` (tag `v1.2.12-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 314 nei pacchetti, tutti verdi (1.2.11-beta).
+- **Test automatici:** 315 nei pacchetti, tutti verdi (1.2.12-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -30,6 +30,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - **Introduzione all'uso** (ADR-0081, 1.2.9-beta): fatta; da provare (10s) e da aggiornare con la guida fino alla distribuzione.
    - **Progetti di esempio** (ADR-0066, 1.2.10-beta): da provare su un archivio nuovo (3e.7, con `scripts/try-branch.sh --fresh` o un utente macOS di prova): l'archivio dell'utente non li riceve.
    - **Dettaglio dell'elemento** (ADR-0084, 1.2.11-beta): fatto; da provare su call vere (10t), soprattutto la barra fissa con molte sezioni aperte e i momenti su una call lunga.
+   - **Riepilogo e Attività** (ADR-0085, 1.2.12-beta): fatto; da provare su progetti veri con molte voci (10u).
 1. **Prove, in un'unica sessione** (vedi [`docs/prove-tester.md`](prove-tester.md)):
    - versioni recenti: 10i (lavoro aperto), 10n (Inbox e nomi), 10o (due trascrizioni), 10p (trascrizione principale);
    - dal vivo: microfono di Teams mentre IAGO registra, icona di IAGO nelle notifiche, sezioni 10b–10h (memoria su 16 GB, schermate e scorciatoie, sintesi e proposte da Claude Desktop, DMG e aggiornamenti, soglia delle voci);
@@ -53,6 +54,8 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-02:** versione **1.2.12-beta**.
+- **2026-11-02, Riepilogo, Attività e correzioni** (ADR-0085, su proposte approvate dall'utente): in **Gestisci** il Riepilogo è fatto di box su due colonne "a muro" (ognuno nella più corta), con le tile dei box sempre in alto che portano al box e lo fanno brillare; c'è anche *Ultime decisioni e tappe*; i box vuoti sono ridotti all'intestazione; con il pannello aperto i box vanno in una colonna. In **Traccia** il Riepilogo breve ha la pagina già divisa, con il pannello vuoto a destra. **Attività** a tutta finestra con tile, sezioni nello stile della scheda, *Ultimi 7 giorni* e *Pronto per lavorare*. L'icona della modalità nella barra laterale è blu per Gestisci e apre la scelta della modalità. Colonna di Punti chiave più larga all'inizio. **Correzioni:** «Categorie e tag» nella barra laterale non si selezionava; il foglio di un punto chiave nuovo era più largo della finestra e tagliato (ora i tipi sono pillole che vanno a capo, etichette allineate). Schermate della guida rifatte.
 - **2026-11-02:** versione **1.2.11-beta**.
 - **2026-11-02, dettaglio dell'elemento** (ADR-0084, deciso con la review board su un prototipo): sotto il titolo cliente › progetto e data · durata · tipo, poi le **tile** piccole con un solo dato (la trascrizione dice IAGO, Teams o IAGO + Teams) che aprono la sezione e ci portano; scorrendo, una **barra fissa** con titolo, progetto e le tile in miniatura con la sezione corrente; **↑** in basso a destra sopra «Chiedi a IAGO»; sezioni aperte o chiuse **ricordate per elemento**, con i default in Impostazioni › Generale › Dettaglio elemento e *Riapplica a tutti gli elementi…*; sezioni vuote ridotte a un'intestazione tratteggiata con la loro azione; **momenti** (segnalibri e schermate) come tacche sul player con un momento alla volta sotto, e nella trascrizione al loro minuto. Il tour dimostrativo aggiunge segnalibri e schermate inventati; tutte le schermate della guida rifatte, nuove `scheda.png`, `scheda-barra.png`, `scheda-momenti.png`. Nella stessa versione: ADR-0082 (sync per tutti i client), ADR-0083 (metadati strutturati del progetto), note per Windows e regole di processo della condivisione.
 - **2026-10-31:** versione **1.2.10-beta**.

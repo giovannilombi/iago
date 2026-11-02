@@ -304,6 +304,14 @@ You need two real people in the same room (invented names in written tests).
 - [ ] 10t.5 A call without bookmarks, notes or links: those sections are just a dashed header with the sentence; *Add note* and *Link to…* work from there.
 - [ ] 10t.6 A call with bookmarks and screenshots: coloured ticks on the player; below one moment at a time with ‹ › and «N of M»; the minute plays the audio from there; while listening the moment follows the audio. The same moments are in the transcript at their minute. Turning off the two checkboxes in Settings makes them disappear.
 
+## 10u. Overview, Activity and fixes (1.2.12-beta)
+- [ ] 10u.1 A project's Overview in Manage: boxes in two columns with no holes even when a box has many more entries; the tiles at the top stay in view while scrolling; a click on a tile takes you to the box and makes it glow, even when already in view; empty boxes are a dashed header; *Latest decisions and milestones* is there.
+- [ ] 10u.2 A click on an entry opens the panel on the right and the boxes switch to one column; ✕ or Esc closes it and two columns come back. With a narrow window one column and the tiles wrap, with no text cut off.
+- [ ] 10u.3 A project in Track: the Short overview has the panel on the right at once, with the logo and no ✕; opening an entry the panel shows it.
+- [ ] 10u.4 Activity: across the window, no «No item selected»; tiles at the top taking you to the sections; *Last 7 days* and *Ready to work* on the right (below with a narrow window); *Open* shows the item in the panel.
+- [ ] 10u.5 Sidebar: the mode icon is green (Track) or blue (Manage); a click opens the choice and changing it changes the project. «Categories and tags» opens on click.
+- [ ] 10u.6 *New* in Key points, with the window not full screen: the sheet is fully visible, the kinds are pills on several lines, the labels in one column.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

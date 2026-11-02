@@ -71,16 +71,17 @@ If you want, a **morning notification** (Settings › General) tells you how man
 ## Overview
 Every project, client and stream has its **Overview**, the first button at the top: the first time, the project opens there.
 
-In **Track mode** it is the **Short overview**, one column with three blocks: *To do* (the open tasks, to tick off there), *Keep an eye on* (open risks, open questions and requests) and *Latest decisions and milestones*. An empty block is not shown.
+In **Track mode** it is the **Short overview**, one column with three blocks: *To do* (the open tasks, to tick off there), *Keep an eye on* (open risks, open questions and requests) and *Latest decisions and milestones*. An empty block is not shown. The panel on the right is always there: empty until you open an entry.
 
 ![Short overview](img/riepilogo-breve.png)
 
-In **Manage mode** it fills the whole window: at the top the numbers (open and closed by kind, overdue, blocked); on the left what to act on (due dates, blocked, waiting, risks, open questions, upcoming milestones); on the right what changed, the status report and the checklists. A click on an entry opens it in the panel on the right.
+In **Manage mode** it fills the whole window and is made of **boxes**: *To do and due dates*, *Keep an eye on* (risks by severity and open questions), *Waiting on others*, *Latest decisions and milestones*, *Upcoming milestones*, *Status report*, *What changed*, *Checklist* and *Blocked*.
 
 ![A project's Overview](img/riepilogo.png)
-- open entries by kind, upcoming due dates, recent decisions and milestones, waits;
-- the **project checklists** (for example "Final delivery"): you create them, pin them at the top and tick them off;
-- in Manage also the progress, the blocked entries, risks by severity, *What changed* since the last time you opened it and the **Status report**: a text written by the local engine from the key points, to copy into an email or pass to Claude.
+- The boxes sit in two columns and each one goes in the shorter: a long box leaves no holes beside it. With a narrow window, or with the panel on the right open, they become one column.
+- At the top, always in view, the boxes' **tiles** with their number: a click takes you to the box and makes it glow for a moment. A dashed tile is an empty box, reduced to its header.
+- A click on an entry opens it in the panel on the right; right-click changes its status.
+- The **Status report** is a text written by the local engine from the key points, to copy into an email or pass to Claude. *What changed* starts from the last time you opened the overview. The **project checklists** (for example "Final delivery") you create, pin at the top and tick off.
 
 ## Kanban
 In Manage, the **Kanban** of a project, client or stream (or of all of them, from the Inbox and from Key points) fills the whole window and puts open work in columns: *To do*, *In progress*, *Waiting*, *Blocked*, *Done*. Dragging a card to another column changes its status; in *Waiting* IAGO asks who you are waiting for and until when.

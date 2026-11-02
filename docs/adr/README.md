@@ -106,3 +106,4 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0082 | Sincronizzazione utilizzabile da tutti i client | accettato (principio, fase 4) |
 | 0083 | Metadati strutturati del progetto | accettato (principio, fase 4) |
 | 0084 | Dettaglio dell'elemento: tile, barra fissa e momenti | accettato (1.2.11-beta) |
+| 0085 | Riepilogo a box, Traccia divisa in due, Attività a tutta finestra | accettato (1.2.12-beta) |

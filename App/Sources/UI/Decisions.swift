@@ -769,6 +769,9 @@ struct DecisionEditor: View {
     @State private var derivedFrom: Decision?
     @Environment(\.dismiss) private var dismiss
 
+    /// The labels of every row («Data», «Stato»…) in one column, across the two grids.
+    static let labelWidth: CGFloat = 110
+
     init(model: AppModel, draft: DecisionDraft) {
         self.model = model
         _draft = State(initialValue: draft)
@@ -791,12 +794,8 @@ struct DecisionEditor: View {
                             ))
                 }
             }
-            Picker("", selection: $draft.kind) {
-                ForEach(DecisionRow.allKinds, id: \.self) { kind in
-                    Text(DecisionRow.kindLabel(kind)).tag(kind)
-                }
-            }
-            .pickerStyle(.segmented).labelsHidden().fixedSize()
+            // Pills that wrap, not a segmented control: six kinds did not fit the sheet and pushed it off its edges.
+            KindChooser(kind: $draft.kind)
             Text(Self.explanation(draft.kind)).font(.caption).foregroundStyle(.secondary)
             if let source = draft.sourceLabel {
                 Label(source, systemImage: draft.sourceAtSec != nil ? "waveform" : "doc.text")
@@ -843,11 +842,13 @@ struct DecisionEditor: View {
             }
             Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
                 GridRow {
-                    Text(String(localized: "Data")).foregroundStyle(.secondary).fixedSize()
+                    Text(String(localized: "Data")).foregroundStyle(.secondary).frame(
+                        minWidth: Self.labelWidth, alignment: .leading)
                     DatePicker("", selection: $draft.decidedAt).labelsHidden().fixedSize()
                 }
                 GridRow {
-                    Text(String(localized: "Progetto")).foregroundStyle(needsProject ? .orange : .secondary).fixedSize()
+                    Text(String(localized: "Progetto")).foregroundStyle(needsProject ? .orange : .secondary)
+                        .frame(minWidth: Self.labelWidth, alignment: .leading)
                     Picker("", selection: $draft.projectID) {
                         Text(String(localized: "Nessuno")).tag(String?.none)
                         ForEach(model.projects) { Text($0.name).tag(Optional($0.id)) }
@@ -862,24 +863,28 @@ struct DecisionEditor: View {
                 }
                 if let projectID = draft.projectID {
                     GridRow(alignment: .top) {
-                        Text(String(localized: "Stream")).foregroundStyle(.secondary).fixedSize()
+                        Text(String(localized: "Stream")).foregroundStyle(.secondary).frame(
+                            minWidth: Self.labelWidth, alignment: .leading)
                         StreamChooser(model: model, projectID: projectID, selection: $draft.streamIDs)
                     }
                 }
                 GridRow(alignment: .top) {
-                    Text(String(localized: "Persone")).foregroundStyle(.secondary).fixedSize()
+                    Text(String(localized: "Persone")).foregroundStyle(.secondary).frame(
+                        minWidth: Self.labelWidth, alignment: .leading)
                     TokenField(
                         values: $draft.people, placeholder: String(localized: "Aggiungi persona"), prefix: "",
                         suggestions: model.people.map(\.name))
                 }
                 GridRow(alignment: .top) {
-                    Text(String(localized: "Tag")).foregroundStyle(.secondary).fixedSize()
+                    Text(String(localized: "Tag")).foregroundStyle(.secondary).frame(
+                        minWidth: Self.labelWidth, alignment: .leading)
                     TokenField(
                         values: $draft.tags, placeholder: String(localized: "Aggiungi tag"), prefix: "#",
                         suggestions: model.tags.map(\.name))
                 }
                 GridRow(alignment: .top) {
-                    Text(String(localized: "Supera")).foregroundStyle(.secondary).fixedSize()
+                    Text(String(localized: "Supera")).foregroundStyle(.secondary).frame(
+                        minWidth: Self.labelWidth, alignment: .leading)
                     supersedeChooser
                 }
             }
@@ -1010,20 +1015,24 @@ struct DecisionEditor: View {
     private var workFields: some View {
         Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
             GridRow {
-                Text(String(localized: "Stato")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Stato")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 statusPicker
             }
             GridRow(alignment: .top) {
-                Text(String(localized: "Responsabile")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Responsabile")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 PersonField(model: model, name: $draft.ownerName, placeholder: String(localized: "Chi se ne occupa"))
             }
             GridRow {
-                Text(String(localized: "Scadenza")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Scadenza")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 OptionalDateField(
                     date: $draft.dueAt, late: draft.status.isOpen && (draft.dueAt.map(isPast) ?? false))
             }
             GridRow(alignment: .top) {
-                Text(String(localized: "In attesa di")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "In attesa di")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 HStack(alignment: .top, spacing: 8) {
                     PersonField(model: model, name: $draft.waitingOnName, placeholder: String(localized: "Persona"))
                     if draft.waitingOnName != nil {
@@ -1034,7 +1043,8 @@ struct DecisionEditor: View {
             }
             if draft.kind == .risk, mode == .manage {
                 GridRow {
-                    Text(String(localized: "Gravità")).foregroundStyle(.secondary).fixedSize()
+                    Text(String(localized: "Gravità")).foregroundStyle(.secondary).frame(
+                        minWidth: Self.labelWidth, alignment: .leading)
                     Picker("", selection: $draft.severity) {
                         Text(String(localized: "—")).tag(Decision.Severity?.none)
                         ForEach(Decision.Severity.allCases, id: \.self) {
@@ -1045,12 +1055,14 @@ struct DecisionEditor: View {
                 }
             }
             GridRow(alignment: .top) {
-                Text(String(localized: "Checklist")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Checklist")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 ChecklistEditor(lines: $draft.checklist)
             }
             if let derivedFrom, mode == .manage {
                 GridRow {
-                    Text(String(localized: "Nata da")).foregroundStyle(.secondary).fixedSize()
+                    Text(String(localized: "Nata da")).foregroundStyle(.secondary).frame(
+                        minWidth: Self.labelWidth, alignment: .leading)
                     HStack(spacing: 4) {
                         Image(systemName: DecisionRow.icon(derivedFrom)).foregroundStyle(.secondary)
                         Text(DecisionRow.clip(derivedFrom.text, 60)).lineLimit(1)
@@ -1128,7 +1140,8 @@ struct DecisionEditor: View {
     private var manageFields: some View {
         Grid(alignment: .leading, horizontalSpacing: 12, verticalSpacing: 10) {
             GridRow {
-                Text(String(localized: "Priorità")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Priorità")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 Picker("", selection: $draft.priority) {
                     Text(String(localized: "—")).tag(Int?.none)
                     ForEach([1, 2, 3], id: \.self) { Text(DecisionRow.priorityLabel($0)).tag(Optional($0)) }
@@ -1136,11 +1149,13 @@ struct DecisionEditor: View {
                 .pickerStyle(.segmented).labelsHidden().fixedSize()
             }
             GridRow(alignment: .top) {
-                Text(String(localized: "Dipende da")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Dipende da")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 dependencyChooser
             }
             GridRow {
-                Text(String(localized: "Stima")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Stima")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 TextField(
                     String(localized: "Es. 3 giorni"),
                     text: Binding(get: { draft.estimate ?? "" }, set: { draft.estimate = $0.isEmpty ? nil : $0 })
@@ -1148,11 +1163,13 @@ struct DecisionEditor: View {
                 .textFieldStyle(.roundedBorder).frame(width: 160)
             }
             GridRow {
-                Text(String(localized: "Inizio")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Inizio")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 OptionalDateField(date: $draft.startsAt)
             }
             GridRow {
-                Text(String(localized: "Ricorrenza")).foregroundStyle(.secondary).fixedSize()
+                Text(String(localized: "Ricorrenza")).foregroundStyle(.secondary).frame(
+                    minWidth: Self.labelWidth, alignment: .leading)
                 Picker("", selection: $draft.recurrence) {
                     Text(String(localized: "Nessuna")).tag(Decision.Recurrence?.none)
                     ForEach(Decision.Recurrence.allCases, id: \.self) {
@@ -1588,6 +1605,32 @@ struct PendingKeyPoints: View {
         }
         .task(id: "\(model.revision)-\(model.intelligence.revision)") {
             pending = (model.decisionScope.flatMap { try? model.archive.pendingKeyPointSuggestions($0) }) ?? []
+        }
+    }
+}
+
+/// The kind of a key point as pills that wrap: the chosen one filled with its colour.
+private struct KindChooser: View {
+    @Binding var kind: Decision.Kind
+
+    var body: some View {
+        FlowLayout(spacing: 6, lineSpacing: 6) {
+            ForEach(DecisionRow.allKinds, id: \.self) { option in
+                let chosen = option == kind
+                let tint = DecisionRow.tint(option)
+                Button {
+                    kind = option
+                } label: {
+                    Label(DecisionRow.kindLabel(option), systemImage: DecisionRow.kindIcon(option))
+                        .font(.callout.weight(chosen ? .semibold : .regular))
+                        .foregroundStyle(chosen ? Color.white : tint)
+                        .padding(.horizontal, 10).padding(.vertical, 5)
+                        .background(Capsule().fill(chosen ? tint : tint.opacity(0.12)))
+                        .contentShape(Capsule())
+                }
+                .buttonStyle(.plain)
+                .accessibilityAddTraits(chosen ? .isSelected : [])
+            }
         }
     }
 }

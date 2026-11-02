@@ -30,12 +30,26 @@ struct WorkOverview: View {
     /// Width of the page: two columns when there is room (ADR-0075), one below it.
     @State private var width: CGFloat = 1000
     private var twoColumns: Bool { width >= 860 }
+    /// The box a tile just led to, glowing for a moment.
+    @State private var flashing: String?
 
     var body: some View {
-        ScrollView {
-            if mode == .track { brief } else { full }
+        ScrollViewReader { proxy in
+            ScrollView {
+                if mode == .track { brief } else { full }
+            }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                VStack(alignment: .leading, spacing: 0) {
+                    ViewModePicker(model: model)
+                    // The boxes' tiles stay in view: a click goes to the box (ADR-0084, as in an item).
+                    if mode == .manage {
+                        DetailTiles(tiles: boxes.map(\.tile)) { key in go(to: key, proxy) }
+                            .padding(.horizontal, 24).padding(.bottom, 10)
+                    }
+                }
+                .background(.bar)
+            }
         }
-        .safeAreaInset(edge: .top, spacing: 0) { ViewModePicker(model: model).background(.bar) }
         .task(id: model.revision) { load() }
         .task(id: scope.key) { markSeen() }
     }
@@ -85,23 +99,21 @@ struct WorkOverview: View {
         .frame(maxWidth: .infinity)
     }
 
-    /// The complete page of «Gestisci».
+    /// The complete page of «Gestisci»: the boxes in two columns when there is room, each in the shorter one, so a long
+    /// box never leaves a hole beside it; one column when the window or the open inspector leaves less room.
     private var full: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            numbers
-            if twoColumns {
-                HStack(alignment: .top, spacing: 16) {
-                    VStack(spacing: 16) { actionCards }.frame(maxWidth: .infinity)
-                    VStack(spacing: 16) { contextCards }.frame(width: min(440, width * 0.4))
-                }
-            } else {
-                VStack(spacing: 16) {
-                    actionCards
-                    contextCards
-                }
+        MasonryLayout(columns: twoColumns ? 2 : 1, spacing: 16) {
+            ForEach(boxes) { box in
+                box.view
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 10).stroke(Color.accentColor, lineWidth: 3)
+                            .opacity(flashing == box.id ? 1 : 0)
+                    }
+                    .scaleEffect(flashing == box.id ? 1.01 : 1)
+                    .id("overview.\(box.id)")
             }
         }
-        .padding(.horizontal, 24).padding(.vertical, 20)
+        .padding(.horizontal, 24).padding(.vertical, 16)
         .frame(maxWidth: 1400, alignment: .leading)
         .frame(maxWidth: .infinity)
         .onGeometryChange(for: CGFloat.self) {
@@ -111,68 +123,128 @@ struct WorkOverview: View {
         }
     }
 
-    /// Left: what to act on, most urgent first.
-    @ViewBuilder
-    private var actionCards: some View {
-        let overdue = open.filter { OpenWork.due($0.decision.dueAt) == .overdue && $0.decision.status != .waiting }
-        let blocked = open.filter { $0.decision.status == .blocked }
-        card(
-            String(localized: "Scadenze"), count: nextDue.count, icon: "calendar",
-            tint: overdue.isEmpty ? .accentColor : .red,
-            empty: String(localized: "Nessuna voce aperta con una scadenza.")
-        ) { rows(nextDue) }
-        if mode == .manage, !blocked.isEmpty {
-            card(String(localized: "Bloccate"), count: blocked.count, icon: "nosign", tint: .red) { rows(blocked) }
-        }
-        if !waiting.isEmpty {
-            card(String(localized: "Attese da altri"), count: waiting.count, icon: "hourglass", tint: .purple) {
-                rows(waiting)
-            }
-        }
-        let questions = open.filter { $0.decision.kind == .openQuestion && $0.decision.status != .waiting }
-        let risks = open.filter { $0.decision.kind == .risk }
-        HStack(alignment: .top, spacing: 16) {
-            card(
-                String(localized: "Rischi"), count: risks.count, icon: WorkStyle.icon(.risk),
-                tint: WorkStyle.tint(.risk),
-                empty: String(localized: "Nessun rischio aperto."), fills: true
-            ) { riskRows(risks) }
-            card(
-                String(localized: "Punti da chiarire"), count: questions.count, icon: WorkStyle.icon(.openQuestion),
-                tint: WorkStyle.tint(.openQuestion), empty: String(localized: "Nessuna domanda in sospeso."),
-                fills: true
-            ) { rows(questions) }
-        }
-        .fixedSize(horizontal: false, vertical: true)
-        if mode == .manage, !nextMilestones.isEmpty {
-            card(String(localized: "Prossime tappe"), count: nextMilestones.count, icon: "flag", tint: .teal) {
-                rows(nextMilestones)
-            }
+    /// A tile: to its box, with a short glow so it is found even when already in view.
+    private func go(to key: String, _ proxy: ScrollViewProxy) {
+        withAnimation(.easeInOut(duration: 0.3)) { proxy.scrollTo("overview.\(key)", anchor: .top) }
+        withAnimation(.easeOut(duration: 0.15)) { flashing = key }
+        Task {
+            try? await Task.sleep(for: .milliseconds(550))
+            withAnimation(.easeOut(duration: 0.35)) { if flashing == key { flashing = nil } }
         }
     }
 
-    /// Right: what changed, the written status, the checklists.
-    @ViewBuilder
-    private var contextCards: some View {
-        if mode == .manage {
-            card(String(localized: "Cosa è cambiato"), icon: "clock.arrow.circlepath", tint: .secondary) { changes }
-            card(String(localized: "Sintesi di stato"), icon: "text.quote", tint: .indigo) {
-                StatusReportBox(model: model, scope: scope, entries: entries)
-            }
-        } else {
-            card(
-                String(localized: "Decisioni e tappe recenti"), count: recentMemory.count, icon: "checkmark.seal",
-                tint: .green, empty: String(localized: "Nessuna decisione o tappa recente.")
-            ) { rows(recentMemory) }
+    /// One box of «Gestisci» and its tile.
+    struct Box: Identifiable {
+        let id: String
+        let tile: DetailTile
+        let view: AnyView
+    }
+
+    /// The boxes in order of importance: what to do, what to keep an eye on, what happened, the tools.
+    private var boxes: [Box] {
+        let work = open.filter { $0.decision.status != .waiting && $0.decision.status != .blocked }
+        let todo = work.filter { $0.decision.kind == .action || $0.decision.kind == .request }
+            .sorted { ($0.decision.dueAt ?? .distantFuture) < ($1.decision.dueAt ?? .distantFuture) }
+        let watch =
+            sortedRisks(work.filter { $0.decision.kind == .risk })
+            + work.filter { $0.decision.kind == .openQuestion }
+        let blocked = open.filter { $0.decision.status == .blocked }
+        let changed = changeCount
+        var result: [Box] = [
+            box(
+                "todo", String(localized: "Da fare e scadenze"), tile: String(localized: "Da fare"), icon: "checklist",
+                tint: WorkStyle.tint(.action), count: todo.count, empty: String(localized: "Niente da fare, per ora")
+            ) { rows(todo) },
+            box(
+                "watch", String(localized: "Da tenere d'occhio"), icon: "eye", tint: .purple, count: watch.count,
+                empty: String(localized: "Nessun rischio o punto da chiarire aperto")
+            ) { rows(watch) },
+        ]
+        if !waiting.isEmpty {
+            result.append(
+                box(
+                    "waiting", String(localized: "Attese da altri"), icon: "hourglass", tint: .purple,
+                    count: waiting.count
+                ) { rows(waiting) })
         }
-        card(
-            String(localized: "Checklist"), count: checklists.isEmpty ? nil : checklists.count, icon: "checklist",
-            tint: .accentColor
+        result.append(
+            box(
+                "memory", String(localized: "Ultime decisioni e tappe"), tile: String(localized: "Decisioni e tappe"),
+                icon: "checkmark.seal", tint: .green, count: recentMemory.count,
+                empty: String(localized: "Nessuna decisione o tappa recente")
+            ) { rows(recentMemory) })
+        if !nextMilestones.isEmpty {
+            result.append(
+                box(
+                    "milestones", String(localized: "Prossime tappe"), icon: "flag", tint: .teal,
+                    count: nextMilestones.count
+                ) { rows(nextMilestones) })
+        }
+        result.append(
+            box(
+                "status", String(localized: "Sintesi di stato"), icon: "text.quote", tint: .indigo,
+                value: hasReport ? "✓" : "—", isEmpty: !hasReport
+            ) { StatusReportBox(model: model, scope: scope, entries: entries) })
+        result.append(
+            box(
+                "changes", String(localized: "Cosa è cambiato"), icon: "clock.arrow.circlepath", tint: .blue,
+                value: "\(changed)", isEmpty: changed == 0
+            ) { changes })
+        result.append(
+            box(
+                "checklist", String(localized: "Checklist"), icon: "checklist", tint: .teal,
+                value: "\(checklists.count)", isEmpty: checklists.isEmpty
+            ) {
+                checklistSection
+            } accessory: {
+                if let projectID { NewChecklistButton(model: model, projectID: projectID) }
+            })
+        result.append(
+            box(
+                "blocked", String(localized: "Bloccate"), icon: "nosign", tint: .red, count: blocked.count,
+                empty: String(localized: "nessuna voce in attesa di un'altra")
+            ) { rows(blocked) })
+        return result
+    }
+
+    /// A box with a count: `empty` turns it into a dashed header when there is nothing (as in an item).
+    private func box<Content: View, Accessory: View>(
+        _ key: String, _ title: String, tile: String? = nil, icon: String, tint: Color, count: Int? = nil,
+        value: String? = nil, isEmpty: Bool? = nil, empty: String? = nil, @ViewBuilder content: () -> Content,
+        @ViewBuilder accessory: () -> Accessory = { EmptyView() }
+    ) -> Box {
+        let none = isEmpty ?? (count == 0)
+        let shownValue = value ?? "\(count ?? 0)"
+        let view = SectionBox(
+            title, systemImage: icon, tint: tint, detail: none || count == nil ? nil : "\(count ?? 0)",
+            emptyText: none ? empty : nil
         ) {
-            checklistSection
-        } accessory: {
-            if let projectID { NewChecklistButton(model: model, projectID: projectID) }
+            if Accessory.self != EmptyView.self {
+                HStack {
+                    Spacer(minLength: 0)
+                    accessory()
+                }
+            }
+            content()
         }
+        return Box(
+            id: key,
+            tile: DetailTile(key: key, title: tile ?? title, value: shownValue, tint: tint, isEmpty: none),
+            view: AnyView(view))
+    }
+
+    private var hasReport: Bool {
+        _ = model.revision
+        return ((try? model.archive.setting("work.overview.report.\(scope.key)")) ?? nil) != nil
+    }
+
+    /// New, closed and updated entries since the last visit.
+    private var changeCount: Int {
+        guard let lastSeen else { return 0 }
+        return entries.filter {
+            $0.decision.createdAt > lastSeen || ($0.decision.closedAt ?? .distantPast) > lastSeen
+                || $0.decision.updatedAt > lastSeen
+        }.count
     }
 
     /// A block of the page: title, count and action on one line, then its content.
@@ -213,7 +285,7 @@ struct WorkOverview: View {
     }
 
     /// Highest severity first; each row says its severity.
-    private func riskRows(_ risks: [DecisionSummary]) -> some View {
+    private func sortedRisks(_ risks: [DecisionSummary]) -> [DecisionSummary] {
         func rank(_ severity: Decision.Severity?) -> Int {
             switch severity {
             case .high: 0
@@ -222,7 +294,7 @@ struct WorkOverview: View {
             case nil: 3
             }
         }
-        return rows(risks.sorted { rank($0.decision.severity) < rank($1.decision.severity) })
+        return risks.sorted { rank($0.decision.severity) < rank($1.decision.severity) }
     }
 
     // MARK: Data
@@ -277,54 +349,6 @@ struct WorkOverview: View {
             Date.init(timeIntervalSince1970:))
         seenLoaded = true
         model.perform { try model.archive.setSetting(key, String(Date().timeIntervalSince1970)) }
-    }
-
-    // MARK: Numbers
-
-    /// One row across the page: open and closed per kind, then late and blocked.
-    private var numbers: some View {
-        let overdue = open.filter { OpenWork.due($0.decision.dueAt) == .overdue && $0.decision.status != .waiting }
-        return HStack(spacing: 10) {
-            ForEach(Decision.Kind.work, id: \.self) { kind in
-                let all = entries.filter { $0.decision.kind == kind && $0.decision.status != .cancelled }
-                let openCount = all.filter { $0.decision.status.isOpen }.count
-                tile(
-                    WorkStyle.plural(kind), openCount, icon: WorkStyle.icon(kind), tint: WorkStyle.tint(kind),
-                    detail: String(localized: "aperte · \(all.count - openCount) chiuse"),
-                    progress: mode == .manage && !all.isEmpty ? Double(all.count - openCount) / Double(all.count) : nil)
-            }
-            tile(
-                String(localized: "In ritardo"), overdue.count, icon: "clock.badge.exclamationmark",
-                tint: overdue.isEmpty ? .secondary : .red, detail: String(localized: "scadenze passate"))
-            if mode == .manage {
-                let blocked = open.filter { $0.decision.status == .blocked }.count
-                tile(
-                    String(localized: "Bloccate"), blocked, icon: "nosign", tint: blocked == 0 ? .secondary : .red,
-                    detail: String(localized: "aspettano altre voci"))
-            }
-        }
-        .fixedSize(horizontal: false, vertical: true)
-    }
-
-    private func tile(
-        _ title: String, _ count: Int, icon: String, tint: Color, detail: String, progress: Double? = nil
-    ) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 5) {
-                Image(systemName: icon).foregroundStyle(tint)
-                Text(title).font(.caption.weight(.medium)).foregroundStyle(.secondary).lineLimit(1)
-            }
-            Text("\(count)").font(.title.weight(.semibold)).monospacedDigit()
-                .foregroundStyle(count == 0 ? .secondary : .primary)
-            Text(detail).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
-            if let progress {
-                ProgressView(value: progress).tint(tint).controlSize(.small)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .padding(.horizontal, 12).padding(.vertical, 10)
-        .background(RoundedRectangle(cornerRadius: 10).fill(Color(nsColor: .controlBackgroundColor)))
-        .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.15)))
     }
 
     @ViewBuilder
@@ -553,5 +577,40 @@ private struct StatusReportBox: View {
             try? await Task.sleep(for: .seconds(3))
             copied = nil
         }
+    }
+}
+
+/// Children in columns, each one in the column that is shortest at that point (a masonry wall): boxes of very
+/// different lengths leave no holes.
+struct MasonryLayout: Layout {
+    var columns: Int
+    var spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        let width = proposal.width ?? 800
+        return CGSize(width: width, height: arrange(subviews, width: width).height)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        for (index, frame) in arrange(subviews, width: bounds.width).frames.enumerated() {
+            subviews[index].place(
+                at: CGPoint(x: bounds.minX + frame.minX, y: bounds.minY + frame.minY),
+                proposal: ProposedViewSize(width: frame.width, height: frame.height))
+        }
+    }
+
+    private func arrange(_ subviews: Subviews, width: CGFloat) -> (frames: [CGRect], height: CGFloat) {
+        let count = max(columns, 1)
+        let column = (width - spacing * CGFloat(count - 1)) / CGFloat(count)
+        var heights = Array(repeating: CGFloat(0), count: count)
+        var frames: [CGRect] = []
+        for subview in subviews {
+            let height = subview.sizeThatFits(ProposedViewSize(width: column, height: nil)).height
+            let shortest = heights.indices.min { heights[$0] < heights[$1] } ?? 0
+            frames.append(
+                CGRect(x: CGFloat(shortest) * (column + spacing), y: heights[shortest], width: column, height: height))
+            heights[shortest] += height + spacing
+        }
+        return (frames, max((heights.max() ?? 0) - spacing, 0))
     }
 }

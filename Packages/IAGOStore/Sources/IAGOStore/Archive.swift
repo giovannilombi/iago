@@ -108,6 +108,18 @@ public final class Archive: Sendable {
         }
     }
 
+    /// When each item from `date` on happened (not deleted, not in the trash): «Ultimi 7 giorni» in Attività counts
+    /// them per day without loading the items.
+    public func itemDates(since date: Date) throws -> [Date] {
+        try database.writer.read { db in
+            try Date.fetchAll(
+                db,
+                Item.select(Column("occurred_at"))
+                    .filter(Column("deleted_at") == nil && Column("trashed_at") == nil && Column("occurred_at") >= date)
+            )
+        }
+    }
+
     // MARK: Projects and categories
 
     @discardableResult

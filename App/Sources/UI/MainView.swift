@@ -190,11 +190,12 @@ struct MainView: View {
         } detail: {
             GeometryReader { geometry in
                 let chat = model.showsChat ? ChatPane.width(stored: chatWidth, available: geometry.size.width) : 0
-                let inspector = model.hasSelection ? min(480, (geometry.size.width - chat) * 0.45) : 0
+                let shown = model.hasSelection || model.keepsInspector
+                let inspector = shown ? min(480, (geometry.size.width - chat) * 0.45) : 0
                 HStack(spacing: 0) {
                     wideContent.safeAreaInset(edge: .top, spacing: 0) { backToSearch }
                         .frame(width: geometry.size.width - chat - inspector).clipped()
-                    if model.hasSelection {
+                    if shown {
                         inspectorPane.frame(width: inspector)
                             .transition(.move(edge: .trailing))
                     }
@@ -207,6 +208,16 @@ struct MainView: View {
 
     @ViewBuilder
     private var wideContent: some View {
+        // «Attività» has nothing to select: it takes the whole space, «Apri» shows the item in the inspector.
+        if model.sidebar == .activity {
+            ActivityView(model: model)
+        } else {
+            wideViews
+        }
+    }
+
+    @ViewBuilder
+    private var wideViews: some View {
         switch model.viewMode {
         case .board:
             if model.sidebar == .inbox || model.sidebar == .decisions {
@@ -225,18 +236,21 @@ struct MainView: View {
         HStack(spacing: 0) {
             Divider()
             VStack(spacing: 0) {
-                HStack {
-                    Spacer()
-                    Button {
-                        model.clearSelection()
-                    } label: {
-                        Image(systemName: "xmark").font(.system(size: 11, weight: .semibold))
+                // Kept open with nothing in it («Traccia»): no ✕, there is nothing to close.
+                if model.hasSelection {
+                    HStack {
+                        Spacer()
+                        Button {
+                            model.clearSelection()
+                        } label: {
+                            Image(systemName: "xmark").font(.system(size: 11, weight: .semibold))
+                        }
+                        .buttonStyle(.borderless).keyboardShortcut(.cancelAction)
+                        .help(String(localized: "Chiudi il pannello (Esc)"))
                     }
-                    .buttonStyle(.borderless).keyboardShortcut(.cancelAction)
-                    .help(String(localized: "Chiudi il pannello (Esc)"))
+                    .padding(.horizontal, 10).padding(.vertical, 6)
+                    Divider()
                 }
-                .padding(.horizontal, 10).padding(.vertical, 6)
-                Divider()
                 detail
             }
         }
@@ -368,7 +382,9 @@ extension MainView {
         case .activity, .labels: return (420, 560)
         default:
             if model.sidebar == .inbox { return (360, 620) }
-            if model.showsTimeline || model.showsDecisions { return (280, 560) }
+            // «Punti chiave»: the timeline column starts wide enough for its cards.
+            if model.showsDecisions { return (440, 600) }
+            if model.showsTimeline { return (280, 560) }
             return (280, 320)
         }
     }
@@ -466,7 +482,8 @@ private struct Sidebar: View {
             Image(systemName: "gauge.with.dots.needle.67percent")
         }
         .tag(AppModel.SidebarSelection.activity)
-        Label(String(localized: "Categorie e tag"), systemImage: "tag").tag(AppModel.SidebarSelection.labels)
+        // The tag goes last: after `onGeometryChange` the row was not selectable.
+        Label(String(localized: "Categorie e tag"), systemImage: "tag")
             .onGeometryChange(for: CGFloat.self) {
                 $0.frame(in: .global).maxY
             } action: {
@@ -474,6 +491,7 @@ private struct Sidebar: View {
                 lastRowBottom = $0
                 fitTop()
             }
+            .tag(AppModel.SidebarSelection.labels)
         if askButtonHidden {
             AskIAGOSidebarRow(model: model) { askButtonHidden = false }
                 .onGeometryChange(for: CGFloat.self) {

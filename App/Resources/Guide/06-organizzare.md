@@ -8,7 +8,7 @@
 - **Sotto, fisse:** *Elementi da classificare*, *Recenti*, *Punti chiave*, *Importa*, *Attività*, *Categorie e tag*.
 - **Progetti** (l'unica parte che scorre):
   - **In evidenza** (pin rosso): progetti, stream, categorie e tag che fissi.
-  - **I clienti**, ognuno con i suoi progetti. Accanto a ogni progetto una piccola icona dice la sua modalità: un quaderno verde per la *Modalità Traccia*, tre colonne per la *Modalità Gestisci*. Un clic sul nome apre o chiude il cliente; **⌥-clic** apre solo quello e chiude gli altri. Passando sopra: **→** apre tutti gli elementi del cliente, **+** crea un progetto.
+  - **I clienti**, ognuno con i suoi progetti. Accanto a ogni progetto una piccola icona dice la sua modalità: un quaderno verde per la *Modalità Traccia*, tre colonne blu per la *Modalità Gestisci*; un clic sull'icona ti fa scegliere l'altra, come la pillola accanto al nome del progetto. Un clic sul nome apre o chiude il cliente; **⌥-clic** apre solo quello e chiude gli altri. Passando sopra: **→** apre tutti gli elementi del cliente, **+** crea un progetto.
   - **Senza cliente** (quadratino grigio), sempre ultimo, con **Non definito** in fondo: gli elementi classificati senza progetto.
 - **In fondo:** **＋** per un nuovo progetto o cliente, e il **Cestino** con il numero di elementi.
 - Con più di 15 progetti compare **Filtra progetti**.

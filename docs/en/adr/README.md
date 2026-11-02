@@ -106,3 +106,4 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0082 | Sync usable by every client | accepted (principle, phase 4) |
 | 0083 | Structured project metadata | accepted (principle, phase 4) |
 | 0084 | Item detail: tiles, sticky bar and moments | accepted (1.2.11-beta) |
+| 0085 | Overview of boxes, Track split in two, Activity across the window | accepted (1.2.12-beta) |
