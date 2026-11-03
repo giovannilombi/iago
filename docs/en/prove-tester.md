@@ -320,6 +320,21 @@ You need two real people in the same room (invented names in written tests).
 - [ ] 10v.5 A call with bookmarks and screenshots: in the transcript they sit on a veil of their colour with a thread on the left, the screenshot with its thumbnail.
 - [ ] 10v.6 Kanban with columns in boxes and the status line under the title; Activity in one column with *Last 7 days* and *Ready to work* side by side; Categories and tags across the window.
 
+## 10w. Inbox in two halves
+- [ ] 10w.1 With entries and suggestions, *Do now* takes the top half and *Suggestions to confirm* the bottom half; each scrolls on its own and the bar shows even with "Show scroll bars: automatically" on the Mac.
+- [ ] 10w.2 When more entries are below, *N more* appears at the bottom right with three dots that light up about every 10 seconds; scrolling to the end makes it disappear.
+- [ ] 10w.3 Once every suggestion is confirmed or dismissed, the bottom box shrinks to its header and *Do now* takes all the room; *Later* and *Show closed* sit at the bottom of *Do now*.
+- [ ] 10w.4 Dragging the handle between the two boxes changes their height; after quitting and reopening IAGO it stays as it was; a double click goes back to half and half.
+- [ ] 10w.5 A click on an item's box in *Suggestions to confirm* highlights it and opens all its suggestions on the right; *Confirm*, *Dismiss*, *Confirm all* and *Dismiss these* update the numbers at once, and the item with no suggestions left leaves the list. *Open item* opens its page.
+- [ ] 10w.6 On an archive where you never moved the divider, the middle and right columns are half and half in every place. Widen the middle column in *Unfiled items*: in *Inbox* and *Recent* it stays as it was, and back in *Unfiled items* you find your width, also after restarting IAGO.
+- [ ] 10w.7 In a call's card the sections are, in order: Audio, Bookmarks, Screenshots, Summary, Transcript, Suggestions, Key points, Notes, Links, Files; the tiles at the top follow the same order.
+- [ ] 10w.8 Drag the title of *Notes* (or its ≡ handle) upwards: all the sections close, «Drop the section where you want it…» appears at the top, *Notes* is highlighted and the others move as you pass. Drop it on *Summary*: *Notes* stays there, the sections go back to open or closed as before and the tiles reorder. Open another call and an email: the order is the same, also after restarting IAGO. Dropping outside the card ends the reordering by itself.
+- [ ] 10w.9 *Settings › General › Item detail › Restore the section order* (enabled only after a reorder) brings back the standard order in the next card you open.
+- [ ] 10w.10 Sidebar: no «Projects» title; on the right above *Pinned* there is *Add*, which opens *Add:* with *Client…* and *Project…*, and both work. At the bottom there is only *Trash*, like the entries at the top, and a click opens it.
+- [ ] 10w.11 Hovering a client shows only **+**: it opens *New project* with that client written and not editable, and the project created ends up under that client. From a project's right-click, *New stream…* opens its window.
+- [ ] 10w.12 With a narrow sidebar, stay two seconds on a project's truncated name: the whole name appears, disappears when you leave, and a click on the row still opens the project.
+- [ ] 10w.13 The line between the middle and right columns stops under the toolbar: at the top there is only the sidebar's line, in light and dark.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

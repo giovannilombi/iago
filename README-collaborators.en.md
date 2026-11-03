@@ -45,7 +45,7 @@ This guide is for people who join the project without knowing its history. It ex
 - An automatic check before every commit (`scripts/check-private-data.sh`) blocks forbidden files and words. Add to `Config/private-terms.local` the real names you use in your work: the file stays on your Mac.
 
 ### Authors and attribution
-- The rights belong to **Giovanni Lombi** until the work on sharing (phase 4) starts, to **Giovanni Lombi and Gianluca Sestito** from the first version with that work, the first done together (ADR-0065). Every commit still names both: whoever makes the commit is its author; the other is added automatically as `Co-Authored-By`, by reading `Config/team.txt`.
+- The rights belong to **Giovanni Lombi** until the work on sharing (phase 4) starts, to **Giovanni Lombi and Gianluca Sestito** from the first version with that work, the first done together (ADR-0065). Until then commits have only Giovanni Lombi as author; from that version every commit names both: whoever makes the commit is its author, the other is added automatically as `Co-Authored-By`, by reading `Config/team.txt`, where Gianluca Sestito's line stays commented out until then (ADR-0089).
 - **Never an AI as author or co-author**, and no "Generated with…" line in commits and PRs. The commit check blocks them.
 
 ### Git and GitHub

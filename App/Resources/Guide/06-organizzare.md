@@ -6,12 +6,14 @@
 ## La barra laterale
 - **In cima, l'Inbox**, in grassetto e separata dal resto: il lavoro aperto che aspetta te. Ha due bollini: il **rosso** (!) conta ciò che chiede un'azione adesso, il **giallo** (✦) le proposte da confermare (vedi Punti chiave e lavoro aperto).
 - **Sotto, fisse:** *Elementi da classificare*, *Recenti*, *Punti chiave*, *Importa*, *Attività*, *Categorie e tag*.
-- **Progetti** (l'unica parte che scorre):
+- **Clienti e progetti** (l'unica parte che scorre). In cima, a destra, **Aggiungi** apre il menu *Aggiungi:* con **Cliente…** e **Progetto…**. Se un nome è troppo lungo per la barra, resta **due secondi** sul nome: compare il nome intero.
   - **In evidenza** (pin rosso): progetti, stream, categorie e tag che fissi.
-  - **I clienti**, ognuno con i suoi progetti. Accanto a ogni progetto una piccola icona dice la sua modalità: un quaderno verde per la *Modalità Traccia*, tre colonne blu per la *Modalità Gestisci*; un clic sull'icona ti fa scegliere l'altra, come la pillola accanto al nome del progetto. Un clic sul nome apre o chiude il cliente; **⌥-clic** apre solo quello e chiude gli altri. Passando sopra: **→** apre tutti gli elementi del cliente, **+** crea un progetto.
+  - **I clienti**, ognuno con i suoi progetti. Accanto a ogni progetto una piccola icona dice la sua modalità: un quaderno verde per la *Modalità Traccia*, tre colonne blu per la *Modalità Gestisci*; un clic sull'icona ti fa scegliere l'altra, come la pillola accanto al nome del progetto. Un clic sul nome apre o chiude il cliente; **⌥-clic** apre solo quello e chiude gli altri. Passando sopra compare **+**: crea un progetto di quel cliente, già scelto e non modificabile. Tutti gli elementi del cliente si aprono con il tasto destro › *Apri*.
   - **Senza cliente** (quadratino grigio), sempre ultimo, con **Non definito** in fondo: gli elementi classificati senza progetto.
-- **In fondo:** **＋** per un nuovo progetto o cliente, e il **Cestino** con il numero di elementi.
+- **In fondo:** il **Cestino**, con il numero di elementi.
 - Con più di 15 progetti compare **Filtra progetti**.
+
+**Le colonne.** Accanto alla barra laterale, la colonna centrale (l'elenco) e quella di destra (ciò che apri) partono a metà e metà. Trascina il divisore tra le due per cambiarle: la larghezza resta per quella sezione soltanto, anche alla prossima apertura. Inbox, Elementi da classificare, Recenti, Punti chiave e le altre ne hanno ognuna una sua; i progetti, i clienti, gli stream, le categorie e i tag ne hanno una in comune per ogni vista.
 
 ## Progetti e stream
 Un progetto appartiene a un cliente (o a nessuno). Uno **stream** è una linea di lavoro dentro il progetto (es. Design, Sviluppo, Legale): elementi, note e punti chiave possono appartenere a uno o più stream. Trascina un progetto su un cliente per spostarlo. Tasto destro: impostazioni, nuovo stream, rinomina, sposta, fissa. Anche uno stream si fissa in alto con il tasto destro.

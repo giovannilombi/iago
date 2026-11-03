@@ -7,15 +7,15 @@ Un elemento è una **call**, un'**email** o un **documento**. La scheda raccogli
 
 - **Intestazione:** titolo, sotto cliente › progetto e data · durata · tipo; poi data, progetto, stream, categoria, tag, tutti modificabili.
 - **Azioni:** trascrivi, ritrascrivi, **Condividi…**, esporta, elimina, **Copia per Claude** (vedi il capitolo *Claude*).
-- **Sintesi:** vedi il capitolo *Sintesi*.
-- **Proposte:** ciò che il motore suggerisce, da confermare o scartare.
+Poi le sezioni, in quest'ordine se non lo cambi tu:
 - **Audio:** lettore con scelta della traccia (entrambe, solo microfono, solo sistema) e i **momenti** della call (vedi sotto).
 - **Segnalibri** dei momenti segnati durante la call.
 - **Schermate** catturate con *Segna momento con screenshot*, con il minuto e il testo letto.
-- **Trascrizione** con chi parla e il minuto: un clic su un minuto fa partire l'audio da lì; tasto destro su una frase per farne un punto chiave. Segnalibri e schermate compaiono al loro minuto, su un velo leggero del loro colore (per le schermate anche la miniatura).
-- **Contenuto** per documenti ed email (con immagine originale e testo riconosciuto).
-- **Note** datate, anche dettate a voce.
+- **Sintesi:** vedi il capitolo *Sintesi*.
+- **Trascrizione** con chi parla e il minuto: un clic su un minuto fa partire l'audio da lì; tasto destro su una frase per farne un punto chiave. Segnalibri e schermate compaiono al loro minuto, su un velo leggero del loro colore (per le schermate anche la miniatura). Per documenti ed email al suo posto c'è il **Contenuto** (con immagine originale e testo riconosciuto).
+- **Proposte:** ciò che il motore suggerisce, da confermare o scartare.
 - **Punti chiave** nati da questo elemento.
+- **Note** datate, anche dettate a voce.
 - **Collegamenti** ad altri elementi (risposte, allegati, documenti correlati).
 - **File:** gli asset dell'elemento, con dimensione.
 
@@ -26,10 +26,13 @@ Quando scendi, in alto compare una **barra fissa**: titolo, cliente › progetto
 
 ![Dopo lo scorrimento: la barra fissa in alto e ↑ in basso a destra](img/scheda-barra.png)
 
+## Cambiare l'ordine delle sezioni
+A destra del titolo di ogni sezione c'è una piccola maniglia (≡). **Trascina il titolo** di una sezione: tutte le sezioni si chiudono, così vedi l'ordine a colpo d'occhio, e le altre si spostano mentre passi. Rilascia dove la vuoi: le sezioni tornano aperte o chiuse come prima. L'ordine vale per **tutti gli elementi** e resta anche alla prossima apertura; anche le tile lo seguono. **Impostazioni › Generale › Dettaglio elemento › Ripristina l'ordine delle sezioni** torna a quello di base.
+
 ## Sezioni aperte e chiuse
 - Un clic sul titolo apre o chiude una sezione. **Ogni elemento ricorda** le sue sezioni aperte e chiuse.
 - Come partono quelle di un elemento che non hai ancora toccato lo scegli in **Impostazioni › Generale › Dettaglio elemento**; *Riapplica a tutti gli elementi…* dimentica le scelte fatte nei singoli elementi.
-- **File** è sempre aperta, in fondo.
+- **Audio** e **File** sono sempre aperte.
 - Una sezione **vuota** è solo un'intestazione tratteggiata, con una frase che dice cosa manca e, quando serve, il pulsante per aggiungere (per esempio *Aggiungi nota* o *Collega a…*).
 
 ## I momenti sul player

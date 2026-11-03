@@ -2,16 +2,16 @@
 
 > Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
 > **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
-> Ultimo aggiornamento: **30 ottobre 2026**.
+> Ultimo aggiornamento: **3 novembre 2026**.
 
 ## In breve
-- **Versione:** 1.2.13-beta su `main` (tag `v1.2.13-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.14-beta su `main` (tag `v1.2.14-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 315 nei pacchetti, tutti verdi (1.2.13-beta).
+- **Test automatici:** 315 nei pacchetti, tutti verdi (1.2.14-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -32,6 +32,8 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - **Dettaglio dell'elemento** (ADR-0084, 1.2.11-beta): fatto; da provare su call vere (10t), soprattutto la barra fissa con molte sezioni aperte e i momenti su una call lunga.
    - **Riepilogo e Attività** (ADR-0085, 1.2.12-beta): fatto; da provare su progetti veri con molte voci (10u).
    - **Stile A, chiaro e scuro** (ADR-0086, 1.2.13-beta): fatto; da provare nei due aspetti su un archivio vero (10v). Nel tuo archivio c'è il progetto di prova «Sito e app Officina Lume (prova)», da eliminare (progetto e cliente) quando non serve più.
+   - **Inbox a due metà, proposte a destra, colonne per sezione** (ADR-0087, 1.2.14-beta): fatto; da provare (10w), soprattutto il trascinamento della maniglia e dei divisori, che il tour dimostrativo non può fare.
+   - **Ordine delle sezioni dell'elemento e barra laterale** (ADR-0088, 1.2.14-beta): fatto; da provare (10w.7–10w.13), soprattutto il riordino trascinando le sezioni.
 1. **Prove, in un'unica sessione** (vedi [`docs/prove-tester.md`](prove-tester.md)):
    - versioni recenti: 10i (lavoro aperto), 10n (Inbox e nomi), 10o (due trascrizioni), 10p (trascrizione principale);
    - dal vivo: microfono di Teams mentre IAGO registra, icona di IAGO nelle notifiche, sezioni 10b–10h (memoria su 16 GB, schermate e scorciatoie, sintesi e proposte da Claude Desktop, DMG e aggiornamenti, soglia delle voci);
@@ -55,7 +57,11 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-03:** versione **1.2.14-beta**, con le schermate della guida rifatte in italiano e inglese.
+- **2026-11-03, co-autori** (ADR-0089): fino al lavoro sulla condivisione (fase 4) i commit hanno come autore solo Giovanni Lombi; la riga di Gianluca Sestito in `Config/team.txt` è commentata e l'hook non la aggiunge più.
 - **2026-11-02:** versione **1.2.13-beta**.
+- **2026-11-03, Inbox a due metà** (ADR-0087, sul prototipo approvato dall'utente): *Da fare ora* in alto e *Proposte da confermare* in basso, ognuna che scorre per conto suo con la barra sempre visibile e un *altre N* discreto con tre puntini che si accendono ogni 10 secondi; un box vuoto si riduce all'intestazione; *Più avanti* e le chiuse in fondo a *Da fare ora*. Poi (V3): barra più sottile e tenue, maniglia tra i due box con la parte salvata, proposte in box per elemento che si aprono a destra, colonna centrale e destra a metà e larghezza salvata per sezione.
+- **2026-11-03, ordine delle sezioni e barra laterale** (ADR-0088): nella scheda prima audio, segnalibri e schermate, poi sintesi e trascrizione; sezioni riordinabili trascinando il titolo (ordine unico per tutti gli elementi, ripristinabile in Impostazioni); *Aggiungi* (cliente o progetto) sopra i progetti al posto del titolo «Progetti» e del ＋ in basso, dove resta il solo Cestino; il + di un cliente apre di nuovo il nuovo progetto con il cliente bloccato (anche *Nuovo stream…* tornava a non aprirsi); nome intero del progetto dopo due secondi; nomi dei progetti un punto più piccoli; il divisore tra colonna centrale e destra non attraversa più la barra in alto; larghezza delle colonne una per sezione anche in Da classificare, Recenti e Non definito.
 - **2026-11-02, stile «colore come segnale», chiaro e scuro** (ADR-0086, su proposte approvate dall'utente): testi neutri e colore del tipo solo in barretta, icona, puntini delle tile e linea della timeline; icone grigie, rosso solo per l'urgenza; barra laterale grigia; filo sotto il titolo di ogni box; foglio «Aggiungi» con il tipo in una tile; segnalibri e schermate nella trascrizione su un velo del loro colore; Kanban con colonne in box; Attività in una colonna con il riepilogo in alto; Categorie e tag a tutta finestra; menu dell'aspetto (Automatico, Chiaro, Scuro) accanto alle Impostazioni; chiaro con il grigio freddo, senza bianco pieno. Nuovo `scripts/guide-screenshots.sh` per rifare le schermate della guida; tutte rifatte in italiano e inglese.
 - **2026-11-02:** versione **1.2.12-beta**.
 - **2026-11-02, Riepilogo, Attività e correzioni** (ADR-0085, su proposte approvate dall'utente): in **Gestisci** il Riepilogo è fatto di box su due colonne "a muro" (ognuno nella più corta), con le tile dei box sempre in alto che portano al box e lo fanno brillare; c'è anche *Ultime decisioni e tappe*; i box vuoti sono ridotti all'intestazione; con il pannello aperto i box vanno in una colonna. In **Traccia** il Riepilogo breve ha la pagina già divisa, con il pannello vuoto a destra. **Attività** a tutta finestra con tile, sezioni nello stile della scheda, *Ultimi 7 giorni* e *Pronto per lavorare*. L'icona della modalità nella barra laterale è blu per Gestisci e apre la scelta della modalità. Colonna di Punti chiave più larga all'inizio. **Correzioni:** «Categorie e tag» nella barra laterale non si selezionava; il foglio di un punto chiave nuovo era più largo della finestra e tagliato (ora i tipi sono pillole che vanno a capo, etichette allineate). Schermate della guida rifatte.

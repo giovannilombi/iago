@@ -10,8 +10,6 @@ struct ProjectTree: View {
     @Bindable var model: AppModel
     /// "Filtra progetti" (many projects): matching projects, or every project of a matching client.
     var filter = ""
-    @State private var newStreamProject: Project?
-    @State private var newProjectClient: Client?
 
     static let unassignedNode = "__no_client__"
     static let pinnedNode = "__pinned__"
@@ -29,22 +27,12 @@ struct ProjectTree: View {
             } header: {
                 ClientHeader(
                     model: model, client: client, open: open, toggle: { toggle(client.id, only: $0) },
-                    newProject: { newProjectClient = client })
+                    newProject: {
+                        model.newProject = AppModel.NewProjectRequest(clientID: client.id, locksClient: true)
+                    })
             }
         }
         unassigned
-        EmptyView()
-            .sheet(item: $newStreamProject) { project in
-                NewStreamSheet(model: model, project: project) { stream in
-                    model.expandedNodes.insert(project.id)
-                    model.select(.library(.stream(stream.id)))
-                }
-            }
-            .sheet(item: $newProjectClient) { client in
-                NewProjectSheet(model: model, clientID: client.id) { project in
-                    model.select(.library(.project(project.id)))
-                }
-            }
     }
 
     @ViewBuilder
@@ -55,7 +43,7 @@ struct ProjectTree: View {
                 // row at the top is highlighted; a click still opens the project.
                 ProjectRow(
                     model: model, project: project, depth: 0, showsClient: false, expandsStreams: false,
-                    newStream: { newStreamProject = project }
+                    newStream: { model.newStreamProject = project }
                 )
                 .id("tree-\(project.id)")
                 .contentShape(Rectangle())
@@ -188,7 +176,7 @@ struct ProjectTree: View {
     private func projectRow(_ project: Project, showsClient: Bool) -> some View {
         ProjectRow(
             model: model, project: project, depth: 0, showsClient: showsClient, expandsStreams: true,
-            newStream: { newStreamProject = project }
+            newStream: { model.newStreamProject = project }
         )
         .tag(AppModel.SidebarSelection.library(.project(project.id)))
         if model.expandedNodes.contains(project.id) {
@@ -281,18 +269,11 @@ private struct ClientHeader: View {
             }
             Spacer(minLength: 4)
             if hovering {
-                Button {
-                    model.select(.library(.client(client.id)))
-                } label: {
-                    Image(systemName: "arrow.right.circle").font(.system(size: 11))
-                }
-                .buttonStyle(.plain).foregroundStyle(.secondary)
-                .help(String(localized: "Apri tutti gli elementi di «\(client.name)»"))
-                Button(action: newProject) {
-                    Image(systemName: "plus").font(.system(size: 10, weight: .semibold))
-                }
-                .buttonStyle(.plain).foregroundStyle(.secondary)
-                .help(String(localized: "Nuovo progetto in «\(client.name)»"))
+                // A gesture, not a button: inside the header's tap a button never received the click.
+                Image(systemName: "plus").font(.system(size: 10, weight: .semibold)).foregroundStyle(.secondary)
+                    .frame(width: 18, height: 18).contentShape(Rectangle())
+                    .onTapGesture(perform: newProject)
+                    .help(String(localized: "Nuovo progetto in «\(client.name)»"))
             }
         }
         .padding(.vertical, 3)
@@ -361,6 +342,15 @@ private struct UnassignedHeader: View {
 /// Project row: chevron when it has streams, a small pin (tilted and grey when not pinned), the client in
 /// small type for pinned copies at the top. Draggable onto a client.
 private struct ProjectRow: View {
+    /// A point under the sidebar's text, which follows the icon size of System Settings (small, medium, large).
+    static var nameSize: CGFloat {
+        switch UserDefaults.standard.integer(forKey: "NSTableViewDefaultSizeMode") {
+        case 1: 10
+        case 3: 14
+        default: 12
+        }
+    }
+
     let model: AppModel
     let project: Project
     let depth: Int
@@ -383,7 +373,7 @@ private struct ProjectRow: View {
             // Projects stay neutral: a small dot in the text colour (clients carry the colour).
             Circle().fill(Color.primary.opacity(0.75)).frame(width: 5, height: 5).frame(width: 14, height: 16)
             VStack(alignment: .leading, spacing: 0) {
-                Text(project.name).lineLimit(1)
+                Text(project.name).font(.system(size: ProjectRow.nameSize)).lineLimit(1).nameTip(project.name)
                 if showsClient, let client = model.client(project.clientId) {
                     Text(client.name).font(.caption2).foregroundStyle(.secondary).lineLimit(1)
                 }
@@ -438,6 +428,74 @@ private struct ProjectRow: View {
                 model.perform { try model.archive.renameProject(project.id, to: name) }
             }
         }
+    }
+}
+
+/// The whole name after two seconds on it: a narrow sidebar cuts long project names. A small panel that lets the
+/// mouse through, like a tooltip, so the click still reaches the row.
+private struct NameTip: ViewModifier {
+    let text: String
+    @State private var waiting: Task<Void, Never>?
+
+    func body(content: Content) -> some View {
+        content
+            .onHover { inside in
+                waiting?.cancel()
+                if inside {
+                    waiting = Task {
+                        try? await Task.sleep(for: .seconds(2))
+                        if !Task.isCancelled { NameTipPanel.shared.show(text) }
+                    }
+                } else {
+                    NameTipPanel.shared.hide()
+                }
+            }
+            .onDisappear {
+                waiting?.cancel()
+                NameTipPanel.shared.hide()
+            }
+    }
+}
+
+extension View {
+    fileprivate func nameTip(_ text: String) -> some View { modifier(NameTip(text: text)) }
+}
+
+@MainActor
+private final class NameTipPanel {
+    static let shared = NameTipPanel()
+    private var panel: NSPanel?
+
+    func show(_ text: String) {
+        let host = NSHostingView(
+            rootView: Text(text).font(.callout).padding(.horizontal, 8).padding(.vertical, 4)
+                .frame(maxWidth: 360).fixedSize(horizontal: false, vertical: true)
+                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 6))
+                .overlay(RoundedRectangle(cornerRadius: 6).strokeBorder(Color.primary.opacity(0.15)))
+        )
+        let size = host.fittingSize
+        let panel = self.panel ?? Self.makePanel()
+        panel.contentView = host
+        let mouse = NSEvent.mouseLocation
+        panel.setFrame(
+            NSRect(x: mouse.x + 4, y: mouse.y - size.height - 18, width: size.width, height: size.height),
+            display: true)
+        panel.orderFrontRegardless()
+        self.panel = panel
+    }
+
+    func hide() { panel?.orderOut(nil) }
+
+    private static func makePanel() -> NSPanel {
+        let panel = NSPanel(
+            contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: true)
+        panel.isOpaque = false
+        panel.backgroundColor = .clear
+        panel.hasShadow = true
+        panel.ignoresMouseEvents = true
+        panel.level = .floating
+        panel.hidesOnDeactivate = true
+        return panel
     }
 }
 

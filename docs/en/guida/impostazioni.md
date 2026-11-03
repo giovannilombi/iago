@@ -2,7 +2,7 @@
 
 The **appearance** (automatic, light or dark) is not here: you choose it from the icon next to Settings, in the main window.
 
-- **General:** language (Italian or English: IAGO restarts to change it, and summaries and suggestions switch to the new language too), name ("Me"), Kanban, item detail (sections open or closed at first, moments in the transcript and on the player), morning notification, open at login, updates, shortcuts in all apps, screenshots (one or all screens).
+- **General:** language (Italian or English: IAGO restarts to change it, and summaries and suggestions switch to the new language too), name ("Me"), Kanban, item detail (sections open or closed at first, restoring the section order, moments in the transcript and on the player), morning notification, open at login, updates, shortcuts in all apps, screenshots (one or all screens).
 - **Permissions:** what is on and what is missing, with guided activation.
 - **Audio:** microphone, meetings (suggestions, calendar, Teams mute).
 - **Transcription:** engine, language, glossary, what to do after Stop, only when plugged in, models.

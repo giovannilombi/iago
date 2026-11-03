@@ -1,3 +1,4 @@
+import AppKit
 import IAGOStore
 import SwiftUI
 
@@ -43,6 +44,95 @@ final class SectionMemory {
 extension EnvironmentValues {
     /// Set by the item view: its sections open and close for that item only.
     @Entry var sectionMemory: SectionMemory?
+    /// Set by the item view: its sections can be dragged by the header to a new place.
+    @Entry var sectionReorder: SectionReorder?
+    /// Which place of the order a section of the item view takes.
+    @Entry var sectionKey: String?
+}
+
+/// The order of the item view's sections, the same for every item: the standard one, or the one the user dragged.
+/// Settings › Generale › Dettaglio elemento brings the standard one back.
+enum DetailOrder {
+    static let storageKey = "detail.sectionOrder"
+    /// «text» is the transcript, or the email and the content of a document.
+    static let standard = [
+        "audio", "markers", "screenshots", "summary", "text", "suggestions", "decisions", "notes", "links", "files",
+    ]
+
+    /// The user's order; a section it does not know yet takes its standard place.
+    static func load() -> [String] {
+        guard !DemoMode.isActive, let stored = UserDefaults.standard.stringArray(forKey: storageKey) else {
+            return standard
+        }
+        var order = stored.filter { standard.contains($0) }
+        for (index, key) in standard.enumerated() where !order.contains(key) {
+            let previous = standard[..<index].last { order.contains($0) }
+            let at = previous.flatMap { order.firstIndex(of: $0) }.map { $0 + 1 } ?? 0
+            order.insert(key, at: at)
+        }
+        return order
+    }
+
+    static func save(_ order: [String]) {
+        guard !DemoMode.isActive else { return }
+        UserDefaults.standard.set(order, forKey: storageKey)
+    }
+
+    static func reset() { UserDefaults.standard.removeObject(forKey: storageKey) }
+
+    static var isCustom: Bool { UserDefaults.standard.stringArray(forKey: storageKey) != nil }
+}
+
+/// A section being dragged by its header: meanwhile every section shows only its header, and the others make room
+/// where it passes. The new order is kept for every item.
+@MainActor
+@Observable
+final class SectionReorder {
+    private(set) var order = DetailOrder.load()
+    private(set) var dragging: String?
+
+    func start(_ key: String) {
+        guard dragging == nil else { return }
+        withAnimation(.easeInOut(duration: 0.2)) { dragging = key }
+        // A drag that ends outside the sections reaches no drop: the mouse coming up ends it.
+        Task { @MainActor [weak self] in
+            while self?.dragging != nil {
+                try? await Task.sleep(for: .milliseconds(250))
+                if NSEvent.pressedMouseButtons & 1 == 0 { self?.finish() }
+            }
+        }
+    }
+
+    /// The dragged section takes the place of `target`.
+    func move(over target: String) {
+        guard let dragging, dragging != target, let from = order.firstIndex(of: dragging),
+            let to = order.firstIndex(of: target)
+        else { return }
+        withAnimation(.easeInOut(duration: 0.15)) {
+            order.move(fromOffsets: IndexSet(integer: from), toOffset: to > from ? to + 1 : to)
+        }
+    }
+
+    func finish() {
+        guard dragging != nil else { return }
+        withAnimation(.easeInOut(duration: 0.2)) { dragging = nil }
+        DetailOrder.save(order)
+    }
+}
+
+/// Drops on a section of the item view while another one is dragged.
+struct SectionDropDelegate: DropDelegate {
+    let key: String
+    let reorder: SectionReorder
+
+    func dropEntered(info: DropInfo) { reorder.move(over: key) }
+
+    func dropUpdated(info: DropInfo) -> DropProposal? { DropProposal(operation: .move) }
+
+    func performDrop(info: DropInfo) -> Bool {
+        reorder.finish()
+        return true
+    }
 }
 
 /// Where each section of the item view starts, in the scrolling content (`ItemDetailView.space`).
@@ -351,6 +441,7 @@ struct ItemDetailSettings: View {
     @AppStorage(DetailMoments.inTranscriptKey) private var inTranscript = true
     @AppStorage(DetailMoments.onPlayerKey) private var onPlayer = true
     @State private var confirmReset = false
+    @State private var customOrder = DetailOrder.isCustom
     /// The defaults as shown: `UserDefaults` is not observed.
     @State private var closed: [String: Bool] = [:]
 
@@ -395,6 +486,20 @@ struct ItemDetailSettings: View {
                 String(localized: "Segnalibri e schermate anche nella trascrizione, nel loro momento"),
                 isOn: $inTranscript)
             Toggle(String(localized: "Momenti sul player audio"), isOn: $onPlayer)
+            HStack(spacing: 8) {
+                Button(String(localized: "Ripristina l'ordine delle sezioni")) {
+                    DetailOrder.reset()
+                    customOrder = false
+                }
+                .disabled(!customOrder)
+                Text(
+                    String(
+                        localized:
+                            "Le sezioni si riordinano trascinandole dall'intestazione; l'ordine vale per tutti gli elementi."
+                    )
+                )
+                .font(.caption).foregroundStyle(.secondary)
+            }
             HStack(spacing: 8) {
                 Button(String(localized: "Riapplica a tutti gli elementi…")) { confirmReset = true }
                 Text(String(localized: "Dimentica le scelte fatte nei singoli elementi.")).font(.caption)

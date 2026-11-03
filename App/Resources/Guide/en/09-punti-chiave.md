@@ -59,10 +59,10 @@ The **Inbox**, at the top of the sidebar, gathers the open work of all projects,
   - your entries that are **late** and those due **today**;
   - the entries with **no owner**, to assign;
   - the **overdue waits**: you have waited past the promised date, time to follow up.
-- **Suggestions to confirm**, **yellow** badge with the sparkle: the engine's suggestions, grouped by the item they come from. Each one has the sentence it comes from and the minute, and you confirm, edit or dismiss it right there. Three are shown per item, then *Show the other*. *Dismiss these* dismisses those of one item, *Dismiss all…* all of them.
-- **Later**, with no badge: your entries for this week, after it and with no date, **Waiting on others** (the waits not yet overdue) and the projects' **pinned checklists**, to tick off here.
+- **Suggestions to confirm**, **yellow** badge with the sparkle: the engine's suggestions, with a box for each item they come from: title, date, project, which suggestions it has and how many. A click on the box opens all its suggestions on the right, each with the sentence it comes from and the minute: you confirm, edit or dismiss it there. At the top right *Open item*, *Confirm all* and *Dismiss these*; in the box *Dismiss all…* dismisses those of every item.
+- **Later**, with no badge, at the bottom of the *Do now* box: your entries for this week, after it and with no date, **Waiting on others** (the waits not yet overdue) and the projects' **pinned checklists**, to tick off here.
 
-A badge at zero does not appear, and neither does an empty block.
+*Do now* takes the top half of the column and *Suggestions to confirm* the bottom half: drag the small handle between them to give one more room (it stays that way the next times; double-click to go back to half and half). Each one scrolls on its own, with the bar always visible when there is more below; at the bottom right a small *N more* with three dots says how many entries are left to see. An empty box shrinks to its header and the other one takes all the room. A badge at zero does not appear.
 
 *Show closed* also shows the entries closed recently. In Manage you can sort by priority and filter by person.
 

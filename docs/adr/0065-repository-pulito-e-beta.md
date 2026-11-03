@@ -32,7 +32,7 @@
 
 ## Modifica del 2026-10-24 (autori)
 - **1.0.0-beta:** unico autore Giovanni Lombi.
-- **Dalle versioni successive:** i diritti sono di **Giovanni Lombi e Gianluca Sestito**. Ogni commit nomina entrambi: chi lo fa è l'autore, l'altro compare come `Co-Authored-By`. L'hook `commit-msg` aggiunge da solo le righe mancanti leggendo `Config/team.txt`; un nuovo autore si aggiunge lì.
+- **Dalle versioni successive** (precisato da ADR-0089: dalla prima versione con il lavoro sulla condivisione, fase 4): i diritti sono di **Giovanni Lombi e Gianluca Sestito**. Ogni commit nomina entrambi: chi lo fa è l'autore, l'altro compare come `Co-Authored-By`. L'hook `commit-msg` aggiunge da solo le righe mancanti leggendo `Config/team.txt`; un nuovo autore si aggiunge lì.
 - Claude non compare mai, né come autore né come co-autore.
 - L'esempio dell'archivio nuovo e il divieto di contenuti nell'app sono in ADR-0066.
 
@@ -53,5 +53,5 @@
 
 ## Modifica del 2026-10-29 (diritti)
 - I diritti sono di **Giovanni Lombi fino alla 1.3.x-beta** e di **Giovanni Lombi e Gianluca Sestito dalla 1.4.0-beta**. Sostituisce il «dalle versioni successive alla 1.0.0-beta» della modifica del 2026-10-24.
-- I commit continuano a nominare entrambi (`Co-Authored-By` aggiunto dall'hook `commit-msg`).
+- I commit nominano entrambi dalla prima versione con il lavoro sulla condivisione (`Co-Authored-By` aggiunto dall'hook `commit-msg`, ADR-0089).
 - Impostazioni › Informazioni mostra Giovanni Lombi fino alla 1.3.x-beta; il sito nomina entrambi e rimanda ai crediti del README.

@@ -45,7 +45,7 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 - Un controllo automatico prima di ogni commit (`scripts/check-private-data.sh`) blocca file e parole vietate. Aggiungi a `Config/private-terms.local` i nomi reali che usi nel tuo lavoro: il file resta sul tuo Mac.
 
 ### Autori e attribuzione
-- I diritti sono di **Giovanni Lombi** fino all'inizio del lavoro sulla condivisione (fase 4), di **Giovanni Lombi e Gianluca Sestito** dalla prima versione con quel lavoro, il primo fatto insieme (ADR-0065). Ogni commit nomina comunque entrambi: chi fa il commit ne è l'autore; l'altro viene aggiunto da solo come `Co-Authored-By`, leggendo `Config/team.txt`.
+- I diritti sono di **Giovanni Lombi** fino all'inizio del lavoro sulla condivisione (fase 4), di **Giovanni Lombi e Gianluca Sestito** dalla prima versione con quel lavoro, il primo fatto insieme (ADR-0065). Fino ad allora i commit hanno come autore solo Giovanni Lombi; da quella versione ogni commit nomina entrambi: chi fa il commit ne è l'autore, l'altro viene aggiunto da solo come `Co-Authored-By`, leggendo `Config/team.txt`, dove la riga di Gianluca Sestito resta commentata fino ad allora (ADR-0089).
 - **Mai un'IA come autore o co-autore**, e nessuna riga "Generated with…" nei commit e nelle PR. Il controllo dei commit li blocca.
 
 ### Git e GitHub

@@ -1,6 +1,6 @@
 # ADR-0084 — Dettaglio dell'elemento: tile, barra fissa e momenti
 
-- Stato: accettato (1.2.11-beta)
+- Stato: accettato (1.2.11-beta); ordine delle sezioni rivisto in ADR-0088
 - Data: 2026-11-02
 - Riferimenti: ADR-0018 (l'elemento è un evento tipizzato), ADR-0049 («Chiedi a IAGO» in basso a destra), ADR-0072 (segna momento con screenshot); review board interna del 2026-11-02, prototipo approvato dall'utente
 
