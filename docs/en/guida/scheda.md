@@ -6,15 +6,15 @@ An item is a **call**, an **email** or a **document**. The card gathers everythi
 
 - **Header:** title, below it client › project and date · duration · type; then date, project, stream, category, tags, all editable.
 - **Actions:** transcribe, transcribe again, **Share…**, export, delete, **Copy for Claude** (see the chapter *Claude*).
-- **Summary:** see the chapter *Summary*.
-- **Suggestions:** what the engine suggests, to confirm or dismiss.
+Then the sections, in this order unless you change it:
 - **Audio:** player with a choice of track (both, microphone only, system only) and the call's **moments** (see below).
 - **Bookmarks** of the moments marked during the call.
 - **Screenshots** captured with *Mark moment with screenshot*, with the minute and the text that was read.
-- **Transcript** with who is speaking and the minute: a click on a minute plays the audio from there; right-click a sentence to turn it into a key point. Bookmarks and screenshots appear at their minute, on a faint veil of their colour (screenshots with their thumbnail too).
-- **Content** for documents and emails (with the original image and the recognized text).
-- Dated **notes**, dictated by voice too.
+- **Summary:** see the chapter *Summary*.
+- **Transcript** with who is speaking and the minute: a click on a minute plays the audio from there; right-click a sentence to turn it into a key point. Bookmarks and screenshots appear at their minute, on a faint veil of their colour (screenshots with their thumbnail too). For documents and emails the **Content** takes its place (with the original image and the recognized text).
+- **Suggestions:** what the engine suggests, to confirm or dismiss.
 - **Key points** that came from this item.
+- Dated **notes**, dictated by voice too.
 - **Links** to other items (replies, attachments, related documents).
 - **Files:** the item's assets, with their size.
 
@@ -25,10 +25,13 @@ When you scroll down, a **sticky bar** appears at the top: title, client › pro
 
 ![After scrolling: the sticky bar at the top and ↑ at the bottom right](img/scheda-barra.png)
 
+## Changing the order of the sections
+On the right of each section's title there is a small handle (≡). **Drag a section's title**: all the sections close, so you see the order at a glance, and the others move as you pass. Drop it where you want it: the sections go back to open or closed as before. The order applies to **every item** and stays for the next time; the tiles follow it too. **Settings › General › Item detail › Restore the section order** goes back to the standard one.
+
 ## Open and closed sections
 - A click on the title opens or closes a section. **Each item remembers** its open and closed sections.
 - How they start in an item you have not touched yet is chosen in **Settings › General › Item detail**; *Reapply to all items…* forgets the choices made in single items.
-- **Files** is always open, at the bottom.
+- **Audio** and **Files** are always open.
 - An **empty** section is just a dashed header, with a sentence saying what is missing and, when useful, the button to add (for example *Add note* or *Link to…*).
 
 ## Moments on the player

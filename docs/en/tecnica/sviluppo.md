@@ -32,7 +32,7 @@ The complete team rules are in [`README-collaborators.md`](https://github.com/gi
 - **Decisions:** every relevant choice is an [ADR](/en/adr/); an accepted ADR is not rewritten, it is amended with a dated section or superseded.
 - **Data:** never real data in the repository (ADR-0065); the app contains no content (ADR-0066).
 - **Email addresses:** never a personal one, neither in files nor in commits; commits are signed with the anonymous GitHub address (ADR-0065).
-- **Authors:** after 1.0.0-beta every commit names Giovanni Lombi and Gianluca Sestito (the hook adds the co-author); never an AI.
+- **Authors:** until the work on sharing (phase 4) commits have only Giovanni Lombi as author; from that version they also name Gianluca Sestito, added by the hook once his line in `Config/team.txt` is no longer commented out (ADR-0089); never an AI.
 
 ## Documentation with every commit
 Every commit that changes the app's behavior updates the documentation in the same commit:

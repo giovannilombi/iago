@@ -1,6 +1,6 @@
 # ADR-0084 — Item detail: tiles, sticky bar and moments
 
-- Status: accepted (1.2.11-beta)
+- Status: accepted (1.2.11-beta); order of the sections revised in ADR-0088
 - Date: 2026-11-02
 - References: ADR-0018 (the item is a typed event), ADR-0049 («Ask IAGO» at the bottom right), ADR-0072 (mark moment with screenshot); internal review board of 2026-11-02, prototype approved by the user
 

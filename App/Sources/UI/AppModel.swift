@@ -53,7 +53,9 @@ final class AppModel {
         case trash
     }
 
-    var sidebar: SidebarSelection? = .library(.unclassified)
+    var sidebar: SidebarSelection? = .library(.unclassified) {
+        didSet { if sidebar != .inbox { proposalsItemID = nil } }
+    }
 
     /// Combined filters and sorting of the library (FR-71, FR-72), applied to list and timeline.
     struct LibraryFilter: Equatable {
@@ -212,6 +214,7 @@ final class AppModel {
             lastItemID = selectedItemID
             selectedDecisionID = nil
             selectedNoteID = nil
+            proposalsItemID = nil
         }
     }
     /// A decision or a note opened in the detail pane, instead of an item (one thing at a time).
@@ -220,6 +223,7 @@ final class AppModel {
             guard selectedDecisionID != nil else { return }
             selectedItemID = nil
             selectedNoteID = nil
+            proposalsItemID = nil
         }
     }
     var selectedNoteID: String? {
@@ -227,6 +231,16 @@ final class AppModel {
             guard selectedNoteID != nil else { return }
             selectedItemID = nil
             selectedDecisionID = nil
+            proposalsItemID = nil
+        }
+    }
+    /// «Inbox» (ADR-0087): the proposals of one item, opened from its box, to confirm in the detail pane.
+    var proposalsItemID: String? {
+        didSet {
+            guard proposalsItemID != nil else { return }
+            selectedItemID = nil
+            selectedDecisionID = nil
+            selectedNoteID = nil
         }
     }
     /// Last item created or opened: default target of "Nota vocale…" from the menu bar (FR-216).
@@ -404,12 +418,15 @@ final class AppModel {
         }
     }
 
-    var hasSelection: Bool { selectedItemID != nil || selectedDecisionID != nil || selectedNoteID != nil }
+    var hasSelection: Bool {
+        selectedItemID != nil || selectedDecisionID != nil || selectedNoteID != nil || proposalsItemID != nil
+    }
 
     func clearSelection() {
         selectedItemID = nil
         selectedDecisionID = nil
         selectedNoteID = nil
+        proposalsItemID = nil
     }
 
     // MARK: View remembered per scope
@@ -1463,6 +1480,18 @@ final class AppModel {
 
     /// The import sheet of a project (ADR-0076).
     var importing: ImportTarget?
+
+    /// «Nuovo progetto»: from a client, its client is set and cannot be changed.
+    struct NewProjectRequest: Identifiable {
+        let id = UUID()
+        var clientID: String?
+        var locksClient = false
+    }
+
+    /// The «Nuovo progetto» sheet, shown by the window (a sheet inside the sidebar's list never appeared).
+    var newProject: NewProjectRequest?
+    /// The «Nuovo stream» sheet of a project, shown by the window.
+    var newStreamProject: Project?
 
     enum ExportKind: String, Identifiable {
         case llm, audio

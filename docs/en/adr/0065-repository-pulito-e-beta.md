@@ -32,7 +32,7 @@
 
 ## Change of 2026-10-24 (authors)
 - **1.0.0-beta:** sole author Giovanni Lombi.
-- **From later versions:** the rights belong to **Giovanni Lombi and Gianluca Sestito**. Every commit names both: whoever makes it is the author, the other appears as `Co-Authored-By`. The `commit-msg` hook adds the missing lines on its own by reading `Config/team.txt`; a new author is added there.
+- **From later versions** (made precise by ADR-0089: from the first version with the work on sharing, phase 4): the rights belong to **Giovanni Lombi and Gianluca Sestito**. Every commit names both: whoever makes it is the author, the other appears as `Co-Authored-By`. The `commit-msg` hook adds the missing lines on its own by reading `Config/team.txt`; a new author is added there.
 - Claude never appears, neither as author nor as co-author.
 - The new archive example and the ban on content in the app are in ADR-0066.
 
@@ -53,5 +53,5 @@
 
 ## Change of 2026-10-29 (rights)
 - The rights belong to **Giovanni Lombi up to 1.3.x-beta** and to **Giovanni Lombi and Gianluca Sestito from 1.4.0-beta**. This replaces the "from the versions after 1.0.0-beta" of the change of 2026-10-24.
-- Commits still name both (`Co-Authored-By` added by the `commit-msg` hook).
+- Commits name both from the first version with the work on sharing (`Co-Authored-By` added by the `commit-msg` hook, ADR-0089).
 - Settings › About shows Giovanni Lombi up to 1.3.x-beta; the site names both and links to the README's credits.

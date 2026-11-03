@@ -2,16 +2,16 @@
 
 > The restart point for anyone working on IAGO, people and Claude Code sessions.
 > **It must be updated at the end of every piece of work**, in the same PR: what changed, what remains open.
-> Last update: **October 30, 2026**.
+> Last update: **November 3, 2026**.
 
 ## In brief
-- **Version:** 1.2.13-beta on `main` (tag `v1.2.13-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
+- **Version:** 1.2.14-beta on `main` (tag `v1.2.14-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
 - **Repositories:**
   - `giovannilombi/iago`, private, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi; from the versions after 1.0.0-beta, Giovanni Lombi and Gianluca Sestito (ADR-0065).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 315 in the packages, all green (1.2.13-beta).
+- **Automated tests:** 315 in the packages, all green (1.2.14-beta).
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -32,6 +32,8 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - **Item detail** (ADR-0084, 1.2.11-beta): done; to be tested on real calls (10t), above all the sticky bar with many open sections and the moments on a long call.
    - **Overview and Activity** (ADR-0085, 1.2.12-beta): done; to be tested on real projects with many entries (10u).
    - **Style A, light and dark** (ADR-0086, 1.2.13-beta): done; to be tested in both appearances on a real archive (10v). Your archive has the test project «Sito e app Officina Lume (prova)», to delete (project and client) when no longer needed.
+   - **Inbox in two halves, suggestions on the right, columns per place** (ADR-0087, 1.2.14-beta): done; to be tested (10w), especially dragging the handle and the dividers, which the demo tour cannot do.
+   - **Order of the item's sections and sidebar** (ADR-0088, 1.2.14-beta): done; to be tested (10w.7–10w.13), especially reordering by dragging the sections.
 1. **Tests, in a single session** (see [`docs/prove-tester.md`](prove-tester.md)):
    - recent versions: 10i (open work), 10n (Inbox and names), 10o (two transcripts), 10p (main transcript);
    - live: Teams microphone while IAGO records, IAGO's icon in notifications, sections 10b–10h (memory on 16 GB, screenshots and shortcuts, summaries and suggestions from Claude Desktop, DMG and updates, voice threshold);
@@ -55,7 +57,11 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-03:** version **1.2.14-beta**, with the guide's screenshots retaken in Italian and English.
+- **2026-11-03, co-authors** (ADR-0089): until the work on sharing (phase 4) commits have only Giovanni Lombi as author; Gianluca Sestito's line in `Config/team.txt` is commented out and the hook no longer adds it.
 - **2026-11-02:** version **1.2.13-beta**.
+- **2026-11-03, Inbox in two halves** (ADR-0087, on the prototype approved by the user): *Do now* at the top and *Suggestions to confirm* at the bottom, each half scrolling on its own with the bar always visible and a discreet "N more" with three dots that light up every 10 seconds; an empty box shrinks to its header; *Later* and the closed entries at the bottom of *Do now*. Then (V3): a thinner, fainter bar, a handle between the two boxes with the share saved, suggestions in one box per item opened on the right, middle and right columns half and half with the width saved per place.
+- **2026-11-03, order of the sections and sidebar** (ADR-0088): in the card first audio, bookmarks and screenshots, then summary and transcript; sections reordered by dragging their title (one order for every item, restorable in Settings); *Add* (client or project) above the projects instead of the «Projects» title and the ＋ at the bottom, where only the Trash remains; a client's + opens the new project again with the client locked (*New stream…* did not open either); the whole project name after two seconds; project names one point smaller; the divider between the middle and right columns no longer crosses the toolbar; one column width per place also in Unfiled, Recent and Undefined.
 - **2026-11-02, "colour as a signal" style, light and dark** (ADR-0086, on proposals approved by the user): neutral text and the kind's colour only in the bar, icon, tile dots and timeline rail; grey icons, red only for urgency; grey sidebar; a thread under every box title; the "Add" sheet with the kind in a tile; bookmarks and screenshots in the transcript on a veil of their colour; Kanban with columns in boxes; Activity in one column with the summary on top; Categories and tags across the window; appearance menu (Automatic, Light, Dark) next to Settings; light with cool grey, no full white. New `scripts/guide-screenshots.sh` to retake the guide's screenshots; all retaken in Italian and English.
 - **2026-11-02:** version **1.2.12-beta**.
 - **2026-11-02, Overview, Activity and fixes** (ADR-0085, on proposals approved by the user): in **Manage** the Overview is made of boxes in two "masonry" columns (each in the shorter one), with the boxes' tiles always at the top taking you to the box and making it glow; *Latest decisions and milestones* is there too; empty boxes are reduced to their header; with the panel open the boxes go in one column. In **Track** the Short overview has the page already split, with the empty panel on the right. **Activity** across the window with tiles, sections in the style of the item card, *Last 7 days* and *Ready to work*. The mode icon in the sidebar is blue for Manage and opens the mode choice. The Key points column starts wider. **Fixes:** «Categories and tags» in the sidebar could not be selected; the sheet of a new key point was wider than the window and cut off (now the kinds are pills that wrap, labels aligned). Guide screenshots retaken.

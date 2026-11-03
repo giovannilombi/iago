@@ -59,10 +59,10 @@ L'**Inbox**, in cima alla barra laterale, raccoglie il lavoro aperto di tutti i 
   - le tue voci **in ritardo** e quelle di **oggi**;
   - le voci **senza responsabile**, da assegnare;
   - le **attese scadute**: hai aspettato oltre la data promessa, è il momento di sollecitare.
-- **Proposte da confermare**, bollino **giallo** con la stellina: le proposte del motore, raggruppate per l'elemento da cui vengono. Ognuna ha la frase da cui viene e il minuto, e la confermi, la modifichi o la scarti lì. Per ogni elemento se ne vedono tre, poi *Mostra le altre*. *Scarta queste* scarta quelle di un elemento, *Scarta tutte…* tutte.
-- **Più avanti**, senza bollino: le tue voci di questa settimana, dopo e senza data, **Aspetto da altri** (le attese non ancora scadute) e le **checklist fissate** dei progetti, da spuntare qui.
+- **Proposte da confermare**, bollino **giallo** con la stellina: le proposte del motore, con un box per ogni elemento da cui vengono: titolo, data, progetto, quali proposte ha e quante. Un clic sul box apre a destra tutte le sue proposte, ognuna con la frase da cui viene e il minuto: la confermi, la modifichi o la scarti lì. In alto a destra *Apri l'elemento*, *Conferma tutte* e *Scarta queste*; nel box *Scarta tutte…* scarta quelle di tutti gli elementi.
+- **Più avanti**, senza bollino, in fondo al box *Da fare ora*: le tue voci di questa settimana, dopo e senza data, **Aspetto da altri** (le attese non ancora scadute) e le **checklist fissate** dei progetti, da spuntare qui.
 
-Un bollino a zero non compare, e un blocco vuoto nemmeno.
+*Da fare ora* occupa la metà alta della colonna e *Proposte da confermare* la metà bassa: trascina la piccola maniglia tra i due per dare più spazio all'uno o all'altro (resta così anche le volte dopo; doppio clic per tornare a metà e metà). Ognuna scorre per conto suo, con la barra sempre visibile quando sotto c'è altro; in basso a destra un piccolo *altre N* con tre puntini dice quante voci restano da vedere. Un box vuoto si riduce alla sua intestazione e l'altro prende tutto lo spazio. Un bollino a zero non compare.
 
 *Mostra chiuse* fa vedere anche le voci chiuse da poco. In Gestisci puoi ordinare per priorità e filtrare per persona.
 

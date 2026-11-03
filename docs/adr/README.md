@@ -108,3 +108,6 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0084 | Dettaglio dell'elemento: tile, barra fissa e momenti | accettato (1.2.11-beta) |
 | 0085 | Riepilogo a box, Traccia divisa in due, Attività a tutta finestra | accettato (1.2.12-beta) |
 | 0086 | Stile: colore come segnale, chiaro e scuro | accettato (1.2.13-beta) |
+| 0087 | Inbox a due metà, proposte a destra, colonne per sezione | accettato |
+| 0088 | Ordine delle sezioni dell'elemento e barra laterale | accettato |
+| 0089 | Co-autori dei commit fino alla condivisione | accettato |

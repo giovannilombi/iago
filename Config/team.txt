@@ -1,4 +1,6 @@
-# The authors of IAGO (ADR-0065). From the versions after 1.0.0-beta every commit names all of them: the author plus a
-# "Co-Authored-By" line for each of the others, added by scripts/git-hooks/commit-msg. Never an AI. One per line.
+# The authors of IAGO (ADR-0065, ADR-0089). Every commit names the active ones: the author plus a "Co-Authored-By" line
+# for each of the others, added by scripts/git-hooks/commit-msg. Never an AI. One per line; a line starting with "#"
+# is skipped.
 Giovanni Lombi <11275618+giovannilombi@users.noreply.github.com>
-Gianluca Sestito <144025200+gianluca-sestito@users.noreply.github.com>
+# Co-author from the first version with the work on sharing (phase 4): remove the "# " in that commit.
+# Gianluca Sestito <144025200+gianluca-sestito@users.noreply.github.com>

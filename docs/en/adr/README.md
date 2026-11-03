@@ -108,3 +108,6 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0084 | Item detail: tiles, sticky bar and moments | accepted (1.2.11-beta) |
 | 0085 | Overview of boxes, Track split in two, Activity across the window | accepted (1.2.12-beta) |
 | 0086 | Style: colour as a signal, light and dark | accepted (1.2.13-beta) |
+| 0087 | Inbox in two halves, suggestions on the right, columns per place | accepted |
+| 0088 | Order of the item's sections and sidebar | accepted |
+| 0089 | Commit co-authors until sharing | accepted |

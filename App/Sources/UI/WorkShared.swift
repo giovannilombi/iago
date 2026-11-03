@@ -654,6 +654,8 @@ struct InboxBlockHeader<Trailing: View>: View {
     let systemImage: String
     let count: Int
     var kind: InboxCount?
+    /// The box's inner padding: the title is inset, the line runs from edge to edge.
+    var inset: CGFloat = 0
     @ViewBuilder var trailing: () -> Trailing
 
     var body: some View {
@@ -673,14 +675,221 @@ struct InboxBlockHeader<Trailing: View>: View {
                     Text("\(count)").font(.callout).monospacedDigit().foregroundStyle(.secondary)
                 }
             }
+            .padding(.horizontal, inset)
             Rectangle().fill((kind?.color ?? .secondary).opacity(0.5)).frame(height: 1)
         }
-        .padding(.top, 18).padding(.bottom, 2)
+        .padding(.top, inset > 0 ? 12 : 18).padding(.bottom, 2)
     }
 }
 
 extension InboxBlockHeader where Trailing == EmptyView {
-    init(title: String, systemImage: String, count: Int, kind: InboxCount? = nil) {
-        self.init(title: title, systemImage: systemImage, count: count, kind: kind) { EmptyView() }
+    init(title: String, systemImage: String, count: Int, kind: InboxCount? = nil, inset: CGFloat = 0) {
+        self.init(title: title, systemImage: systemImage, count: count, kind: kind, inset: inset) { EmptyView() }
+    }
+}
+
+/// A box of «Inbox» (two halves of the column): its header stays, the rows scroll inside with the bar always
+/// visible and, at the bottom right, «altre N» while rows are below. An empty box shrinks to its header and a line.
+struct InboxBox<Header: View, Content: View>: View {
+    /// The rows in their order, each with the same `.id` in the content.
+    let ids: [String]
+    let isEmpty: Bool
+    @ViewBuilder var header: () -> Header
+    @ViewBuilder var content: () -> Content
+    @State private var visible: Set<String> = []
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            header()
+            if isEmpty {
+                VStack(alignment: .leading, spacing: 2) { content() }
+                    .padding(.horizontal, 14).padding(.bottom, 12)
+            } else {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 2) { content() }
+                        .scrollTargetLayout()
+                        .padding(.leading, 14).padding(.trailing, 18).padding(.bottom, 12)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(AlwaysVisibleScroller())
+                }
+                .scrollIndicators(.visible)
+                .onScrollTargetVisibilityChange(idType: String.self, threshold: 0.6) { visible = Set($0) }
+                .overlay(alignment: .bottomTrailing) {
+                    if below > 0 { InboxMorePill(count: below).padding(.trailing, 26).padding(.bottom, 8) }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: isEmpty ? nil : .infinity, alignment: .top)
+        .background(RoundedRectangle(cornerRadius: 10).fill(IAGOColor.card))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(IAGOColor.divider.opacity(0.7)))
+    }
+
+    /// The rows after the last one in view.
+    private var below: Int {
+        guard let last = ids.lastIndex(where: visible.contains) else { return 0 }
+        return ids.count - last - 1
+    }
+}
+
+/// Keeps the bar of the enclosing scroll view on screen while there is more to see, whatever the Mac's «Mostra barre
+/// di scorrimento»: a thin, faint classic scroller, hidden only when everything fits.
+private struct AlwaysVisibleScroller: NSViewRepresentable {
+    final class Probe: NSView {
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            apply()
+            NotificationCenter.default.removeObserver(self)
+            NotificationCenter.default.addObserver(
+                self, selector: #selector(styleChanged), name: NSScroller.preferredScrollerStyleDidChangeNotification,
+                object: nil)
+        }
+
+        @objc private func styleChanged() { DispatchQueue.main.async { self.apply() } }
+
+        func apply() {
+            guard let scrollView = enclosingScrollView else { return }
+            if !(scrollView.verticalScroller is ThinScroller) { scrollView.verticalScroller = ThinScroller() }
+            scrollView.scrollerStyle = .legacy
+            scrollView.autohidesScrollers = true
+            scrollView.hasVerticalScroller = true
+        }
+    }
+
+    func makeNSView(context: Context) -> Probe { Probe() }
+    func updateNSView(_ view: Probe, context: Context) { DispatchQueue.main.async { view.apply() } }
+}
+
+/// A light scroller: no track, a narrow rounded knob in the text colour at low opacity, a little stronger under the
+/// pointer.
+final class ThinScroller: NSScroller {
+    private var hovering = false
+    private var hoverArea: NSTrackingArea?
+
+    override class func scrollerWidth(for controlSize: NSControl.ControlSize, scrollerStyle: NSScroller.Style)
+        -> CGFloat
+    { 10 }
+
+    override var isOpaque: Bool { false }
+
+    override func draw(_ dirtyRect: NSRect) { drawKnob() }
+
+    override func drawKnobSlot(in slotRect: NSRect, highlight flag: Bool) {}
+
+    override func drawKnob() {
+        let knob = rect(for: .knob).insetBy(dx: 0, dy: 2)
+        guard knob.height > 0 else { return }
+        let width: CGFloat = hovering ? 6 : 5
+        let bar = NSRect(x: bounds.midX - width / 2, y: knob.minY, width: width, height: knob.height)
+        NSColor.labelColor.withAlphaComponent(hovering ? 0.32 : 0.16).setFill()
+        NSBezierPath(roundedRect: bar, xRadius: width / 2, yRadius: width / 2).fill()
+    }
+
+    override func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        if let hoverArea { removeTrackingArea(hoverArea) }
+        let area = NSTrackingArea(
+            rect: .zero, options: [.mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect], owner: self)
+        addTrackingArea(area)
+        hoverArea = area
+    }
+
+    override func mouseEntered(with event: NSEvent) {
+        hovering = true
+        needsDisplay = true
+    }
+
+    override func mouseExited(with event: NSEvent) {
+        hovering = false
+        needsDisplay = true
+    }
+}
+
+/// The two boxes of «Inbox» one over the other, with a handle between them to change their share (kept for the next
+/// times; a double click goes back to half and half). An empty box takes only its header and the other the rest.
+struct InboxSplit<Top: View, Bottom: View>: View {
+    @Binding var ratio: Double
+    let topCollapsed: Bool
+    let bottomCollapsed: Bool
+    @ViewBuilder var top: () -> Top
+    @ViewBuilder var bottom: () -> Bottom
+    @State private var dragStart: Double?
+    @State private var hovering = false
+    private static var gripHeight: CGFloat { 14 }
+
+    var body: some View {
+        if topCollapsed || bottomCollapsed {
+            VStack(spacing: 12) {
+                top()
+                bottom()
+            }
+        } else {
+            GeometryReader { geometry in
+                let height = max(0, geometry.size.height - Self.gripHeight)
+                VStack(spacing: 0) {
+                    top().frame(height: height * ratio)
+                    grip(height)
+                    bottom().frame(height: height * (1 - ratio))
+                }
+            }
+        }
+    }
+
+    private func grip(_ height: CGFloat) -> some View {
+        Capsule().fill(Color.secondary.opacity(hovering || dragStart != nil ? 0.6 : 0.3)).frame(width: 36, height: 4)
+            .frame(maxWidth: .infinity).frame(height: Self.gripHeight)
+            .contentShape(Rectangle())
+            .pointerStyle(.rowResize)
+            .onHover { hovering = $0 }
+            .gesture(
+                DragGesture(minimumDistance: 1)
+                    .onChanged { value in
+                        let start = dragStart ?? ratio
+                        dragStart = start
+                        ratio = min(0.8, max(0.2, start + value.translation.height / max(height, 1)))
+                    }
+                    .onEnded { _ in dragStart = nil }
+            )
+            .onTapGesture(count: 2) { ratio = 0.5 }
+            .help(String(localized: "Trascina per cambiare l'altezza dei due box. Doppio clic: metà e metà."))
+    }
+}
+
+/// «altre N» at the bottom of a box of «Inbox»: discreet, three small dots that light up once every 10 seconds.
+struct InboxMorePill: View {
+    let count: Int
+    @State private var pulse = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    var body: some View {
+        HStack(spacing: 5) {
+            HStack(spacing: 3) {
+                ForEach(0..<3, id: \.self) { index in
+                    Circle().fill(.secondary).frame(width: 4, height: 4)
+                        .keyframeAnimator(initialValue: 0.35, trigger: pulse) { dot, opacity in
+                            dot.opacity(opacity)
+                        } keyframes: { _ in
+                            LinearKeyframe(0.35, duration: Double(index) * 0.15)
+                            CubicKeyframe(1, duration: 0.3)
+                            CubicKeyframe(0.35, duration: 0.6)
+                        }
+                }
+            }
+            Text(String(localized: "altre \(count)")).font(.subheadline).monospacedDigit()
+                .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, 8).padding(.vertical, 2)
+        .background(Capsule().fill(IAGOColor.bar.opacity(0.85)))
+        .overlay(Capsule().strokeBorder(IAGOColor.divider))
+        .allowsHitTesting(false)
+        .accessibilityLabel(String(localized: "Altre \(count) voci più in basso"))
+        .task {
+            guard !reduceMotion else { return }
+            try? await Task.sleep(for: .seconds(2))
+            while !Task.isCancelled {
+                pulse += 1
+                try? await Task.sleep(for: .seconds(10))
+            }
+        }
     }
 }

@@ -15,11 +15,11 @@ struct WorkInbox: View {
     @State private var checklists: [Checklist] = []
     /// The user as a person («Il tuo nome», «Io»), read once per reload.
     @State private var me: Set<String> = []
-    /// Items whose proposals are all shown, not only the first ones.
-    @State private var expanded: Set<String> = []
     @State private var confirmsDismissAll = false
     @AppStorage("inbox.showsClosed") private var showsClosed = false
     @AppStorage("inbox.byPriority") private var byPriority = true
+    /// The share of the upper box, moved with the handle between the two (ADR-0087).
+    @AppStorage("inbox.split") private var split = 0.5
     /// «Gestisci»: whose entries; nil = mine.
     @State private var person: PersonFilter = .me
 
@@ -35,33 +35,33 @@ struct WorkInbox: View {
         var id: String { item.id }
     }
 
-    /// Proposals shown per item before «Mostra le altre».
-    private static let proposalsShown = 3
-
     private var mode: WorkMode { model.workViewsMode }
     private var filter: PersonFilter { mode == .manage ? person : .me }
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .leading, spacing: 2) {
-                if actionCount > 0 { actionBlock }
-                if proposalCount > 0 { proposalBlock }
-                if laterCount > 0 { laterBlock }
-                if showsClosed {
-                    WorkSectionTitle(
-                        title: String(localized: "Chiuse negli ultimi \(Archive.boardArchiveDays) giorni"),
-                        count: closedShown.count, color: .secondary)
-                    if closedShown.isEmpty {
-                        Text(String(localized: "Nessuna voce chiusa di recente.")).font(.callout)
-                            .foregroundStyle(.secondary).padding(.leading, 8)
+        // A stack, not a group: an empty group would drop `.task` and nothing would ever load.
+        VStack(spacing: 0) {
+            if !isEmpty {
+                InboxSplit(ratio: $split, topCollapsed: actionIsEmpty, bottomCollapsed: proposalCount == 0) {
+                    InboxBox(ids: actionIDs, isEmpty: actionIsEmpty) {
+                        InboxBlockHeader(
+                            title: String(localized: "Da fare ora"), systemImage: InboxCount.action.systemImage,
+                            count: actionCount, kind: .action, inset: 14)
+                    } content: {
+                        actionBox
                     }
-                    rows(closedShown, showsOwner: filter != .me)
+                } bottom: {
+                    InboxBox(ids: proposalIDs, isEmpty: proposalCount == 0) {
+                        proposalHeader
+                    } content: {
+                        proposalBlock
+                    }
                 }
             }
-            .padding(.horizontal, 24).padding(.bottom, 24)
-            .frame(maxWidth: 900)
-            .frame(maxWidth: .infinity)
         }
+        .padding(.horizontal, 24).padding(.top, 12).padding(.bottom, 16)
+        .frame(maxWidth: 900, maxHeight: .infinity, alignment: .top)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .safeAreaInset(edge: .top, spacing: 0) { header.iagoBar() }
         .overlay {
             if isEmpty {
@@ -90,11 +90,13 @@ struct WorkInbox: View {
 
     // MARK: Blocks
 
-    private var actionBlock: some View {
+    /// The upper box: «Da fare ora», then «Più avanti» and, if asked, the closed ones, in the same scroll.
+    private var actionBox: some View {
         Group {
-            InboxBlockHeader(
-                title: String(localized: "Da fare ora"), systemImage: InboxCount.action.systemImage,
-                count: actionCount, kind: .action)
+            if actionCount == 0 {
+                Text(String(localized: "Niente in ritardo, per oggi o senza responsabile."))
+                    .font(.callout).foregroundStyle(.secondary).padding(.leading, 8).padding(.top, 8)
+            }
             ForEach(urgentGroups, id: \.due) { group in
                 WorkSubsectionTitle(
                     title: group.due.title, count: group.entries.count,
@@ -109,52 +111,55 @@ struct WorkInbox: View {
                 WorkSubsectionTitle(title: String(localized: "Attese scadute"), count: waitingLate.count)
                 rows(waitingLate, showsOwner: filter != .me)
             }
+            if laterCount > 0 { laterBlock }
+            if showsClosed {
+                WorkSectionTitle(
+                    title: String(localized: "Chiuse negli ultimi \(Archive.boardArchiveDays) giorni"),
+                    count: closedShown.count, color: .secondary)
+                if closedShown.isEmpty {
+                    Text(String(localized: "Nessuna voce chiusa di recente.")).font(.callout)
+                        .foregroundStyle(.secondary).padding(.leading, 8)
+                }
+                rows(closedShown, showsOwner: filter != .me)
+            }
+        }
+    }
+
+    private var proposalHeader: some View {
+        InboxBlockHeader(
+            title: String(localized: "Proposte da confermare"), systemImage: InboxCount.proposals.systemImage,
+            count: proposalCount, kind: .proposals, inset: 14
+        ) {
+            if proposalCount > 0 {
+                Button(String(localized: "Scarta tutte…")) { confirmsDismissAll = true }
+                    .buttonStyle(.link).font(.callout).foregroundStyle(.secondary)
+            }
         }
     }
 
     private var proposalBlock: some View {
         Group {
-            InboxBlockHeader(
-                title: String(localized: "Proposte da confermare"), systemImage: InboxCount.proposals.systemImage,
-                count: proposalCount, kind: .proposals
-            ) {
-                Button(String(localized: "Scarta tutte…")) { confirmsDismissAll = true }
-                    .buttonStyle(.link).font(.callout).foregroundStyle(.secondary)
+            if proposalCount == 0 {
+                Text(String(localized: "Nessuna proposta da confermare."))
+                    .font(.callout).foregroundStyle(.secondary).padding(.leading, 8).padding(.top, 8)
+            } else {
+                Text(String(localized: "Un box per elemento: aprilo per vedere e confermare le sue proposte a destra."))
+                    .font(.caption).foregroundStyle(.secondary).padding(.leading, 8).padding(.top, 6)
             }
-            Text(String(localized: "Diventano punti chiave solo se le confermi."))
-                .font(.caption).foregroundStyle(.secondary).padding(.leading, 8).padding(.top, 4)
             ForEach(proposals) { group in
-                HStack {
-                    Button(group.item.title) { model.selectedItemID = group.item.id }
-                        .buttonStyle(.link).font(.callout.weight(.semibold)).lineLimit(1)
-                    Text(group.item.occurredAt.formatted(.dateTime.day().month(.abbreviated)))
-                        .font(.caption).foregroundStyle(.secondary)
-                    Text("\(group.suggestions.count)").font(.caption).monospacedDigit().foregroundStyle(.secondary)
-                    Spacer()
-                    Button(String(localized: "Scarta queste")) { model.dismiss(group.suggestions) }
-                        .buttonStyle(.link).font(.caption).foregroundStyle(.secondary)
-                }
-                .padding(.top, 12).padding(.leading, 8)
-                let all = expanded.contains(group.id)
-                ForEach(all ? group.suggestions : Array(group.suggestions.prefix(Self.proposalsShown))) {
-                    suggestion in
-                    SuggestionRow(model: model, item: group.item, suggestion: suggestion)
-                        .padding(.horizontal, 10).padding(.vertical, 6)
-                        .background(RoundedRectangle(cornerRadius: 8).fill(Color.yellow.opacity(0.06)))
-                }
-                if !all, group.suggestions.count > Self.proposalsShown {
-                    Button(String(localized: "Mostra le altre \(group.suggestions.count - Self.proposalsShown)")) {
-                        expanded.insert(group.id)
-                    }
-                    .buttonStyle(.link).font(.callout).padding(.leading, 8)
-                }
+                ProposalItemCard(
+                    item: group.item, suggestions: group.suggestions,
+                    projectName: model.project(group.item.projectId)?.name,
+                    selected: model.proposalsItemID == group.id
+                ) { model.proposalsItemID = group.id }
+                .id(group.id)
             }
         }
     }
 
     private var laterBlock: some View {
         Group {
-            InboxBlockHeader(title: String(localized: "Più avanti"), systemImage: "clock", count: laterCount)
+            WorkSectionTitle(title: String(localized: "Più avanti"), count: laterCount, color: .secondary)
             ForEach(laterGroups, id: \.due) { group in
                 WorkSubsectionTitle(
                     title: group.due == .later ? String(localized: "Dopo questa settimana") : group.due.title,
@@ -169,7 +174,7 @@ struct WorkInbox: View {
                 WorkSubsectionTitle(title: String(localized: "Checklist fissate"), count: checklists.count)
                 ForEach(checklists) { list in
                     ChecklistCard(model: model, checklist: list, showsProject: true, editable: false)
-                        .padding(.vertical, 3)
+                        .padding(.vertical, 3).id(list.id)
                 }
             }
         }
@@ -230,7 +235,7 @@ struct WorkInbox: View {
 
     private func rows(_ entries: [DecisionSummary], showsOwner: Bool) -> some View {
         ForEach(entries) { summary in
-            WorkEntryRow(model: model, summary: summary, mode: mode, showsOwner: showsOwner)
+            WorkEntryRow(model: model, summary: summary, mode: mode, showsOwner: showsOwner).id(summary.id)
         }
     }
 
@@ -303,6 +308,18 @@ struct WorkInbox: View {
     private var laterCount: Int {
         laterGroups.reduce(0) { $0 + $1.entries.count } + waiting.count + checklists.count
     }
+
+    /// The upper box has nothing: it shrinks to its header and the proposals take the room.
+    private var actionIsEmpty: Bool { actionCount == 0 && laterCount == 0 && !showsClosed }
+
+    /// The rows of each box in their order, for «altre N» (the ones below the last visible).
+    private var actionIDs: [String] {
+        (urgentGroups.flatMap(\.entries) + unassigned + waitingLate + laterGroups.flatMap(\.entries) + waiting).map(
+            \.id)
+            + checklists.map(\.id) + (showsClosed ? closedShown.map(\.id) : [])
+    }
+
+    private var proposalIDs: [String] { proposals.map(\.id) }
 
     private var isEmpty: Bool { actionCount == 0 && proposalCount == 0 && laterCount == 0 && !showsClosed }
 

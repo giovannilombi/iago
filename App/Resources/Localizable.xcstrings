@@ -1227,6 +1227,17 @@
         }
       }
     },
+    "+ Nuovo…" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ New…"
+          }
+        }
+      }
+    },
     "+ Stream" : {
       "localizations" : {
         "en" : {
@@ -1721,6 +1732,16 @@
         }
       }
     },
+    "Aggiungi un cliente o un progetto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a client or a project"
+          }
+        }
+      }
+    },
     "Aggiungi un'attività" : {
       "localizations" : {
         "en" : {
@@ -1737,6 +1758,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add an entry"
+          }
+        }
+      }
+    },
+    "Aggiungi:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add:"
           }
         }
       }
@@ -1957,6 +1988,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Other transcript"
+          }
+        }
+      }
+    },
+    "altre %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld more"
+          }
+        }
+      }
+    },
+    "Altre %lld voci più in basso" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld more entries below"
           }
         }
       }
@@ -2384,6 +2435,7 @@
       }
     },
     "Apri tutti gli elementi di «%@»" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4137,6 +4189,16 @@
         }
       }
     },
+    "Cliente…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Client…"
+          }
+        }
+      }
+    },
     "Clienti" : {
       "localizations" : {
         "en" : {
@@ -4543,6 +4605,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confirm each email with its attachments"
+          }
+        }
+      }
+    },
+    "Conferma tutte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confirm all"
           }
         }
       }
@@ -5998,11 +6070,22 @@
       }
     },
     "Diventano punti chiave solo se le confermi." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "They become key points only if you confirm them."
+          }
+        }
+      }
+    },
+    "Diventano punti chiave solo se le confermi. Il minuto apre la trascrizione in quel punto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They become key points only if you confirm them. The minute opens the transcript at that point."
           }
         }
       }
@@ -10397,6 +10480,16 @@
         }
       }
     },
+    "Le proposte di questo elemento sono state confermate o scartate." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item's suggestions have been confirmed or dismissed."
+          }
+        }
+      }
+    },
     "Le proposte di registrazione restano finché non rispondi (al massimo 5 minuti)" : {
       "localizations" : {
         "en" : {
@@ -10423,6 +10516,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sections opened and closed in single items go back to what is set here. This cannot be undone."
+          }
+        }
+      }
+    },
+    "Le sezioni si riordinano trascinandole dall'intestazione; l'ordine vale per tutti gli elementi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag a section by its header to reorder; the order applies to every item."
           }
         }
       }
@@ -11299,6 +11402,7 @@
       }
     },
     "Mostra le altre %lld" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -12087,6 +12191,26 @@
         }
       }
     },
+    "Nessuna proposta da confermare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No suggestions to confirm"
+          }
+        }
+      }
+    },
+    "Nessuna proposta da confermare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No suggestions to confirm."
+          }
+        }
+      }
+    },
     "Nessuna registrazione in corso" : {
       "localizations" : {
         "en" : {
@@ -12265,6 +12389,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nothing in progress."
+          }
+        }
+      }
+    },
+    "Niente in ritardo, per oggi o senza responsabile." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nothing late, due today or without an owner."
           }
         }
       }
@@ -13081,7 +13215,19 @@
         }
       }
     },
+    "Nuovo cliente o progetto" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New client or project"
+          }
+        }
+      }
+    },
     "Nuovo cliente…" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13132,6 +13278,7 @@
       }
     },
     "Nuovo progetto o cliente" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13197,6 +13344,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New tag"
+          }
+        }
+      }
+    },
+    "Nuovo:" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New:"
           }
         }
       }
@@ -14249,6 +14407,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Project: %@"
+          }
+        }
+      }
+    },
+    "Progetto…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project…"
           }
         }
       }
@@ -15587,6 +15755,16 @@
         }
       }
     },
+    "Rilascia la sezione dove la vuoi: l'ordine vale per tutti gli elementi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drop the section where you want it: the order applies to every item."
+          }
+        }
+      }
+    },
     "Rimuovere i progetti di esempio?" : {
       "localizations" : {
         "en" : {
@@ -15793,6 +15971,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restore automatic text"
+          }
+        }
+      }
+    },
+    "Ripristina l'ordine delle sezioni" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore the section order"
           }
         }
       }
@@ -17651,6 +17839,16 @@
         }
       }
     },
+    "Sposta la sezione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move section"
+          }
+        }
+      }
+    },
     "Sposta le email importate nella sottocartella «Importate»" : {
       "localizations" : {
         "en" : {
@@ -18694,6 +18892,26 @@
         }
       }
     },
+    "Trascina per cambiare l'altezza dei due box. Doppio clic: metà e metà." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to change the height of the two boxes. Double click: half and half."
+          }
+        }
+      }
+    },
+    "Trascina per cambiare l'ordine delle sezioni, in tutti gli elementi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to change the order of the sections, in every item"
+          }
+        }
+      }
+    },
     "Trascina qui file, cartelle o email" : {
       "localizations" : {
         "en" : {
@@ -19393,6 +19611,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A 1to1, a progress review or a kickoff each get a summary in their own format, with the minute each point comes from. The local engine also suggests decisions and tasks to confirm."
+          }
+        }
+      }
+    },
+    "Un box per elemento: aprilo per vedere e confermare le sue proposte a destra." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One box per item: open it to see and confirm its suggestions on the right."
           }
         }
       }

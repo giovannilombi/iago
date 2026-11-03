@@ -12,10 +12,13 @@ struct NewProjectSheet: View {
     @State private var name = ""
     /// ADR-0038: the client of the new project (preset when created from a client).
     @State private var clientID: String?
+    /// Created from a client: the client is shown, not chosen.
+    let locksClient: Bool
 
-    init(model: AppModel, clientID: String? = nil, onDone: @escaping (Project) -> Void) {
+    init(model: AppModel, clientID: String? = nil, locksClient: Bool = false, onDone: @escaping (Project) -> Void) {
         self.model = model
         self.onDone = onDone
+        self.locksClient = locksClient && clientID != nil
         _clientID = State(initialValue: clientID)
     }
 
@@ -27,7 +30,15 @@ struct NewProjectSheet: View {
             TextField(String(localized: "Nome del progetto"), text: $name)
                 .textFieldStyle(.roundedBorder).frame(width: 380)
                 .onSubmit { if similar.isEmpty { create(trimmed) } }
-            if !model.clients.isEmpty {
+            if locksClient, let client = model.client(clientID) {
+                LabeledContent(String(localized: "Cliente")) {
+                    HStack(spacing: 5) {
+                        ClientMark(color: client.color)
+                        Text(client.name)
+                    }
+                }
+                .frame(width: 380, alignment: .leading)
+            } else if !model.clients.isEmpty {
                 Picker(String(localized: "Cliente"), selection: $clientID) {
                     Text(String(localized: "Nessun cliente")).tag(String?.none)
                     ForEach(model.clients) { Text($0.name).tag(Optional($0.id)) }

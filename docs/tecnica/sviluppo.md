@@ -32,7 +32,7 @@ Le regole complete del team sono in [`README-collaborators.md`](https://github.c
 - **Decisioni:** ogni scelta rilevante è un [ADR](/adr/); un ADR accettato non si riscrive, si modifica con una sezione datata o si sostituisce.
 - **Dati:** mai dati reali nel repository (ADR-0065); l'app non contiene contenuti (ADR-0066).
 - **Indirizzi email:** mai uno personale, né nei file né nei commit; si firma con l'indirizzo anonimo di GitHub (ADR-0065).
-- **Autori:** dopo la 1.0.0-beta ogni commit nomina Giovanni Lombi e Gianluca Sestito (l'hook aggiunge il co-autore); mai un'IA.
+- **Autori:** fino al lavoro sulla condivisione (fase 4) i commit hanno come autore solo Giovanni Lombi; da quella versione nominano anche Gianluca Sestito, aggiunto dall'hook quando la sua riga in `Config/team.txt` non è più commentata (ADR-0089); mai un'IA.
 
 ## Documentazione a ogni commit
 Ogni commit che cambia il comportamento dell'app aggiorna la documentazione nello stesso commit:

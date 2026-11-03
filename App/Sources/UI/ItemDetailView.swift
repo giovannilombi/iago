@@ -51,6 +51,8 @@ struct ItemDetailView: View {
     static let space = "itemDetail"
     /// Open and closed sections of this item.
     @State private var memory: SectionMemory
+    /// The order of the sections, and the one being dragged.
+    @State private var reorder = SectionReorder()
     @State private var hasSummary = false
     @State private var suggestionCount = 0
     @State private var linkCount = 0
@@ -129,6 +131,7 @@ struct ItemDetailView: View {
                     .frame(minWidth: 0, maxWidth: 820, alignment: .leading)
                     .coordinateSpace(.named(Self.space))
                     .environment(\.sectionMemory, memory)
+                    .environment(\.sectionReorder, reorder)
                     .onPreferenceChange(SectionTopsKey.self) { tops in
                         Task { @MainActor in sectionTops = tops }
                     }
@@ -185,6 +188,34 @@ struct ItemDetailView: View {
             ViaClaudeBadge(model: model, entity: .item, id: item.id)
             actions(item)
             if let job = activeJob { jobProgress(job) }
+            if reorder.dragging != nil {
+                Label(
+                    String(localized: "Rilascia la sezione dove la vuoi: l'ordine vale per tutti gli elementi."),
+                    systemImage: "arrow.up.and.down"
+                )
+                .font(.callout).foregroundStyle(Color.accentColor)
+                .transition(.opacity)
+            }
+            // In the order of the view, the standard one or the user's (dragged by a section's header).
+            ForEach(reorder.order, id: \.self) { key in
+                section(key, item).environment(\.sectionKey, key)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func section(_ key: String, _ item: Item) -> some View {
+        switch key {
+        case "audio": if hasAudio { playerSection(item) }
+        case "markers": if item.type == .call { markersSection }
+        case "screenshots":
+            if item.type == .call {
+                ScreenshotsSection(model: model, itemID: itemID) { seconds in
+                    tab = .transcript
+                    Task { await listen(at: seconds) }
+                }
+            }
+        case "summary":
             SummarySection(
                 model: model, item: item,
                 hasText: item.type == .call ? transcript != nil : content?.isEmpty == false,
@@ -194,20 +225,13 @@ struct ItemDetailView: View {
                 // Minutes of a Teams transcript are not minutes of the audio (ADR-0078).
                 if transcript?.isImported != true { Task { await listen(at: seconds) } }
             }
-            SuggestionsSection(model: model, item: item)
-            if hasAudio { playerSection(item) }
-            if item.type == .call {
-                markersSection
-                ScreenshotsSection(model: model, itemID: itemID) { seconds in
-                    tab = .transcript
-                    Task { await listen(at: seconds) }
-                }
-            }
-            textSection(item)
-            notesSection(item)
-            decisionsSection(item)
-            LinksSection(model: model, itemID: itemID)
-            assetsSection
+        case "text": textSection(item)
+        case "suggestions": SuggestionsSection(model: model, item: item)
+        case "decisions": decisionsSection(item)
+        case "notes": notesSection(item)
+        case "links": LinksSection(model: model, itemID: itemID)
+        case "files": assetsSection
+        default: EmptyView()
         }
     }
 
@@ -274,27 +298,25 @@ struct ItemDetailView: View {
         }
     }
 
-    /// The tiles, in the order approved with the prototype; each one names a section's anchor.
+    /// The tiles, in the order of the sections; each one names a section's anchor.
     private func tiles(_ item: Item) -> [DetailTile] {
         func count(_ key: String, _ title: String, _ value: Int, _ tint: Color) -> DetailTile {
             DetailTile(key: key, title: title, value: "\(value)", tint: tint, isEmpty: value == 0)
         }
-        var tiles = [
+        var tiles: [DetailTile] = []
+        if item.type == .call {
+            tiles.append(count("markers", String(localized: "Segnalibri"), markers.count, .orange))
+        }
+        tiles.append(
             DetailTile(
                 key: "summary", title: String(localized: "Sintesi"), value: hasSummary ? "✓" : "—", tint: .indigo,
-                isEmpty: !hasSummary),
-            count("decisions", String(localized: "Punti chiave"), decisions.count, .green),
-            count("suggestions", String(localized: "Proposte"), suggestionCount, .indigo),
-            count("notes", String(localized: "Note"), notes.count, .yellow),
-        ]
+                isEmpty: !hasSummary))
         switch item.type {
         case .call:
             tiles.append(
                 DetailTile(
                     key: "transcript", title: String(localized: "Trascrizione"), value: transcriptSources,
                     tint: .blue, isEmpty: transcript == nil && activeJob == nil))
-            tiles.append(count("markers", String(localized: "Segnalibri"), markers.count, .orange))
-            tiles.append(count("screenshots", String(localized: "Schermate"), shots.count, .teal))
         case .email:
             tiles.append(DetailTile(key: "email", title: String(localized: "Email"), value: "✓", tint: .indigo))
         case .document:
@@ -304,9 +326,19 @@ struct ItemDetailView: View {
                     key: "content", title: String(localized: "Contenuto"), value: has ? "✓" : "—", tint: .teal,
                     isEmpty: !has))
         }
+        tiles.append(count("suggestions", String(localized: "Proposte"), suggestionCount, .indigo))
+        if item.type == .call { tiles.append(count("screenshots", String(localized: "Schermate"), shots.count, .teal)) }
+        tiles.append(count("notes", String(localized: "Note"), notes.count, .yellow))
+        tiles.append(count("decisions", String(localized: "Punti chiave"), decisions.count, .green))
         tiles.append(count("links", String(localized: "Collegamenti"), linkCount, .mint))
         tiles.append(count("files", String(localized: "File"), assets.count, .gray))
-        return tiles
+        // In the order of the sections.
+        let place = { (tile: DetailTile) -> Int in
+            let key = ["transcript", "email", "content"].contains(tile.key) ? "text" : tile.key
+            return reorder.order.firstIndex(of: key) ?? .max
+        }
+        return tiles.enumerated().sorted { (place($0.element), $0.offset) < (place($1.element), $1.offset) }
+            .map(\.element)
     }
 
     /// «IAGO», «Teams», «IAGO + Teams»; «…» while transcribing, «—» without.
@@ -1124,6 +1156,8 @@ struct SectionBox<Content: View>: View {
     /// Outside an item: remembered per kind of section (all transcripts, all notes…).
     @AppStorage private var storedCollapsed: Bool
     @Environment(\.sectionMemory) private var memory
+    @Environment(\.sectionReorder) private var reorder
+    @Environment(\.sectionKey) private var orderKey
 
     init(
         _ title: String, systemImage: String, tint: Color = .accentColor, collapseKey: String? = nil,
@@ -1148,6 +1182,10 @@ struct SectionBox<Content: View>: View {
         return memory?.isCollapsed(collapseKey) ?? storedCollapsed
     }
 
+    /// A section is being dragged: every section shows only its header, so the order reads at a glance.
+    private var reordering: Bool { reorder?.dragging != nil }
+    private var isDragged: Bool { reordering && reorder?.dragging == orderKey }
+
     private func toggle() {
         guard let collapseKey else { return }
         withAnimation(.easeInOut(duration: 0.15)) {
@@ -1163,6 +1201,18 @@ struct SectionBox<Content: View>: View {
         .overlay(alignment: .leading) {
             UnevenRoundedRectangle(topLeadingRadius: 10, bottomLeadingRadius: 10).fill(tint).frame(width: 3)
         }
+        // The dragged section, where it would land.
+        .overlay {
+            if isDragged {
+                RoundedRectangle(cornerRadius: 10).fill(Color.accentColor.opacity(0.1))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10).strokeBorder(
+                            Color.accentColor, style: StrokeStyle(lineWidth: 1.5, dash: [5, 3]))
+                    )
+                    .allowsHitTesting(false)
+            }
+        }
+        .modifier(SectionDrop(key: orderKey, reorder: reorder))
         // Where the card starts: the tiles and the sticky bar scroll there.
         .background {
             if let anchor {
@@ -1178,33 +1228,57 @@ struct SectionBox<Content: View>: View {
     private var full: some View {
         VStack(alignment: .leading, spacing: 10) {
             if collapseKey != nil {
-                Button(action: toggle) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "chevron.right").font(.system(size: 10, weight: .bold))
-                            .foregroundStyle(.secondary)
-                            .rotationEffect(.degrees(collapsed ? 0 : 90))
-                            .frame(width: 12)
-                        heading
-                        Spacer(minLength: 0)
+                HStack(spacing: 6) {
+                    Button(action: toggle) {
+                        HStack(spacing: 6) {
+                            Image(systemName: "chevron.right").font(.system(size: 10, weight: .bold))
+                                .foregroundStyle(.secondary)
+                                .rotationEffect(.degrees(collapsed || reordering ? 0 : 90))
+                                .frame(width: 12)
+                            heading
+                            Spacer(minLength: 0)
+                        }
+                        .contentShape(Rectangle())
                     }
-                    .contentShape(Rectangle())
+                    .buttonStyle(.plain)
+                    .help(collapsed ? String(localized: "Apri") : String(localized: "Chiudi"))
+                    grip
                 }
-                .buttonStyle(.plain)
-                .help(collapsed ? String(localized: "Apri") : String(localized: "Chiudi"))
-                if !collapsed {
+                .modifier(SectionDrag(key: orderKey, reorder: reorder))
+                if !collapsed, !reordering {
                     BoxTitleDivider(padding: 14)
                     content
                 }
             } else {
-                heading
-                BoxTitleDivider(padding: 14)
-                content
+                HStack(spacing: 6) {
+                    heading
+                    Spacer(minLength: 0)
+                    grip
+                }
+                .contentShape(Rectangle())
+                .modifier(SectionDrag(key: orderKey, reorder: reorder))
+                if !reordering {
+                    BoxTitleDivider(padding: 14)
+                    content
+                }
             }
         }
         .padding(14)
         .frame(maxWidth: .infinity, maxHeight: fillsHeight ? .infinity : nil, alignment: .topLeading)
         .background(RoundedRectangle(cornerRadius: 10).fill(IAGOColor.card))
         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.secondary.opacity(0.18)))
+    }
+
+    /// Six dots on the right of the header: the section can be dragged to another place.
+    @ViewBuilder
+    private var grip: some View {
+        if reorder != nil, orderKey != nil {
+            Image(systemName: "line.3.horizontal").font(.system(size: 11, weight: .medium))
+                .foregroundStyle(.tertiary)
+                .frame(width: 22, height: 18).contentShape(Rectangle())
+                .pointerStyle(.grabIdle)
+                .help(String(localized: "Trascina per cambiare l'ordine delle sezioni, in tutti gli elementi"))
+        }
     }
 
     /// Colour as a signal (style A): the icon and the bar carry the section's colour, the title stays neutral.
@@ -1225,10 +1299,13 @@ struct SectionBox<Content: View>: View {
             Label(title, systemImage: systemImage).font(.headline).foregroundStyle(.secondary)
             Text("· \(text)").foregroundStyle(.secondary).lineLimit(2)
             Spacer(minLength: 8)
-            if let emptyAction {
+            if let emptyAction, !reordering {
                 Button(emptyAction.title, action: emptyAction.action).controlSize(.small)
             }
+            grip
         }
+        .contentShape(Rectangle())
+        .modifier(SectionDrag(key: orderKey, reorder: reorder))
         .padding(.horizontal, 14).padding(.vertical, 9)
         .padding(.leading, 0)
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -1236,6 +1313,41 @@ struct SectionBox<Content: View>: View {
         .overlay(
             RoundedRectangle(cornerRadius: 10).strokeBorder(
                 Color.secondary.opacity(0.35), style: StrokeStyle(lineWidth: 1, dash: [4, 3])))
+    }
+}
+
+/// The header of a section of the item view starts a drag of the whole section.
+private struct SectionDrag: ViewModifier {
+    let key: String?
+    let reorder: SectionReorder?
+
+    func body(content: Content) -> some View {
+        if let key, let reorder {
+            content.onDrag {
+                reorder.start(key)
+                return NSItemProvider(object: key as NSString)
+            } preview: {
+                Label(String(localized: "Sposta la sezione"), systemImage: "line.3.horizontal")
+                    .font(.callout.weight(.semibold)).padding(.horizontal, 10).padding(.vertical, 6)
+                    .background(RoundedRectangle(cornerRadius: 7).fill(IAGOColor.card))
+            }
+        } else {
+            content
+        }
+    }
+}
+
+/// A section of the item view makes room for the one being dragged.
+private struct SectionDrop: ViewModifier {
+    let key: String?
+    let reorder: SectionReorder?
+
+    func body(content: Content) -> some View {
+        if let key, let reorder {
+            content.onDrop(of: [.plainText], delegate: SectionDropDelegate(key: key, reorder: reorder))
+        } else {
+            content
+        }
     }
 }
 

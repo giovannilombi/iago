@@ -8,7 +8,6 @@ import os
 struct MainView: View {
     @Bindable var model: AppModel
     @State private var isDropTargeted = false
-    @State private var creatingProject = false
     /// The floating "Chiedi a IAGO" closed with its X: the entry moves to the sidebar.
     @AppStorage("askButtonHidden") private var askButtonHidden = false
     /// Width of the "Chiedi a IAGO" pane, chosen by dragging its edge.
@@ -108,9 +107,15 @@ struct MainView: View {
         .sheet(item: $model.editingNote) { draft in
             NoteEditor(model: model, draft: draft) { model.saveNote($0) }
         }
-        .sheet(isPresented: $creatingProject) {
-            NewProjectSheet(model: model, clientID: currentClientID) { project in
+        .sheet(item: $model.newProject) { request in
+            NewProjectSheet(model: model, clientID: request.clientID, locksClient: request.locksClient) { project in
                 model.select(.library(.project(project.id)))
+            }
+        }
+        .sheet(item: $model.newStreamProject) { project in
+            NewStreamSheet(model: model, project: project) { stream in
+                model.expandedNodes.insert(project.id)
+                model.select(.library(.stream(stream.id)))
             }
         }
         // Files, and emails dragged from Outlook or Mail (promised files, ADR-0040).
@@ -169,6 +174,7 @@ struct MainView: View {
             }
             .safeAreaInset(edge: .top, spacing: 0) { backToSearch }
             .background(IAGOColor.page)
+            .background(ContentColumnWidth(key: columnKey))
             .navigationSplitViewColumnWidth(min: contentWidth.min, ideal: contentWidth.ideal)
         } detail: {
             // "Chiedi a IAGO" sits next to the detail as a plain pane: the system inspector looped AppKit's
@@ -284,7 +290,7 @@ struct MainView: View {
     }
 
     private var sidebar: some View {
-        Sidebar(model: model, createProject: { creatingProject = true })
+        Sidebar(model: model) { model.newProject = AppModel.NewProjectRequest(clientID: currentClientID) }
             .navigationSplitViewColumnWidth(min: 180, ideal: 220)
     }
 
@@ -296,6 +302,8 @@ struct MainView: View {
             DecisionDetailView(model: model, decisionID: id).id(id)
         } else if let id = model.selectedNoteID {
             NoteDetailView(model: model, noteID: id).id(id)
+        } else if let id = model.proposalsItemID, model.item(id) != nil {
+            ItemProposalsPane(model: model, itemID: id).id(id)
         } else {
             ContentUnavailableView {
                 VStack(spacing: 10) {
@@ -382,6 +390,25 @@ struct MainView: View {
 }
 
 extension MainView {
+    /// Which place the middle column's width belongs to (ADR-0087).
+    var columnKey: String {
+        if isSearching { return "search" }
+        let view = model.showsDecisions ? "decisions" : model.showsTimeline ? "timeline" : "list"
+        switch model.sidebar {
+        case .inbox: return "inbox"
+        case .decisions: return "decisions"
+        case .importer: return "importer"
+        case .activity: return "activity"
+        case .labels: return "labels"
+        case .trash: return "trash"
+        case .library(.unclassified): return "unclassified"
+        case .library(.recent): return "recent"
+        case .library(.undefinedProject): return "undefined"
+        case .library: return "scopes/\(view)"
+        case nil: return "none"
+        }
+    }
+
     /// Width of the content column for what it shows.
     var contentWidth: (min: CGFloat, ideal: CGFloat) {
         switch model.sidebar {
@@ -433,10 +460,12 @@ private struct Sidebar: View {
                 }
                 .frame(height: topHeight)
             Hairline()
-            // The title of the whole section, apart from the views above.
-            Text(String(localized: "Progetti").uppercased()).font(.subheadline.weight(.bold)).tracking(0.6)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 14).padding(.top, 20).padding(.bottom, 5)
+            // «Aggiungi» on the right, above clients and projects, with some room before them.
+            HStack(spacing: 6) {
+                Spacer(minLength: 6)
+                newMenu
+            }
+            .padding(.leading, 14).padding(.trailing, 10).padding(.top, 14).padding(.bottom, 20)
             List(selection: selection) {
                 if model.projects.count > Self.filterThreshold {
                     TextField(String(localized: "Filtra progetti"), text: $projectFilter)
@@ -527,34 +556,45 @@ private struct Sidebar: View {
         }
     }
 
-    /// "＋" for a new project or client on the left, the trash on the right: always there, never in the way.
-    private var bottomBar: some View {
-        HStack(spacing: 8) {
-            Menu {
-                Button(String(localized: "Nuovo progetto…"), action: createProject)
-                Button(String(localized: "Nuovo cliente…")) { creatingClient = true }
-            } label: {
-                Image(systemName: "plus").font(.system(size: 13, weight: .medium))
-            }
-            .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
-            .help(String(localized: "Nuovo progetto o cliente"))
-            Spacer()
-            Button {
-                model.select(.trash)
-            } label: {
-                HStack(spacing: 4) {
-                    Image(systemName: "trash").font(.system(size: 12))
-                    if trashCount > 0 { Text("\(trashCount)").font(.caption).monospacedDigit() }
+    /// «Aggiungi» above the projects: a client or a project, like «Aggiungi» of a project.
+    private var newMenu: some View {
+        Menu {
+            Section(String(localized: "Aggiungi:")) {
+                Button {
+                    creatingClient = true
+                } label: {
+                    Label(String(localized: "Cliente…"), systemImage: "person.2")
                 }
-                .padding(.horizontal, 6).padding(.vertical, 3)
-                .background(
-                    RoundedRectangle(cornerRadius: 5).fill(
-                        model.sidebar == .trash ? Color.primary.opacity(0.12) : Color.clear))
+                Button(action: createProject) {
+                    Label(String(localized: "Progetto…"), systemImage: "folder")
+                }
             }
-            .buttonStyle(.plain).foregroundStyle(model.sidebar == .trash ? .primary : .secondary)
-            .help(String(localized: "Cestino"))
+        } label: {
+            Label(String(localized: "Aggiungi"), systemImage: "plus.circle").font(.callout)
         }
-        .padding(.horizontal, 14).padding(.vertical, 8)
+        .menuStyle(.borderlessButton).menuIndicator(.hidden).fixedSize()
+        .help(String(localized: "Aggiungi un cliente o un progetto"))
+    }
+
+    /// «Cestino» alone at the bottom, a row like the views above: always there, never in the way.
+    private var bottomBar: some View {
+        List(selection: selection) {
+            Label {
+                HStack {
+                    Text(String(localized: "Cestino"))
+                    Spacer()
+                    if trashCount > 0 {
+                        Text("\(trashCount)").foregroundStyle(.secondary).monospacedDigit()
+                    }
+                }
+            } icon: {
+                Image(systemName: "trash")
+            }
+            .listItemTint(.monochrome)
+            .tag(AppModel.SidebarSelection.trash)
+        }
+        .listStyle(.sidebar).scrollDisabled(true).scrollContentBackground(.hidden)
+        .frame(height: 40)
     }
 }
 

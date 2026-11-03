@@ -169,6 +169,15 @@ enum DemoMode {
             model.select(.inbox)
             model.viewMode = .list
             await shot("inbox", main)
+            // Only for design reviews: a short window, so both boxes scroll and show «altre N».
+            main?.setFrame(NSRect(x: 80, y: 80, width: 1440, height: 640), display: true)
+            await shot("inbox-basso", main)
+            main?.setFrame(NSRect(x: 80, y: 80, width: 1440, height: 900), display: true)
+            // Only for design reviews: the proposals of one item opened on the right.
+            model.proposalsItemID = (try? model.archive.pendingKeyPointSuggestions(.all))?.first?.itemId
+            try? await Task.sleep(for: .seconds(0.5))
+            await shot("inbox-proposte", main)
+            model.proposalsItemID = nil
             model.viewMode = .list
             model.select(.labels)
             await shot("categorie-tag", main)

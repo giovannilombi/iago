@@ -320,6 +320,21 @@ Servono due persone vere nella stessa stanza (nomi inventati nelle prove scritte
 - [ ] 10v.5 Una call con segnalibri e schermate: nella trascrizione stanno su un velo del loro colore con un filo a sinistra, la schermata con la miniatura.
 - [ ] 10v.6 Kanban con colonne in box e la riga dello stato sotto il titolo; Attività in una colonna con *Ultimi 7 giorni* e *Pronto per lavorare* affiancati; Categorie e tag a tutta finestra.
 
+## 10w. Inbox a due metà
+- [ ] 10w.1 Con voci e proposte, *Da fare ora* occupa la metà alta e *Proposte da confermare* la metà bassa; ognuna scorre da sola e la barra si vede anche con «Mostra barre di scorrimento: automaticamente» nel Mac.
+- [ ] 10w.2 Quando sotto ci sono altre voci, in basso a destra compare *altre N* con tre puntini che si accendono ogni 10 secondi circa; scorrendo fino in fondo sparisce.
+- [ ] 10w.3 Confermate o scartate tutte le proposte, il box in basso si riduce all'intestazione e *Da fare ora* prende tutto lo spazio; *Più avanti* e *Mostra chiuse* stanno in fondo a *Da fare ora*.
+- [ ] 10w.4 Trascinando la maniglia tra i due box cambia la loro altezza; chiudendo e riaprendo IAGO resta com'era; un doppio clic torna a metà e metà.
+- [ ] 10w.5 Un clic sul box di un elemento in *Proposte da confermare* lo evidenzia e apre a destra tutte le sue proposte; *Conferma*, *Scarta*, *Conferma tutte* e *Scarta queste* aggiornano subito i numeri, e l'elemento senza più proposte esce dall'elenco. *Apri l'elemento* apre la sua scheda.
+- [ ] 10w.6 Su un archivio dove non hai mai spostato il divisore, colonna centrale e destra sono a metà in ogni sezione. Allarga la colonna centrale in *Elementi da classificare*: in *Inbox* e in *Recenti* resta com'era, tornando in *Elementi da classificare* ritrovi la tua larghezza, anche dopo aver riavviato IAGO.
+- [ ] 10w.7 Nella scheda di una call le sezioni sono, in ordine: Audio, Segnalibri, Schermate, Sintesi, Trascrizione, Proposte, Punti chiave, Note, Collegamenti, File; le tile in alto seguono lo stesso ordine.
+- [ ] 10w.8 Trascina il titolo di *Note* (o la sua maniglia ≡) verso l'alto: tutte le sezioni si chiudono, in cima compare «Rilascia la sezione dove la vuoi…», *Note* è evidenziata e le altre si spostano mentre passi. Rilascia sopra *Sintesi*: *Note* resta lì, le sezioni tornano aperte o chiuse come prima e le tile si riordinano. Apri un'altra call e un'email: l'ordine è lo stesso, anche dopo aver riavviato IAGO. Rilasciando fuori dalla scheda il riordino si chiude da solo.
+- [ ] 10w.9 *Impostazioni › Generale › Dettaglio elemento › Ripristina l'ordine delle sezioni* (attivo solo dopo un riordino) riporta l'ordine di base alla prossima scheda aperta.
+- [ ] 10w.10 Barra laterale: niente titolo «Progetti»; a destra sopra *In evidenza* c'è *Aggiungi*, che apre *Aggiungi:* con *Cliente…* e *Progetto…*, e funzionano tutti e due. In fondo c'è solo *Cestino*, come le voci in alto, e un clic lo apre.
+- [ ] 10w.11 Passando su un cliente compare solo **+**: apre *Nuovo progetto* con quel cliente scritto e non modificabile, e il progetto creato finisce sotto quel cliente. Dal tasto destro di un progetto, *Nuovo stream…* apre la sua finestra.
+- [ ] 10w.12 Con la barra laterale stretta, resta due secondi sul nome troncato di un progetto: compare il nome intero, sparisce uscendo, e il clic sulla riga apre comunque il progetto.
+- [ ] 10w.13 La linea tra colonna centrale e destra si ferma sotto la barra degli strumenti: in alto c'è solo la linea della barra laterale, in chiaro e in scuro.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.
