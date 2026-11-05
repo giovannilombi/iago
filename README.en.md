@@ -74,7 +74,7 @@ The name comes from the icon: a parrot with a memory of steel.
 - **Summaries by meeting type:** a 1to1 has commitments and feedback, a progress review milestones, risks and decisions, a sales meeting needs, objections and next steps.
   - Every point carries the minute it comes from, verified against the transcript.
   - The summary templates come from Meetily and Hyprnote (MIT) and can be edited.
-- **Transcription** with who is speaking: your voice is "Me", the others are separated by person and can be renamed; a glossary helps with difficult names.
+- **Transcription** with who is speaking: your voice has the name you choose, with the "You" mark; the others are separated by person and are renamed with suggestions of names already known; a glossary helps with difficult names.
 - **Project views:** the **Overview**, the project's **Items**, and the shapes of the story (**Timeline**, **Kanban**, **Graph** of people and linked decisions) with what to show (everything, only items or only key points). IAGO remembers the last view of each project. From a project, **Import files and items…** brings in audio, documents, emails and text directly there.
 - **In Italian and in English:** the language is chosen at first launch and changed in Settings › General; guide, summaries, suggestions and answers follow the chosen language.
 
@@ -82,7 +82,8 @@ The name comes from the icon: a parrot with a memory of steel.
 - **Calls:**
   - recording on two separate tracks (the Mac's audio and your microphone), aligned on the same clock;
   - IAGO notices meetings (Teams, Zoom, Webex, FaceTime, Slack, Calendar) and offers to record them with the right title;
-  - it follows Teams mute.
+  - it follows Teams mute;
+  - if no audio comes from the microphone, the icon's dot turns yellow within a couple of seconds and a panel says so clearly.
 - **Emails** (.eml, .msg), recognized by sender, conversation and attachments, also automatically from a **watched folder** (for example Outlook mail saved by Power Automate).
 - **Documents:** PDF, Word, text and images, with text recognition.
 - **Teams transcripts, audio and video.**
@@ -93,13 +94,13 @@ The name comes from the icon: a parrot with a memory of steel.
 - **Categories** as meeting types, on two levels:
   - the main ones always visible;
   - the families (Agile, Management, People, Operations) when needed.
-- Cross-cutting **tags** and the **Activity** section, with everything IAGO is doing.
+- Cross-cutting **tags**, with **Categories and tags** in three columns to combine a category and several tags, and the **Activity** section, with everything IAGO is doing.
 
 ### It expands, if you want
 - **Claude** (Claude Desktop or Claude Code) connected to IAGO via MCP, to reason about your projects with a more powerful model:
   - it reads only what you enable;
   - it writes notes, key points and documents only with a preview and your confirmation;
-  - it can produce **summaries and suggestions instead of the Mac's engine**: "Copy for Claude" in the item card gives it the right item, and IAGO verifies every quote as it does with its own engine;
+  - it can produce **summaries and suggestions instead of the Mac's engine**: under the summary a box shows the steps to do it, on every Mac, and "Copy for Claude" in the item card gives it the right item; IAGO verifies every quote as it does with its own engine;
   - every write can be undone.
 - **Sharing with the team** *(coming, phase 4)*: shared projects in trusted spaces controlled by you or your company (OneDrive, SharePoint, Google Drive), without an IAGO server.
 - **Obsidian**, per-project **exports** (also in Markdown for an LLM) and an **encrypted backup** to move to another Mac.

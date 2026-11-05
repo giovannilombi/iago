@@ -74,7 +74,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **Sintesi per tipo di riunione:** un 1to1 ha impegni e feedback, un SAL tappe, rischi e decisioni, un incontro commerciale esigenze, obiezioni e prossimi passi.
   - Ogni punto porta il minuto da cui viene, verificato sulla trascrizione.
   - I modelli di sintesi vengono da Meetily e Hyprnote (MIT) e sono modificabili.
-- **Trascrizione** con chi parla: la tua voce è "Io", gli altri vengono separati per persona e si possono rinominare; un glossario aiuta con i nomi difficili.
+- **Trascrizione** con chi parla: la tua voce ha il nome che scegli, con il segno «Tu»; gli altri vengono separati per persona e si rinominano con i suggerimenti dei nomi già noti; un glossario aiuta con i nomi difficili.
 - **Viste di progetto:** il **Riepilogo**, gli **Elementi** del progetto, e le forme della storia (**Timeline**, **Kanban**, **Grafo** delle persone e delle decisioni collegate) con cosa mostrare (tutto, solo gli elementi o solo i punti chiave). IAGO ricorda l'ultima vista di ogni progetto. Da un progetto **Importa file ed elementi…** porta dentro audio, documenti, email e testo direttamente lì.
 - **In italiano e in inglese:** la lingua si sceglie al primo avvio e si cambia in Impostazioni › Generale; guida, sintesi, proposte e risposte seguono la lingua scelta.
 
@@ -82,7 +82,8 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **Call:**
   - registrazione su due tracce separate (l'audio del Mac e il tuo microfono), allineate sullo stesso orologio;
   - IAGO si accorge delle riunioni (Teams, Zoom, Webex, FaceTime, Slack, Calendario) e propone di registrarle con il titolo giusto;
-  - segue il mute di Teams.
+  - segue il mute di Teams;
+  - se dal microfono non arriva audio, il pallino dell'icona diventa giallo in un paio di secondi e un pannello lo dice chiaramente.
 - **Email** (.eml, .msg), riconosciute per mittente, conversazione e allegati, anche in automatico da una **cartella sorvegliata** (per esempio la posta di Outlook salvata da Power Automate).
 - **Documenti:** PDF, Word, testi e immagini, con il riconoscimento del testo.
 - **Trascrizioni di Teams, audio e video.**
@@ -93,13 +94,13 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **Categorie** come tipo di riunione, su due livelli:
   - le principali sempre visibili;
   - le famiglie (Agile, Direzione, Persone, Operazioni) quando servono.
-- **Tag** trasversali e la sezione **Attività**, con tutto quello che IAGO sta facendo.
+- **Tag** trasversali, con **Categorie e tag** a tre colonne per combinare una categoria e più tag, e la sezione **Attività**, con tutto quello che IAGO sta facendo.
 
 ### Si espande, se vuoi
 - **Claude** (Claude Desktop o Claude Code) collegato a IAGO via MCP, per ragionare sui tuoi progetti con un modello più potente:
   - legge solo ciò che abiliti;
   - scrive note, punti chiave e documenti solo con anteprima e tua conferma;
-  - può fare **sintesi e proposte al posto del motore del Mac**: «Copia per Claude» nella scheda gli dà l'elemento giusto, e IAGO verifica ogni citazione come con il suo motore;
+  - può fare **sintesi e proposte al posto del motore del Mac**: sotto la sintesi un riquadro mostra i passi per farlo, su ogni Mac, e «Copia per Claude» nella scheda gli dà l'elemento giusto; IAGO verifica ogni citazione come con il suo motore;
   - ogni scrittura si può annullare.
 - **Condivisione con il gruppo** *(in arrivo, fase 4)*: progetti condivisi in spazi fidati che controlli tu o la tua azienda (OneDrive, SharePoint, Google Drive), senza un server di IAGO.
 - **Obsidian**, **esportazioni** per progetto (anche in Markdown per un LLM) e **backup cifrato** per passare a un altro Mac.
