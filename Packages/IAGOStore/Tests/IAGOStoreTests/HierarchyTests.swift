@@ -95,6 +95,53 @@ import Testing
 }
 
 @Suite struct StarterExampleTests {
+    @Test func chosenProjectsScopeSearchDecisionsAndConversations() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let alfa = try archive.createProject(name: "Alfa")
+        let beta = try archive.createProject(name: "Beta")
+        let gamma = try archive.createProject(name: "Gamma")
+        for project in [alfa, beta, gamma] {
+            let item = try fixture.makeItem()
+            try archive.updateItem(item.id) { $0.projectId = project.id }
+            try archive.addNote(itemID: item.id, body: "Cabina da rifare in \(project.name)")
+            try archive.createDecision(
+                Decision(
+                    text: "Cabina nuova", decidedAt: Date(), projectId: project.id, sourceItemId: item.id,
+                    origin: .selection))
+        }
+        let scope = SearchScope.chosen([beta.id, alfa.id])
+        #expect(scope == .projects([alfa.id, beta.id].sorted()))
+        #expect(SearchScope.chosen([alfa.id]) == .project(alfa.id))
+        #expect(SearchScope.chosen([String]()) == .all)
+        let hits = try archive.search("cabina", scope: scope)
+        #expect(!hits.isEmpty && hits.allSatisfy { [alfa.id, beta.id].contains($0.projectID ?? "") })
+        #expect(try archive.search("cabina").count > hits.count)
+        #expect(try archive.decisions(DecisionQuery(scope: .projects([alfa.id, beta.id]))).count == 2)
+        #expect(try archive.changedSince(.distantPast, scope: scope).items.count == 2)
+        try archive.startConversation(scope: scope, question: "Rischi?", answer: "Nessuno", sources: "[]", model: "m")
+        #expect(try archive.conversations().first?.scope == scope)
+    }
+
+    @Test func labelsCombineCategoryAndEveryTag() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let category = try archive.createCategory(name: "Riunione")
+        let both = try fixture.makeItem()
+        try archive.updateItem(both.id) { $0.categoryId = category.id }
+        try archive.setTags(["budget", "ux"], for: both.id)
+        let one = try fixture.makeItem()
+        try archive.setTags(["budget"], for: one.id)
+        _ = try fixture.makeItem()
+        let tags = Dictionary(uniqueKeysWithValues: try archive.tags(for: both.id).map { ($0.name, $0.id) })
+        let budget = try #require(tags["budget"])
+        let ux = try #require(tags["ux"])
+        #expect(try archive.summaries(categoryID: nil, tagIDs: []).count == 2)
+        #expect(try archive.summaries(categoryID: nil, tagIDs: [budget]).count == 2)
+        #expect(try archive.summaries(categoryID: nil, tagIDs: [budget, ux]).map(\.id) == [both.id])
+        #expect(try archive.summaries(categoryID: category.id, tagIDs: [budget]).map(\.id) == [both.id])
+    }
+
     @Test func archiveInUseGetsNoExample() throws {
         let archive = try ArchiveFixture().archive
         _ = try archive.createProject(name: "Esistente")

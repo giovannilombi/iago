@@ -6,7 +6,9 @@ The **appearance** (automatic, light or dark) is not here: you choose it from th
 - **Permissions:** what is on and what is missing, with guided activation.
 - **Audio:** microphone, meetings (suggestions, calendar, Teams mute).
 - **Transcription:** engine, language, glossary, what to do after Stop, only when plugged in, models.
-- **Voices:** recognizing the same voices from one call to the next (off by default) and known voices, to delete one by one or all at once.
+- **Voices:** at the top *Your name*, that is how your voice appears in transcripts (it is also in General). It is saved with Return, *Save* or by leaving the field, and calls already transcribed with the previous name take the new one, except those where you gave your voice another name. Then recognizing the same voices across calls (**on by default**) and known voices, to delete one by one or all at once.
+
+![Settings › Voices: your name and known voices](img/voci.png)
 - **Engine:** local model, search by meaning, automatic jobs (suggestions and summaries; off by default below 32 GB of memory).
 - **Projects:** rename, archive, delete (in three steps); the mode of each one, *Track mode* or *Manage mode* (the default).
 - **Email and people:** your addresses, contacts, watched folders, rules.

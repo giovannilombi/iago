@@ -27,6 +27,6 @@ Each category has a **template** (the sections to fill in). The templates come f
 ## Which engine
 Summaries need at least **Qwen 3.5 9B**; **Gemma 4 12B** (Macs with 32 GB) writes the richest summaries. The 4B is too small. Times for a 30-minute call: about 1 to 1.5 minutes with the 9B, 2.5 to 4.5 minutes with Gemma.
 
-Below the summary it always says who wrote it: "Summarized with Qwen 3.5 9B on the Mac", or "Summarized by Claude" if you had Claude do it.
+Below the summary it always says who wrote it: "Summarized with Qwen 3.5 9B on the Mac", or "Summarized by Claude" if you had Claude do it. Until there is a summary, a box at the bottom of the block explains how to make it with Claude, in four steps (see *Claude*).
 
 They are **drafts to reread**: the quality depends on the transcript.

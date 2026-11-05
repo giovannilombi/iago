@@ -422,7 +422,7 @@ private struct SearchScopeBar: View {
             projectID = model.stream(id)?.projectId
         case .project(let id): projectID = id
         case .client(let id): result.append(.client(id))
-        case .all: break
+        case .all, .projects: break
         }
         if let projectID {
             result.append(.project(projectID))
@@ -437,6 +437,7 @@ private struct SearchScopeBar: View {
         case .all: return String(localized: "Ricerca in tutto l'archivio")
         case .client(let id): return String(localized: "Ricerca nel cliente «\(model.client(id)?.name ?? "")»")
         case .project(let id): return String(localized: "Ricerca nel progetto «\(projectName(id) ?? "")»")
+        case .projects(let ids): return String(localized: "Ricerca in \(ids.count) progetti")
         case .stream(let id):
             let stream = model.stream(id)
             return String(
@@ -449,7 +450,7 @@ private struct SearchScopeBar: View {
         switch scope {
         case .all: "globe"
         case .client: "building.2"
-        case .project: "folder"
+        case .project, .projects: "folder"
         case .stream: "point.3.connected.trianglepath.dotted"
         }
     }

@@ -1,6 +1,6 @@
 # ADR-0073 — Riconoscere le stesse voci in call diverse
 
-- Stato: accettato
+- Stato: accettato, modificato da ADR-0094 (acceso di default, nomi degli speaker)
 - Data: 2026-10-27
 - Riferimenti: ADR-0006 (FluidAudio, diarizzazione), ADR-0028 (chiavi per elemento), ADR-0049 (proposte), ADR-0058 (dati), ADR-0070 (chi ha prodotto un risultato); richiesta dell'utente del 2026-10-27
 

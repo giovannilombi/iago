@@ -253,6 +253,16 @@
         }
       }
     },
+    "«%@» è già in Claude (icona di Claude nella barra laterale): a posto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” is already in Claude (Claude icon in the sidebar): all set"
+          }
+        }
+      }
+    },
     "«%@» è in IAGO." : {
       "localizations" : {
         "en" : {
@@ -768,11 +778,22 @@
       }
     },
     "%@, dove hai aperto Chiedi" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@, where you opened Ask"
+          }
+        }
+      }
+    },
+    "%@, tutti i progetti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, all projects"
           }
         }
       }
@@ -951,6 +972,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld duplicates"
+          }
+        }
+      }
+    },
+    "%lld elementi · in tutti i progetti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld items · in every project"
           }
         }
       }
@@ -1310,6 +1341,16 @@
         }
       }
     },
+    "⚠︎ Nessun audio dal microfono: registro solo l'audio di sistema" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠︎ No audio from the microphone: recording system audio only"
+          }
+        }
+      }
+    },
     "⚠︎ Problema nella registrazione. Dettaglio tecnico: %@" : {
       "localizations" : {
         "en" : {
@@ -1356,12 +1397,32 @@
         }
       }
     },
+    "1 elemento · in tutti i progetti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 item · in every project"
+          }
+        }
+      }
+    },
     "1 momento" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 moment"
+          }
+        }
+      }
+    },
+    "1 progetto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 project"
           }
         }
       }
@@ -1406,7 +1467,18 @@
         }
       }
     },
+    "A tutta finestra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full window"
+          }
+        }
+      }
+    },
     "A-Z" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1586,12 +1658,32 @@
         }
       }
     },
+    "Aggiornata 1 call." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 call updated."
+          }
+        }
+      }
+    },
     "Aggiornate" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Updated"
+          }
+        }
+      }
+    },
+    "Aggiornate %lld call." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld calls updated."
           }
         }
       }
@@ -1708,6 +1800,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add person"
+          }
+        }
+      }
+    },
+    "Aggiungi progetti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add projects"
+          }
+        }
+      }
+    },
+    "Aggiungi progetti…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add projects…"
           }
         }
       }
@@ -1853,6 +1965,7 @@
       }
     },
     "Allarga a" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1863,6 +1976,7 @@
       }
     },
     "Allarga contesto" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1978,6 +2092,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "High"
+          }
+        }
+      }
+    },
+    "Alternativa: fai la sintesi con Claude" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternative: write the summary with Claude"
+          }
+        }
+      }
+    },
+    "Alternativa: puoi chiedere le proposte anche a Claude." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternative: you can also ask Claude for the suggestions."
+          }
+        }
+      }
+    },
+    "Alternativa: puoi fare la sintesi anche con Claude." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternative: you can also make the summary with Claude."
           }
         }
       }
@@ -2213,6 +2357,16 @@
         }
       }
     },
+    "Applica" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apply"
+          }
+        }
+      }
+    },
     "Apri" : {
       "localizations" : {
         "en" : {
@@ -2414,6 +2568,16 @@
         }
       }
     },
+    "Apri la guida: Claude" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open the guide: Claude"
+          }
+        }
+      }
+    },
     "Apri la nota da cui è nata" : {
       "localizations" : {
         "en" : {
@@ -2446,6 +2610,7 @@
       }
     },
     "Apri una categoria o un tag per vedere tutti i suoi elementi, in ogni progetto. Con il tasto destro lo fissi in evidenza nella barra laterale." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3384,6 +3549,16 @@
         }
       }
     },
+    "Cancella la ricerca" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear the search"
+          }
+        }
+      }
+    },
     "Cartella del vault" : {
       "localizations" : {
         "en" : {
@@ -3504,6 +3679,16 @@
         }
       }
     },
+    "Cerca" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search"
+          }
+        }
+      }
+    },
     "Cerca di nuovo" : {
       "localizations" : {
         "en" : {
@@ -3521,6 +3706,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search the archive  ·  #tag  ·  category:"
+          }
+        }
+      }
+    },
+    "Cerca nell'archivio (⌘F)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search the archive (⌘F)"
           }
         }
       }
@@ -3556,6 +3751,16 @@
         }
       }
     },
+    "Cerca progetti o clienti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search projects or clients"
+          }
+        }
+      }
+    },
     "Cerca proposte" : {
       "localizations" : {
         "en" : {
@@ -3587,11 +3792,22 @@
       }
     },
     "Cerca un tag" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search for a tag"
+          }
+        }
+      }
+    },
+    "Cerca uno o più tag" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search one or more tags"
           }
         }
       }
@@ -3752,6 +3968,27 @@
         }
       }
     },
+    "Chiedi a Claude: IAGO copia la richiesta e apre Claude, tu la incolli e confermi qui il risultato" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask Claude: IAGO copies the request and opens Claude, you paste it and confirm the result here"
+          }
+        }
+      }
+    },
+    "Chiedi a Claude: incolli la richiesta in Claude e confermi qui il risultato" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ask Claude: paste the request in Claude and confirm the result here"
+          }
+        }
+      }
+    },
     "Chiedi a IAGO" : {
       "localizations" : {
         "en" : {
@@ -3848,6 +4085,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Close panel (Esc)"
+          }
+        }
+      }
+    },
+    "Chiudi la ricerca" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Close the search"
           }
         }
       }
@@ -3994,6 +4241,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Claude Desktop"
+          }
+        }
+      }
+    },
+    "Claude Desktop è aperto: vedrà «%@» solo dopo un riavvio, perché legge i progetti condivisi quando si apre. Chiudilo (⌘Q) e riaprilo, oppure lascia fare a IAGO." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Desktop is open: it will see “%@” only after a restart, because it reads shared projects when it opens. Quit it (⌘Q) and open it again, or let IAGO do it."
+          }
+        }
+      }
+    },
+    "Claude Desktop è aperto: vedrà i progetti appena condivisi solo dopo un riavvio, perché li legge quando si apre. Chiudilo (⌘Q) e riaprilo, oppure lascia fare a IAGO." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude Desktop is open: it will see the projects you just shared only after a restart, because it reads them when it opens. Quit it (⌘Q) and open it again, or let IAGO do it."
+          }
+        }
+      }
+    },
+    "Claude è collegato a IAGO" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Claude is connected to IAGO"
           }
         }
       }
@@ -4259,6 +4536,37 @@
         }
       }
     },
+    "Collega Claude a IAGO, una volta sola" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Claude to IAGO, just once"
+          }
+        }
+      }
+    },
+    "Collega Claude anche a «%@»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Claude to “%@” too"
+          }
+        }
+      }
+    },
+    "Collega Claude anche a questo progetto: ora vede solo altri progetti" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connect Claude to this project too: right now it only sees other projects"
+          }
+        }
+      }
+    },
     "Collega Claude…" : {
       "localizations" : {
         "en" : {
@@ -4445,6 +4753,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "What's your name in transcripts?"
+          }
+        }
+      }
+    },
+    "come?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "how?"
           }
         }
       }
@@ -4649,6 +4967,27 @@
         }
       }
     },
+    "Consenti «%@» a Claude, poi riavvia Claude Desktop o Claude Code" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow “%@” to Claude, then restart Claude Desktop or Claude Code"
+          }
+        }
+      }
+    },
+    "Consenti a Claude di leggere e scrivere questo progetto" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Claude to read and write this project"
+          }
+        }
+      }
+    },
     "Consenti a IAGO l'uso del microfono in Impostazioni di Sistema › Privacy e sicurezza › Microfono." : {
       "localizations" : {
         "en" : {
@@ -4845,6 +5184,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Context"
+          }
+        }
+      }
+    },
+    "Contesto globale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Global context"
           }
         }
       }
@@ -5449,6 +5798,16 @@
         }
       }
     },
+    "Da oltre 30 secondi il microfono è muto mentre gli altri parlano. Se stai solo ascoltando va tutto bene; se stai parlando, controlla il microfono o il mute della call." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The microphone has been silent for over 30 seconds while the others talk. If you are only listening, all is well; if you are speaking, check the microphone or the call's mute."
+          }
+        }
+      }
+    },
     "Da scaricare: %@" : {
       "localizations" : {
         "en" : {
@@ -5565,6 +5924,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "since %@"
+          }
+        }
+      }
+    },
+    "Dal microfono non arriva audio: IAGO sta registrando solo l'audio di sistema e la tua voce non finirà nella trascrizione. Controlla che sia collegato, o scegline un altro." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No audio is coming from the microphone: IAGO is recording system audio only and your voice will not be in the transcript. Check that it is connected, or choose another one."
           }
         }
       }
@@ -6549,6 +6918,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Items"
+          }
+        }
+      }
+    },
+    "Elementi che hanno tutti questi tag, in tutti i progetti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items that have all these tags, in every project."
           }
         }
       }
@@ -8629,6 +9008,16 @@
         }
       }
     },
+    "Il contesto cambia con la barra laterale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The context changes with the sidebar"
+          }
+        }
+      }
+    },
     "Il doppio della memoria (circa 6 GB) e del tempo del 4B" : {
       "localizations" : {
         "en" : {
@@ -8699,6 +9088,26 @@
         }
       }
     },
+    "Il microfono non registra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The microphone is not recording"
+          }
+        }
+      }
+    },
+    "Il microfono non sente la tua voce" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The microphone does not hear your voice"
+          }
+        }
+      }
+    },
     "Il miglior riordino del testo" : {
       "localizations" : {
         "en" : {
@@ -8755,6 +9164,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The Mac engine will write a new summary in place of Claude's."
+          }
+        }
+      }
+    },
+    "Il motore del Mac va bene su questo Mac. Se preferisci, Claude scrive la sintesi con lo stesso modello della categoria, e IAGO controlla ogni citazione come fa con il motore del Mac." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Mac's engine works well on this Mac. If you prefer, Claude writes the summary with the same category template, and IAGO checks every quote as it does with the Mac's engine."
           }
         }
       }
@@ -9237,6 +9656,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In “%@”. Nothing is applied without your confirmation."
+          }
+        }
+      }
+    },
+    "In alternativa, con Claude:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alternatively, with Claude:"
           }
         }
       }
@@ -9773,6 +10202,16 @@
         }
       }
     },
+    "Invio o ✓ per salvare, Esc per annullare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Return or ✓ to save, Esc to cancel"
+          }
+        }
+      }
+    },
     "Io" : {
       "localizations" : {
         "en" : {
@@ -9895,6 +10334,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The audio is deleted after the transcript is checked"
+          }
+        }
+      }
+    },
+    "L'elemento è nel progetto «%@»" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The item is in the project “%@”"
           }
         }
       }
@@ -10830,6 +11280,27 @@
         }
       }
     },
+    "Metti l'elemento in un progetto, dal menu Progetto in alto: Claude scrive solo nei progetti" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Put the item in a project, from the Project menu at the top: Claude writes only in projects"
+          }
+        }
+      }
+    },
+    "Metti l'elemento in un progetto: Claude scrive solo lì" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Put the item in a project: Claude writes only there"
+          }
+        }
+      }
+    },
     "Metti un elemento in un progetto" : {
       "localizations" : {
         "en" : {
@@ -11678,6 +12149,16 @@
         }
       }
     },
+    "Nel progetto «%@»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In the project “%@”"
+          }
+        }
+      }
+    },
     "nel testo" : {
       "localizations" : {
         "en" : {
@@ -11729,11 +12210,22 @@
       }
     },
     "Nelle trascrizioni la tua voce (il microfono del Mac) compare con questo nome." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "In transcripts, your voice (the Mac's microphone) appears with this name."
+          }
+        }
+      }
+    },
+    "Nelle trascrizioni la tua voce (il microfono del Mac) compare con questo nome. Cambiandolo, lo prendono anche le call già trascritte con il nome di prima." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In transcripts your voice (the Mac's microphone) appears with this name. If you change it, calls already transcribed with the previous name take the new one too."
           }
         }
       }
@@ -11744,6 +12236,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No network access so far."
+          }
+        }
+      }
+    },
+    "Nessun audio dal microfono" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No audio from the microphone"
           }
         }
       }
@@ -11828,6 +12330,16 @@
         }
       }
     },
+    "Nessun elemento con queste etichette insieme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No item has these labels together"
+          }
+        }
+      }
+    },
     "Nessun elemento in questo progetto" : {
       "localizations" : {
         "en" : {
@@ -11904,6 +12416,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No engine: features that use one will ask you to choose one. Everything else works."
+          }
+        }
+      }
+    },
+    "Nessun progetto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No project"
+          }
+        }
+      }
+    },
+    "Nessun progetto con «%@»" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No project with “%@”"
           }
         }
       }
@@ -12714,6 +13246,16 @@
         }
       }
     },
+    "Non qui: uso il motore del Mac" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not here: I use the Mac's engine"
+          }
+        }
+      }
+    },
     "Non ricordare più da dove nasce" : {
       "localizations" : {
         "en" : {
@@ -12765,6 +13307,7 @@
       }
     },
     "Non salvato · ⏎ per salvare, Esc per annullare" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -13619,6 +14162,16 @@
         }
       }
     },
+    "Passa alla ricerca semplice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch to simple search"
+          }
+        }
+      }
+    },
     "Passo %lld di %lld" : {
       "localizations" : {
         "en" : {
@@ -13771,6 +14324,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "To make IAGO work at 100%"
+          }
+        }
+      }
+    },
+    "Per farla con Claude" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To do it with Claude"
           }
         }
       }
@@ -13965,6 +14528,16 @@
         }
       }
     },
+    "per utilizzo · %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "by use · %lld"
+          }
+        }
+      }
+    },
     "Perderai le impronte di %lld persone e quelle degli speaker non ancora nominati. Non si potranno recuperare." : {
       "localizations" : {
         "en" : {
@@ -14072,6 +14645,7 @@
       }
     },
     "Più usati" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -14377,6 +14951,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Projects in the vault"
+          }
+        }
+      }
+    },
+    "Progetti scelti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chosen projects"
           }
         }
       }
@@ -14951,6 +15535,16 @@
         }
       }
     },
+    "Questa call è stata trascritta senza le impronte delle voci: i nomi restano, ma per far imparare a IAGO le voci usa Ritrascrivi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This call was transcribed without voice prints: the names stay, but to let IAGO learn the voices use Transcribe again."
+          }
+        }
+      }
+    },
     "Questa categoria è impostata su «Nessuna sintesi» (Impostazioni › Categorie)." : {
       "localizations" : {
         "en" : {
@@ -15359,6 +15953,36 @@
         }
       }
     },
+    "Restringi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Narrow"
+          }
+        }
+      }
+    },
+    "Restringi contesto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Narrow context"
+          }
+        }
+      }
+    },
+    "Restringi contesto…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Narrow context…"
+          }
+        }
+      }
+    },
     "Ri-registra" : {
       "localizations" : {
         "en" : {
@@ -15429,6 +16053,26 @@
         }
       }
     },
+    "Riavvia Claude" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart Claude"
+          }
+        }
+      }
+    },
+    "Riavvia Claude Desktop" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restart Claude Desktop"
+          }
+        }
+      }
+    },
     "Riavvia e ripristina" : {
       "localizations" : {
         "en" : {
@@ -15455,6 +16099,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restart IAGO?"
+          }
+        }
+      }
+    },
+    "Ricerca in %lld progetti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search in %lld projects"
           }
         }
       }
@@ -15521,6 +16175,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search by meaning"
+          }
+        }
+      }
+    },
+    "Ricerca semplice" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simple search"
           }
         }
       }
@@ -15641,6 +16305,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rearrange"
+          }
+        }
+      }
+    },
+    "Riduci a pannello" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back to a pane"
           }
         }
       }
@@ -16639,6 +17313,16 @@
         }
       }
     },
+    "Scegli il microfono" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the microphone"
+          }
+        }
+      }
+    },
     "Scegli il progetto a cui appartiene la decisione." : {
       "localizations" : {
         "en" : {
@@ -16709,6 +17393,16 @@
         }
       }
     },
+    "Scegli un elemento dall'elenco" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose an item from the list"
+          }
+        }
+      }
+    },
     "Scegli un elemento dall'elenco, oppure trascina qui un file per importarlo." : {
       "localizations" : {
         "en" : {
@@ -16725,6 +17419,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose…"
+          }
+        }
+      }
+    },
+    "Scelto da te: resta anche cambiando sezione" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chosen by you: stays when you change section"
           }
         }
       }
@@ -16920,6 +17624,16 @@
         }
       }
     },
+    "Se usi Claude, puoi collegarlo a IAGO una volta: poi sintesi e proposte le può fare lui, con i controlli di IAGO." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If you use Claude, you can connect it to IAGO once: then Claude can do summaries and suggestions, with IAGO's checks."
+          }
+        }
+      }
+    },
     "Seconda trascrizione" : {
       "localizations" : {
         "en" : {
@@ -17071,12 +17785,32 @@
         }
       }
     },
+    "Segue la sezione aperta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follows the open section"
+          }
+        }
+      }
+    },
     "Segui il mute di Teams con l'Accessibilità di macOS" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Follow Teams mute with macOS Accessibility"
+          }
+        }
+      }
+    },
+    "Segui la sezione aperta" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follow the open section"
           }
         }
       }
@@ -17097,6 +17831,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You're in a %@ call"
+          }
+        }
+      }
+    },
+    "Sei tu, chi usa IAGO: in questo file importato lo speaker ha il tuo nome (Impostazioni › Voci › Il tuo nome)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is you, the person using IAGO: in this imported file the speaker has your name (Settings › Voices › Your name)."
+          }
+        }
+      }
+    },
+    "Sei tu, chi usa IAGO: la tua voce, presa dal microfono del Mac in una call registrata con IAGO." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This is you, the person using IAGO: your voice, taken from the Mac's microphone in a call recorded with IAGO."
           }
         }
       }
@@ -17293,6 +18047,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Used to record your voice during calls. IAGO records only when you start it."
+          }
+        }
+      }
+    },
+    "Serve più di un progetto: con uno solo non c'è da restringere" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Needs more than one project: with one there is nothing to narrow"
           }
         }
       }
@@ -17909,6 +18673,26 @@
         }
       }
     },
+    "Spunta altri progetti da includere" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tick more projects to include"
+          }
+        }
+      }
+    },
+    "Spunta i progetti da aggiungere a quelli di adesso. La scelta resta finché non la cambi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tick the projects to add to the current ones. The choice stays until you change it."
+          }
+        }
+      }
+    },
     "Sta per iniziare «%@»" : {
       "localizations" : {
         "en" : {
@@ -18461,6 +19245,16 @@
         }
       }
     },
+    "Ti serve una risposta, un riassunto o un confronto? La ricerca semplice non usa l'AI: trova i passaggi. Per le risposte con le fonti chiedi a IAGO." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Need an answer, a summary or a comparison? Simple search does not use AI: it finds passages. For answers with sources, ask IAGO."
+          }
+        }
+      }
+    },
     "Tieni il filo del progetto: elementi, decisioni e attività da spuntare." : {
       "localizations" : {
         "en" : {
@@ -18651,6 +19445,26 @@
         }
       }
     },
+    "Togli «%@» dal contesto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove “%@” from the context"
+          }
+        }
+      }
+    },
+    "Togli #%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove #%@"
+          }
+        }
+      }
+    },
     "Togli da «In evidenza»" : {
       "localizations" : {
         "en" : {
@@ -18721,6 +19535,26 @@
         }
       }
     },
+    "Togli la spunta ai progetti da escludere" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Untick the projects to leave out"
+          }
+        }
+      }
+    },
+    "Togli la spunta ai progetti da escludere. La scelta resta finché non la cambi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Untick the projects to leave out. The choice stays until you change it."
+          }
+        }
+      }
+    },
     "Togli la voce" : {
       "localizations" : {
         "en" : {
@@ -18782,6 +19616,7 @@
       }
     },
     "Torna a" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18792,6 +19627,7 @@
       }
     },
     "Torna ai risultati per «%@»" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -18908,6 +19744,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Drag to change the order of the sections, in every item"
+          }
+        }
+      }
+    },
+    "Trascina per cambiare la larghezza · doppio clic: misure di base" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to change the width · double click: base widths"
           }
         }
       }
@@ -19263,6 +20109,26 @@
         }
       }
     },
+    "Trova i passaggi con le parole che scrivi in trascrizioni, note, email, documenti e punti chiave, con il minuto della call. Usala quando sai cosa cercare: un nome, una sigla, un numero, una frase detta. Accetta anche #tag e categoria:." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finds the passages with the words you type in transcripts, notes, emails, documents and key points, with the minute of the call. Use it when you know what to look for: a name, an acronym, a number, a sentence someone said. It also accepts #tag and category:."
+          }
+        }
+      }
+    },
+    "Trova i passaggi con le parole che scrivi, e quelli che dicono la stessa cosa con altre parole, in trascrizioni, note, email, documenti e punti chiave, con il minuto della call. Usala quando sai cosa cercare: un nome, una sigla, un numero, una frase detta. Accetta anche #tag e categoria:." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finds the passages with the words you type, and those that say the same thing in other words, in transcripts, notes, emails, documents and key points, with the minute of the call. Use it when you know what to look for: a name, an acronym, a number, a sentence someone said. It also accepts #tag and category:."
+          }
+        }
+      }
+    },
     "Trovato per il senso della domanda, anche con altre parole" : {
       "localizations" : {
         "en" : {
@@ -19279,6 +20145,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Found only in the call's other transcript: opening it opens that tab"
+          }
+        }
+      }
+    },
+    "Tu" : {
+      "comment" : "Badge next to the user's own voice in a transcript",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You"
           }
         }
       }
@@ -19310,6 +20187,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Whole memory"
+          }
+        }
+      }
+    },
+    "Tutta la memoria, tutti i progetti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Whole memory, every project"
           }
         }
       }
@@ -19360,6 +20247,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "All"
+          }
+        }
+      }
+    },
+    "Tutti gli elementi con una categoria o un tag" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every item with a category or a tag"
           }
         }
       }
@@ -19621,6 +20518,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "One box per item: open it to see and confirm its suggestions on the right."
+          }
+        }
+      }
+    },
+    "Un clic su una categoria la sceglie, un altro la toglie; i tag cercati si sommano." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One click on a category chooses it, another removes it; the tags you search add up."
           }
         }
       }
@@ -19970,6 +20877,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "It sees only the projects you enable below (and unfiled items only if you choose the connection that includes them). The Trash is never visible. Every read goes into the log at the bottom of this page."
+          }
+        }
+      }
+    },
+    "Vedi come" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "See how"
           }
         }
       }

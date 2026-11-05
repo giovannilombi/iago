@@ -13,6 +13,7 @@ struct VoicesPane: View {
     @State private var typed = ""
 
     var body: some View {
+        MyNameGroup(model: model)
         SettingsGroup(
             title: String(localized: "Riconoscimento delle voci"),
             footnote: String(
@@ -149,5 +150,61 @@ struct VoicesPane: View {
     private func cancel() {
         step = 0
         typed = ""
+    }
+}
+
+/// «Il tuo nome» (Generale and Voci): how the user's voice, the Mac's microphone, is named in the transcripts. It
+/// applies with Return, the button or by leaving the field, and the calls that still have the old name take the new one.
+struct MyNameGroup: View {
+    let model: AppModel
+    @State private var name = ""
+    @State private var saved = ""
+    @State private var changed: Int?
+    @FocusState private var focused: Bool
+
+    private var trimmed: String { name.trimmingCharacters(in: .whitespaces) }
+    private var pending: Bool { trimmed != saved && !trimmed.isEmpty }
+
+    var body: some View {
+        SettingsGroup(
+            title: String(localized: "Il tuo nome"),
+            footnote: String(
+                localized:
+                    "Nelle trascrizioni la tua voce (il microfono del Mac) compare con questo nome. Cambiandolo, lo prendono anche le call già trascritte con il nome di prima."
+            )
+        ) {
+            HStack {
+                TextField(MeLabel.defaultName, text: $name).textFieldStyle(.roundedBorder).frame(maxWidth: 260)
+                    .focused($focused)
+                    .onSubmit(save)
+                if pending {
+                    Button(String(localized: "Salva"), action: save).keyboardShortcut(.defaultAction)
+                }
+            }
+            if let changed, changed > 0 {
+                Text(
+                    changed == 1
+                        ? String(localized: "Aggiornata 1 call.") : String(localized: "Aggiornate \(changed) call.")
+                )
+                .font(.caption).foregroundStyle(.secondary)
+            }
+        }
+        .onAppear {
+            saved = model.meName
+            name = saved
+        }
+        .onChange(of: focused) { _, now in if !now, pending { save() } }
+    }
+
+    private func save() {
+        guard pending else { return }
+        let old = saved
+        let value = trimmed
+        model.perform { try model.archive.setSetting(TranscriptionService.meLabelKey, value) }
+        let items = (try? model.archive.renameMe(from: old, to: value)) ?? []
+        for item in items { model.refreshTextAssets(item) }
+        saved = value
+        changed = items.count
+        model.reload()
     }
 }

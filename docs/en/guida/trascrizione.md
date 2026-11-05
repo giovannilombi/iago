@@ -8,8 +8,10 @@ Transcription happens on the Mac. Two engines:
 | Parakeet | about 4 times faster | less accurate on names |
 
 ## Who is speaking
-Your track is **Me** (the name you gave at the start). The others' voices are separated by person ("Speaker 1", "Speaker 2"…). **Rename the speakers** in the item card, in the field next to *Speaker:*.
-- The name is saved with **Return** or with the **⏎** button next to the field, and only then does it change in the transcript. Until you save it the field has a **red border**: the text stays there even if you move to another item, and **Esc** cancels it.
+Your track is **Me**, or the name you gave at the start (you change it in Settings › Voices › *Your name*). The others' voices are separated by person ("Speaker 1", "Speaker 2"…). **Rename the speakers** in the item card, in the field next to *Speaker:*.
+- **You:** next to your voice, in the transcript and in the speaker fields, there is the **You** mark. Hovering over it with the mouse tells why: in a call recorded with IAGO it is the voice taken from the Mac's microphone; in an imported file it is the speaker who has your name.
+- **Suggestions:** while you type, the names IAGO already knows appear under the field (people, speakers named in other calls, those present), leaving out whoever already has a name in this call. Pick one with a click or with the arrow keys.
+- The name is saved with **Return**, with the **✓** button next to the field or **by leaving the field**. Until it is saved the field has a blue border: the text stays there even if you move to another item, and **Esc** cancels it.
 - **Similar names:** if a similar name already exists, IAGO asks whether it is the same person, for example «*Antonello* already exists. Is *Lello* the same person?». It recognizes names written differently (*Marco* and *Marco Rossi*), typos and the most common Italian nicknames (*Lello* and *Antonello*, *Peppe* and *Giuseppe*). If you say yes it uses the name it already knows and remembers it: next time it suggests it right away, also for nicknames it did not know.
 - **Same name for two speakers:** sometimes the same voice gets split in two. If you give a speaker the name of another one in the same call, IAGO offers to **join** them: a single speaker remains, with all their sentences. Below the fields appears «Speaker 3 joined to Antonello» with **Separate**, which puts it back as it was.
 - The names apply to exports and to what the engine writes from then on. A summary already written stays as it is: *Regenerate* rewrites it with the new names.
@@ -25,9 +27,9 @@ People connected remotely are always told apart, even many of them from the same
 - **Present:** in the card, and in the panel after Stop, write who was there (a name and Return, or several names separated by commas). Next to each speaker still without a name a button lets you choose among those present. Those present also go into exports and *Share*.
 
 ## Recognizing voices
-In **Settings › Voices** you can turn on *Recognize voices from one call to the next* (off by default). When you name a speaker, IAGO remembers their voice; in later calls it suggests the name ("Speaker 2 becomes Marco", *Recognized by voice*) and you confirm or dismiss it. It never assigns a name on its own.
+*Recognize voices across calls* is **on by default**; you turn it off in **Settings › Voices**. When you name a speaker, IAGO remembers their voice; in later calls it suggests the name ("Speaker 2 becomes Marco", *Recognized by voice*) and you confirm or dismiss it. It never assigns a name on its own.
 
-- It applies to calls transcribed after you turn it on; for a call already transcribed, use **Transcribe again**.
+- It applies to calls transcribed with recognition on. A call transcribed earlier has no voice prints: a line under the speaker names says so, and with **Transcribe again** IAGO learns them, tying them at once to the names already given.
 - It needs at least about ten seconds of speech to recognize a voice.
 - The room's voices count too, when they are separated. Yours («Me») does not.
 - Voices stay only on the Mac and never go to Claude or into exports. In the same panel you see the known voices and can delete them one by one or all together.

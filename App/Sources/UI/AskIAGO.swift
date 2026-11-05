@@ -87,33 +87,8 @@ struct AskIAGOSidebarRow: View {
     }
 }
 
-/// Back to the search results after opening another section: the search is kept, this says so and brings it back.
-struct BackToSearchBar: View {
-    @Bindable var model: AppModel
-
-    var body: some View {
-        Button {
-            model.showsSearch = true
-        } label: {
-            HStack(spacing: 6) {
-                Image(systemName: "magnifyingglass")
-                Text(String(localized: "Torna ai risultati per «\(model.searchText)»")).lineLimit(1)
-                Spacer(minLength: 4)
-                Text(String(localized: "\(model.searchHits.count) risultati")).foregroundStyle(.secondary)
-                    .monospacedDigit()
-                Image(systemName: "arrow.uturn.backward")
-            }
-            .font(.callout)
-            .padding(.horizontal, 12).padding(.vertical, 7)
-            .background(RoundedRectangle(cornerRadius: 8).fill(Color.accentColor.opacity(0.12)))
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .padding(.horizontal, 10).padding(.top, 6).padding(.bottom, 4)
-    }
-}
-
-/// The "Chiedi a IAGO" pane with its draggable left edge: at least 300 points, and the detail keeps at least 320.
+/// The right pane with its draggable left edge, for «Chiedi a IAGO» or «Ricerca semplice» (ADR-0092): at least 300
+/// points, and the detail keeps at least 320.
 struct ChatPane: View {
     @Bindable var model: AppModel
     @Binding var width: Double
@@ -147,7 +122,7 @@ struct ChatPane: View {
                                 }
                                 .onEnded { _ in dragStart = nil })
                 }
-            ChatPanel(model: model)
+            if model.showsSearch { SearchPanel(model: model) } else { ChatPanel(model: model) }
         }
     }
 }

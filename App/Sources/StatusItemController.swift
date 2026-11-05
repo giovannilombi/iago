@@ -17,6 +17,12 @@ final class StatusItemController: NSObject {
     private var refreshTask: Task<Void, Never>?
     private var micOverrideUID: String?
     private var bookmarkFlashUntil: Date?
+    /// ADR-0093: panels when the microphone gives nothing, or stays silent while the others talk.
+    private let micPanels = CallPrompts()
+    /// The silent microphone is told once per recording: listening in silence is normal.
+    private var toldSilentMic = false
+    /// The absent microphone's panel was answered: not again until the microphone comes back and goes again.
+    private var answeredAbsentMic = false
     private var importingCount = 0
     private let transcription: TranscriptionService
     /// Running transcription job and its progress (FR-01 "job in corso").
@@ -57,12 +63,66 @@ final class StatusItemController: NSObject {
     private func refresh() async {
         snapshot = await controller.snapshot()
         render()
+        updateMicPanels()
+    }
+
+    private static let absentPanel = "mic.absent"
+    private static let silentPanel = "mic.silent"
+
+    /// ADR-0093: a panel as soon as nothing arrives from the microphone, gone when it comes back; and once per
+    /// recording when the microphone is silent for over 30 s while the others talk.
+    private func updateMicPanels() {
+        guard let snapshot, snapshot.state != .idle else {
+            micPanels.closeAll()
+            toldSilentMic = false
+            answeredAbsentMic = false
+            return
+        }
+        if snapshot.micAbsent {
+            micPanels.close(Self.silentPanel)
+            if !answeredAbsentMic {
+                micPanels.show(
+                    micPanel(
+                        id: Self.absentPanel, title: String(localized: "Il microfono non registra"),
+                        message: String(
+                            localized:
+                                "Dal microfono non arriva audio: IAGO sta registrando solo l'audio di sistema e la tua voce non finirà nella trascrizione. Controlla che sia collegato, o scegline un altro."
+                        )))
+            }
+        } else {
+            micPanels.close(Self.absentPanel)
+            answeredAbsentMic = false
+        }
+        if snapshot.silentTrack == .mic, !snapshot.micAbsent, !toldSilentMic {
+            toldSilentMic = true
+            micPanels.show(
+                micPanel(
+                    id: Self.silentPanel, title: String(localized: "Il microfono non sente la tua voce"),
+                    message: String(
+                        localized:
+                            "Da oltre 30 secondi il microfono è muto mentre gli altri parlano. Se stai solo ascoltando va tutto bene; se stai parlando, controlla il microfono o il mute della call."
+                    )))
+        } else if snapshot.silentTrack != .mic {
+            micPanels.close(Self.silentPanel)
+        }
+    }
+
+    private func micPanel(id: String, title: String, message: String) -> CallPrompts.Prompt {
+        CallPrompts.Prompt(
+            id: id, title: title, message: message, primary: String(localized: "Scegli il microfono"),
+            onPrimary: { [weak self] in
+                if id == Self.absentPanel { self?.answeredAbsentMic = true }
+                self?.windows?.model.settingsPane = .audio
+                self?.windows?.showSettings()
+            },
+            onIgnore: { [weak self] in if id == Self.absentPanel { self?.answeredAbsentMic = true } })
     }
 
     private func render() {
         guard let button = statusItem.button else { return }
         let state = snapshot?.state ?? .idle
-        let needsAttention = snapshot?.silentTrack != nil || snapshot?.lastError != nil
+        // ADR-0093: yellow when nothing arrives from the microphone; a silent track is a line in the menu.
+        let needsAttention = snapshot?.micAbsent == true || snapshot?.lastError != nil
         var badge = MenuBarIcon.Badge.none
         switch state {
         case .idle:
@@ -176,7 +236,10 @@ final class StatusItemController: NSObject {
         let open = item(String(localized: "Apri IAGO"), #selector(openMainWindow))
         open.keyEquivalent = "o"
         menu.addItem(open)
-        if let silent = snapshot?.silentTrack {
+        if snapshot?.micAbsent == true {
+            menu.addItem(
+                disabledItem(String(localized: "⚠︎ Nessun audio dal microfono: registro solo l'audio di sistema")))
+        } else if let silent = snapshot?.silentTrack {
             let track = silent == .mic ? String(localized: "microfono") : String(localized: "audio di sistema")
             menu.addItem(disabledItem(String(localized: "⚠︎ Traccia \(track) muta da oltre 30 s")))
         }

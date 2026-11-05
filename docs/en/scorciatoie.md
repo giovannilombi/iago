@@ -34,7 +34,8 @@ These also work while you are in Teams or another app; change or turn them off i
 | Open or close **Ask IAGO** | **⌘K** |
 | Send the question in Ask | **⌘↩** |
 | Close the Ask panel | **Esc** |
-| Search the archive | click the field at the top right, then `#` for tags and `category:` for categories |
+| Open **Simple search** in the right pane | **⌘F**, or the **Search** button at the top right; then `#` for tags and `category:` for categories |
+| Close Simple search | **Esc** |
 | Expand or collapse a single client in the sidebar (and collapse the others) | **⌥-click** on the client name |
 
 ## Notes and windows

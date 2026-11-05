@@ -34,7 +34,8 @@ Funzionano anche mentre sei in Teams o in un'altra app; si cambiano o disattivan
 | Aprire o chiudere **Chiedi a IAGO** | **⌘K** |
 | Inviare la domanda in Chiedi | **⌘↩** |
 | Chiudere il pannello di Chiedi | **Esc** |
-| Cercare nell'archivio | clic nel campo in alto a destra, poi `#` per i tag e `categoria:` per le categorie |
+| Aprire la **Ricerca semplice** nella spalla destra | **⌘F**, o il pulsante **Cerca** in alto a destra; poi `#` per i tag e `categoria:` per le categorie |
+| Chiudere la Ricerca semplice | **Esc** |
 | Aprire o chiudere un solo cliente nella barra laterale (e chiudere gli altri) | **⌥-clic** sul nome del cliente |
 
 ## Note e finestre

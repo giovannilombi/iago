@@ -179,6 +179,9 @@ extension Archive {
                        OR chunk.note_id IN (SELECT note_id FROM note_stream WHERE stream_id = ?))
                     """
                 arguments += [id, id]
+            case .projects(let ids):
+                sql += " AND \(project) IN (\(SearchScope.placeholders(ids.count)))"
+                for id in ids { arguments += [id] }
             }
             return try Chunk.fetchAll(db, sql: sql, arguments: arguments)
         }
@@ -347,6 +350,9 @@ extension Archive {
             case .stream(let id):
                 sql += " AND item.id IN (SELECT item_id FROM item_stream WHERE stream_id = ?)"
                 arguments += [id]
+            case .projects(let ids):
+                sql += " AND item.project_id IN (\(SearchScope.placeholders(ids.count)))"
+                for id in ids { arguments += [id] }
             }
             sql += " ORDER BY item.occurred_at DESC, suggestion.created_at"
             return try Suggestion.fetchAll(db, sql: sql, arguments: arguments)
@@ -390,6 +396,7 @@ public struct Conversation: Codable, FetchableRecord, PersistableRecord, Sendabl
         case "project": scopeId.map { .project($0) } ?? .all
         case "client": scopeId.map { .client($0) } ?? .all
         case "stream": scopeId.map { .stream($0) } ?? .all
+        case "projects": .chosen(scopeId?.split(separator: ",").map(String.init) ?? [])
         default: .all
         }
     }
@@ -400,6 +407,7 @@ public struct Conversation: Codable, FetchableRecord, PersistableRecord, Sendabl
         case .project(let id): ("project", id)
         case .client(let id): ("client", id)
         case .stream(let id): ("stream", id)
+        case .projects(let ids): ("projects", ids.joined(separator: ","))
         }
     }
 }
@@ -548,6 +556,17 @@ extension Archive {
                 noteArguments += [id]
                 decisionFilter += " AND decision.id IN (SELECT decision_id FROM decision_stream WHERE stream_id = ?)"
                 decisionArguments += [id]
+            case .projects(let ids):
+                let list = "(\(SearchScope.placeholders(ids.count)))"
+                itemFilter += " AND item.project_id IN \(list)"
+                noteFilter +=
+                    " AND (note.project_id IN \(list) OR note.item_id IN (SELECT id FROM item WHERE project_id IN \(list)))"
+                decisionFilter += " AND decision.project_id IN \(list)"
+                for id in ids {
+                    arguments += [id]
+                    decisionArguments += [id]
+                }
+                for id in ids + ids { noteArguments += [id] }
             }
             let items = try String.fetchAll(db, sql: "SELECT id FROM item WHERE \(itemFilter)", arguments: arguments)
             let notes =

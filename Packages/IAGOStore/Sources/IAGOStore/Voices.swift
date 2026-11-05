@@ -79,7 +79,7 @@ enum VoiceMath {
     }
 }
 
-/// Voice prints (ADR-0073): off unless the user turns them on. Each diarized speaker of a call keeps its embedding,
+/// Voice prints (ADR-0073): on by default since ADR-0094, off when the user turns them off. Each diarized speaker of a call keeps its embedding,
 /// sealed with the item's key; naming the speaker ties it to that person's voice, and the next calls get a proposal
 /// "Speaker 2 sembra Marco". A print is the mean of the calls it comes from: deleting a call, or forgetting a voice,
 /// takes it away. Nothing of this goes to Claude, the exports or the sync.
@@ -92,10 +92,11 @@ extension Archive {
     public static let voiceThreshold = 0.6
     public static let voiceMargin = 0.05
 
-    public func voicesEnabled() -> Bool { ((try? setting(Self.voicesEnabledKey)) ?? nil) == "1" }
+    /// On unless the user turned it off (ADR-0094): no setting means on.
+    public func voicesEnabled() -> Bool { ((try? setting(Self.voicesEnabledKey)) ?? nil) != "0" }
 
     public func setVoicesEnabled(_ enabled: Bool) throws {
-        try setSetting(Self.voicesEnabledKey, enabled ? "1" : nil)
+        try setSetting(Self.voicesEnabledKey, enabled ? "1" : "0")
     }
 
     /// Generic labels ("Speaker 2", "Stanza 3", "Io") are not names to learn a voice for.
@@ -128,6 +129,14 @@ extension Archive {
                     ])
             }
             try Self.dropEmptyVoices(db)
+        }
+    }
+
+    /// Whether the call has its speakers' voice prints (transcribed with recognition on).
+    public func hasVoices(itemID: String) throws -> Bool {
+        try database.writer.read { db in
+            try Bool.fetchOne(db, sql: "SELECT EXISTS (SELECT 1 FROM item_voice WHERE item_id = ?)", arguments: [itemID])
+                ?? false
         }
     }
 
@@ -219,7 +228,7 @@ extension Archive {
     static func linkVoice(itemID: String, speakerID: String, label: String, now: Date, _ db: Database) throws {
         guard
             try String.fetchOne(db, sql: "SELECT value FROM setting WHERE key = ?", arguments: [voicesEnabledKey])
-                == "1"
+                != "0"
         else { return }
         let voiceID = isVoiceName(label) ? try voiceID(named: label, now, db) : nil
         try db.execute(

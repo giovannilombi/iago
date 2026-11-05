@@ -35,6 +35,16 @@ Change or turn them off in **Settings › General › Shortcuts in all apps**: e
 - **Automatic** (recommended): IAGO uses the call app's microphone and follows it if you plug in or unplug your headphones.
 - **Fixed**: pick one in Settings › Audio or from the menu of the IAGO icon {{icona}}.
 
+## The dot on the icon
+While recording, a dot on the IAGO icon {{icona}} tells how it is going:
+- **red**: recording, with the microphone;
+- **yellow**: **no audio is coming** from the microphone (unplugged, off or unavailable). It appears within a couple of seconds and turns red again as soon as the microphone resumes. If you are just listening in silence it stays red;
+- **orange**: paused.
+
+If no audio is coming from the microphone, a panel also appears at the top right, **The microphone is not recording**: IAGO is recording only the Mac's audio and your voice would not end up in the transcript. *Choose the microphone* opens Settings › Audio.
+
+If instead the microphone works but has been silent for over 30 seconds while the others talk, once per recording **The microphone does not hear your voice** appears: if you are only listening all is well, if you are speaking check the microphone or the call's mute. The same warning stays as a line in the icon's menu and in the recording bar.
+
 ## Without headphones: echo
 Without headphones the microphone also hears the speakers, and the others' voices partly come back on your track too. **Use headphones when you can.** When transcribing, IAGO still recognizes and drops the sentences of the system track that reappear on the microphone.
 

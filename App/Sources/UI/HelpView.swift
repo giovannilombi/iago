@@ -38,6 +38,13 @@ struct HelpView: View {
             }
         }
         .frame(minWidth: 900, minHeight: 600)
+        // «come?» in the app: the chapter asked for.
+        .onChange(of: model.helpChapter, initial: true) { _, wanted in
+            guard let wanted, let found = GuideChapter.all.first(where: { $0.id.hasPrefix(wanted) }) else { return }
+            query = ""
+            chapter = found.id
+            model.helpChapter = nil
+        }
     }
 
     /// "← Precedente · Successivo →" at the end of a chapter.

@@ -7,7 +7,9 @@ L'**aspetto** (automatico, chiaro o scuro) non è qui: si sceglie dall'icona acc
 - **Permessi:** cosa è attivo e cosa manca, con l'attivazione guidata.
 - **Audio:** microfono, riunioni (proposte, calendario, mute di Teams).
 - **Trascrizione:** motore, lingua, glossario, cosa fare dopo lo Stop, solo con alimentazione, modelli.
-- **Voci:** riconoscimento delle stesse voci tra una call e l'altra (spento di default) e voci conosciute, da eliminare una per una o tutte.
+- **Voci:** in cima *Il tuo nome*, cioè come compare la tua voce nelle trascrizioni (è anche in Generale). Si salva con Invio, *Salva* o uscendo dal campo, e le call già trascritte con il nome di prima prendono quello nuovo, tranne quelle in cui hai dato alla tua voce un altro nome. Poi il riconoscimento delle stesse voci tra una call e l'altra (**acceso di default**) e le voci conosciute, da eliminare una per una o tutte.
+
+![Impostazioni › Voci: il tuo nome e le voci conosciute](img/voci.png)
 - **Motore:** modello locale, ricerca per significato, lavori automatici (proposte e sintesi; spenti di default sotto i 32 GB di memoria).
 - **Progetti:** rinomina, archivia, elimina (in tre passi); la modalità di ciascuno, *Modalità Traccia* o *Modalità Gestisci* (predefinita).
 - **Email e persone:** i tuoi indirizzi, contatti, cartelle sorvegliate, regole.

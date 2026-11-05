@@ -41,6 +41,23 @@ public enum SearchScope: Sendable, Hashable {
     case client(String)
     case project(String)
     case stream(String)
+    /// Several projects chosen in «Chiedi a IAGO» (ADR-0091): ids sorted, at least two.
+    case projects([String])
+
+    /// Several projects as a scope: one is that project, none is everything.
+    public static func chosen(_ ids: some Collection<String>) -> SearchScope {
+        let sorted = Set(ids).sorted()
+        return switch sorted.count {
+        case 0: .all
+        case 1: .project(sorted[0])
+        default: .projects(sorted)
+        }
+    }
+
+    /// `?, ?, ?` for an `IN (…)` list.
+    public static func placeholders(_ count: Int) -> String {
+        Array(repeating: "?", count: count).joined(separator: ", ")
+    }
 }
 
 /// Full-text index (FTS5, accents and case ignored). Texts are indexed in clear inside the database, which
@@ -183,6 +200,9 @@ extension Archive {
                            AND search_index.source_id IN (SELECT note_id FROM note_stream WHERE stream_id = ?)))
                     """
                 arguments += [id, id, id]
+            case .projects(let ids):
+                sql += " AND search_index.project_id IN (\(SearchScope.placeholders(ids.count)))"
+                for id in ids { arguments += [id] }
             }
             if !sources.isEmpty {
                 sql += " AND search_index.source IN (\(sources.map { _ in "?" }.joined(separator: ",")))"

@@ -9,8 +9,10 @@ La trascrizione avviene sul Mac. Due motori:
 | Parakeet | circa 4 volte più veloce | meno preciso sui nomi |
 
 ## Chi parla
-La tua traccia è **Io** (il nome che hai dato all'inizio). Le voci degli altri vengono separate per persona ("Speaker 1", "Speaker 2"…). **Rinomina gli speaker** nella scheda, nel campo accanto a *Speaker:*.
-- Il nome si salva con **Invio** o con il pulsante **⏎** accanto al campo, e solo allora cambia nella trascrizione. Finché non lo salvi il campo ha il **bordo rosso**: il testo resta lì anche se passi a un altro elemento, ed **Esc** lo annulla.
+La tua traccia è **Io**, o il nome che hai dato all'inizio (lo cambi in Impostazioni › Voci › *Il tuo nome*). Le voci degli altri vengono separate per persona ("Speaker 1", "Speaker 2"…). **Rinomina gli speaker** nella scheda, nel campo accanto a *Speaker:*.
+- **Tu:** accanto alla tua voce, nella trascrizione e nei campi degli speaker, c'è il segno **Tu**. Passandoci sopra con il mouse dice perché: in una call registrata con IAGO è la voce presa dal microfono del Mac; in un file importato è lo speaker che ha il tuo nome.
+- **Suggerimenti:** mentre scrivi, sotto il campo compaiono i nomi che IAGO conosce già (persone, speaker nominati in altre call, presenti), escluso chi ha già un nome in questa call. Scegline uno con un clic o con le frecce.
+- Il nome si salva con **Invio**, con il pulsante **✓** accanto al campo o **uscendo dal campo**. Finché non è salvato il campo ha il bordo blu: il testo resta lì anche se passi a un altro elemento, ed **Esc** lo annulla.
 - **Nomi simili:** se esiste già un nome simile, IAGO chiede se è la stessa persona, per esempio «Esiste già *Antonello*. *Lello* è la stessa persona?». Riconosce i nomi scritti in modo diverso (*Marco* e *Marco Rossi*), gli errori di battitura e i diminutivi più comuni (*Lello* e *Antonello*, *Peppe* e *Giuseppe*). Se rispondi di sì usa il nome già noto e se lo ricorda: la volta dopo lo propone subito, anche per i soprannomi che non conosceva.
 - **Stesso nome a due speaker:** a volte la stessa voce viene divisa in due. Se dai a uno speaker il nome di un altro della stessa call, IAGO propone di **unirli**: resta un solo speaker, con tutte le sue frasi. Sotto i campi compare «Speaker 3 unito ad Antonello» con **Separa**, che lo riporta com'era.
 - I nomi valgono per le esportazioni e per ciò che il motore scrive da lì in poi. Una sintesi già fatta resta com'è: *Rigenera* la riscrive con i nomi nuovi.
@@ -26,9 +28,9 @@ Le persone collegate da remoto si separano sempre, anche se sono in tanti dallo 
 - **Presenti:** nella scheda, e nel pannello dopo lo Stop, scrivi chi c'era (un nome e Invio, o più nomi separati da virgole). Accanto a ogni speaker ancora senza nome compare un pulsante per sceglierlo tra i presenti. I presenti finiscono anche nelle esportazioni e in *Condividi*.
 
 ## Riconoscere le voci
-In **Impostazioni › Voci** puoi attivare *Riconosci le voci tra una call e l'altra* (spento di default). Quando dai un nome a uno speaker, IAGO ricorda la sua voce; nelle call successive propone il nome («Speaker 2 diventa Marco», *Riconosciuta dalla voce*) e tu confermi o scarti. Non assegna mai un nome da solo.
+*Riconosci le voci tra una call e l'altra* è **acceso di default**; lo spegni in **Impostazioni › Voci**. Quando dai un nome a uno speaker, IAGO ricorda la sua voce; nelle call successive propone il nome («Speaker 2 diventa Marco», *Riconosciuta dalla voce*) e tu confermi o scarti. Non assegna mai un nome da solo.
 
-- Vale per le call trascritte dopo l'attivazione; per una call già trascritta usa **Ritrascrivi**.
+- Vale per le call trascritte con il riconoscimento acceso. Una call trascritta prima non ha le impronte delle voci: sotto i nomi degli speaker una riga lo dice, e con **Ritrascrivi** IAGO le impara, legandole subito ai nomi già dati.
 - Servono almeno una decina di secondi di parlato per riconoscere una voce.
 - Valgono anche le voci della stanza, quando sono separate. La tua («Io») no.
 - Le voci restano solo sul Mac e non vanno mai a Claude né nelle esportazioni. Nello stesso pannello vedi le voci conosciute e le elimini una per una o tutte insieme.

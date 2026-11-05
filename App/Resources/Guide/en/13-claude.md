@@ -3,7 +3,7 @@
 
 You can connect **Claude Desktop** (or Claude Code) to the projects you choose. Claude reads nothing you have not enabled.
 
-1. **Settings › Claude**: choose the projects (or a client) and press **Add to Claude Desktop**; restart Claude.
+1. **Settings › Claude**: choose the projects (or a client) and press **Add to Claude Desktop**; restart Claude. When you make a project readable while Claude Desktop is open, IAGO shows **Restart Claude Desktop**: Claude Desktop and Claude Code read shared projects only when they open. **Restart Claude** quits it and opens it again for you; *Later* leaves it to you (⌘Q and open it again). A project that already has the **Claude icon** in the sidebar is already shared.
 2. Claude can **read**: search, open items, the timeline, key points, notes, export a project.
 3. With **Can write**, Claude can add notes, key points, documents, emails and files: every write goes through a **preview** and your confirmation, appears with the label *via Claude* and can be **undone** from Settings › Claude.
 
@@ -12,13 +12,23 @@ You can connect **Claude Desktop** (or Claude Code) to the projects you choose. 
 ## Summaries and suggestions made by Claude
 You can ask Claude for an item's summary or suggestions, instead of the Mac's engine.
 
-**On Macs up to 16 GB** the local engine is slow, and in the item card, under *Summary* and *Suggestions*, a **tip** appears: *Ask Claude for the summary* copies the request and opens Claude, and you paste it with ⌘V. The tip also says what is missing:
-- Claude not yet connected to IAGO: *Connect Claude…* takes you to Settings › Claude;
-- connection limited to other projects: a connection that includes this one must be added;
-- project Claude cannot read or write: *Allow and ask Claude* enables it for that project only;
-- item without a project: Claude writes only in projects, so it must be assigned first.
+Under *Summary*, when the item has no summary yet, and on one line under *Suggestions*, a box about Claude appears. In the summary it sits **at the bottom**, after *Generate summary*: first comes the way with the Mac's engine, then Claude.
+- **On Macs up to 16 GB** it is a **Tip**, in orange: the local engine takes a long time and slows everything else down.
+- **On Macs with more memory** it is an **Alternative**, in grey: the Mac's engine works well, Claude is another way.
 
-IAGO never enables anything by itself. *Use the Mac's engine* hides the tip on that project, *Don't show again* on the whole Mac. In **Settings › Engine › Summaries and suggestions** you can choose **Claude**: the Mac's engine no longer starts by itself and the tip always appears, on any Mac.
+### To do it with Claude: the four steps
+The box lists four steps. Those already done have a green mark, and next to those still to do there is the button you need. **how?** opens this page.
+1. **The item is in a project.** Claude writes only in projects: if the item has none, choose it from the Project menu at the top of the card.
+2. **Claude is connected to IAGO.** You do it just once: *Connect Claude…* takes you to Settings › Claude, where you add the connection (see above). If the connection you have is limited to other projects, add one that includes this one too.
+3. **The project is allowed to Claude.** *Allow* makes it readable and writable by Claude, for that project only; then **restart Claude Desktop or Claude Code**, because they see the project only after a restart. If the project already has the **Claude icon** in the sidebar, it is all set.
+4. **Ask Claude for the summary.** IAGO copies the request and opens Claude: you paste it in the chat with ⌘V. When Claude has finished, you check the result in the preview and, with your OK, it appears in the card.
+
+IAGO never enables anything by itself.
+
+### Hiding the box
+At the bottom of the box, **Not here: I use the Mac's engine** hides it on that project, **Don't show again** on the whole Mac. In its place a thin strip remains, *Alternative: you can also make the summary with Claude.*, with **See how**, which opens the whole box again for the item you are looking at.
+
+In **Settings › Engine › Summaries and suggestions** you can choose **Claude**: the Mac's engine no longer starts by itself and the box always appears, on any Mac.
 
 At any time you can also do this:
 1. In the item card press **Copy for Claude…** and choose *For the summary*, *For suggestions* or *Reference only*. If Claude cannot read (or write to) the project yet, IAGO tells you and turns it on with one click.

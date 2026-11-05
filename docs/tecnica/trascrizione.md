@@ -10,17 +10,20 @@ Tutto avviene sul Mac (ADR-0005), nella coda dei lavori, un elemento alla volta.
 5. **Segmentazione per speaker:** tempi per parola di whisper, segmenti divisi ai cambi di speaker e frasi spezzate ricucite.
 6. **Unione** delle due tracce sulla linea del tempo e **filtro dell'eco:** le frasi del microfono che ripetono quelle della traccia di sistema vengono scartate.
 7. **Indicizzazione** dei segmenti per la ricerca.
-8. **Voci** (solo se attive in Impostazioni › Voci, ADR-0073): vedi sotto.
+8. **Voci** (ADR-0073; accese di default da ADR-0094, si spengono in Impostazioni › Voci): vedi sotto.
 
 ## Riconoscere le voci (ADR-0073)
 - La diarizzazione dà per ogni speaker un'**impronta WeSpeaker** (256 numeri, `DiarizationResult.speakerDatabase`), rinumerata come gli speaker (`TranscriptPostProcessing.normalizeVoices`). La pipeline la restituisce in `Output.voices`, con i secondi di parlato, per la traccia di sistema, per il file importato e per le voci della stanza separate; il microfono dell'utente («Io») no.
 - Dopo la trascrizione `TranscriptionService` la salva (`Archive.storeVoices`, almeno 10 s di parlato) e cerca le voci conosciute (`Archive.voiceMatches`): somiglianza del coseno ≥ 0,60 con la media delle impronte della persona, almeno 0,05 sopra la seconda voce, una persona per speaker. Le corrispondenze diventano proposte `person` con `origin = voice`.
 - `Archive.renameSpeaker` lega l'impronta della call al nome (o la slega, se torna generico). Un errore nelle voci non fa fallire la trascrizione.
 - **Nomi degli speaker** (`App/Sources/UI/ItemDetailView.swift`, `SpeakerNames`; `IAGOStore/SpeakerNames.swift`):
-  - il nome si applica solo con Invio o ⏎; il testo non confermato sta in `AppModel.speakerDrafts` (in memoria, per elemento) e il campo è rosso;
+  - mentre si scrive, `textInputSuggestions` propone i nomi noti (`knownPersonNames` più i presenti, senza quelli già usati nella call): prima quelli che iniziano con il testo, poi quelli che lo contengono;
+  - il nome si applica con Invio, con ✓ o lasciando il campo (ADR-0094); il testo non confermato sta in `AppModel.speakerDrafts` (in memoria, per elemento) e il campo ha il bordo del colore d'accento;
   - prima di applicarlo, `Archive.similarPersonNames` cerca tra persone e speaker con un nome (`knownPersonNames`). Prima viene l'alias scelto dall'utente (`name_alias`, per forma normalizzata), poi `PersonNameMatcher`: errore di battitura sui nomi lunghi, un nome dentro l'altro, tabella dei diminutivi italiani, forma breve all'inizio o alla fine («Ale», «Sandro», «Nello»). Una parola in comune da sola non basta;
   - **Unisci** (`Archive.mergeSpeaker`): `item_speaker.merged_into` punta allo speaker della stessa call e il label diventa il suo. Così trascrizione, sintesi ed export restano invariati, e l'impronta va alla stessa voce. Rinominare lo speaker di arrivo rinomina anche quelli uniti. **Separa** (`separateSpeaker`) rimette il label della trascrizione. `transcript.json` non si riscrive mai;
   - prima di *Genera sintesi* e *Rigenera*, `AppModel.unnamedSpeakers` (label generici, escluso `me` e gli uniti) fa chiedere se dare prima i nomi; «Dai prima i nomi» (`AppModel.namingSpeakersFor`) apre la trascrizione, la porta in vista e mette il cursore nel primo campo senza nome.
+- **Acceso di default** (ADR-0094): `Archive.voicesEnabled()` è vero se `voices.enabled` manca; spegnendolo si salva `0`. `Archive.hasVoices(itemID:)` dice se la call ha impronte: se mancano (trascritta da spento), sotto i nomi una riga suggerisce *Ritrascrivi*.
+- **Il tuo nome:** `me_label` nelle impostazioni dell'archivio (Generale e Voci, `MyNameGroup`); cambiandolo, `Archive.renameMe(from:to:)` rinomina lo speaker `me` nelle call che hanno ancora il nome di prima, e IAGO rifà i loro testi esportati. Accanto alla voce dell'utente compare **Tu** (`YouBadge`): lo speaker `me` di una call registrata, o lo speaker di un file importato con il nome dell'utente; il suggerimento al passaggio del mouse dice quale dei due.
 - Costi: nessun modello in più, circa 1 KB per speaker, confronto sotto il millisecondo.
 
 ## Motori (ADR-0023)
