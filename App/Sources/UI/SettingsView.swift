@@ -145,21 +145,12 @@ struct SettingsGroup<Content: View>: View {
 
 private struct GeneralPane: View {
     let model: AppModel
-    @State private var name = ""
     @State private var launchAtLogin = SMAppService.mainApp.status == .enabled
 
     var body: some View {
         LanguageGroup()
         if let updates = model.updates { UpdatesGroup(updates: updates) }
-        SettingsGroup(
-            title: String(localized: "Il tuo nome"),
-            footnote: String(
-                localized: "Nelle trascrizioni la tua voce (il microfono del Mac) compare con questo nome.")
-        ) {
-            TextField(MeLabel.defaultName, text: $name).textFieldStyle(.roundedBorder).frame(maxWidth: 260)
-                .onSubmit { save() }
-                .onChange(of: name) { save() }
-        }
+        MyNameGroup(model: model)
         WorkViewsSettings(model: model)
         ItemDetailSettings()
         SettingsGroup(title: String(localized: "Avvio")) {
@@ -178,14 +169,9 @@ private struct GeneralPane: View {
                     }
                 }
         }
-        .onAppear { name = (try? model.archive.setting(TranscriptionService.meLabelKey)) ?? MeLabel.defaultName }
         if let shortcuts = model.shortcuts { ShortcutSettings(model: model, shortcuts: shortcuts) }
     }
 
-    private func save() {
-        let value = name.trimmingCharacters(in: .whitespaces)
-        model.perform { try model.archive.setSetting(TranscriptionService.meLabelKey, value.isEmpty ? nil : value) }
-    }
 }
 
 /// «Lingua» (ADR-0077): Italian or English. macOS applies the language at launch, so IAGO restarts; what it writes

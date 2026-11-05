@@ -58,8 +58,8 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 
 ## Cosa fa
 ### Risponde
-- **Chiedi a IAGO** (⌘K): domande in linguaggio naturale su uno stream, un progetto, un cliente o tutta la memoria, con il contesto sempre in vista e "Allarga contesto" per cercare più in largo. Le risposte usano solo i tuoi contenuti e citano le fonti numerate, che si aprono all'elemento e al minuto giusto. Le conversazioni si conservano, si fissano, si salvano come nota.
-- **Ricerca** a testo pieno e **per significato**: "quanto versa l'azienda" trova "il contributo del datore di lavoro". Le due ricerche sono unite con *reciprocal rank fusion*.
+- **Chiedi a IAGO** (⌘K): domande in linguaggio naturale su uno stream, un progetto, un cliente o tutta la memoria, con il contesto sempre in vista, anche più progetti insieme scelti da te («Cambia contesto»). Si apre nella spalla destra o a tutta finestra. Le risposte usano solo i tuoi contenuti e citano le fonti numerate, che si aprono all'elemento e al minuto giusto. Le conversazioni si conservano, si fissano, si salvano come nota.
+- **Ricerca** a testo pieno e **per significato**, con **Cerca** (⌘F) nella spalla destra: "quanto versa l'azienda" trova "il contributo del datore di lavoro". Le due ricerche sono unite con *reciprocal rank fusion*.
 - **Accesso trasversale:** ogni categoria e ogni tag attraversa tutti i progetti; `#tag` e `categoria:` direttamente dalla ricerca.
 
 ### Ricorda ciò che conta
@@ -68,7 +68,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 - **L'evoluzione delle decisioni:** una voce può superarne altre, anche di tipo diverso, e IAGO tiene la storia di come ci si è arrivati.
 - **Momenti segnati** durante una call, anche **con lo screenshot** della slide condivisa (il testo letto entra nella trascrizione, nella ricerca e nelle sintesi), e **note** datate sul progetto o sull'elemento, anche dettate a voce. Le scorciatoie (⌃⌥M, ⌃⌥S, ⌃⌥R) funzionano in qualsiasi app.
 - **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività (con chi, entro quando, chi si aspetta), punti da chiarire, rischi, richieste, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
-- **Riconosce le voci** (se lo attivi): dai un nome a uno speaker e nelle call successive IAGO propone quel nome quando sente la stessa voce. Le impronte restano cifrate sul Mac, non vanno mai a Claude e si eliminano quando vuoi.
+- **Riconosce le voci** (attivo di default, si spegne in Impostazioni › Voci): dai un nome a uno speaker e nelle call successive IAGO propone quel nome quando sente la stessa voce. Le impronte restano cifrate sul Mac, non vanno mai a Claude e si eliminano quando vuoi.
 
 ### Capisce
 - **Sintesi per tipo di riunione:** un 1to1 ha impegni e feedback, un SAL tappe, rischi e decisioni, un incontro commerciale esigenze, obiezioni e prossimi passi.
@@ -263,7 +263,7 @@ Prove su call reali: [`docs/benchmarks/2026-10-21-sintesi-e-glossario.md`](docs/
 - **Aggiornamenti firmati** EdDSA: IAGO installa solo versioni firmate dalla stessa chiave.
 
 ## Le decisioni di progetto
-Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 68 finora, con contesto, alternative scartate e conseguenze. Alcune:
+Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 95 finora, con contesto, alternative scartate e conseguenze. Alcune:
 
 | ADR | Decisione | Perché |
 |---|---|---|
@@ -280,16 +280,18 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0069](docs/adr/0069-coda-unica-del-motore.md) | Un lavoro pesante alla volta, la chat per prima | il Mac non si riempie, le risposte non aspettano |
 | [0071](docs/adr/0071-claude-sintesi-e-proposte.md) | Sintesi e proposte anche da Claude, con le stesse verifiche | qualità alta sui Mac piccoli, sempre controllabile |
 | [0072](docs/adr/0072-segna-momento-con-screenshot.md) | Screenshot solo su richiesta, letti sul Mac | le slide entrano nella memoria senza catture automatiche |
-| [0073](docs/adr/0073-riconoscere-le-voci.md) | Voci riconosciute tra le call, solo se attivo e solo come proposta | meno nomi da scrivere, dati biometrici sotto controllo |
+| [0073](docs/adr/0073-riconoscere-le-voci.md) | Voci riconosciute tra le call, solo come proposta (attivo di default da ADR-0094) | meno nomi da scrivere, dati biometrici sotto controllo |
 | [0074](docs/adr/0074-lavoro-aperto-traccia-gestisci.md) | Lavoro aperto con due modi per progetto, Traccia e Gestisci, sugli stessi dati | semplice dove basta, completo dove si gestisce |
 | [0075](docs/adr/0075-viste-come-e-cosa.md) | Viste come «come guardare × cosa mostrare», Riepilogo a parte, Kanban a tutta finestra | una barra con una gerarchia chiara |
 | [0076](docs/adr/0076-modalita-inbox-elementi.md) | Modalità Traccia davvero semplice, Inbox in cima, Elementi e Grafo, import dal progetto | due modalità che si distinguono, il lavoro di tutti in un posto |
 | [0077](docs/adr/0077-italiano-e-inglese.md) | Italiano e inglese per app, guida, sito e documenti, allineati da un controllo automatico | doppia lingua senza traduzioni dimenticate |
 | [0056](docs/adr/0056-aggiornamenti.md) | Aggiornamenti Sparkle firmati, maggiori obbligatori | tutti sulla stessa versione sicura |
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
+| [0092](docs/adr/0092-ricerca-nella-spalla-e-chat-a-tutta-finestra.md) | Ricerca sempre nella spalla destra, Chiedi a IAGO anche a tutta finestra | un solo posto per cercare e chiedere |
+| [0095](docs/adr/0095-claude-come-alternativa-e-riavvio.md) | Claude come alternativa su ogni Mac, con i passi | si vede come farlo, senza imporlo |
 
 ## Qualità e test
-- **301 test automatici** nei pacchetti: Store 109, Capture 48, Intelligence 32, Transcription 29, Ingest 22, MCP 20, Core 15, Engine 15, Export 10, Sync 1.
+- **321 test automatici** nei pacchetti: Store 124, Capture 49, Intelligence 34, Transcription 30, Ingest 22, MCP 20, Core 15, Engine 15, Export 11, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
 - **Prima di ogni pull request**, sul Mac: tutti i test e il controllo delle API di rete (`scripts/test-packages.sh`); gli hook di git controllano dati reali, indirizzi email e lingue. La CI di GitHub Actions si lancia solo a mano, per risparmiare i minuti di GitHub Free. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
@@ -331,7 +333,8 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
-| **1.2.14-beta** | 3 novembre 2026 | Su `main` (tag `v1.2.14-beta`; si torna alle versioni precedenti: vedi sotto). **Inbox a due metà:** *Da fare ora* in alto e *Proposte da confermare* in basso, ognuna con il suo scorrimento e una maniglia per cambiarne l'altezza; proposte in un box per elemento che si apre a destra, con *Conferma tutte*. **Colonne a metà** e larghezza salvata per sezione. **Scheda dell'elemento:** prima audio, segnalibri e schermate, poi sintesi e trascrizione; sezioni da riordinare trascinandole, con l'ordine per tutti gli elementi. **Barra laterale:** *Aggiungi* cliente o progetto sopra i progetti, Cestino in fondo, + del cliente che crea il progetto con il cliente già scelto, nome intero del progetto dopo due secondi. Schermate della guida rifatte |
+| **1.2.15-beta** | 5 novembre 2026 | Su `main` (tag `v1.2.15-beta`; si torna alle versioni precedenti: vedi sotto). **Categorie e tag** a tre colonne, con categoria e più tag insieme. **Chiedi a IAGO** con più progetti scelti da te («Cambia contesto») e a tutta finestra. **Cerca** (⌘F) nella spalla destra al posto del campo in alto. **Pallino giallo** subito quando dal microfono non arriva audio, e pannelli chiari. **Voci riconosciute** di default, nomi degli speaker con suggerimenti e salvati anche uscendo dal campo, segno «Tu», il tuo nome anche in Impostazioni › Voci. **Claude** come alternativa su ogni Mac, con i passi e l'avviso di riavvio. Schermate della guida rifatte |
+| **1.2.14-beta** | 3 novembre 2026 | Tag `v1.2.14-beta`. **Inbox a due metà:** *Da fare ora* in alto e *Proposte da confermare* in basso, ognuna con il suo scorrimento e una maniglia per cambiarne l'altezza; proposte in un box per elemento che si apre a destra, con *Conferma tutte*. **Colonne a metà** e larghezza salvata per sezione. **Scheda dell'elemento:** prima audio, segnalibri e schermate, poi sintesi e trascrizione; sezioni da riordinare trascinandole, con l'ordine per tutti gli elementi. **Barra laterale:** *Aggiungi* cliente o progetto sopra i progetti, Cestino in fondo, + del cliente che crea il progetto con il cliente già scelto, nome intero del progetto dopo due secondi. Schermate della guida rifatte |
 | **1.2.13-beta** | 2 novembre 2026 | Tag `v1.2.13-beta`. **Nuovo stile «colore come segnale»:** testi neutri, colore del tipo solo dove serve, rosso solo per l'urgenza, filo sotto il titolo dei box. **Chiaro, scuro o automatico** dall'icona accanto alle Impostazioni; chiaro con grigi freddi, senza bianco pieno. Foglio «Aggiungi» con il tipo in una tile, Kanban con colonne in box, Attività riordinata. Tutte le schermate della guida rifatte |
 | **1.2.12-beta** | 2 novembre 2026 | Tag `v1.2.12-beta`. **Riepilogo rivisto:** in Gestisci box su due colonne che si ridispongono da soli, tile dei box sempre in alto, ultime decisioni e tappe; in Traccia pagina già divisa con il pannello a destra. **Attività** a tutta finestra con gli ultimi 7 giorni. Icona della modalità cliccabile. Correzioni: «Categorie e tag» di nuovo selezionabile, foglio dei punti chiave non più tagliato |
 | **1.2.11-beta** | 2 novembre 2026 | Tag `v1.2.11-beta`. **Dettaglio dell'elemento rivisto:** sotto il titolo cliente e progetto, poi tile piccole con un solo dato che portano alla sezione; scorrendo, una barra fissa con le tile in miniatura e ↑ sopra «Chiedi a IAGO»; sezioni aperte o chiuse ricordate per elemento, con i default in Impostazioni; sezioni vuote ridotte all'intestazione; segnalibri e schermate come tacche sul player, un momento alla volta, e nella trascrizione al loro minuto. Nuove schermate della guida |
@@ -351,7 +354,7 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 | **1.0.0-beta** | 24 ottobre 2026 | Beta, non ancora distribuita: tutto quello che è descritto qui (fasi 0-3). La 1.0.0 sarà la prima versione distribuibile |
 
 ### Tornare a una versione precedente
-Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`, `v1.2.8-beta`, `v1.2.9-beta`, `v1.2.10-beta`, `v1.2.11-beta`, `v1.2.12-beta`, `v1.2.13-beta`, `v1.2.14-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
+Ogni versione ha un tag su GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`, `v1.2.8-beta`, `v1.2.9-beta`, `v1.2.10-beta`, `v1.2.11-beta`, `v1.2.12-beta`, `v1.2.13-beta`, `v1.2.14-beta`, `v1.2.15-beta`…) con l'elenco delle funzioni nel messaggio: codice, guida e documentazione di quella versione sono tutti lì.
 - **Codice e documentazione:** `git checkout v1.0.1-beta`, poi `xcodegen generate` e una build; `npm run docs:dev` mostra il sito di quella versione. Se si abbandona una versione, lo sviluppo riprende dal ramo della versione precedente (per esempio `release/1.0.x`) con i numeri di quella serie (1.0.2-beta…).
 - **Archivio:** le migrazioni del database vanno solo avanti. Una versione più vecchia potrebbe non leggere un archivio già aperto da una più nuova. Per tornare indietro si ripristina il **backup** fatto prima dell'aggiornamento (Impostazioni › Backup e trasferimento), oppure si prova la versione nuova su una **copia** dell'archivio (`scripts/try-branch.sh`).
 

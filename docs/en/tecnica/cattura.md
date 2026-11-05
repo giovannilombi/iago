@@ -17,7 +17,8 @@ IAGO records **two separate tracks** (ADR-0002): the Mac's audio (the others) an
 - When recording ends, the tracks are finalized as AAC and encrypted into the archive.
 - **Recovery at launch:** a session that was not finalized (crash, shutdown) is recovered; an empty track is filled with silence to stay aligned.
 - **Mac sleep:** automatic pause and a choice on wake.
-- **Silent track:** after 30 seconds of silence on a track, IAGO warns.
+- **Absent microphone** (ADR-0093): `TrackWriter.lastBufferPosition` marks the last buffer that arrived, with signal or not; `SilenceAlarm.micAbsent` is true after 2 seconds without buffers from the microphone (`absentWindow`) or without a device. Silence does not count: a microphone that listens still sends buffers. `RecordingController.Snapshot.micAbsent` brings it to the interface, which reads it every second: yellow dot on IAGO's icon, a line in the menu and in the recording bar, and a panel (`CallPrompts`, like the recording proposals) handled by `StatusItemController.updateMicPanels`, which does not come back after an answer until the microphone resumes.
+- **Silent track** (FR-16): after 30 seconds of silence on a track while the other has signal, a line in the menu and in the recording bar; for the microphone also a panel, once per recording. It no longer colours the dot.
 
 ## Recording interface
 - Click on the icon: menu; right-click or Control-click: start, pause and resume. This way a careless click never pauses a call (ADR-0026).

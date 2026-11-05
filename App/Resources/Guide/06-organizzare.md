@@ -31,7 +31,12 @@ La **categoria** è il tipo di riunione (1to1, Kickoff, SAL, Workshop, Review/De
 Etichette libere, trasversali ai progetti (es. `#budget`, `#fornitore-x`). Si aggiungono nella scheda di un elemento.
 
 ## Categorie e tag, trasversali
-La vista **Categorie e tag** mostra tutte le categorie con il numero di elementi e tutti i tag: un clic apre l'elenco di tutti gli elementi in tutti i progetti. Con il tasto destro li fissi **in evidenza**. Nella ricerca scrivi `#` o `categoria:` per aprirli al volo; nella scheda un clic su un tag fa lo stesso.
+La vista **Categorie e tag** ha tre colonne:
+- **a sinistra** le etichette, in due riquadri che si aprono e si chiudono: *Categorie*, con il numero di elementi, e *Tag*, dal più usato. Scegli una categoria e uno o più tag: gli elementi devono averli tutti. Il campo di ricerca dei tag aggiunge con Invio il primo che corrisponde; i tag scelti diventano tessere blu con la ✕, e **Azzera** toglie tutto. Con il tasto destro fissi un'etichetta **in evidenza**;
+- **al centro** gli elementi di tutti i progetti con quelle etichette;
+- **a destra** la scheda dell'elemento scelto.
+
+Le colonne si allargano trascinando i divisori; un doppio clic su un divisore le riporta com'erano. Nella ricerca scrivi `#` o `categoria:` per aprire un'etichetta al volo; nella scheda un clic su un tag fa lo stesso.
 
 ![Categorie e tag](img/categorie-tag.png)
 

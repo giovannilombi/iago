@@ -88,7 +88,7 @@ struct CopyForClaudeLink: View {
                         try model.archive.setProjectClaudeAccessible(project.id, true)
                         if request.needsWriting { try model.archive.setProjectClaudeWritable(project.id, true) }
                     }
-                    ClaudeConnection.provisionServerKey(archive: model.archive)
+                    ClaudeConnection.projectShared(archive: model.archive, projectName: project.name)
                     model.reload()
                     put(request)
                 }

@@ -28,6 +28,6 @@ Ogni categoria ha un **modello** (le sezioni da riempire). I modelli vengono da 
 ## Quale motore
 Le sintesi richiedono almeno **Qwen 3.5 9B**; **Gemma 4 12B** (Mac con 32 GB) scrive le sintesi più ricche. Il 4B è troppo piccolo. Tempi per una call di 30 minuti: circa 1-1,5 minuti con il 9B, 2,5-4,5 minuti con Gemma.
 
-Sotto la sintesi c'è sempre chi l'ha scritta: «Sintetizzata con Qwen 3.5 9B sul Mac», oppure «Sintetizzata da Claude» se l'hai fatta fare a Claude.
+Sotto la sintesi c'è sempre chi l'ha scritta: «Sintetizzata con Qwen 3.5 9B sul Mac», oppure «Sintetizzata da Claude» se l'hai fatta fare a Claude. Finché la sintesi non c'è, in fondo al blocco un riquadro spiega come farla con Claude, in quattro passi (vedi *Claude*).
 
 Sono **bozze da rileggere**: la qualità dipende dalla trascrizione.

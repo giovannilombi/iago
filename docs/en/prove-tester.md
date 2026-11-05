@@ -71,7 +71,7 @@ The tests don't require real data: use test meetings and test files.
 - [ ] 3e.2b "No client" (small gray square) is always the last entry and contains the projects with no client and, at the bottom, "Undefined". With more than 15 projects "Filter projects" appears.
 - [ ] 3e.3 "Categories and tags" shows the categories with the number of items and the tags; clicking opens the list across all projects.
 - [ ] 3e.4 Right-click a category or a tag › "Pin to «Pinned»": it appears at the top of the sidebar.
-- [ ] 3e.5 In the search field type `#` or `category:`: the tags or categories to open appear.
+- [ ] 3e.5 Press **Search** (⌘F) and in the simple search type `#` or `category:`: the tags or categories to open appear.
 - [ ] 3e.7 On a Mac without IAGO (or with a new archive): once the setup is done, the sidebar shows **Atoms**, **Poldo S.p.A.** and **Sanna TheBest s.r.l.** with their projects, and *Headless customer portal* pinned, full of calls, emails, documents and key points. *Settings › Projects › Remove the example* removes them all and they don't come back after a restart. They don't appear on an archive already in use.
 - [ ] 3e.8 Right-click a stream › **Pin to top**: it appears in "Pinned" with the project name below; **Unpin from top** removes it.
 - [ ] 3e.6 In an item's detail, clicking a tag opens all the items with that tag. Next to the category there is no icon: all the items of a category are opened from Categories and tags.
@@ -120,10 +120,10 @@ The tests don't require real data: use test meetings and test files.
 - [ ] 6.6 Add an item and reopen a conversation: **"New material added"** appears with "Ask again".
 - [ ] 6.7 "Save as note" puts the answer in the project notes.
 - [ ] 6.8 Open Ask from a stream: the **Context** strip shows Client › Project › Stream (with the client's small square) and the field says "Ask about \<stream\>". With long names the path wraps onto two lines; on hover you can read it all.
-- [ ] 6.9 **Widen context ▾** lists project, client and All memory, each with its type below. Before asking, the choice only changes the context.
-- [ ] 6.10 After a question, widen: a new conversation opens in the chosen context with the same question; the previous one stays in the list.
-- [ ] 6.11 From a widened context the link becomes **Change context ▾** and offers "Back to" the starting section.
-- [ ] 6.12 An answer with no cited sources shows "Widen context ▾" below. In All memory the link isn't there.
+- [ ] 6.9 **Change context ▾** offers *Add projects…*, *Narrow context…*, *Global context* and *Follow the open section*. Before asking, the choice only changes the context.
+- [ ] 6.10 After a question, change the context: a new conversation opens in the chosen context with the same question; the previous one stays in the list.
+- [ ] 6.11 With a chosen context the strip says "Chosen by you: stays when you change section"; *Follow the open section* brings it back to the open section.
+- [ ] 6.12 An answer with no cited sources: with **Change context ▾ › Global context** the same question is asked again on the whole memory.
 - [ ] 6.13 Changing section in the sidebar before asking, the context follows it.
 
 ## 7. Add to IAGO (Services)
@@ -334,6 +334,24 @@ You need two real people in the same room (invented names in written tests).
 - [ ] 10w.11 Hovering a client shows only **+**: it opens *New project* with that client written and not editable, and the project created ends up under that client. From a project's right-click, *New stream…* opens its window.
 - [ ] 10w.12 With a narrow sidebar, stay two seconds on a project's truncated name: the whole name appears, disappears when you leave, and a click on the row still opens the project.
 - [ ] 10w.13 The line between the middle and right columns stops under the toolbar: at the top there is only the sidebar's line, in light and dark.
+
+## 10x. Categories and tags, context, search, microphone, voices and Claude (1.2.15-beta)
+- [ ] 10x.1 *Categories and tags*: three columns (labels, items, detail). On the left the *Categories* and *Tags* boxes close and open again; in the tag search Return adds the first match. Choose a category and two tags: in the middle only the items with the category and **both** tags remain; ✕ on a tag removes it, *Reset* removes everything. Right click on a tag: you put it in *Pinned*.
+- [ ] 10x.2 Drag the two handles between the columns: the widths stay after restarting IAGO; a double click on a handle goes back to the initial widths.
+- [ ] 10x.3 *Ask IAGO* from a project: the context is the project and says "Follows the open section". *Change context › Add projects…*: tick a second project (also with the client's box) and *Apply*: two chips appear, the conversation starts again with the last question and sources come from both. The context now says "Chosen by you" and stays when changing section and restarting IAGO.
+- [ ] 10x.4 ✕ on a chip removes that project; *Narrow context…* keeps only the ticked projects (off with a single project); *Global context* moves to the whole memory; *Follow the open section* goes back to the basic behaviour.
+- [ ] 10x.5 At the top right there is *Search*, no longer the field: a click or ⌘F opens *Simple search* in the right pane with the explanation, the cursor in the field and the ✕ (also Esc) to close it. Search a word: results stay in the pane and a click opens the item in the detail beside it. `#` and `category:` show the suggestions.
+- [ ] 10x.6 From search, *Ask IAGO* at the bottom moves to the chat in the same pane; in the chat the magnifying glass goes back to search. While either pane is open, the round *Ask IAGO* button at the bottom right disappears.
+- [ ] 10x.7 In the chat, the *Full window* button: the sidebar, the conversation list and the conversation in the middle remain; a source opens on the right with its ✕. *Back to a pane* returns as before, with the same conversation. A click on a sidebar section leaves the full-window view. Closing and opening the chat again, the conversation is still there.
+- [ ] 10x.8 Sidebar: a click on a project's mode icon opens the choice; the explanations of Track and Manage can be read in full, without ellipses.
+- [ ] 10x.9 Record a test call and, while recording, unplug the microphone (or choose in System Settings an input that sends no audio): within 2-3 seconds the dot on IAGO's icon turns yellow, the panel *The microphone is not recording* appears and the menu says *No audio from the microphone*. Plug it back: it turns red again and the panel goes away. *Ignore* closes the panel, which does not come back until the microphone resumes and stops again; *Choose the microphone* opens Settings › Audio.
+- [ ] 10x.10 While recording, stay silent for more than 30 seconds while someone talks in the Mac's audio: the dot stays red, the panel *The microphone does not hear your voice* appears only once and the menu has the silent track line.
+- [ ] 10x.11 On a new archive Settings › Voices has *Recognize voices across calls* on, and *Your name* at the top. Change the name and press Return (or leave the field): below it shows how many calls were updated, and in those calls your voice has the new name.
+- [ ] 10x.12 In a transcribed call, type in a speaker's field the first letters of a name already used: the list of known names appears; choosing one and pressing Return, ✓ or clicking elsewhere saves the name, without a red border. In a call transcribed before voices were on, a line under the names says to use *Transcribe again*. After *Transcribe again* and naming the speaker, the voice appears in *Known voices*.
+- [ ] 10x.13 Next to your voice appears **You**, in the transcript and in the names: hovering over it, in a recorded call it says it is the microphone's voice recorded with IAGO; in an imported audio file, after giving a speaker your name, it says it is an imported file with your name.
+- [ ] 10x.14 An item without a summary, on a Mac with more than 16 GB: at the bottom of Summary, after *Generate summary*, there is *Alternative: write the summary with Claude* in neutral colours, with the four steps (project, connection, consent, request) and the done mark on those already in place. On a project already in Claude (Claude icon in the sidebar) step 3 says it is all set. Every *how?* opens the guide at the Claude chapter.
+- [ ] 10x.15 *Don't show again*: a strip "Alternative: you can also make the summary with Claude." remains with *See how*, which opens the box again for that item; opening another item the strip comes back.
+- [ ] 10x.16 With Claude Desktop open, make a project readable by Claude (Settings › Claude, or *Allow* in the box): *Restart Claude Desktop* appears; *Restart Claude* quits and reopens Claude Desktop, which then sees the project. With Claude Desktop closed the alert does not appear.
 
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).

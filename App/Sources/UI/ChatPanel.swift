@@ -8,17 +8,41 @@ import SwiftUI
 /// 48 hours unless the user keeps or pins them; reopening one warns when new material may change the answer.
 struct ChatPanel: View {
     @Bindable var model: AppModel
-    @State private var question = ""
-    @State private var conversation: Conversation?
-    @State private var turns: [Turn] = []
-    @State private var task: Task<Void, Never>?
-    @State private var showsList = false
+    /// Over the whole window: the conversations in a column, the conversation in the middle (ADR-0092).
+    var fullWindow = false
+    // The conversation lives in the model (`ChatState`), so it survives the pane moving or closing.
+    private var question: String {
+        get { model.chat.question }
+        nonmutating set { model.chat.question = newValue }
+    }
+    private var conversation: Conversation? {
+        get { model.chat.conversation }
+        nonmutating set { model.chat.conversation = newValue }
+    }
+    private var turns: [Turn] {
+        get { model.chat.turns }
+        nonmutating set { model.chat.turns = newValue }
+    }
+    private var task: Task<Void, Never>? {
+        get { model.chat.task }
+        nonmutating set { model.chat.task = newValue }
+    }
+    private var showsList: Bool {
+        get { model.chat.showsList }
+        nonmutating set { model.chat.showsList = newValue }
+    }
     @State private var confirmingDelete = false
     @State private var conversations: [Conversation] = []
-    /// Items of the scope added or changed after the last answer that concern it.
-    @State private var newMaterial: Int = 0
-    /// A context chosen with "Allarga contesto" for the next conversation, instead of the sidebar's.
-    @State private var scopeOverride: SearchScope?
+    private var newMaterial: Int {
+        get { model.chat.newMaterial }
+        nonmutating set { model.chat.newMaterial = newValue }
+    }
+    private var chosenScope: SearchScope? {
+        get { model.chat.chosenScope }
+        nonmutating set { model.chat.chosenScope = newValue }
+    }
+    /// «Aggiungi progetti» or «Restringi contesto» open.
+    @State private var picker: ContextPicker.Mode?
     @FocusState private var focused: Bool
 
     struct Turn: Identifiable {
@@ -33,36 +57,47 @@ struct ChatPanel: View {
     }
 
     /// The scope of the open conversation, or the chosen or sidebar one for a new conversation.
-    private var scope: SearchScope { conversation?.scope ?? scopeOverride ?? model.chatScope }
+    private var scope: SearchScope { conversation?.scope ?? chosenScope ?? model.chatScope }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             header
-            if showsList {
+            if fullWindow {
+                HStack(spacing: 0) {
+                    list.frame(width: 260)
+                    Divider()
+                    conversationView.frame(maxWidth: 760).frame(maxWidth: .infinity)
+                }
+            } else if showsList {
                 list
             } else {
-                contextStrip
-                banners
-                ScrollViewReader { proxy in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 22) {
-                            if turns.isEmpty { intro }
-                            ForEach(turns) { turn in turnView(turn).id(turn.id) }
-                        }
-                        .padding(.horizontal, 18).padding(.vertical, 14)
-                    }
-                    .onChange(of: turns.last?.answer) {
-                        if let last = turns.last { proxy.scrollTo(last.id, anchor: .bottom) }
-                    }
-                }
-                composer
+                conversationView
             }
         }
         .background(Color(nsColor: .windowBackgroundColor))
         .onAppear { focused = true }
         .task(id: model.intelligence.revision) { reloadList() }
-        // A new conversation follows the section the user moves to.
-        .onChange(of: model.chatScope) { if conversation == nil, turns.isEmpty { scopeOverride = nil } }
+    }
+
+    /// Context, notices, the questions and answers, and the field to ask.
+    private var conversationView: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            contextStrip
+            banners
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 22) {
+                        if turns.isEmpty { intro }
+                        ForEach(turns) { turn in turnView(turn).id(turn.id) }
+                    }
+                    .padding(.horizontal, 18).padding(.vertical, 14)
+                }
+                .onChange(of: turns.last?.answer) {
+                    if let last = turns.last { proxy.scrollTo(last.id, anchor: .bottom) }
+                }
+            }
+            composer
+        }
     }
 
     // MARK: Header and banners
@@ -85,12 +120,21 @@ struct ChatPanel: View {
                     refresh(conversation.id)
                 }
             }
+            iconButton("magnifyingglass", String(localized: "Passa alla ricerca semplice")) { model.openSearch() }
             iconButton(
-                showsList ? "bubble.left" : "clock.arrow.circlepath",
-                showsList ? String(localized: "Torna alla conversazione") : String(localized: "Conversazioni")
+                model.chatFullWindow ? "arrow.down.right.and.arrow.up.left" : "arrow.up.left.and.arrow.down.right",
+                model.chatFullWindow ? String(localized: "Riduci a pannello") : String(localized: "A tutta finestra")
             ) {
-                showsList.toggle()
-                reloadList()
+                model.chatFullWindow.toggle()
+            }
+            if !fullWindow {
+                iconButton(
+                    showsList ? "bubble.left" : "clock.arrow.circlepath",
+                    showsList ? String(localized: "Torna alla conversazione") : String(localized: "Conversazioni")
+                ) {
+                    showsList.toggle()
+                    reloadList()
+                }
             }
             iconButton("square.and.pencil", String(localized: "Nuova conversazione")) { startNew() }
             iconButton("xmark", String(localized: "Chiudi")) { model.showsChat = false }
@@ -101,118 +145,180 @@ struct ChatPanel: View {
 
     // MARK: Context
 
-    /// "Contesto": where the answers come from (Cliente › Progetto › Stream, or Tutta la memoria), with
-    /// "Allarga contesto" underneath.
+    /// "Contesto" (ADR-0091): the projects the answers come from, as tiles (✕ takes one out when there are several),
+    /// whether it follows the open section or was chosen, and «Cambia contesto».
     private var contextStrip: some View {
-        let everything = scope == .all
-        return VStack(alignment: .trailing, spacing: 3) {
-            VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 6) {
+            HStack(spacing: 6) {
                 Text(String(localized: "Contesto")).font(.caption2).textCase(.uppercase).tracking(0.7).opacity(0.75)
-                Text(contextPath).font(.callout).lineLimit(2).fixedSize(horizontal: false, vertical: true)
+                Spacer(minLength: 4)
+                if chosenScope != nil {
+                    Label(String(localized: "Scelto da te: resta anche cambiando sezione"), systemImage: "pin")
+                        .foregroundStyle(.orange)
+                } else {
+                    Text(String(localized: "Segue la sezione aperta")).foregroundStyle(.secondary)
+                }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 10).padding(.vertical, 7)
-            .foregroundStyle(everything ? Color.primary : Color.accentColor)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(everything ? Color.secondary.opacity(0.08) : Color.accentColor.opacity(0.12))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .strokeBorder(everything ? Color.secondary.opacity(0.2) : Color.accentColor.opacity(0.35))
-            )
-            .help(Self.levels(scope, model).map { Self.levelName($0, model) }.joined(separator: " › "))
+            .font(.caption2).lineLimit(1)
+            FlowLayout(spacing: 6) {
+                ForEach(chips, id: \.self) { chip in contextChip(chip) }
+            }
             contextMenu
         }
+        .padding(.horizontal, 10).padding(.vertical, 8)
+        .background(RoundedRectangle(cornerRadius: 10).fill(Color.secondary.opacity(0.06)))
+        .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(Color.secondary.opacity(0.16)))
         .padding(.horizontal, 14).padding(.bottom, 4)
-    }
-
-    /// The client's square, the ancestors in regular weight and the current level in semibold.
-    private var contextPath: AttributedString {
-        let levels = Self.levels(scope, model)
-        guard scope != .all else {
-            var all = AttributedString("◎ " + Self.levelName(.all, model))
-            all.font = .callout.weight(.semibold)
-            return all
-        }
-        var path = AttributedString()
-        if case .client(let id)? = levels.first {
-            var square = AttributedString("■ ")
-            square.foregroundColor = model.client(id)?.color.flatMap(Color.init(hex:)) ?? .secondary
-            path += square
-        }
-        for (index, level) in levels.enumerated() {
-            var name = AttributedString(Self.levelName(level, model))
-            name.font = .callout.weight(index == levels.count - 1 ? .semibold : .regular)
-            path += name
-            if index < levels.count - 1 {
-                var separator = AttributedString(" › ")
-                separator.font = .callout
-                path += separator
+        .popover(item: $picker, arrowEdge: .leading) { mode in
+            ContextPicker(model: model, mode: mode, start: Self.projectIDs(scope, model)) { ids in
+                picker = nil
+                change(to: .chosen(ids))
+            } cancel: {
+                picker = nil
             }
         }
-        return path
     }
 
-    /// "Allarga contesto": the wider levels and, once widened, the section Chiedi was opened from.
-    @ViewBuilder
+    /// The tiles of the context: one per project, or the client, the stream, or the whole memory.
+    private var chips: [SearchScope] {
+        if case .projects(let ids) = scope {
+            let alive = ids.filter { model.project($0) != nil }
+            return alive.isEmpty ? [.all] : alive.map { .project($0) }
+        }
+        return [scope]
+    }
+
+    private func contextChip(_ chip: SearchScope) -> some View {
+        let removable = chips.count > 1
+        return HStack(spacing: 5) {
+            switch chip {
+            case .all:
+                Image(systemName: "globe").imageScale(.small)
+            case .client(let id):
+                RoundedRectangle(cornerRadius: 2).fill(Color.iago(model.client(id)?.color)).frame(width: 8, height: 8)
+            case .project(let id):
+                RoundedRectangle(cornerRadius: 2).fill(Color.iago(model.client(model.project(id)?.clientId)?.color))
+                    .frame(width: 8, height: 8)
+            case .stream(let id):
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.iago(model.client(model.project(model.stream(id)?.projectId)?.clientId)?.color))
+                    .frame(width: 8, height: 8)
+            case .projects: EmptyView()
+            }
+            Text(chipName(chip)).lineLimit(1)
+            if removable, case .project(let id) = chip {
+                Button {
+                    change(
+                        to: .chosen(
+                            chips.compactMap { if case .project(let other) = $0, other != id { other } else { nil } }))
+                } label: {
+                    Image(systemName: "xmark").font(.system(size: 8, weight: .bold)).foregroundStyle(.secondary)
+                        .frame(width: 14, height: 14).contentShape(Rectangle())
+                }
+                .buttonStyle(.plain).disabled(task != nil)
+                .help(String(localized: "Togli «\(chipName(chip))» dal contesto"))
+            }
+        }
+        .font(.callout)
+        .padding(.leading, 8).padding(.trailing, removable ? 4 : 8).padding(.vertical, 4)
+        .background(RoundedRectangle(cornerRadius: 7).fill(Color.accentColor.opacity(chip == .all ? 0.06 : 0.14)))
+        .overlay(RoundedRectangle(cornerRadius: 7).strokeBorder(Color.accentColor.opacity(0.3)))
+        .help(Self.levels(chip, model).map { Self.levelName($0, model) }.joined(separator: " › "))
+    }
+
+    /// A stream shows its project too; a client is all its projects.
+    private func chipName(_ chip: SearchScope) -> String {
+        switch chip {
+        case .stream(let id):
+            [model.project(model.stream(id)?.projectId)?.name, model.stream(id)?.name].compactMap { $0 }
+                .joined(separator: " › ")
+        case .client(let id): String(localized: "\(model.client(id)?.name ?? ""), tutti i progetti")
+        default: Self.levelName(chip, model)
+        }
+    }
+
+    /// «Cambia contesto»: add projects, narrow them, the whole memory, or back to following the section.
     private var contextMenu: some View {
-        let wider = Self.wider(scope, model)
-        let origin = model.chatScope
-        let back = origin != scope && !wider.contains(origin) ? origin : nil
-        if !wider.isEmpty || back != nil {
-            Menu {
-                if !wider.isEmpty {
-                    Section(String(localized: "Allarga a")) {
-                        ForEach(wider, id: \.self) { level in
-                            Button {
-                                change(to: level)
-                            } label: {
-                                Text(Self.levelName(level, model))
-                                Text(Self.levelKind(level))
-                            }
-                        }
-                    }
-                }
-                if let back {
-                    Section(String(localized: "Torna a")) {
-                        Button {
-                            change(to: back)
-                        } label: {
-                            Text(Self.levelName(back, model))
-                            Text(String(localized: "\(Self.levelKind(back)), dove hai aperto Chiedi"))
-                        }
-                    }
-                }
+        let ids = Self.projectIDs(scope, model)
+        let canNarrow = scope == .all || ids.count > 1
+        return Menu {
+            Button {
+                picker = .add
             } label: {
-                // A text link in the accent colour: a borderless menu would ignore the colour.
-                HStack(spacing: 3) {
-                    Text(back == nil ? String(localized: "Allarga contesto") : String(localized: "Cambia contesto"))
-                    Image(systemName: "chevron.down").imageScale(.small)
-                }
-                .font(.caption).foregroundStyle(Color.accentColor).contentShape(Rectangle())
+                Text(String(localized: "Aggiungi progetti…"))
+                Text(String(localized: "Spunta altri progetti da includere"))
             }
-            .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
-            .disabled(task != nil)
+            Button {
+                picker = .narrow
+            } label: {
+                Text(String(localized: "Restringi contesto…"))
+                Text(
+                    canNarrow
+                        ? String(localized: "Togli la spunta ai progetti da escludere")
+                        : String(localized: "Serve più di un progetto: con uno solo non c'è da restringere"))
+            }
+            .disabled(!canNarrow)
+            Button {
+                change(to: .all)
+            } label: {
+                Text(String(localized: "Contesto globale"))
+                Text(String(localized: "Tutta la memoria, tutti i progetti"))
+            }
+            .disabled(scope == .all)
+            Divider()
+            Button {
+                follow()
+            } label: {
+                Text(String(localized: "Segui la sezione aperta"))
+                Text(String(localized: "Il contesto cambia con la barra laterale"))
+            }
+            .disabled(chosenScope == nil && conversation == nil)
+        } label: {
+            // A text link in the accent colour: a borderless menu would ignore the colour.
+            HStack(spacing: 3) {
+                Text(String(localized: "Cambia contesto"))
+                Image(systemName: "chevron.down").imageScale(.small)
+            }
+            .font(.caption.weight(.medium)).foregroundStyle(Color.accentColor).contentShape(Rectangle())
         }
+        .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).fixedSize()
+        .disabled(task != nil)
     }
 
-    /// A new context: before the first question it simply applies; afterwards it opens a new conversation
-    /// there and asks the last question again (a conversation keeps the context it was started in).
+    /// A new context, kept until the user changes it: before the first question it simply applies; afterwards it
+    /// opens a new conversation there and asks the last question again (a conversation keeps its context).
     private func change(to level: SearchScope) {
         let last = turns.last?.question
-        if !turns.isEmpty { startNew() }
-        scopeOverride = level
+        if !turns.isEmpty || conversation != nil { startNew() }
+        chosenScope = level
         if let last {
             question = last
             send()
         }
     }
 
+    /// Back to the context of the open section.
+    private func follow() {
+        if !turns.isEmpty || conversation != nil { startNew() }
+        chosenScope = nil
+    }
+
+    /// The projects of a context: what «Aggiungi progetti» and «Restringi contesto» start from (everything for the
+    /// whole memory when narrowing is handled by the picker).
+    static func projectIDs(_ scope: SearchScope, _ model: AppModel) -> [String] {
+        switch scope {
+        case .all: []
+        case .project(let id): [id]
+        case .projects(let ids): ids
+        case .client(let id): model.projects.filter { $0.clientId == id }.map(\.id)
+        case .stream(let id): model.stream(id).map { [$0.projectId] } ?? []
+        }
+    }
+
     /// Cliente, Progetto, Stream down to `scope`.
     static func levels(_ scope: SearchScope, _ model: AppModel) -> [SearchScope] {
         switch scope {
-        case .all: return [.all]
+        case .all, .projects: return [scope]
         case .client: return [scope]
         case .project(let id):
             return (model.project(id)?.clientId.map { [SearchScope.client($0)] } ?? []) + [scope]
@@ -222,18 +328,16 @@ struct ChatPanel: View {
         }
     }
 
-    /// The levels above `scope`, nearest first, ending with Tutta la memoria.
-    static func wider(_ scope: SearchScope, _ model: AppModel) -> [SearchScope] {
-        guard scope != .all else { return [] }
-        return levels(scope, model).dropLast().reversed() + [.all]
-    }
-
     static func levelName(_ scope: SearchScope, _ model: AppModel) -> String {
         switch scope {
         case .all: String(localized: "Tutta la memoria")
         case .project(let id): model.project(id)?.name ?? ""
         case .client(let id): model.client(id)?.name ?? ""
         case .stream(let id): model.stream(id)?.name ?? ""
+        case .projects(let ids):
+            ids.count <= 3
+                ? ListFormatter.localizedString(byJoining: ids.compactMap { model.project($0)?.name })
+                : String(localized: "\(ids.count) progetti")
         }
     }
 
@@ -243,6 +347,7 @@ struct ChatPanel: View {
         case .project: String(localized: "Progetto")
         case .client: String(localized: "Cliente")
         case .stream: String(localized: "Stream")
+        case .projects: String(localized: "Progetti scelti")
         }
     }
 
@@ -384,7 +489,7 @@ struct ChatPanel: View {
                 scope == .all
                     ? String(localized: "Chiedi su tutta la memoria")
                     : String(localized: "Chiedi su \(Self.levelName(scope, model))"),
-                text: $question, axis: .vertical
+                text: Bindable(model.chat).question, axis: .vertical
             )
             .textFieldStyle(.plain).lineLimit(1...6).focused($focused)
             .onSubmit(send)
@@ -423,6 +528,7 @@ struct ChatPanel: View {
         case .project(let id): "· " + (model.project(id)?.name ?? "")
         case .client(let id): "· " + (model.client(id)?.name ?? "")
         case .stream(let id): "· " + (model.stream(id)?.name ?? "")
+        case .projects: "· " + levelName(scope, model)
         }
     }
 
@@ -587,7 +693,6 @@ struct ChatPanel: View {
     private func startNew() {
         task?.cancel()
         conversation = nil
-        scopeOverride = nil
         turns = []
         newMaterial = 0
         showsList = false

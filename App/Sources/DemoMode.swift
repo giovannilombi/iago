@@ -186,9 +186,19 @@ enum DemoMode {
             if let portal { model.select(.library(.project(portal.id))) }
             model.showsChat = true
             await shot("chiedi", main)
-            model.showsChat = false
-            for (pane, name) in [(SettingsView.Pane.permissions, "permessi"), (.engine, "motore"), (.claude, "claude")]
-            {
+            // ADR-0092: «Chiedi a IAGO» on the whole window, and the simple search in the right pane.
+            model.chatFullWindow = true
+            await shot("chiedi-finestra", main)
+            model.chatFullWindow = false
+            model.openSearch()
+            model.searchText = "SSO"
+            try? await Task.sleep(for: .seconds(1))
+            await shot("ricerca", main)
+            model.searchText = ""
+            model.sidePane = nil
+            for (pane, name) in [
+                (SettingsView.Pane.permissions, "permessi"), (.engine, "motore"), (.claude, "claude"), (.voices, "voci"),
+            ] {
                 model.settingsPane = pane
                 windows.showSettings()
                 await shot(name, NSApp.windows.first { $0.title == String(localized: "Impostazioni di IAGO") })

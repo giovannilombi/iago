@@ -71,7 +71,7 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 3e.2b "Senza cliente" (quadratino grigio) è sempre l'ultima voce e contiene i progetti senza cliente e, in fondo, "Non definito". Con più di 15 progetti compare "Filtra progetti".
 - [ ] 3e.3 "Categorie e tag" mostra le categorie con il numero di elementi e i tag; il clic apre l'elenco su tutti i progetti.
 - [ ] 3e.4 Con il tasto destro su una categoria o un tag "Fissa in «In evidenza»": compare in cima alla barra laterale.
-- [ ] 3e.5 Nel campo di ricerca scrivi `#` o `categoria:`: compaiono i tag o le categorie da aprire.
+- [ ] 3e.5 Premi **Cerca** (⌘F) e nella ricerca semplice scrivi `#` o `categoria:`: compaiono i tag o le categorie da aprire.
 - [ ] 3e.7 Su un Mac senza IAGO (o con un archivio nuovo): finita la configurazione, la barra laterale mostra **Atoms**, **Poldo S.p.A.** e **Sanna TheBest s.r.l.** con i loro progetti, e *Portale clienti headless* in evidenza, pieno di call, email, documenti e punti chiave. *Impostazioni › Progetti › Rimuovi l'esempio* li toglie tutti e al riavvio non ricompaiono. Su un archivio già in uso non compaiono.
 - [ ] 3e.8 Tasto destro su uno stream › **Fissa in alto**: compare in "In evidenza" con sotto il nome del progetto; **Togli dall'alto** lo toglie.
 - [ ] 3e.6 Nella scheda di un elemento, il clic su un tag apre tutti gli elementi con quel tag. Accanto alla categoria non c'è nessuna icona: tutti gli elementi di una categoria si aprono da Categorie e tag.
@@ -120,10 +120,10 @@ Le prove non richiedono dati reali: usa riunioni e file di prova.
 - [ ] 6.6 Aggiungi un elemento e riapri una conversazione: compare **"Nuovo materiale aggiunto"** con "Chiedi di nuovo".
 - [ ] 6.7 "Salva come nota" mette la risposta nelle note del progetto.
 - [ ] 6.8 Apri Chiedi da uno stream: la striscia **Contesto** mostra Cliente › Progetto › Stream (con il quadratino del cliente) e il campo dice "Chiedi su \<stream\>". Con nomi lunghi il percorso va a capo su due righe; passandoci sopra si legge tutto.
-- [ ] 6.9 **Allarga contesto ▾** elenca progetto, cliente e Tutta la memoria, ognuno con il tipo sotto. Prima di chiedere, la scelta cambia solo il contesto.
-- [ ] 6.10 Dopo una domanda, allarga: si apre una nuova conversazione nel contesto scelto con la stessa domanda; la precedente resta nell'elenco.
-- [ ] 6.11 Da contesto allargato il link diventa **Cambia contesto ▾** e propone "Torna a" la sezione di partenza.
-- [ ] 6.12 Una risposta senza fonti citate mostra sotto "Allarga contesto ▾". In Tutta la memoria il link non c'è.
+- [ ] 6.9 **Cambia contesto ▾** propone *Aggiungi progetti…*, *Restringi contesto…*, *Contesto globale* e *Segui la sezione aperta*. Prima di chiedere, la scelta cambia solo il contesto.
+- [ ] 6.10 Dopo una domanda, cambia contesto: si apre una nuova conversazione nel contesto scelto con la stessa domanda; la precedente resta nell'elenco.
+- [ ] 6.11 Con un contesto scelto la striscia dice «Scelto da te: resta anche cambiando sezione»; *Segui la sezione aperta* la fa tornare alla sezione aperta.
+- [ ] 6.12 Una risposta senza fonti citate: con **Cambia contesto ▾ › Contesto globale** la stessa domanda si ripete su tutta la memoria.
 - [ ] 6.13 Cambiando sezione nella barra laterale prima di chiedere, il contesto la segue.
 
 ## 7. Aggiungi a IAGO (Servizi)
@@ -334,6 +334,24 @@ Servono due persone vere nella stessa stanza (nomi inventati nelle prove scritte
 - [ ] 10w.11 Passando su un cliente compare solo **+**: apre *Nuovo progetto* con quel cliente scritto e non modificabile, e il progetto creato finisce sotto quel cliente. Dal tasto destro di un progetto, *Nuovo stream…* apre la sua finestra.
 - [ ] 10w.12 Con la barra laterale stretta, resta due secondi sul nome troncato di un progetto: compare il nome intero, sparisce uscendo, e il clic sulla riga apre comunque il progetto.
 - [ ] 10w.13 La linea tra colonna centrale e destra si ferma sotto la barra degli strumenti: in alto c'è solo la linea della barra laterale, in chiaro e in scuro.
+
+## 10x. Categorie e tag, contesto, ricerca, microfono, voci e Claude (1.2.15-beta)
+- [ ] 10x.1 *Categorie e tag*: tre colonne (etichette, elementi, dettaglio). A sinistra i riquadri *Categorie* e *Tag* si chiudono e si riaprono; nella ricerca dei tag Invio aggiunge il primo trovato. Scegli una categoria e due tag: al centro restano solo gli elementi con la categoria e **tutti e due** i tag; ✕ su un tag lo toglie, *Azzera* toglie tutto. Tasto destro su un tag: lo metti *In evidenza*.
+- [ ] 10x.2 Trascina le due maniglie tra le colonne: le larghezze restano dopo il riavvio di IAGO; un doppio clic su una maniglia torna alle larghezze iniziali.
+- [ ] 10x.3 *Chiedi a IAGO* da un progetto: il contesto è il progetto e dice «Segue la sezione aperta». *Cambia contesto › Aggiungi progetti…*: spunta un secondo progetto (anche con la casella del cliente) e *Applica*: compaiono due chip, la conversazione riparte con l'ultima domanda e le fonti vengono da tutti e due. Il contesto ora dice «Scelto da te» e resta cambiando sezione e riavviando IAGO.
+- [ ] 10x.4 ✕ su un chip toglie quel progetto; *Restringi contesto…* lascia solo i progetti spuntati (spento con un solo progetto); *Contesto globale* passa a tutta la memoria; *Segui la sezione aperta* torna al comportamento di base.
+- [ ] 10x.5 In alto a destra c'è *Cerca*, non più il campo: un clic o ⌘F apre *Ricerca semplice* nella spalla destra con la spiegazione, il cursore nel campo e la ✕ (anche Esc) per chiuderla. Cerca una parola: i risultati restano nella spalla e un clic apre l'elemento nella scheda accanto. `#` e `categoria:` mostrano i suggerimenti.
+- [ ] 10x.6 Dalla ricerca, *Chiedi a IAGO* in fondo passa alla chat nella stessa spalla; nella chat la lente torna alla ricerca. Mentre una delle due spalle è aperta, il pulsante tondo *Chiedi a IAGO* in basso a destra sparisce.
+- [ ] 10x.7 Nella chat, il pulsante *A tutta finestra*: restano la barra laterale, l'elenco delle conversazioni e la conversazione al centro; una fonte si apre a destra con la sua ✕. *Riduci a pannello* torna com'era, con la stessa conversazione. Un clic su una sezione della barra laterale esce dalla vista a tutta finestra. Chiudendo e riaprendo la chat la conversazione è ancora lì.
+- [ ] 10x.8 Barra laterale: un clic sull'icona della modalità di un progetto apre la scelta; le spiegazioni di Traccia e Gestisci si leggono intere, senza puntini.
+- [ ] 10x.9 Registra una call di prova e, durante la registrazione, stacca il microfono (o scegli in Impostazioni di Sistema un ingresso che non manda audio): entro 2-3 secondi il pallino dell'icona di IAGO diventa giallo, compare il pannello *Il microfono non registra* e il menu dice *Nessun audio dal microfono*. Ricollegalo: torna rosso e il pannello sparisce. *Ignora* chiude il pannello, che non torna finché il microfono non riprende e si ferma di nuovo; *Scegli il microfono* apre Impostazioni › Audio.
+- [ ] 10x.10 Durante una registrazione resta in silenzio per più di 30 secondi mentre dall'audio del Mac c'è qualcuno che parla: il pallino resta rosso, compare una sola volta il pannello *Il microfono non sente la tua voce* e il menu ha la riga della traccia muta.
+- [ ] 10x.11 Su un archivio nuovo Impostazioni › Voci ha *Riconosci le voci* acceso, e in cima *Il tuo nome*. Cambia il nome e premi Invio (o esci dal campo): sotto compare quante call sono state aggiornate, e in quelle call la tua voce ha il nome nuovo.
+- [ ] 10x.12 In una call trascritta, scrivi nel campo di uno speaker le prime lettere di un nome già usato: compare l'elenco dei nomi noti; sceglierne uno e premere Invio, il ✓ o cliccare altrove salva il nome, senza bordo rosso. In una call trascritta prima di attivare le voci, sotto i nomi una riga dice di usare *Ritrascrivi*. Dopo *Ritrascrivi* e il nome dato, la voce compare in *Voci conosciute*.
+- [ ] 10x.13 Accanto alla tua voce compare **Tu**, nella trascrizione e nei nomi: passandoci sopra, in una call registrata dice che è la voce del microfono registrata con IAGO; in un file audio importato, dopo aver dato a uno speaker il tuo nome, dice che è un file importato con il tuo nome.
+- [ ] 10x.14 Un elemento senza sintesi, su un Mac con più di 16 GB: in fondo alla Sintesi, dopo *Genera sintesi*, c'è *Alternativa: fai la sintesi con Claude* in colori neutri, con i quattro passi (progetto, collegamento, consenso, richiesta) e il segno di fatto su quelli già a posto. Su un progetto già in Claude (icona di Claude nella barra laterale) il passo 3 dice che è già a posto. Ogni *come?* apre la guida al capitolo Claude.
+- [ ] 10x.15 *Non mostrare più*: resta una striscia «Alternativa: puoi fare la sintesi anche con Claude.» con *Vedi come*, che riapre il riquadro per quell'elemento; aprendo un altro elemento torna la striscia.
+- [ ] 10x.16 Con Claude Desktop aperto, rendi consultabile da Claude un progetto (Impostazioni › Claude, o *Consenti* nel riquadro): compare *Riavvia Claude Desktop*; *Riavvia Claude* chiude e riapre Claude Desktop, che poi vede il progetto. Con Claude Desktop chiuso l'avviso non compare.
 
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).

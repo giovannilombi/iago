@@ -131,6 +131,12 @@ final class RecordingSession {
         return SilenceAlarm.silentTrack(now: timeline.elapsed(at: hostTime), lastSignal: lastSignal)
     }
 
+    func micAbsent(at hostTime: UInt64, hasDevice: Bool) -> Bool {
+        guard !timeline.isPaused else { return false }
+        return SilenceAlarm.micAbsent(
+            now: timeline.elapsed(at: hostTime), lastBuffer: writers[.mic]?.lastBufferPosition, hasDevice: hasDevice)
+    }
+
     /// Periodic flush, so data reaches the disk even if buffers stop arriving.
     func tick() {
         for writer in writers.values {

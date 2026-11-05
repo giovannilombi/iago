@@ -31,7 +31,12 @@ The **category** is the type of meeting (1to1, Kickoff, Progress review, Worksho
 Free labels that cut across projects (e.g. `#budget`, `#fornitore-x`). You add them in an item's card.
 
 ## Categories and tags, across projects
-The **Categories and tags** view shows all categories with their number of items, and all tags: a click opens the list of all their items across all projects. Right-click to **pin** them. In search, type `#` or `category:` to open them on the fly; in the item card, a click on a tag does the same.
+The **Categories and tags** view has three columns:
+- **on the left** the labels, in two boxes that open and close: *Categories*, with their number of items, and *Tags*, most used first. Choose a category and one or more tags: items must have all of them. The tag search field adds the first match with Return; chosen tags become blue tiles with a ✕, and **Reset** clears everything. Right-click to **pin** a label;
+- **in the middle** the items of all projects with those labels;
+- **on the right** the card of the chosen item.
+
+Drag the dividers to widen the columns; a double click on a divider puts them back as they were. In search, type `#` or `category:` to open a label on the fly; in the item card, a click on a tag does the same.
 
 ![Categories and tags](img/categorie-tag.png)
 

@@ -56,6 +56,8 @@ public struct DecisionQuery: Sendable, Hashable {
         case noProject
         case client(String)
         case stream(String)
+        /// Several projects (ADR-0091).
+        case projects([String])
     }
 
     public var scope: Scope
@@ -314,6 +316,8 @@ extension Archive {
             case .stream(let id):
                 request = request.filter(
                     sql: "id IN (SELECT decision_id FROM decision_stream WHERE stream_id = ?)", arguments: [id])
+            case .projects(let ids):
+                request = request.filter(ids.contains(Column("project_id")))
             }
             if !query.statuses.isEmpty {
                 request = request.filter(query.statuses.map(\.rawValue).contains(Column("status")))

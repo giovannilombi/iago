@@ -989,8 +989,13 @@ struct ItemDetailView: View {
                 }
             }
             .frame(width: 64, alignment: .leading)
-            Text(label(segment.speaker)).fontWeight(.semibold).frame(
-                width: 110, alignment: .leading)
+            HStack(spacing: 4) {
+                Text(label(segment.speaker)).fontWeight(.semibold).lineLimit(1).truncationMode(.tail)
+                if let kind = YouBadge.kind(speakerID: segment.speaker, label: label(segment.speaker), model: model) {
+                    YouBadge(kind: kind)
+                }
+            }
+            .frame(width: 130, alignment: .leading)
             Text(segment.text).textSelection(.enabled)
         }
         .contextMenu {
@@ -1386,9 +1391,41 @@ private struct DeleteNoteButton: View {
     }
 }
 
+/// «Tu» next to the user's own voice: the Mac's microphone in a call recorded with IAGO, or, in an imported file, the
+/// speaker named with the user's name. The tooltip says which.
+struct YouBadge: View {
+    enum Kind { case recorded, imported }
+    let kind: Kind
+
+    static func kind(speakerID: String, label: String, model: AppModel) -> Kind? {
+        if speakerID == "me" { return .recorded }
+        let name = TagNormalizer.normalize(label)
+        return !name.isEmpty && name == TagNormalizer.normalize(model.meName) ? .imported : nil
+    }
+
+    var body: some View {
+        Text(String(localized: "Tu", comment: "Badge next to the user's own voice in a transcript"))
+            .font(.caption2.weight(.semibold)).foregroundStyle(Color.accentColor)
+            .padding(.horizontal, 5).padding(.vertical, 1)
+            .background(Capsule().fill(Color.accentColor.opacity(0.15)))
+            .fixedSize()
+            .help(
+                kind == .recorded
+                    ? String(
+                        localized:
+                            "Sei tu, chi usa IAGO: la tua voce, presa dal microfono del Mac in una call registrata con IAGO."
+                    )
+                    : String(
+                        localized:
+                            "Sei tu, chi usa IAGO: in questo file importato lo speaker ha il tuo nome (Impostazioni › Voci › Il tuo nome)."
+                    ))
+    }
+}
+
 /// Speaker names, renameable per item (FR-41). Renames never rewrite `transcript.json` (spec 7.3).
-/// - A name applies with Return or the ⏎ button, never by leaving the field: until then the field is red, and what was
-///   typed stays (`AppModel.speakerDrafts`) while IAGO is open, also after moving to another item.
+/// - While typing, the names IAGO knows (people, speakers already named, «Presenti») are offered as completions.
+/// - A name applies with Return, the ✓ button or by leaving the field (ADR-0094); what was typed stays
+///   (`AppModel.speakerDrafts`) while IAGO is open, also after moving to another item.
 /// - Before applying it IAGO asks about similar names already known ("Lello" / "Antonello") and remembers the answer;
 ///   the same name as another speaker of the call offers to join them ("Unisci", undone by "Separa").
 private struct SpeakerNames: View {
@@ -1400,6 +1437,10 @@ private struct SpeakerNames: View {
     var attendees: [String] = []
     @FocusState private var focused: String?
     @State private var question: Question?
+    /// Names to complete with: people, speakers already named, «Presenti».
+    @State private var known: [String] = []
+    /// The call was transcribed without voice prints: naming does not teach the voice until «Ritrascrivi».
+    @State private var withoutPrints = false
 
     enum Question: Identifiable {
         /// Names already known that may be the one typed.
@@ -1443,8 +1484,16 @@ private struct SpeakerNames: View {
                 }
             }
             if ids.contains(where: isPending) {
-                Text(String(localized: "Non salvato · ⏎ per salvare, Esc per annullare"))
-                    .font(.caption).foregroundStyle(.red)
+                Text(String(localized: "Invio o ✓ per salvare, Esc per annullare"))
+                    .font(.caption).foregroundStyle(.secondary)
+            } else if withoutPrints {
+                Text(
+                    String(
+                        localized:
+                            "Questa call è stata trascritta senza le impronte delle voci: i nomi restano, ma per far imparare a IAGO le voci usa Ritrascrivi."
+                    )
+                )
+                .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
             }
         }
         .confirmationDialog(
@@ -1486,15 +1535,51 @@ private struct SpeakerNames: View {
             guard wanted == itemID else { return }
             focused = ids.first { !Archive.isVoiceName(current($0)) && $0 != "me" } ?? ids.first
         }
+        // Leaving a field saves what was typed in it.
+        .onChange(of: focused) { old, _ in
+            if let old, question == nil, isPending(old) { confirm(old) }
+        }
+        .onAppear(perform: loadKnown)
+        .onChange(of: model.revision) { loadKnown() }
+    }
+
+    private func loadKnown() {
+        var seen = Set<String>()
+        known = (attendees + ((try? model.archive.knownPersonNames()) ?? [])).filter {
+            !MeLabel.isMe($0) && seen.insert(TagNormalizer.normalize($0)).inserted
+        }
+        withoutPrints =
+            model.archive.voicesEnabled() && ids.contains { $0 != "me" }
+            && !((try? model.archive.hasVoices(itemID: itemID)) ?? true)
+    }
+
+    /// Known names that start with, or contain, what is typed; none of those already in this call.
+    private func completions(_ id: String) -> [String] {
+        let typed = TagNormalizer.normalize(typed(id) ?? "")
+        guard !typed.isEmpty else { return [] }
+        let taken = Set(ids.map { TagNormalizer.normalize(current($0)) })
+        let matching = known.filter { name in
+            let normalized = TagNormalizer.normalize(name)
+            return normalized != typed && !taken.contains(normalized) && normalized.contains(typed)
+        }
+        return Array(
+            (matching.filter { TagNormalizer.normalize($0).hasPrefix(typed) }
+                + matching.filter { !TagNormalizer.normalize($0).hasPrefix(typed) }).prefix(8))
     }
 
     private func field(_ id: String) -> some View {
         let pending = isPending(id)
         return HStack(spacing: 4) {
+            if let kind = YouBadge.kind(speakerID: id, label: current(id), model: model) { YouBadge(kind: kind) }
             TextField("", text: draft(id))
-                .textFieldStyle(.roundedBorder).frame(width: 130)
+                .textFieldStyle(.roundedBorder).frame(width: 150)
+                .textInputSuggestions {
+                    ForEach(completions(id), id: \.self) { name in
+                        Text(name).textInputCompletion(name)
+                    }
+                }
                 .overlay(
-                    RoundedRectangle(cornerRadius: 5).stroke(Color.red, lineWidth: pending ? 1.5 : 0)
+                    RoundedRectangle(cornerRadius: 5).stroke(Color.accentColor, lineWidth: pending ? 1.5 : 0)
                         .allowsHitTesting(false)
                 )
                 .focused($focused, equals: id)
@@ -1518,9 +1603,9 @@ private struct SpeakerNames: View {
                 Button {
                     confirm(id)
                 } label: {
-                    Image(systemName: "return")
+                    Image(systemName: "checkmark.circle.fill")
                 }
-                .buttonStyle(.borderless).foregroundStyle(.red)
+                .buttonStyle(.borderless).foregroundStyle(Color.accentColor)
                 .help(String(localized: "Salva il nome (Invio)"))
             }
         }

@@ -115,7 +115,6 @@ struct SummarySection: View {
                 )
             )
             .font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
-            ClaudeTip(model: model, item: item, request: .summary)
             HStack(spacing: 10) {
                 CategoryPicker(
                     model: model, selection: item.categoryId, noneLabel: String(localized: "Scegli la categoria")
@@ -140,6 +139,8 @@ struct SummarySection: View {
                 Text(String(localized: "Questa categoria è impostata su «Nessuna sintesi» (Impostazioni › Categorie)."))
                     .font(.caption).foregroundStyle(.secondary)
             }
+            // First the summary with the engine of the Mac, then Claude as the other way.
+            ClaudeTip(model: model, item: item, request: .summary).padding(.top, 4)
         }
     }
 

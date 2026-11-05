@@ -171,7 +171,10 @@ struct RecordingBar: View {
                 Label(mic, systemImage: "mic").foregroundStyle(.secondary).lineLimit(1).truncationMode(.tail)
                     .layoutPriority(-1)
             }
-            if let silent = snapshot.silentTrack {
+            if snapshot.micAbsent {
+                Label(String(localized: "Nessun audio dal microfono"), systemImage: "mic.slash.fill")
+                    .foregroundStyle(.yellow)
+            } else if let silent = snapshot.silentTrack {
                 Label(
                     silent == .mic
                         ? String(localized: "Microfono muto da oltre 30 s")

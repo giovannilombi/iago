@@ -1,6 +1,6 @@
 # ADR-0073 — Recognizing the same voices across different calls
 
-- Status: accepted
+- Status: accepted, amended by ADR-0094 (on by default, speaker names)
 - Date: 2026-10-27
 - References: ADR-0006 (FluidAudio, diarization), ADR-0028 (per-item keys), ADR-0049 (suggestions), ADR-0058 (data), ADR-0070 (who produced a result); user request of 2026-10-27
 

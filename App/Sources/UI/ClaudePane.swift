@@ -61,7 +61,10 @@ struct ClaudePane: View {
                                 get: { project.claudeAccessible },
                                 set: { value in
                                     model.perform { try model.archive.setProjectClaudeAccessible(project.id, value) }
-                                    if value { ClaudeConnection.provisionServerKey(archive: model.archive) }
+                                    if value {
+                                        ClaudeConnection.projectShared(
+                                            archive: model.archive, projectName: project.name)
+                                    }
                                 })
                         )
                         Spacer()

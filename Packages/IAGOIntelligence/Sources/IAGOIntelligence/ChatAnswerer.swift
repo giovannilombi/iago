@@ -50,6 +50,7 @@ public enum ChatAnswerer {
         case .project(let id): .project(id)
         case .client(let id): .client(id)
         case .stream(let id): .stream(id)
+        case .projects(let ids): .projects(ids)
         }
     }
 

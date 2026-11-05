@@ -57,40 +57,61 @@ extension Archive {
             case .tag(let id):
                 request = request.filter(sql: "id IN (SELECT item_id FROM item_tag WHERE tag_id = ?)", arguments: [id])
             }
-            let items = try request.order(Column("occurred_at").desc).fetchAll(db)
-            let projects = Dictionary(uniqueKeysWithValues: try Project.fetchAll(db).map { ($0.id, $0.name) })
-            let categories = Dictionary(uniqueKeysWithValues: try Category.fetchAll(db).map { ($0.id, $0.name) })
-            return try items.map { item in
-                let kinds = try String.fetchAll(
-                    db, sql: "SELECT kind FROM asset WHERE item_id = ? AND deleted_at IS NULL AND trashed_at IS NULL",
-                    arguments: [item.id])
-                let tags = try String.fetchAll(
+            return try Self.summarize(try request.order(Column("occurred_at").desc).fetchAll(db), db)
+        }
+    }
+
+    /// Items with this category (if any) and every one of these tags: «Categorie e tag» (ADR-0090). With neither,
+    /// every item that has a category or a tag.
+    public func summaries(categoryID: String?, tagIDs: Set<String>) throws -> [ItemSummary] {
+        try database.writer.read { db in
+            var request = Item.filter(Column("deleted_at") == nil && Column("trashed_at") == nil)
+            if let categoryID { request = request.filter(Column("category_id") == categoryID) }
+            if categoryID == nil, tagIDs.isEmpty {
+                request = request.filter(
+                    sql: "category_id IS NOT NULL OR id IN (SELECT item_id FROM item_tag)")
+            }
+            for tagID in tagIDs {
+                request = request.filter(
+                    sql: "id IN (SELECT item_id FROM item_tag WHERE tag_id = ?)", arguments: [tagID])
+            }
+            return try Self.summarize(try request.order(Column("occurred_at").desc).fetchAll(db), db)
+        }
+    }
+
+    private static func summarize(_ items: [Item], _ db: Database) throws -> [ItemSummary] {
+        let projects = Dictionary(uniqueKeysWithValues: try Project.fetchAll(db).map { ($0.id, $0.name) })
+        let categories = Dictionary(uniqueKeysWithValues: try Category.fetchAll(db).map { ($0.id, $0.name) })
+        return try items.map { item in
+            let kinds = try String.fetchAll(
+                db, sql: "SELECT kind FROM asset WHERE item_id = ? AND deleted_at IS NULL AND trashed_at IS NULL",
+                arguments: [item.id])
+            let tags = try String.fetchAll(
+                db,
+                sql: """
+                    SELECT tag.name FROM tag JOIN item_tag ON item_tag.tag_id = tag.id
+                    WHERE item_tag.item_id = ? AND tag.deleted_at IS NULL ORDER BY tag.normalized
+                    """, arguments: [item.id])
+            let activeJobs =
+                try Int.fetchOne(
+                    db, sql: "SELECT count(*) FROM job WHERE item_id = ? AND status IN ('queued', 'running')",
+                    arguments: [item.id]) ?? 0
+            let streamIDs = try String.fetchAll(
+                db, sql: "SELECT stream_id FROM item_stream WHERE item_id = ?", arguments: [item.id])
+            let linkCount =
+                try Int.fetchOne(
                     db,
                     sql: """
-                        SELECT tag.name FROM tag JOIN item_tag ON item_tag.tag_id = tag.id
-                        WHERE item_tag.item_id = ? AND tag.deleted_at IS NULL ORDER BY tag.normalized
-                        """, arguments: [item.id])
-                let activeJobs =
-                    try Int.fetchOne(
-                        db, sql: "SELECT count(*) FROM job WHERE item_id = ? AND status IN ('queued', 'running')",
-                        arguments: [item.id]) ?? 0
-                let streamIDs = try String.fetchAll(
-                    db, sql: "SELECT stream_id FROM item_stream WHERE item_id = ?", arguments: [item.id])
-                let linkCount =
-                    try Int.fetchOne(
-                        db,
-                        sql: """
-                            SELECT count(*) FROM item_link WHERE deleted_at IS NULL
-                            AND (from_item_id = ? OR to_item_id = ?)
-                            """, arguments: [item.id, item.id]) ?? 0
-                let email = item.type == .email ? try EmailMeta.fetchOne(db, key: item.id) : nil
-                return ItemSummary(
-                    item: item, projectName: item.projectId.flatMap { projects[$0] },
-                    categoryName: item.categoryId.flatMap { categories[$0] }, tags: tags, streamIDs: streamIDs,
-                    linkCount: linkCount, email: email,
-                    hasAudio: kinds.contains { Asset.Kind(rawValue: $0)?.isAudio == true },
-                    hasTranscript: kinds.contains(Asset.Kind.transcriptJSON.rawValue), hasActiveJob: activeJobs > 0)
-            }
+                        SELECT count(*) FROM item_link WHERE deleted_at IS NULL
+                        AND (from_item_id = ? OR to_item_id = ?)
+                        """, arguments: [item.id, item.id]) ?? 0
+            let email = item.type == .email ? try EmailMeta.fetchOne(db, key: item.id) : nil
+            return ItemSummary(
+                item: item, projectName: item.projectId.flatMap { projects[$0] },
+                categoryName: item.categoryId.flatMap { categories[$0] }, tags: tags, streamIDs: streamIDs,
+                linkCount: linkCount, email: email,
+                hasAudio: kinds.contains { Asset.Kind(rawValue: $0)?.isAudio == true },
+                hasTranscript: kinds.contains(Asset.Kind.transcriptJSON.rawValue), hasActiveJob: activeJobs > 0)
         }
     }
 

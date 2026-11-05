@@ -1,6 +1,6 @@
 # ADR-0078 — Trascrizioni di IAGO e di Teams affiancate, Claude consigliato sui Mac lenti
 
-- Stato: accettato (1.2.5-beta), modificato nella 1.2.6-beta
+- Stato: accettato (1.2.5-beta), modificato nella 1.2.6-beta e da ADR-0095 (Claude su ogni Mac)
 - Data: 2026-10-30
 - Riferimenti: ADR-0033 (trascrizioni Teams), ADR-0043 (server MCP), ADR-0054 (sintesi), ADR-0069 (coda unica e memoria), ADR-0071 (sintesi e proposte fatte da Claude), ADR-0058 (niente esce senza la scelta dell'utente); richieste dell'utente del 2026-10-30
 

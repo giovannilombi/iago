@@ -15,17 +15,28 @@ struct MainView: View {
 
     var body: some View {
         Group {
-            if model.isWide, !isSearching { wideLayout } else { columnsLayout }
+            if model.showsChat, model.chatFullWindow {
+                fullChatLayout
+            } else if model.isWide {
+                wideLayout
+            } else {
+                columnsLayout
+            }
         }
-        .searchable(
-            text: $model.searchText, placement: .toolbar,
-            prompt: Text(
-                String(
-                    localized: "Cerca nell'archivio  ·  #tag  ·  categoria:",
-                    comment: "In English the prefix is «category:»"))
-        )
-        .searchSuggestions { LabelSuggestions(model: model) }
         .toolbar {
+            // «Cerca» opens the simple search in the right pane, like «Chiedi a IAGO» (ADR-0092).
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    model.openSearch()
+                } label: {
+                    Label(String(localized: "Cerca"), systemImage: "magnifyingglass").labelStyle(.titleAndIcon)
+                }
+                .keyboardShortcut("f", modifiers: .command)
+                .help(String(localized: "Cerca nell'archivio (⌘F)"))
+                .background(
+                    RoundedRectangle(cornerRadius: 6).fill(model.showsSearch ? Color.accentColor.opacity(0.25) : .clear)
+                )
+            }
             ToolbarItem(placement: .navigation) {
                 Button {
                     model.openSettings?()
@@ -49,11 +60,11 @@ struct MainView: View {
         .overlay(alignment: .bottomTrailing) {
             // «Torna su» sits above «Chiedi a IAGO» at a fixed distance, or in its place when it is hidden (ADR-0084).
             VStack(alignment: .trailing, spacing: 10) {
-                if !model.showsChat, let backToTop = model.backToTop {
+                if model.sidePane == nil, let backToTop = model.backToTop {
                     BackToTopButton(action: backToTop)
                         .transition(.scale.combined(with: .opacity))
                 }
-                if !model.showsChat, !askButtonHidden {
+                if model.sidePane == nil, !askButtonHidden {
                     AskIAGOButton(model: model) { askButtonHidden = true }
                         .transition(.scale.combined(with: .opacity))
                 }
@@ -62,7 +73,7 @@ struct MainView: View {
             .animation(.easeOut(duration: 0.15), value: model.backToTop == nil)
             // Only the floating button animates: an animated split view moved the sidebar under the title bar when
             // «Chiedi a IAGO» opened on a wide view.
-            .animation(.easeOut(duration: 0.2), value: model.showsChat)
+            .animation(.easeOut(duration: 0.2), value: model.sidePane)
         }
         .sheet(item: Binding(get: { model.engine.neededFor }, set: { model.engine.neededFor = $0 })) { feature in
             EngineNeededSheet(model: model, feature: feature)
@@ -140,10 +151,6 @@ struct MainView: View {
         .frame(minWidth: 900, minHeight: 560)
     }
 
-    private var isSearching: Bool {
-        model.showsSearch && !model.searchText.trimmingCharacters(in: .whitespaces).isEmpty
-    }
-
     /// Sidebar, list and detail: the layout of the library's list and timeline, and of the other places.
     private var columnsLayout: some View {
         // One three-column layout for both views: the inspector-based timeline layout looped in AppKit's
@@ -152,9 +159,7 @@ struct MainView: View {
             sidebar
         } content: {
             Group {
-                if isSearching {
-                    SearchResultsView(model: model)
-                } else if model.sidebar == .importer {
+                if model.sidebar == .importer {
                     ImportView(model: model)
                 } else if model.sidebar == .trash {
                     TrashView(model: model)
@@ -172,7 +177,6 @@ struct MainView: View {
                     ItemList(model: model)
                 }
             }
-            .safeAreaInset(edge: .top, spacing: 0) { backToSearch }
             .background(IAGOColor.page)
             .background(ContentColumnWidth(key: columnKey))
             .navigationSplitViewColumnWidth(min: contentWidth.min, ideal: contentWidth.ideal)
@@ -181,10 +185,10 @@ struct MainView: View {
             // constraint pass in this three-column window and crashed it.
             // Both get an exact width, so the detail wraps its text instead of pushing the panel out.
             GeometryReader { geometry in
-                let chat = model.showsChat ? ChatPane.width(stored: chatWidth, available: geometry.size.width) : 0
+                let chat = model.sidePane != nil ? ChatPane.width(stored: chatWidth, available: geometry.size.width) : 0
                 HStack(spacing: 0) {
                     detail.frame(width: geometry.size.width - chat).clipped()
-                    if model.showsChat { chatPane(chat, available: geometry.size.width) }
+                    if model.sidePane != nil { chatPane(chat, available: geometry.size.width) }
                 }
             }
             .background(IAGOColor.page)
@@ -198,18 +202,19 @@ struct MainView: View {
             sidebar
         } detail: {
             GeometryReader { geometry in
-                let chat = model.showsChat ? ChatPane.width(stored: chatWidth, available: geometry.size.width) : 0
-                let shown = model.hasSelection || model.keepsInspector
+                let chat = model.sidePane != nil ? ChatPane.width(stored: chatWidth, available: geometry.size.width) : 0
+                // «Categorie e tag» shows the item's card in its own third column (ADR-0090).
+                let shown = model.sidebar != .labels && (model.hasSelection || model.keepsInspector)
                 let inspector = shown ? min(480, (geometry.size.width - chat) * 0.45) : 0
                 HStack(spacing: 0) {
-                    wideContent.safeAreaInset(edge: .top, spacing: 0) { backToSearch }
+                    wideContent
                         .background(IAGOColor.page)
                         .frame(width: geometry.size.width - chat - inspector).clipped()
                     if shown {
                         inspectorPane.frame(width: inspector)
                             .transition(.move(edge: .trailing))
                     }
-                    if model.showsChat { chatPane(chat, available: geometry.size.width) }
+                    if model.sidePane != nil { chatPane(chat, available: geometry.size.width) }
                 }
             }
             .animation(.easeOut(duration: 0.15), value: model.hasSelection)
@@ -218,8 +223,7 @@ struct MainView: View {
 
     @ViewBuilder
     private var wideContent: some View {
-        // «Attività» and «Categorie e tag» have nothing to select: they take the whole space; what they open shows in
-        // the inspector or in its own list.
+        // «Attività» and «Categorie e tag» take the whole space: «Categorie e tag» has its own list and card.
         if model.sidebar == .activity {
             ActivityView(model: model)
         } else if model.sidebar == .labels {
@@ -276,10 +280,22 @@ struct MainView: View {
             .transition(.move(edge: .trailing))
     }
 
-    @ViewBuilder
-    private var backToSearch: some View {
-        if !model.showsSearch, !model.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
-            BackToSearchBar(model: model).iagoBar()
+    /// «Chiedi a IAGO» a tutta finestra (ADR-0092): the sidebar and the conversation; a source opens on the right.
+    private var fullChatLayout: some View {
+        NavigationSplitView {
+            sidebar
+        } detail: {
+            GeometryReader { geometry in
+                let source = model.hasSelection ? min(480, geometry.size.width * 0.42) : 0
+                HStack(spacing: 0) {
+                    ChatPanel(model: model, fullWindow: true).frame(width: geometry.size.width - source)
+                    if model.hasSelection {
+                        inspectorPane.frame(width: source)
+                            .transition(.move(edge: .trailing))
+                    }
+                }
+            }
+            .animation(.easeOut(duration: 0.15), value: model.hasSelection)
         }
     }
 
@@ -392,7 +408,6 @@ struct MainView: View {
 extension MainView {
     /// Which place the middle column's width belongs to (ADR-0087).
     var columnKey: String {
-        if isSearching { return "search" }
         let view = model.showsDecisions ? "decisions" : model.showsTimeline ? "timeline" : "list"
         switch model.sidebar {
         case .inbox: return "inbox"
@@ -914,6 +929,7 @@ struct WorkModeMenu: View {
         }
         .padding(8)
         .frame(width: 380)
+        .fixedSize(horizontal: false, vertical: true)
     }
 }
 
@@ -936,7 +952,9 @@ struct WorkModeChoice: View {
                     Spacer(minLength: 0)
                     if selected { Image(systemName: "checkmark").foregroundStyle(.secondary) }
                 }
+                // A button label is one line on macOS: the explanation wraps whole.
                 Text(WorkModeText.explanation(mode)).font(.callout).foregroundStyle(.secondary)
+                    .lineLimit(nil).multilineTextAlignment(.leading)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
@@ -998,7 +1016,7 @@ struct ItemContextMenu: View {
 }
 
 /// FR-73: title, date, duration, project, category, tags, status icons.
-private struct ItemRow: View {
+struct ItemRow: View {
     let summary: ItemSummary
     var suggestions = 0
 
@@ -1062,7 +1080,7 @@ enum Format {
 }
 
 /// "#bud" or "categoria:sa" in the search field: the matching tags or categories, to open with one click.
-private struct LabelSuggestions: View {
+struct LabelSuggestions: View {
     let model: AppModel
 
     var body: some View {

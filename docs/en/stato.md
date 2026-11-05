@@ -2,16 +2,16 @@
 
 > The restart point for anyone working on IAGO, people and Claude Code sessions.
 > **It must be updated at the end of every piece of work**, in the same PR: what changed, what remains open.
-> Last update: **November 3, 2026**.
+> Last update: **November 5, 2026**.
 
 ## In brief
-- **Version:** 1.2.14-beta on `main` (tag `v1.2.14-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
+- **Version:** 1.2.15-beta on `main` (tag `v1.2.15-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
 - **Repositories:**
   - `giovannilombi/iago`, private, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
-- **Authors:** Giovanni Lombi; from the versions after 1.0.0-beta, Giovanni Lombi and Gianluca Sestito (ADR-0065).
+- **Authors:** Giovanni Lombi, alone, until work on sharing (phase 4) begins; from then on Giovanni Lombi and Gianluca Sestito (ADR-0065, ADR-0089).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 315 in the packages, all green (1.2.14-beta).
+- **Automated tests:** 321 in the packages, all green (1.2.15-beta).
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -19,7 +19,7 @@ The full description is in the [README](../../README.en.md). In short:
 - it imports emails, documents, PDFs, images, Teams transcripts, also from watched folders;
 - it organizes by client › project › stream, with categories (which decide the shape of the summary) and tags;
 - it extracts key points (decisions, tasks, milestones) with their evolution over time;
-- summaries by category, search by words and by meaning, "Ask IAGO" with sources and "Widen context";
+- summaries by category, search by words and by meaning, "Ask IAGO" with sources and "Change context" (several projects too);
 - MLX local engine inside the app, optional Claude via MCP;
 - recording bar and listening bar, Activity, built-in guide, tour, updates with Sparkle.
 
@@ -34,6 +34,10 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - **Style A, light and dark** (ADR-0086, 1.2.13-beta): done; to be tested in both appearances on a real archive (10v). Your archive has the test project «Sito e app Officina Lume (prova)», to delete (project and client) when no longer needed.
    - **Inbox in two halves, suggestions on the right, columns per place** (ADR-0087, 1.2.14-beta): done; to be tested (10w), especially dragging the handle and the dividers, which the demo tour cannot do.
    - **Order of the item's sections and sidebar** (ADR-0088, 1.2.14-beta): done; to be tested (10w.7–10w.13), especially reordering by dragging the sections.
+   - **Categories and tags, context with several projects, Search in the pane, Ask on the full window** (ADR-0090, ADR-0091, ADR-0092, 1.2.15-beta): done; to be tested (10x), especially dragging the handles of Categories and tags and the conversation staying when moving between pane and full window.
+   - **Microphone dot and panels** (ADR-0093, 1.2.15-beta): to be tested live (10x), unplugging the microphone during a recording and listening in silence for 30 seconds.
+   - **Voices on by default, speaker names, "You", your name** (ADR-0094, 1.2.15-beta): to be tested (10x). Calls already transcribed have voice prints only after *Transcribe again*; the similarity threshold still has to be tuned with real calls.
+   - **Claude as an alternative with the steps and restart alert** (ADR-0095, 1.2.15-beta): to be tested (10x) with Claude Desktop open and closed.
 1. **Tests, in a single session** (see [`docs/prove-tester.md`](prove-tester.md)):
    - recent versions: 10i (open work), 10n (Inbox and names), 10o (two transcripts), 10p (main transcript);
    - live: Teams microphone while IAGO records, IAGO's icon in notifications, sections 10b–10h (memory on 16 GB, screenshots and shortcuts, summaries and suggestions from Claude Desktop, DMG and updates, voice threshold);
@@ -57,6 +61,9 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-05:** version **1.2.15-beta**, with the guide's screenshots retaken in Italian and English and three new ones (`ricerca.png`, `chiedi-finestra.png`, `voci.png`).
+- **2026-11-05, Categories and tags, context, search and chat** (ADR-0090, ADR-0091, ADR-0092, on prototypes approved by the user): *Categories and tags* in three columns with handles, a category and several tags together; *Ask IAGO* with several chosen projects ("Change context", ✕ on each project), choice remembered; *Search* (⌘F) opens *Simple search* in the right pane, with the switch to IAGO and back with the lens; *Ask IAGO* on the full window; the conversation stays when closing and reopening the pane. Whole text in the mode popover.
+- **2026-11-05, microphone, voices and Claude** (ADR-0093, ADR-0094, ADR-0095): yellow dot within 2 seconds only when no audio comes from the microphone, with a panel; a panel once per recording for a microphone silent for 30 seconds. Voice recognition on by default; speaker names with suggestions, saved also when leaving the field; "You" mark for the user's voice; *Your name* also in Settings › Voices, applied to calls already transcribed. Claude box on every Mac (alternative above 16 GB), at the bottom of the summary, with four steps and "how?" opening the guide, a "See how" strip when it is hidden; *Restart Claude Desktop* alert when a project is allowed.
 - **2026-11-03:** version **1.2.14-beta**, with the guide's screenshots retaken in Italian and English.
 - **2026-11-03, co-authors** (ADR-0089): until the work on sharing (phase 4) commits have only Giovanni Lombi as author; Gianluca Sestito's line in `Config/team.txt` is commented out and the hook no longer adds it.
 - **2026-11-02:** version **1.2.13-beta**.

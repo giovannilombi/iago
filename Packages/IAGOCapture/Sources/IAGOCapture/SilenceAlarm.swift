@@ -1,8 +1,11 @@
 import IAGOCore
 
-/// FR-16: warn when one track stays silent for more than 30 s while the other has signal.
+/// FR-16: warn when one track stays silent for more than 30 s while the other has signal (a line in the menu), and,
+/// within seconds, when no audio arrives from the microphone at all (the yellow dot, ADR-0093).
 public enum SilenceAlarm {
     public static let window: Double = 30
+    /// Seconds without any buffer from the microphone before it counts as absent.
+    public static let absentWindow: Double = 2
     /// RMS above which a buffer counts as signal (about -50 dBFS).
     public static let signalThreshold: Float = 0.003
 
@@ -17,6 +20,13 @@ public enum SilenceAlarm {
         if mic > window, system <= window { return .mic }
         if system > window, mic <= window { return .system }
         return nil
+    }
+
+    /// The microphone delivers nothing: no device, or no buffer for `absentWindow` seconds (unplugged, stopped).
+    /// Silence is not absence: a listener who does not speak still delivers buffers.
+    public static func micAbsent(now: Double, lastBuffer: Double?, hasDevice: Bool) -> Bool {
+        guard now >= absentWindow else { return false }
+        return !hasDevice || now - (lastBuffer ?? 0) > absentWindow
     }
 
     public static func rms(_ samples: [Float]) -> Float {

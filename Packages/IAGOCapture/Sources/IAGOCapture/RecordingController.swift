@@ -15,6 +15,8 @@ public actor RecordingController {
         public var elapsed: Double
         public var micName: String?
         public var silentTrack: TrackKind?
+        /// No audio at all from the microphone while recording: the yellow dot (ADR-0093).
+        public var micAbsent = false
         public var finalizingCount: Int
         public var lastError: String?
         /// The item being recorded, if any.
@@ -45,9 +47,11 @@ public actor RecordingController {
     }
 
     public func snapshot() -> Snapshot {
-        let status = router.status(at: HostClock.now())
+        let mic = engine?.currentMic
+        let status = router.status(at: HostClock.now(), hasMic: mic != nil)
         return Snapshot(
-            state: state, elapsed: status.elapsed, micName: engine?.currentMic?.name, silentTrack: status.silentTrack,
+            state: state, elapsed: status.elapsed, micName: mic?.name, silentTrack: status.silentTrack,
+            micAbsent: state == .recording && status.micAbsent,
             finalizingCount: finalizingCount, lastError: lastError ?? status.error,
             itemID: state == .idle ? nil : router.activeItemID, micMuted: state != .idle && micMuted)
     }
@@ -230,6 +234,7 @@ final class SessionRouter: @unchecked Sendable {
     struct Status {
         var elapsed: Double = 0
         var silentTrack: TrackKind?
+        var micAbsent = false
         var error: String?
     }
 
@@ -331,11 +336,12 @@ final class SessionRouter: @unchecked Sendable {
         queue.sync { session.noteDevice(name, for: track) }
     }
 
-    func status(at hostTime: UInt64) -> Status {
+    func status(at hostTime: UInt64, hasMic: Bool) -> Status {
         queue.sync {
             guard let session = current else { return Status() }
             return Status(
                 elapsed: session.elapsed(at: hostTime), silentTrack: session.silentTrack(at: hostTime),
+                micAbsent: session.micAbsent(at: hostTime, hasDevice: hasMic),
                 error: session.lastError.map { "\($0)" })
         }
     }

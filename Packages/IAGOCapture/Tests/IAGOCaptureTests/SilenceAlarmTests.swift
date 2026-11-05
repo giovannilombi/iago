@@ -20,6 +20,14 @@ import Testing
         #expect(SilenceAlarm.silentTrack(now: 120, lastSignal: [.mic: 10, .system: 10]) == nil)
     }
 
+    @Test func micAbsentOnlyWithoutBuffers() {
+        #expect(!SilenceAlarm.micAbsent(now: 1, lastBuffer: nil, hasDevice: false))
+        #expect(!SilenceAlarm.micAbsent(now: 60, lastBuffer: 59.5, hasDevice: true))
+        #expect(SilenceAlarm.micAbsent(now: 60, lastBuffer: 50, hasDevice: true))
+        #expect(SilenceAlarm.micAbsent(now: 3, lastBuffer: nil, hasDevice: true))
+        #expect(SilenceAlarm.micAbsent(now: 60, lastBuffer: 59.5, hasDevice: false))
+    }
+
     @Test func rmsOfSine() {
         let samples = (0..<48_000).map { Float(sin(Double($0) * 2 * .pi * 440 / 48_000)) }
         #expect(abs(SilenceAlarm.rms(samples) - 0.7071) < 0.001)

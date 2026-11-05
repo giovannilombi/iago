@@ -15,6 +15,8 @@ final class TrackWriter {
     private let flushFrames: Int
     private let syncFrames: Int
     private(set) var lastSignalPosition: Double?
+    /// Timeline position of the last buffer, signal or not: the device is delivering.
+    private(set) var lastBufferPosition: Double?
 
     init(kind: TrackKind, url: URL, sampleRate: Double) throws {
         self.kind = kind
@@ -39,6 +41,7 @@ final class TrackWriter {
         } else {
             resampler = nil
         }
+        lastBufferPosition = position
         if SilenceAlarm.rms(samples) > SilenceAlarm.signalThreshold {
             lastSignalPosition = position
         }

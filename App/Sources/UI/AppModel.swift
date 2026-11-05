@@ -121,26 +121,45 @@ final class AppModel {
         didSet {
             guard searchText != oldValue else { return }
             let active = !searchText.trimmingCharacters(in: .whitespaces).isEmpty
-            if active, !showsSearch {
+            if active, oldValue.trimmingCharacters(in: .whitespaces).isEmpty {
                 // A new search starts in the project being viewed, if any.
                 searchScope = currentSearchScope
                 searchOriginScope = searchScope
             }
-            showsSearch = active
             scheduleSearch()
         }
     }
     private(set) var searchHits: [SearchHit] = []
-    /// The results replace the content column; switching section hides them but keeps the search, and the
-    /// toolbar icon brings them back.
-    var showsSearch = false
+    /// «Ricerca semplice» in the right pane (ADR-0092): it stays open while the user moves between sections.
+    var showsSearch: Bool {
+        get { sidePane == .search }
+        set { sidePane = newValue ? .search : (sidePane == .search ? nil : sidePane) }
+    }
+    /// What the right pane shows: the simple search or «Chiedi a IAGO», one at a time (ADR-0092).
+    enum SidePane { case search, chat }
+    var sidePane: SidePane? { didSet { if sidePane != .chat { chatFullWindow = false } } }
+    /// «Chiedi a IAGO» over the whole window, next to the sidebar (ADR-0092).
+    var chatFullWindow = false
+    /// Bumped to put the cursor in the search field (⌘F, «Cerca»).
+    var searchFocusRequest = 0
+    /// The conversation and the context of «Chiedi a IAGO», kept when the pane changes place or closes.
+    let chat = ChatState()
+
+    /// «Cerca»: the simple search in the right pane, with the cursor in its field.
+    func openSearch() {
+        sidePane = .search
+        searchFocusRequest += 1
+    }
     /// Where the search looks: a client, a project, a stream, or everything.
     var searchScope = SearchScope.all { didSet { if searchScope != oldValue { scheduleSearch() } } }
     /// Where the search started from, to offer it again after "Cerca ovunque".
     private(set) var searchOriginScope = SearchScope.all
 
     /// "Chiedi" (ADR-0049): the side panel and what it looks at.
-    var showsChat = false
+    var showsChat: Bool {
+        get { sidePane == .chat }
+        set { sidePane = newValue ? .chat : (sidePane == .chat ? nil : sidePane) }
+    }
     /// «Torna su» of the item view, set while its sticky bar is shown (ADR-0084).
     var backToTop: (@MainActor () -> Void)?
     /// Asks the item view to open a section and scroll to it (`top`: back to the title); used by the demo tour.
@@ -269,6 +288,8 @@ final class AppModel {
     var openItem: ((String) -> Void)?
     /// Set by the window manager: opens the settings window (gear next to the title).
     var openSettings: (() -> Void)?
+    /// The chapter the guide should show when it opens (prefix of the file name).
+    var helpChapter: String?
     /// "Guida di IAGO" and the welcome tour.
     var openHelp: (() -> Void)?
     var openTour: (() -> Void)?
@@ -987,7 +1008,8 @@ final class AppModel {
             clearSelection()
             showModeIntro(for: selection)
         }
-        showsSearch = false
+        // A section opened from the sidebar takes the window back from «Chiedi a IAGO» a tutta finestra.
+        chatFullWindow = false
         reload()
     }
 

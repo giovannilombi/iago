@@ -58,8 +58,8 @@ The name comes from the icon: a parrot with a memory of steel.
 
 ## What it does
 ### It answers
-- **Ask IAGO** (⌘K): natural-language questions about a stream, a project, a client or the whole memory, with the context always in view and "Widen context" to search more widely. Answers use only your content and cite numbered sources, which open at the right item and minute. Conversations are kept, can be pinned, and can be saved as a note.
-- **Full-text search** and **search by meaning**: "how much the company pays in" finds "the employer contribution". The two searches are merged with *reciprocal rank fusion*.
+- **Ask IAGO** (⌘K): natural-language questions about a stream, a project, a client or the whole memory, with the context always in view, even several projects together chosen by you ("Change context"). It opens in the right pane or on the whole window. Answers use only your content and cite numbered sources, which open at the right item and minute. Conversations are kept, can be pinned, and can be saved as a note.
+- **Full-text search** and **search by meaning**, with **Search** (⌘F) in the right pane: "how much the company pays in" finds "the employer contribution". The two searches are merged with *reciprocal rank fusion*.
 - **Cross-cutting access:** every category and every tag spans all projects; `#tag` and `categoria:` straight from the search.
 
 ### It remembers what matters
@@ -68,7 +68,7 @@ The name comes from the icon: a parrot with a memory of steel.
 - **The evolution of decisions:** an entry can supersede others, even of a different type, and IAGO keeps the history of how you got there.
 - **Moments marked** during a call, also **with a screenshot** of the shared slide (the text read from it goes into the transcript, the search and the summaries), and dated **notes** on the project or the item, also dictated by voice. The shortcuts (⌃⌥M, ⌃⌥S, ⌃⌥R) work in any app.
 - **Engine suggestions:** after each new piece of content IAGO suggests decisions, tasks (with who, by when, who is waited on), open questions, risks, requests, speaker names, tags, project and links, each with the sentence it comes from. Nothing is applied without your confirmation. Every summary and every suggestion says which model produced it.
-- **It recognizes voices** (if you turn it on): give a speaker a name and in later calls IAGO suggests that name when it hears the same voice. Voiceprints stay encrypted on the Mac, never go to Claude and can be deleted whenever you want.
+- **It recognizes voices** (on by default, turned off in Settings › Voices): give a speaker a name and in later calls IAGO suggests that name when it hears the same voice. Voiceprints stay encrypted on the Mac, never go to Claude and can be deleted whenever you want.
 
 ### It understands
 - **Summaries by meeting type:** a 1to1 has commitments and feedback, a progress review milestones, risks and decisions, a sales meeting needs, objections and next steps.
@@ -263,7 +263,7 @@ Tests on real calls: [`docs/en/benchmarks/2026-10-21-sintesi-e-glossario.md`](do
 - **EdDSA-signed updates:** IAGO installs only versions signed with the same key.
 
 ## Design decisions
-Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`](docs/en/adr/README.md): 68 so far, with context, rejected alternatives and consequences. Some of them:
+Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`](docs/en/adr/README.md): 95 so far, with context, rejected alternatives and consequences. Some of them:
 
 | ADR | Decision | Why |
 |---|---|---|
@@ -280,16 +280,18 @@ Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`
 | [0069](docs/en/adr/0069-coda-unica-del-motore.md) | One heavy job at a time, chat first | the Mac does not fill up, answers do not wait |
 | [0071](docs/en/adr/0071-claude-sintesi-e-proposte.md) | Summaries and suggestions also from Claude, with the same checks | high quality on small Macs, always checkable |
 | [0072](docs/en/adr/0072-segna-momento-con-screenshot.md) | Screenshots only on request, read on the Mac | slides enter the memory without automatic captures |
-| [0073](docs/en/adr/0073-riconoscere-le-voci.md) | Voices recognized across calls, only if turned on and only as a suggestion | fewer names to type, biometric data under control |
+| [0073](docs/en/adr/0073-riconoscere-le-voci.md) | Voices recognized across calls, only as a suggestion (on by default since ADR-0094) | fewer names to type, biometric data under control |
 | [0074](docs/en/adr/0074-lavoro-aperto-traccia-gestisci.md) | Open work with two modes per project, Track and Manage, on the same data | simple where that is enough, complete where you manage |
 | [0075](docs/en/adr/0075-viste-come-e-cosa.md) | Views as "how to look × what to show", Overview on its own, full-window Kanban | a bar with a clear hierarchy |
 | [0076](docs/en/adr/0076-modalita-inbox-elementi.md) | Truly simple Track mode, Inbox at the top, Items and Graph, import from the project | two modes that stand apart, everyone's work in one place |
 | [0077](docs/en/adr/0077-italiano-e-inglese.md) | Italian and English for app, guide, site and documents, kept aligned by an automatic check | two languages with no forgotten translations |
 | [0056](docs/en/adr/0056-aggiornamenti.md) | Signed Sparkle updates, major ones required | everyone on the same safe version |
 | [0057](docs/en/adr/0057-sync-onedrive.md) | Sharing through a cloud folder | collaborating without a new server |
+| [0092](docs/en/adr/0092-ricerca-nella-spalla-e-chat-a-tutta-finestra.md) | Search always in the right pane, Ask IAGO also on the whole window | one place to search and ask |
+| [0095](docs/en/adr/0095-claude-come-alternativa-e-riavvio.md) | Claude as an alternative on every Mac, with the steps | you see how to do it, without it being imposed |
 
 ## Quality and tests
-- **301 automated tests** in the packages: Store 109, Capture 48, Intelligence 32, Transcription 29, Ingest 22, MCP 20, Core 15, Engine 15, Export 10, Sync 1.
+- **321 automated tests** in the packages: Store 124, Capture 49, Intelligence 34, Transcription 30, Ingest 22, MCP 20, Core 15, Engine 15, Export 11, Sync 1.
   - The audio pipeline is tested with **synthetic** fixtures (`say` voices), never with real recordings.
   - The engines are tested with fake responses, which also reproduce the real errors of the models.
 - **Before every pull request**, on the Mac: all the tests and the network API check (`scripts/test-packages.sh`); the git hooks check real data, email addresses and languages. GitHub Actions CI runs only by hand, to save the GitHub Free minutes. The build with MLX (`scripts/test-engine.sh`) is done before PRs that touch the engine.
@@ -331,7 +333,8 @@ The notes of each version are on the [releases page](https://github.com/giovanni
 
 | Version | Date | What it contains |
 |---|---|---|
-| **1.2.14-beta** | November 3, 2026 | On `main` (tag `v1.2.14-beta`; going back to previous versions: see below). **Inbox in two halves:** *Do now* at the top and *Suggestions to confirm* at the bottom, each with its own scroll and a handle to change their height; suggestions in one box per item that opens on the right, with *Confirm all*. **Columns half and half** and the width saved per place. **Item card:** first audio, bookmarks and screenshots, then summary and transcript; sections reordered by dragging them, with the order for every item. **Sidebar:** *Add* client or project above the projects, Trash at the bottom, a client's + creating the project with the client already chosen, the whole project name after two seconds. Guide screenshots retaken |
+| **1.2.15-beta** | November 5, 2026 | On `main` (tag `v1.2.15-beta`; going back to previous versions: see below). **Categories and tags** in three columns, with a category and several tags together. **Ask IAGO** with several projects chosen by you ("Change context") and on the whole window. **Search** (⌘F) in the right pane instead of the field at the top. **Yellow dot** at once when no audio comes from the microphone, and clear panels. **Voices recognized** by default, speaker names with suggestions and saved also when leaving the field, the "You" mark, your name also in Settings › Voices. **Claude** as an alternative on every Mac, with the steps and the restart alert. Guide screenshots retaken |
+| **1.2.14-beta** | November 3, 2026 | Tag `v1.2.14-beta`. **Inbox in two halves:** *Do now* at the top and *Suggestions to confirm* at the bottom, each with its own scroll and a handle to change their height; suggestions in one box per item that opens on the right, with *Confirm all*. **Columns half and half** and the width saved per place. **Item card:** first audio, bookmarks and screenshots, then summary and transcript; sections reordered by dragging them, with the order for every item. **Sidebar:** *Add* client or project above the projects, Trash at the bottom, a client's + creating the project with the client already chosen, the whole project name after two seconds. Guide screenshots retaken |
 | **1.2.13-beta** | November 2, 2026 | Tag `v1.2.13-beta`. **New "colour as a signal" style:** neutral text, the kind's colour only where useful, red only for urgency, a thread under box titles. **Light, dark or automatic** from the icon next to Settings; light with cool greys, no full white. "Add" sheet with the kind in a tile, Kanban with columns in boxes, Activity rearranged. Every guide screenshot retaken |
 | **1.2.12-beta** | November 2, 2026 | Tag `v1.2.12-beta`. **Overview revised:** in Manage boxes in two columns that rearrange themselves, the boxes' tiles always at the top, latest decisions and milestones; in Track a page already split with the panel on the right. **Activity** across the window with the last 7 days. Clickable mode icon. Fixes: «Categories and tags» selectable again, key point sheet no longer cut off |
 | **1.2.11-beta** | November 2, 2026 | Tag `v1.2.11-beta`. **Item detail revised:** under the title client and project, then small tiles with one value each that take you to the section; when scrolling, a sticky bar with the tiles in miniature and ↑ above «Ask IAGO»; open or closed sections remembered per item, with defaults in Settings; empty sections reduced to their header; bookmarks and screenshots as ticks on the player, one moment at a time, and in the transcript at their minute. New guide screenshots |
@@ -351,7 +354,7 @@ The notes of each version are on the [releases page](https://github.com/giovanni
 | **1.0.0-beta** | October 24, 2026 | Beta, not yet distributed: everything described here (phases 0-3). 1.0.0 will be the first distributable version |
 
 ### Going back to a previous version
-Every version has a tag on GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`, `v1.2.8-beta`, `v1.2.9-beta`, `v1.2.10-beta`, `v1.2.11-beta`, `v1.2.12-beta`, `v1.2.13-beta`, `v1.2.14-beta`…) with the list of features in the message: code, guide and documentation of that version are all there.
+Every version has a tag on GitHub (`v1.0.1-beta`, `v1.1.0-beta`, `v1.2.0-beta`, `v1.2.1-beta`, `v1.2.2-beta`, `v1.2.3-beta`, `v1.2.4-beta`, `v1.2.5-beta`, `v1.2.6-beta`, `v1.2.7-beta`, `v1.2.8-beta`, `v1.2.9-beta`, `v1.2.10-beta`, `v1.2.11-beta`, `v1.2.12-beta`, `v1.2.13-beta`, `v1.2.14-beta`, `v1.2.15-beta`…) with the list of features in the message: code, guide and documentation of that version are all there.
 - **Code and documentation:** `git checkout v1.0.1-beta`, then `xcodegen generate` and a build; `npm run docs:dev` shows the site of that version. If a version is abandoned, development resumes from the branch of the previous version (for example `release/1.0.x`) with the numbers of that series (1.0.2-beta…).
 - **Archive:** database migrations only go forward. An older version may not read an archive already opened by a newer one. To go back, restore the **backup** made before the update (Settings › Backup and transfer), or try the new version on a **copy** of the archive (`scripts/try-branch.sh`).
 

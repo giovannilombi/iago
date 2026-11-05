@@ -35,6 +35,16 @@ Le cambi o le disattivi in **Impostazioni › Generale › Scorciatoie in tutte 
 - **Automatico** (consigliato): IAGO usa il microfono dell'app di call e lo segue se colleghi o scolleghi le cuffie.
 - **Fisso**: scegline uno in Impostazioni › Audio o dal menu dell'icona di IAGO {{icona}}.
 
+## Il pallino sull'icona
+Durante la registrazione un pallino sull'icona di IAGO {{icona}} dice come va:
+- **rosso**: registra, con il microfono;
+- **giallo**: dal microfono **non arriva audio** (staccato, spento o non disponibile). Compare entro un paio di secondi e torna rosso appena il microfono riprende. Se stai solo ascoltando in silenzio resta rosso;
+- **arancione**: in pausa.
+
+Se dal microfono non arriva audio compare anche un pannello in alto a destra, **Il microfono non registra**: IAGO sta registrando solo l'audio del Mac e la tua voce non finirebbe nella trascrizione. *Scegli il microfono* apre Impostazioni › Audio.
+
+Se invece il microfono funziona ma è muto da oltre 30 secondi mentre gli altri parlano, una volta per registrazione compare **Il microfono non sente la tua voce**: se stai solo ascoltando va tutto bene, se stai parlando controlla il microfono o il mute della call. Lo stesso avviso resta come riga nel menu dell'icona e nella barra di registrazione.
+
 ## Senza cuffie: l'eco
 Senza cuffie il microfono sente anche le casse, e le voci degli altri tornano un po' anche sulla tua traccia. **Usa le cuffie quando puoi.** In trascrizione IAGO riconosce e scarta comunque le frasi della traccia di sistema che ricompaiono sul microfono.
 

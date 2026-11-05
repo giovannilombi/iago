@@ -111,3 +111,9 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0087 | Inbox a due metà, proposte a destra, colonne per sezione | accettato |
 | 0088 | Ordine delle sezioni dell'elemento e barra laterale | accettato |
 | 0089 | Co-autori dei commit fino alla condivisione | accettato |
+| 0090 | Categorie e tag a tre colonne | accettato |
+| 0091 | Contesto di «Chiedi a IAGO» con più progetti | accettato |
+| 0092 | Ricerca nella spalla destra e «Chiedi a IAGO» a tutta finestra | accettato |
+| 0093 | Pallino giallo e pannelli quando il microfono non registra | accettato |
+| 0094 | Riconoscimento delle voci acceso, nomi degli speaker più semplici, il tuo nome | accettato |
+| 0095 | Claude come alternativa su ogni Mac, con i passi, e riavvio di Claude Desktop | accettato |

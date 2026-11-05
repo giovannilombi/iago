@@ -1,6 +1,6 @@
 # ADR-0078 — IAGO's and Teams' transcripts side by side, Claude suggested on slow Macs
 
-- Status: accepted (1.2.5-beta), amended in 1.2.6-beta
+- Status: accepted (1.2.5-beta), amended in 1.2.6-beta and by ADR-0095 (Claude on every Mac)
 - Date: 2026-10-30
 - References: ADR-0033 (Teams transcripts), ADR-0043 (MCP server), ADR-0054 (summaries), ADR-0069 (single queue and memory), ADR-0071 (summaries and suggestions made by Claude), ADR-0058 (nothing leaves without the user's choice); user requests of 2026-10-30
 

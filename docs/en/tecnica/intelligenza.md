@@ -6,7 +6,8 @@
 - **Full text:** SQLite FTS5 ignoring accents and case, updated on save (ADR-0036).
 - **Semantic:** the text is split into pieces (*chunks*) with the source item and minute, turned into vectors by **Qwen3 Embedding 0.6B** (MLX 4-bit, *last-token pooling*); similarity is the cosine over an in-memory matrix (ADR-0049).
 - **Hybrid search:** the two lists are merged with *reciprocal rank fusion*. Without the embedding model, keyword search remains.
-- **Scope:** the whole memory, a client, a project or a stream.
+- **Scope** (`SearchScope`): the whole memory, a client, a project, a stream or **several chosen projects** (`.projects`, ADR-0091: sorted ids, at least two). `SearchScope.chosen(_:)` gives `.all` for no project, `.project` for one and `.projects` for two or more. The scope applies to search, the pieces of meaning search (`chunks`), new material (`changedSince`), open work suggestions and key points (`DecisionQuery.Scope.projects`).
+- **Categories and tags** (ADR-0090): `Archive.summaries(categoryID:tagIDs:)` gives the items with the chosen category and **all** the chosen tags (one `item_tag` filter per tag); with neither category nor tags, those that have at least one of the two.
 - **Two transcripts** (ADR-0078): search by words also looks in a call's other transcript, but only for calls where the main one has not already matched the words (`SearchHit.alternate`), so the same passage does not show twice. The vectors stay of the main one only; the MCP tools drop the other transcript's results, since Claude reads the main one.
 
 ## Key points (ADR-0046, ADR-0052, ADR-0074)
@@ -40,11 +41,12 @@ After every new piece of content the engine suggests decisions, tasks, open ques
 - The minutes in the summary are `iago://seek/N` links that restart the audio there.
 
 ## Ask IAGO (ADR-0049)
-1. The question searches the chosen **context** (stream, project, client or the whole memory) with hybrid search, up to 40 pieces.
+1. The question searches the chosen **context** (stream, project, client, several projects or the whole memory) with hybrid search, up to 40 pieces.
 2. The pieces are grouped by item and numbered as **sources**; the model receives only those, with a labeled context (ADR-0017).
 3. The answer must cite the sources `[n]`; a click on a source opens the item at the minute.
 4. Conversations are kept for 48 hours, unless saved; when one is reopened, IAGO flags new material that arrived after the last answer.
-5. "Widen context" moves up to the next level and repeats the last question in a new conversation.
+5. "Change context" (ADR-0091) adds projects, narrows to some of them, moves to the whole memory or goes back to following the open section; the change opens a new conversation and repeats the last question (`ChatAnswerer.decisionScope` for key points). A conversation over several projects is saved with `scope_kind = "projects"` and the ids joined by commas in `scope_id`, without changing the schema.
+6. **Chat state** (`ChatState`, `App/Sources/UI/ChatContext.swift`): question, conversation, answers and chosen context live in `AppModel.chat`, not in the view, so the conversation stays when moving from the pane to the whole window and when closing the pane. The chosen context also stays across launches in `UserDefaults` (`chat.context`: `all`, `project:id`, `projects:a,b`, `client:id`, `stream:id`); the demo tour neither reads nor writes it (`DemoMode.isActive`).
 
 ## Short titles (ADR-0042)
 When a long text becomes a key point, Apple Foundation Models (macOS 26, if Apple Intelligence is on) suggests a title of at most 8 words. On the Mac, without network.

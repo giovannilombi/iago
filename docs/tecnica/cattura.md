@@ -17,7 +17,8 @@ IAGO registra **due tracce separate** (ADR-0002): l'audio del Mac (gli altri) e 
 - A fine registrazione le tracce vengono finalizzate in AAC e cifrate nell'archivio.
 - **Recovery all'avvio:** una sessione non finalizzata (crash, spegnimento) viene recuperata; una traccia vuota viene riempita di silenzio per restare allineata.
 - **Sonno del Mac:** pausa automatica e scelta al risveglio.
-- **Traccia muta:** dopo 30 secondi di silenzio su una traccia IAGO avvisa.
+- **Microfono assente** (ADR-0093): `TrackWriter.lastBufferPosition` segna l'ultimo buffer arrivato, con segnale o no; `SilenceAlarm.micAbsent` dà vero dopo 2 secondi senza buffer dal microfono (`absentWindow`) o senza dispositivo. Il silenzio non conta: un microfono che ascolta manda comunque buffer. `RecordingController.Snapshot.micAbsent` lo porta all'interfaccia, che lo legge ogni secondo: pallino giallo sull'icona di IAGO, riga nel menu e nella barra di registrazione, e un pannello (`CallPrompts`, come le proposte di registrazione) gestito da `StatusItemController.updateMicPanels`, che non torna dopo una risposta finché il microfono non riprende.
+- **Traccia muta** (FR-16): dopo 30 secondi di silenzio su una traccia mentre l'altra ha segnale, una riga nel menu e nella barra di registrazione; per il microfono anche un pannello, una volta per registrazione. Non colora più il pallino.
 
 ## Interfaccia di registrazione
 - Clic sull'icona: menu; clic destro o ctrl-clic: avvia, pausa e ripresa. Così un clic distratto non mette mai in pausa una call (ADR-0026).

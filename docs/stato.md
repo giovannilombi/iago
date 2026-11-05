@@ -2,16 +2,16 @@
 
 > Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
 > **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
-> Ultimo aggiornamento: **3 novembre 2026**.
+> Ultimo aggiornamento: **5 novembre 2026**.
 
 ## In breve
-- **Versione:** 1.2.14-beta su `main` (tag `v1.2.14-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.2.15-beta su `main` (tag `v1.2.15-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
 - **Repository:**
   - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
-- **Autori:** Giovanni Lombi; dalle versioni successive alla 1.0.0-beta, Giovanni Lombi e Gianluca Sestito (ADR-0065).
+- **Autori:** Giovanni Lombi, solo, fino all'inizio del lavoro sulla condivisione (fase 4); da lì Giovanni Lombi e Gianluca Sestito (ADR-0065, ADR-0089).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 315 nei pacchetti, tutti verdi (1.2.14-beta).
+- **Test automatici:** 321 nei pacchetti, tutti verdi (1.2.15-beta).
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -19,7 +19,7 @@ La descrizione completa è nel [README](../README.md). In sintesi:
 - importa email, documenti, PDF, immagini, trascrizioni di Teams, anche da cartelle sorvegliate;
 - organizza per cliente › progetto › stream, con categorie (che decidono la forma della sintesi) e tag;
 - estrae punti chiave (decisioni, attività, tappe) con la loro evoluzione nel tempo;
-- sintesi per categoria, ricerca per parole e per significato, "Chiedi a IAGO" con fonti e "Allarga contesto";
+- sintesi per categoria, ricerca per parole e per significato, "Chiedi a IAGO" con fonti e "Cambia contesto" (anche più progetti);
 - motore locale MLX dentro l'app, Claude facoltativo via MCP;
 - barra di registrazione e barra di ascolto, Attività, guida integrata, tour, aggiornamenti con Sparkle.
 
@@ -34,6 +34,10 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - **Stile A, chiaro e scuro** (ADR-0086, 1.2.13-beta): fatto; da provare nei due aspetti su un archivio vero (10v). Nel tuo archivio c'è il progetto di prova «Sito e app Officina Lume (prova)», da eliminare (progetto e cliente) quando non serve più.
    - **Inbox a due metà, proposte a destra, colonne per sezione** (ADR-0087, 1.2.14-beta): fatto; da provare (10w), soprattutto il trascinamento della maniglia e dei divisori, che il tour dimostrativo non può fare.
    - **Ordine delle sezioni dell'elemento e barra laterale** (ADR-0088, 1.2.14-beta): fatto; da provare (10w.7–10w.13), soprattutto il riordino trascinando le sezioni.
+   - **Categorie e tag, contesto con più progetti, Cerca nella spalla, Chiedi a tutta finestra** (ADR-0090, ADR-0091, ADR-0092, 1.2.15-beta): fatti; da provare (10x), soprattutto il trascinamento delle maniglie di Categorie e tag e la conversazione che resta passando tra spalla e finestra intera.
+   - **Pallino e pannelli del microfono** (ADR-0093, 1.2.15-beta): da provare dal vivo (10x), staccando il microfono durante una registrazione e ascoltando in silenzio per 30 secondi.
+   - **Voci accese di default, nomi degli speaker, «Tu», il tuo nome** (ADR-0094, 1.2.15-beta): da provare (10x). Le call già trascritte hanno le impronte solo dopo *Ritrascrivi*; la soglia di somiglianza va ancora tarata con call vere.
+   - **Claude come alternativa con i passi e avviso di riavvio** (ADR-0095, 1.2.15-beta): da provare (10x) con Claude Desktop aperto e chiuso.
 1. **Prove, in un'unica sessione** (vedi [`docs/prove-tester.md`](prove-tester.md)):
    - versioni recenti: 10i (lavoro aperto), 10n (Inbox e nomi), 10o (due trascrizioni), 10p (trascrizione principale);
    - dal vivo: microfono di Teams mentre IAGO registra, icona di IAGO nelle notifiche, sezioni 10b–10h (memoria su 16 GB, schermate e scorciatoie, sintesi e proposte da Claude Desktop, DMG e aggiornamenti, soglia delle voci);
@@ -57,6 +61,9 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-05:** versione **1.2.15-beta**, con le schermate della guida rifatte in italiano e inglese e tre nuove (`ricerca.png`, `chiedi-finestra.png`, `voci.png`).
+- **2026-11-05, Categorie e tag, contesto, ricerca e chat** (ADR-0090, ADR-0091, ADR-0092, su prototipi approvati dall'utente): *Categorie e tag* a tre colonne con maniglie, categoria e più tag insieme; *Chiedi a IAGO* con più progetti scelti («Cambia contesto», ✕ su ogni progetto), scelta ricordata; *Cerca* (⌘F) apre la *Ricerca semplice* nella spalla destra, con il passaggio a IAGO e ritorno con la lente; *Chiedi a IAGO* a tutta finestra; la conversazione resta chiudendo e riaprendo il pannello. Testo intero nel popover della modalità.
+- **2026-11-05, microfono, voci e Claude** (ADR-0093, ADR-0094, ADR-0095): pallino giallo entro 2 secondi solo quando dal microfono non arriva audio, con pannello; pannello una volta per registrazione per il microfono muto da 30 secondi. Riconoscimento delle voci acceso di default; nomi degli speaker con suggerimenti, salvati anche uscendo dal campo; segno «Tu» per la voce dell'utente; *Il tuo nome* anche in Impostazioni › Voci, applicato alle call già trascritte. Riquadro di Claude su ogni Mac (alternativa sopra i 16 GB), in fondo alla sintesi, con quattro passi e «come?» che apre la guida, striscia «Vedi come» quando è nascosto; avviso *Riavvia Claude Desktop* quando si consente un progetto.
 - **2026-11-03:** versione **1.2.14-beta**, con le schermate della guida rifatte in italiano e inglese.
 - **2026-11-03, co-autori** (ADR-0089): fino al lavoro sulla condivisione (fase 4) i commit hanno come autore solo Giovanni Lombi; la riga di Gianluca Sestito in `Config/team.txt` è commentata e l'hook non la aggiunge più.
 - **2026-11-02:** versione **1.2.13-beta**.

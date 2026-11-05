@@ -6,7 +6,8 @@
 - **Testo pieno:** SQLite FTS5 con accenti e maiuscole ignorati, aggiornato al salvataggio (ADR-0036).
 - **Per significato:** il testo viene diviso in pezzi (*chunk*) con l'elemento e il minuto d'origine, trasformati in vettori da **Qwen3 Embedding 0.6B** (MLX 4 bit, *last-token pooling*); la similarità è il coseno su una matrice in memoria (ADR-0049).
 - **Ricerca ibrida:** i due elenchi vengono uniti con *reciprocal rank fusion*. Senza il modello di embedding resta la ricerca per parole.
-- **Ambito:** tutta la memoria, un cliente, un progetto o uno stream.
+- **Ambito** (`SearchScope`): tutta la memoria, un cliente, un progetto, uno stream o **più progetti scelti** (`.projects`, ADR-0091: id ordinati, almeno due). `SearchScope.chosen(_:)` dà `.all` per nessun progetto, `.project` per uno e `.projects` per due o più. L'ambito vale per la ricerca, i pezzi della ricerca per significato (`chunks`), il materiale nuovo (`changedSince`), le proposte del lavoro aperto e i punti chiave (`DecisionQuery.Scope.projects`).
+- **Categorie e tag** (ADR-0090): `Archive.summaries(categoryID:tagIDs:)` dà gli elementi con la categoria scelta e **tutti** i tag scelti (un filtro `item_tag` per tag); senza categoria né tag, quelli che hanno almeno una delle due.
 - **Due trascrizioni** (ADR-0078): la ricerca per parole guarda anche nella trascrizione secondaria di una call, ma solo per le call dove la principale non ha già trovato le parole (`SearchHit.alternate`), così lo stesso passaggio non compare due volte. I vettori restano della sola principale; gli strumenti MCP scartano i risultati della secondaria, perché Claude legge la principale.
 
 ## Punti chiave (ADR-0046, ADR-0052, ADR-0074)
@@ -40,11 +41,12 @@ Dopo ogni nuovo contenuto il motore propone decisioni, attività, punti da chiar
 - I minuti nella sintesi sono link `iago://seek/N` che fanno ripartire l'audio.
 
 ## Chiedi a IAGO (ADR-0049)
-1. La domanda cerca nel **contesto** scelto (stream, progetto, cliente o tutta la memoria) con la ricerca ibrida, fino a 40 pezzi.
+1. La domanda cerca nel **contesto** scelto (stream, progetto, cliente, più progetti o tutta la memoria) con la ricerca ibrida, fino a 40 pezzi.
 2. I pezzi vengono raggruppati per elemento e numerati come **fonti**; il modello riceve solo quelle, con un contesto etichettato (ADR-0017).
 3. La risposta deve citare le fonti `[n]`; un clic su una fonte apre l'elemento al minuto.
 4. Le conversazioni restano 48 ore, a meno di conservarle; riaprendone una, IAGO segnala il materiale nuovo arrivato dopo l'ultima risposta.
-5. "Allarga contesto" passa al livello superiore e ripete l'ultima domanda in una conversazione nuova.
+5. «Cambia contesto» (ADR-0091) aggiunge progetti, restringe a una parte, passa a tutta la memoria o torna a seguire la sezione aperta; il cambio apre una conversazione nuova e ripete l'ultima domanda (`ChatAnswerer.decisionScope` per i punti chiave). Una conversazione su più progetti si salva con `scope_kind = "projects"` e gli id uniti da virgole in `scope_id`, senza cambiare lo schema.
+6. **Stato della chat** (`ChatState`, `App/Sources/UI/ChatContext.swift`): domanda, conversazione, risposte e contesto scelto stanno in `AppModel.chat`, non nella vista, così la conversazione resta passando dalla spalla a tutta la finestra e chiudendo il pannello. Il contesto scelto resta anche tra un avvio e l'altro in `UserDefaults` (`chat.context`: `all`, `project:id`, `projects:a,b`, `client:id`, `stream:id`); il tour dimostrativo non lo legge né lo scrive (`DemoMode.isActive`).
 
 ## Titoli brevi (ADR-0042)
 Quando un testo lungo diventa un punto chiave, Apple Foundation Models (macOS 26, se Apple Intelligence è attivo) propone un titolo di al massimo 8 parole. Sul Mac, senza rete.

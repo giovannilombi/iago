@@ -314,7 +314,7 @@ struct ScopeSettingsSheet: View {
                     get: { project.claudeAccessible },
                     set: { value in
                         model.perform { try model.archive.setProjectClaudeAccessible(id, value) }
-                        if value { ClaudeConnection.provisionServerKey(archive: model.archive) }
+                        if value { ClaudeConnection.projectShared(archive: model.archive, projectName: project.name) }
                     })
             )
             .font(.headline)
@@ -352,7 +352,9 @@ struct ScopeSettingsSheet: View {
                         get: { project.claudeAccessible },
                         set: { value in
                             model.perform { try model.archive.setProjectClaudeAccessible(project.id, value) }
-                            if value { ClaudeConnection.provisionServerKey(archive: model.archive) }
+                            if value {
+                                ClaudeConnection.projectShared(archive: model.archive, projectName: project.name)
+                            }
                         }))
                 Spacer()
                 if project.claudeAccessible { WritableToggle(model: model, project: project, short: true) }
@@ -505,6 +507,39 @@ enum ClaudeConnection {
             try input.fileHandleForWriting.close()
         } catch {
             return
+        }
+    }
+
+    /// A project just became readable by Claude: hands the key to the server and, when Claude Desktop is open, says it
+    /// sees the project only after a restart (it starts IAGO's server once, when it opens), offering to do it.
+    static func projectShared(archive: Archive, projectName: String?) {
+        provisionServerKey(archive: archive)
+        guard
+            let claude = NSRunningApplication.runningApplications(withBundleIdentifier: ClaudeTip.claudeBundleID)
+                .first
+        else { return }
+        Task { @MainActor in
+            NSApp.activate()
+            let alert = NSAlert()
+            alert.messageText = String(localized: "Riavvia Claude Desktop")
+            alert.informativeText =
+                projectName.map {
+                    String(
+                        localized:
+                            "Claude Desktop è aperto: vedrà «\($0)» solo dopo un riavvio, perché legge i progetti condivisi quando si apre. Chiudilo (⌘Q) e riaprilo, oppure lascia fare a IAGO."
+                    )
+                }
+                ?? String(
+                    localized:
+                        "Claude Desktop è aperto: vedrà i progetti appena condivisi solo dopo un riavvio, perché li legge quando si apre. Chiudilo (⌘Q) e riaprilo, oppure lascia fare a IAGO."
+                )
+            alert.addButton(withTitle: String(localized: "Riavvia Claude"))
+            alert.addButton(withTitle: String(localized: "Più tardi"))
+            guard alert.runModal() == .alertFirstButtonReturn else { return }
+            let url = claude.bundleURL
+            claude.terminate()
+            for _ in 0..<50 where !claude.isTerminated { try? await Task.sleep(for: .milliseconds(200)) }
+            if let url { try? await NSWorkspace.shared.openApplication(at: url, configuration: .init()) }
         }
     }
 

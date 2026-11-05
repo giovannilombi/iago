@@ -22,8 +22,16 @@ import Testing
         try archive.database.writer.read { db in try Int.fetchOne(db, sql: "SELECT count(*) FROM item_voice") ?? 0 }
     }
 
+    @Test func onByDefault() throws {
+        let fixture = try ArchiveFixture()
+        #expect(fixture.archive.voicesEnabled())
+        try fixture.archive.setVoicesEnabled(false)
+        #expect(!fixture.archive.voicesEnabled())
+    }
+
     @Test func nothingIsKeptWhileOff() throws {
         let fixture = try ArchiveFixture()
+        try fixture.archive.setVoicesEnabled(false)
         let id = try call(fixture, "Call", [SpeakerVoice(speakerID: "s1", embedding: anna, seconds: 60)])
         try fixture.archive.renameSpeaker("s1", of: id, to: "Anna")
         #expect(try storedRows(fixture.archive) == 0)
@@ -163,5 +171,20 @@ import Testing
         #expect(!Archive.isVoiceName("  "))
         #expect(Archive.isVoiceName("Anna"))
         #expect(Archive.isVoiceName("Speakerina"))
+    }
+}
+
+@Suite struct MyNameTests {
+    @Test func renamingMeChangesOnlyTheCallsWithTheOldName() throws {
+        let fixture = try ArchiveFixture()
+        let archive = fixture.archive
+        let first = try fixture.makeItem("Prima")
+        let second = try fixture.makeItem("Seconda")
+        try archive.setSpeakers([("me", "Io")], for: first.id)
+        try archive.setSpeakers([("me", "Io")], for: second.id)
+        try archive.renameSpeaker("me", of: second.id, to: "Ospite")
+        #expect(try archive.renameMe(from: "Io", to: "Dora") == [first.id])
+        #expect(try archive.speakers(itemID: first.id).first?.label == "Dora")
+        #expect(try archive.speakers(itemID: second.id).first?.label == "Ospite")
     }
 }

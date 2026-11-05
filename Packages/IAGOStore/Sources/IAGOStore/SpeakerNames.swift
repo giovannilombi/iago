@@ -87,6 +87,26 @@ extension Archive {
         }
     }
 
+    /// The user's own name changed: the calls where their voice («me») still has the old name take the new one.
+    /// A call where the user gave «me» another name keeps it. Returns the items that changed.
+    @discardableResult
+    public func renameMe(from old: String, to new: String) throws -> [String] {
+        let new = new.trimmingCharacters(in: .whitespaces)
+        guard !new.isEmpty, old != new else { return [] }
+        let now = self.now()
+        return try database.writer.write { db in
+            let items = try String.fetchAll(
+                db, sql: "SELECT item_id FROM item_speaker WHERE speaker_id = 'me' AND label = ?", arguments: [old])
+            for item in items {
+                try db.execute(
+                    sql: "UPDATE item_speaker SET label = ? WHERE item_id = ? AND speaker_id = 'me'",
+                    arguments: [new, item])
+                try ChangeLog.append(db, table: "item_speaker", rowID: "\(item)/me", op: .update, version: 0, at: now)
+            }
+            return items
+        }
+    }
+
     /// The name the user said `name` stands for ("Lello" → "Antonello"); nil if they never did.
     public func nameAlias(_ name: String) throws -> String? {
         try database.writer.read { db in

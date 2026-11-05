@@ -111,3 +111,9 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0087 | Inbox in two halves, suggestions on the right, columns per place | accepted |
 | 0088 | Order of the item's sections and sidebar | accepted |
 | 0089 | Commit co-authors until sharing | accepted |
+| 0090 | Categories and tags in three columns | accepted |
+| 0091 | "Ask IAGO" context with several projects | accepted |
+| 0092 | Search in the right pane and "Ask IAGO" full window | accepted |
+| 0093 | Yellow dot and panels when the microphone is not recording | accepted |
+| 0094 | Voice recognition on, simpler speaker names, your name | accepted |
+| 0095 | Claude as an alternative on every Mac, with the steps, and restarting Claude Desktop | accepted |
