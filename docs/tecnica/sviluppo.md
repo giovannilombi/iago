@@ -14,6 +14,7 @@ Le regole complete del team sono in [`README-collaborators.md`](https://github.c
 |---|---|
 | `scripts/bootstrap.sh` | hook di git + progetto Xcode da `project.yml` |
 | `scripts/test-packages.sh` | `swift test` su tutti i pacchetti |
+| `scripts/pre-pr.sh [--all]` | i controlli prima di ogni PR, per tutti: dati reali, lingue, test, build dell'app, motore e sito; stampa il riepilogo da incollare nella PR (modello `.github/pull_request_template.md`) |
 | `scripts/test-engine.sh` | build dell'app con MLX e shader Metal (prima delle PR sul motore) |
 | `scripts/install-app.sh` | Release firmata installata in `/Applications` |
 | `scripts/try-branch.sh [--fresh]` | prova il branch attuale su una **copia** dell'archivio (`~/IAGO-prova`, opzione Debug `-IAGOTrialRoot`): l'archivio vero non si tocca |

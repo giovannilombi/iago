@@ -18,8 +18,8 @@
  "App/Resources/Guide/en/17-privacy-backup.md": "faeb6fdecee5d6e0c88d80108eb616ea9c406da07c24bfbaefa6e470f562bc97",
  "App/Resources/Guide/en/18-aggiornamenti.md": "f15aef67dce32bd6bca3ee0253ae5ebe84190b09fc8caadd31b6643fc3c205d9",
  "App/Resources/Guide/en/19-problemi.md": "8795482ca570692dcab13bced922db6b05d023aef9105d49199135500fbe3ddc",
- "CLAUDE.en.md": "979d00d0b9fd47e839726a11ba0fae5409e32541f71729d70a3b074be23d3365",
- "README-collaborators.en.md": "28465dd60a86dfca44a6aad65ad62a05c9e2b5de5027bff4c990141da2cf40ef",
+ "CLAUDE.en.md": "9872e274abf1db342888bc35da6bcfcaaf0c50060312f4f2ac33f67e6b76b564",
+ "README-collaborators.en.md": "e076af0f1651ff9c211e77f0be924702f0f2011e720ad16bcf08018674399312",
  "README.en.md": "de750093113f4b68246a280076db6412579d225e64e3ee8ca02a05082bf37278",
  "docs/en/adr/0001-app-nativa-swift.md": "a1289eb98152bd7845bb767a372dcc65b2ec448fe140e935839a0d7cd9dd6a44",
  "docs/en/adr/0002-due-tracce-separate.md": "72be6df24421544b545000ce888ca41e68f5e3125ec93bd0fd75f84bc06d8264",
@@ -133,7 +133,7 @@
  "docs/en/problemi-e-log.md": "06d4744db82848c356cc97db6e0f3300a8c9c179d9bb40d0863ad8979018982e",
  "docs/en/prove-tester.md": "b813dae871b2efe30885ac581537222fb9c265bc279dbb7dc3ee56f7b2bcc3e3",
  "docs/en/scorciatoie.md": "813f706800d10593af16d71f0c99357cb988d6cac78df046c78b9d3e137ce506",
- "docs/en/stato.md": "46d164e44fa0ff42fb411a573d57adfb18a04e4eaa8591c7672881d37f2fb6a0",
+ "docs/en/stato.md": "c60577e41addf441ecda8df31d996d91e6c308af6e07a5c90678458e685ca5e9",
  "docs/en/tecnica/architettura.md": "7f5d139d7730ebb5efa6539860fce8f8c57a79863dae5006c0946ddf84ecff98",
  "docs/en/tecnica/cattura.md": "76a9d0800f01323d5e930ab85f0ec59261294d5cb249cfc146d46233df079ca5",
  "docs/en/tecnica/claude-mcp.md": "74edef19ae1fbe3a58e04cdf01ce87e0d2e41d1dabc8509a5c807525f8c4b6c4",
@@ -145,7 +145,7 @@
  "docs/en/tecnica/motore.md": "cc990c602a96dd4b3c2c80ae9611d509323bdad9a726dbfec8929ea5a6db715a",
  "docs/en/tecnica/privacy-rete.md": "abf899129b9e8368f31ff9e740dbf4765ee6358d88764f0e65eab3eeb87a0f12",
  "docs/en/tecnica/qualita.md": "2441b96129326517cc2755df4bee72c4355b8afe5efb54fc5afbefdfff40e3c7",
- "docs/en/tecnica/sviluppo.md": "1339a4545d52770a19d73530209f5968fb548c5d63c7941acbe2969621a50eb7",
+ "docs/en/tecnica/sviluppo.md": "18f9bdb059621f5b4da90cb6e7cfb2568934ec25196a780a6a07f99a0d357096",
  "docs/en/tecnica/trascrizione.md": "f8aa60a53dec536d0931effe18342195cd5e482439bcf32f59cb3d8c2439d144",
  "docs/en/testing/capture-checklist.md": "07e71563d0d9e23588fc80e5293f56f8c206f413d2d3ecd137caaf494c5527d9"
 }
