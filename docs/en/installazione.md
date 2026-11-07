@@ -16,8 +16,9 @@ It takes about ten minutes, including the guided setup.
 - **Headphones:** not required, but without headphones the microphone also picks up the speakers.
 
 ## 1. Copy the app
-1. Download `IAGO-x.y.z.dmg` from the [releases page](https://github.com/giovannilombi/iago/releases/latest) and open it.
-2. Drag **IAGO** onto the **Applications** folder next to it, then open it from Applications.
+1. Download **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)**, the latest version (the others are on the [releases page](https://github.com/giovannilombi/iago/releases)), and open it.
+2. In the window that opens, drag **IAGO** onto the **Applications** folder, following the arrows.
+3. The same window holds **Leggimi - Read me**: it explains the steps below, in Italian and English.
 
 Developers of IAGO use their own build compiled from source: they do not install the DMG on the same user account, because two copies of IAGO compete for permissions and archive.
 
@@ -29,6 +30,14 @@ IAGO is not distributed through the App Store and is not notarized by Apple, bec
 3. Confirm with your password or Touch ID, then click **Open**.
 
 After the first time IAGO opens normally, including after updates.
+
+**Alternatively, with Terminal.** After dragging IAGO to Applications, open Terminal and type:
+
+```sh
+sudo xattr -dr com.apple.quarantine /Applications/IAGO.app
+```
+
+Then enter your Mac password: nothing shows while you type, that is normal. The command removes from IAGO the "downloaded from the Internet" mark that triggers the check; it applies only to IAGO. Use it only for apps you trust.
 
 ::: tip Why it is not on the App Store
 App Store apps must run in a sandbox, which does not allow recording the audio of other apps. IAGO needs to hear the audio of Teams, Zoom and Meet to record your call.

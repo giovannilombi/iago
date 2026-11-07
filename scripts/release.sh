@@ -39,16 +39,27 @@ mkdir -p dist
 ZIP="dist/IAGO-$VERSION.zip"
 rm -f "$ZIP"
 ditto -c -k --keepParent "$APP" "$ZIP"
-# The DMG for the first installation: IAGO and a link to Applicazioni, signed with the app's identity.
+# The DMG for the first installation (ADR-0097): IAGO, a link to Applicazioni and the instructions, on the background
+# of scripts/dmg (arrows from IAGO to Applicazioni), laid out by dmgbuild without Finder; signed with the app's
+# identity. IAGO.dmg is the same file under a fixed name, for the README's link to the latest version.
 DMG="dist/IAGO-$VERSION.dmg"
+DMGBUILD=build/venv-dmg/bin/dmgbuild
+if [[ ! -x "$DMGBUILD" ]]; then
+  python3 -m venv build/venv-dmg && build/venv-dmg/bin/pip install -q "dmgbuild==1.6.5"
+fi
 STAGE=$(mktemp -d)
-ditto "$APP" "$STAGE/IAGO.app"
-ln -s /Applications "$STAGE/Applicazioni"
-rm -f "$DMG"
-hdiutil create -volname "IAGO $VERSION" -srcfolder "$STAGE" -fs HFS+ -format UDZO -ov "$DMG" >/dev/null
+ICON_DATA="data:image/png;base64,$(base64 -i App/Resources/Assets.xcassets/AppIcon.appiconset/icon_256.png)"
+python3 - "$ICON_DATA" <scripts/dmg/Leggimi.html >"$STAGE/Leggimi - Read me.html" <<'PY'
+import sys
+sys.stdout.write(sys.stdin.read().replace("__ICON__", sys.argv[1]))
+PY
+rm -f "$DMG" dist/IAGO.dmg
+"$DMGBUILD" -s scripts/dmg/settings.py -D app="$APP" -D readme="$STAGE/Leggimi - Read me.html" \
+  -D icon=scripts/dmg/volume.icns -D background=scripts/dmg/background.tiff "IAGO $VERSION" "$DMG" >/dev/null
 rm -rf "$STAGE"
 IDENTITY=$(codesign -dvv "$APP" 2>&1 | sed -n 's/^Authority=//p' | head -1)
 [[ -n "$IDENTITY" ]] && codesign --sign "$IDENTITY" "$DMG"
+cp "$DMG" dist/IAGO.dmg
 SIGN_UPDATE=$(find build/DerivedData/SourcePackages/artifacts "$HOME"/Library/Developer/Xcode/DerivedData/IAGO-*/SourcePackages/artifacts \
   -name sign_update -path "*Sparkle*" 2>/dev/null | head -1)
 [[ -x "$SIGN_UPDATE" ]] || { echo "Sparkle sign_update not found: build once with Xcode" >&2; exit 1; }
@@ -78,8 +89,8 @@ print(f'''<?xml version="1.0" encoding="utf-8"?>
 PY
 echo "Release $VERSION (build $BUILD)$([[ $CRITICAL -eq 1 ]] && echo ", obbligatoria (nuova versione maggiore)")"
 if [[ $GITHUB -eq 1 ]]; then
-  gh release create "v$VERSION" "$DMG" "$ZIP" dist/appcast.xml --title "IAGO $VERSION" \
-    --notes "${NOTES:-Nuova versione di IAGO.}"$'\n\n'"Prima installazione: scarica IAGO-$VERSION.dmg, trascina IAGO in Applicazioni, poi la prima volta Impostazioni di Sistema › Privacy e sicurezza › Apri comunque."
+  gh release create "v$VERSION" "$DMG" dist/IAGO.dmg "$ZIP" dist/appcast.xml --title "IAGO $VERSION" --latest \
+    --notes "${NOTES:-Nuova versione di IAGO.}"$'\n\n'"**Prima installazione:** scarica IAGO.dmg, aprilo, trascina IAGO in Applicazioni e segui «Leggimi» per la conferma da dare la prima volta (Impostazioni di Sistema › Privacy e sicurezza › Apri comunque, oppure un comando nel Terminale)."$'\n\n'"**First installation:** download IAGO.dmg, open it, drag IAGO to Applications and follow «Read me» for the confirmation needed the first time."
   echo "Published: https://github.com/giovannilombi/iago/releases/tag/v$VERSION"
 fi
 echo "Next: update README.md (Versioni) and commit it with project.yml (version $VERSION, build $BUILD)."

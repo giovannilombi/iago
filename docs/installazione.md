@@ -16,8 +16,9 @@ Bastano una decina di minuti, compresa la configurazione guidata.
 - **Cuffie:** non obbligatorie, ma senza cuffie il microfono sente anche le casse.
 
 ## 1. Copiare l'app
-1. Scarica `IAGO-x.y.z.dmg` dalla [pagina delle release](https://github.com/giovannilombi/iago/releases/latest) e aprilo.
-2. Trascina **IAGO** sulla cartella **Applicazioni** che vedi accanto, poi aprilo da Applicazioni.
+1. Scarica **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)**, l'ultima versione (le altre sono nella [pagina delle release](https://github.com/giovannilombi/iago/releases)), e aprilo.
+2. Nella finestra che si apre, trascina **IAGO** sulla cartella **Applicazioni**, seguendo le frecce.
+3. Nella stessa finestra c'è **Leggimi - Read me**: spiega, in italiano e in inglese, i passi qui sotto.
 
 Chi sviluppa IAGO usa la propria build compilata dal codice: non installa il DMG sullo stesso account utente, perché due copie di IAGO si contendono permessi e archivio.
 
@@ -29,6 +30,14 @@ IAGO non è distribuito tramite l'App Store e non è notarizzato da Apple, perch
 3. Conferma con la password o con Touch ID, poi premi **Apri**.
 
 Dopo la prima volta IAGO si apre normalmente, anche dopo gli aggiornamenti.
+
+**In alternativa, con il Terminale.** Dopo aver trascinato IAGO in Applicazioni, apri Terminale e scrivi:
+
+```sh
+sudo xattr -dr com.apple.quarantine /Applications/IAGO.app
+```
+
+Poi inserisci la password del Mac: mentre la scrivi non si vede niente, è normale. Il comando toglie a IAGO il segno di «scaricato da Internet», che fa scattare il controllo; vale solo per IAGO. Usalo solo per app di cui ti fidi.
 
 ::: tip Perché non è nell'App Store
 Le app dell'App Store devono stare in una sandbox, che non permette di registrare l'audio delle altre app. IAGO ha bisogno di sentire l'audio di Teams, Zoom e Meet per registrare la tua call.

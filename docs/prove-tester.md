@@ -353,6 +353,14 @@ Servono due persone vere nella stessa stanza (nomi inventati nelle prove scritte
 - [ ] 10x.15 *Non mostrare più*: resta una striscia «Alternativa: puoi fare la sintesi anche con Claude.» con *Vedi come*, che riapre il riquadro per quell'elemento; aprendo un altro elemento torna la striscia.
 - [ ] 10x.16 Con Claude Desktop aperto, rendi consultabile da Claude un progetto (Impostazioni › Claude, o *Consenti* nel riquadro): compare *Riavvia Claude Desktop*; *Riavvia Claude* chiude e riapre Claude Desktop, che poi vede il progetto. Con Claude Desktop chiuso l'avviso non compare.
 
+## 10y. DMG e istruzioni di installazione (ADR-0097)
+Da fare su un Mac o un account utente dove IAGO non è mai stato installato, con il DMG scaricato dalla release (non copiato da un altro Mac).
+- [ ] 10y.1 Apri `IAGO.dmg`: la finestra ha lo sfondo con «Trascina IAGO in Applicazioni», IAGO a sinistra e Applicazioni a destra, con le tre frecce colorate in mezzo; in basso, nella fascia gialla, c'è *Leggimi - Read me*. Ripeti con il Mac in modalità scura e controlla che i nomi delle icone si leggano.
+- [ ] 10y.2 Apri *Leggimi - Read me*: è nella lingua del Mac e il pulsante in alto passa da italiano a inglese. *Mostrami i passi* porta ai quattro passi, *Allergico ai menu?* porta al comando; *Copia* copia il comando.
+- [ ] 10y.3 Trascina IAGO in Applicazioni e aprilo: compare l'avviso. Segui i passi di *Privacy e sicurezza › Apri comunque*: IAGO si apre e le volte successive si apre senza avviso.
+- [ ] 10y.4 Su un altro account o Mac pulito, dopo aver trascinato IAGO, usa invece il comando del Terminale: chiede la password, e poi IAGO si apre senza avviso.
+- [ ] 10y.5 Il link «Scarica IAGO per Mac» in cima al README scarica l'ultima versione.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

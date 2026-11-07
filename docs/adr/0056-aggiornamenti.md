@@ -1,6 +1,6 @@
 # ADR-0056 — Aggiornamenti dell'app
 
-- Stato: accettato (A, decisa dall'utente il 2026-10-21: il repository diventa pubblico)
+- Stato: accettato (A, decisa dall'utente il 2026-10-21: il repository diventa pubblico; confermato da ADR-0097, con `IAGO.dmg` a nome fisso)
 - Data: 2026-10-21
 - Riferimenti: CLAUDE.md › Rete e privacy; memoria "pre-distribuzione"; richiesta utente 2026-10-15 e 2026-10-21 (distribuire presto, anche ai colleghi)
 

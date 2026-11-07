@@ -1,6 +1,6 @@
 # ADR-0059 — Distribuzione senza notarizzazione
 
-- Stato: accettato
+- Stato: accettato; DMG con sfondo e istruzioni da ADR-0097
 - Data: 2026-10-21
 - Riferimenti: CLAUDE.md › Piattaforma (firma Apple Development, Personal Team), › Regole (nessun servizio a pagamento); ADR-0056; `docs/installazione.md`, guida › Installazione
 

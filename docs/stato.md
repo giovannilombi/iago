@@ -2,7 +2,7 @@
 
 > Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
 > **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
-> Ultimo aggiornamento: **6 novembre 2026**.
+> Ultimo aggiornamento: **7 novembre 2026**.
 
 ## In breve
 - **Versione:** 1.2.15-beta su `main` (tag `v1.2.15-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
@@ -61,6 +61,11 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-07, DMG con sfondo e istruzioni** (ADR-0097):
+  - **Il DMG:** la finestra ha lo sfondo con «Trascina IAGO in Applicazioni», tre frecce nei colori di IAGO e la fascia che invita a leggere le istruzioni. Il volume ha l'icona di IAGO.
+  - **Le istruzioni:** `Leggimi - Read me.html`, in italiano e inglese. Spiegano «Apri comunque» in quattro passi illustrati, e il comando del Terminale per chi preferisce.
+  - **Come si costruisce:** `scripts/release.sh` crea il DMG con `dmgbuild` e allega anche `IAGO.dmg`, a nome fisso, linkato in cima al README.
+  - **Release:** stanno su questo repository, che diventa pubblico.
 - **2026-11-06, modelli LFM2.5 provati e non integrati** (ADR-0096, rifiutato): LFM2.5 8B-A1B e 24B-A2B di Liquid AI provati sulle tre call del 21 ottobre ([risultati](benchmarks/2026-11-06-modelli-lfm.md)).
   - **8B-A1B:** è veloce, ma non riassume, perché copia il parlato, e molte sue proposte citano frasi inesistenti.
   - **24B-A2B:** ragiona fino al limite di token e non ha dato sintesi utilizzabili.

@@ -141,5 +141,5 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 ## 9. Fare una release
 - La versione è in `project.yml`, nella forma `x.y.z-beta`. Il terzo numero sale con una PR che cambia l'app (si chiede a Giovanni), il secondo con un gruppo grande di funzioni. Alla distribuzione si toglie `-beta`.
 - Ogni versione ha un **tag annotato** (`git tag -a v1.0.1-beta -m "…funzioni…"`) che fa da punto di ripristino per codice, guida e documentazione; vedi README › *Tornare a una versione precedente*. Il ramo `release/1.0.x` tiene la serie 1.0.
-- `scripts/release.sh <versione> --notes "…" --github` compila, firma l'archivio per Sparkle (la chiave è nel Portachiavi di Giovanni) e pubblica la release. Funziona solo con il repository pubblico, cioè quando si decide di distribuire.
+- `scripts/release.sh <versione> --notes "…" --github` compila, firma l'archivio per Sparkle (la chiave è nel Portachiavi di Giovanni) crea il DMG con sfondo e istruzioni (`scripts/dmg`, ADR-0097; serve Python 3, la prima volta installa `dmgbuild` in `build/`) e pubblica la release. Funziona solo con il repository pubblico, cioè quando si decide di distribuire.
 - A ogni release si aggiorna la tabella Versioni del README.

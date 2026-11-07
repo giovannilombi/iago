@@ -118,3 +118,4 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0094 | Voice recognition on, simpler speaker names, your name | accepted |
 | 0095 | Claude as an alternative on every Mac, with the steps, and restarting Claude Desktop | accepted |
 | 0096 | LFM2.5 8B-A1B and 24B-A2B models: tested and not integrated | rejected |
+| 0097 | DMG with background and instructions, releases on the public repository | accepted |
