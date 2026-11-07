@@ -107,11 +107,11 @@ Useful commands, with explanations, in README › Development and in `CLAUDE.md`
 
 ## 5. ADR status
 The full index with the status is in [`docs/adr/README.md`](docs/en/adr/README.md). Today:
-- **Accepted and done:** from 0001 to 0077, except those below. The 0068 site is ready but will go online only with the public repository.
+- **Accepted and done:** from 0001 to 0077, except those below. The 0068 site has been online since November 7, 2026.
 - **To be decided:**
   - **0057**, shared projects through a cloud folder: it is the core of phase 4. When accepted, it supersedes the 0012 backend (sync on Cloudflare).
   - **0067**, MiniCPM instead of Qwen 3.5 4B or in addition to it: the tests described in the ADR are needed.
-- **Accepted, to be completed:** **0060**, publication of the repository. The clean repository already exists (0065); what is missing is making it public with the first release, when we decide to distribute.
+- **Done on November 7, 2026:** **0060**, publication of the repository, with the first public release 1.3.0-beta (ADR-0097).
 - **No longer valid:** **0053** withdrawn (macOS echo cancellation took the microphone away from Teams), **0064** rejected (echo cleanup after recording made the voice worse).
 
 What remains to be done, in order, is in [`docs/stato.md`](docs/en/stato.md).
@@ -131,15 +131,15 @@ What remains to be done, in order, is in [`docs/stato.md`](docs/en/stato.md).
 - At the end of every piece of work: update `docs/stato.md`, and if something changed in the way we work, this guide or `CLAUDE.md`.
 
 ## 8. The documentation site
-- It is built with VitePress (ADR-0068) and will be at `https://giovannilombi.github.io/iago/en/`. GitHub Free does not publish sites of private repositories, so it will go online when the repository becomes public; until then you view it locally with `npm run docs:dev`.
+- It is built with VitePress (ADR-0068) and is at `https://giovannilombi.github.io/iago/en/`; locally you view it with `npm run docs:dev`.
 - **Two levels** with the **Usage | Technical** switch at the top:
   - **Usage:** the guide, copied from the app chapters (`App/Resources/Guide`): it is edited there, never in the site. Plus installation, shortcuts, problems and logs.
   - **Technical:** `docs/tecnica` plus ADRs, status, tests, licenses, designs, benchmarks and phases.
 - Every guide chapter has the link to the corresponding technical page (`docs/.vitepress/theme/level.ts`).
-- The site is built locally before the PR (`npm run docs:build`); once the repository is public, every push to `main` will republish it by itself.
+- The site is built locally before the PR (`npm run docs:build`); every push to `main` that touches the documentation or the guide republishes it by itself (`deploy.yml`).
 
 ## 9. Making a release
 - The version is in `project.yml`, in the form `x.y.z-beta`. The third number goes up with a PR that changes the app (ask Giovanni), the second with a large group of features. At distribution, `-beta` is removed.
 - Every version has an **annotated tag** (`git tag -a v1.0.1-beta -m "…funzioni…"`) that acts as a restore point for code, guide and documentation; see README › *Going back to a previous version*. The `release/1.0.x` branch keeps the 1.0 series.
-- `scripts/release.sh <version> --notes "…" --github` builds, signs the archive for Sparkle (the key is in Giovanni's Keychain) builds the DMG with background and instructions (`scripts/dmg`, ADR-0097; it needs Python 3, and the first time it installs `dmgbuild` in `build/`) and publishes the release. It works only with the public repository, that is when we decide to distribute.
+- `scripts/release.sh <version> --notes "…" --github` builds, signs the archive for Sparkle (the key is in Giovanni's Keychain), builds the DMG with background and instructions (`scripts/dmg`, ADR-0097; it needs Python 3, and the first time it installs `dmgbuild` in `build/`) and publishes the release on GitHub, from where users download it and updates arrive.
 - At every release the README Versions table is updated.

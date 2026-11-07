@@ -20,7 +20,7 @@ Call, email, documenti, note e decisioni di ogni progetto in un'unica memoria. C
 
 <p align="center">
   📖 <strong><a href="https://giovannilombi.github.io/iago/">Documentazione ufficiale</a></strong>: come si usa (livello <em>Uso</em>) e come è fatto (livello <em>Tecnico</em>).<br>
-  <sub>È il riferimento: questo README ne è solo il riassunto. Online quando il repository sarà pubblico; fino ad allora in locale con <code>npm install && npm run docs:dev</code> (sito VitePress in <code>docs/</code>).</sub>
+  <sub>È il riferimento: questo README ne è solo il riassunto. Si può vedere anche in locale con <code>npm install && npm run docs:dev</code> (sito VitePress in <code>docs/</code>).</sub>
 </p>
 
 > **Per usare o capire IAGO parti dalla [documentazione ufficiale](https://giovannilombi.github.io/iago/)** (in locale: `npm run docs:dev`). Guida d'uso, installazione, scorciatoie e il livello tecnico sono lì, sempre aggiornati a ogni versione.
@@ -319,7 +319,7 @@ scripts/install-app.sh        # Release firmata installata in /Applications
 scripts/release.sh 1.2.0 --notes "…" --github   # release firmata, appcast Sparkle, GitHub Release
 ```
 - **Serve:** Xcode con Swift 6, XcodeGen e un Apple ID (anche gratuito) per la firma. Il Team ID va in `Config/Local.xcconfig` (vedi `Config/Local.xcconfig.example`).
-- **Sito di documentazione:** VitePress in `docs/`, con la guida presa da `App/Resources/Guide` (`npm run docs:dev`); sarà su [giovannilombi.github.io/iago](https://giovannilombi.github.io/iago/) quando il repository diventerà pubblico.
+- **Sito di documentazione:** VitePress in `docs/`, con la guida presa da `App/Resources/Guide` (`npm run docs:dev`); online su [giovannilombi.github.io/iago](https://giovannilombi.github.io/iago/), ripubblicato a ogni push su `main`.
 - **Per collaborare:** [`README-collaborators.md`](README-collaborators.md) spiega regole, documenti, stato degli ADR, prove e come lavorare con Claude Code.
 - **Convenzioni:**
   - un branch per funzione;
@@ -343,7 +343,8 @@ Le note di ogni versione sono sulla [pagina delle release](https://github.com/gi
 
 | Versione | Data | Cosa contiene |
 |---|---|---|
-| **1.2.15-beta** | 5 novembre 2026 | Su `main` (tag `v1.2.15-beta`; si torna alle versioni precedenti: vedi sotto). **Categorie e tag** a tre colonne, con categoria e più tag insieme. **Chiedi a IAGO** con più progetti scelti da te («Cambia contesto») e a tutta finestra. **Cerca** (⌘F) nella spalla destra al posto del campo in alto. **Pallino giallo** subito quando dal microfono non arriva audio, e pannelli chiari. **Voci riconosciute** di default, nomi degli speaker con suggerimenti e salvati anche uscendo dal campo, segno «Tu», il tuo nome anche in Impostazioni › Voci. **Claude** come alternativa su ogni Mac, con i passi e l'avviso di riavvio. Schermate della guida rifatte |
+| **1.3.0-beta** | 7 novembre 2026 | Su `main` (tag `v1.3.0-beta`; si torna alle versioni precedenti: vedi sotto). **Prima versione pubblica:** repository e [sito](https://giovannilombi.github.io/iago/) pubblici, release scaricabile da chiunque e aggiornamenti automatici con Sparkle. **DMG** con sfondo, frecce verso Applicazioni e istruzioni «Leggimi - Read me» in italiano e inglese («Apri comunque» o il comando del Terminale). Funzioni come la 1.2.15-beta |
+| **1.2.15-beta** | 5 novembre 2026 | Tag `v1.2.15-beta`. **Categorie e tag** a tre colonne, con categoria e più tag insieme. **Chiedi a IAGO** con più progetti scelti da te («Cambia contesto») e a tutta finestra. **Cerca** (⌘F) nella spalla destra al posto del campo in alto. **Pallino giallo** subito quando dal microfono non arriva audio, e pannelli chiari. **Voci riconosciute** di default, nomi degli speaker con suggerimenti e salvati anche uscendo dal campo, segno «Tu», il tuo nome anche in Impostazioni › Voci. **Claude** come alternativa su ogni Mac, con i passi e l'avviso di riavvio. Schermate della guida rifatte |
 | **1.2.14-beta** | 3 novembre 2026 | Tag `v1.2.14-beta`. **Inbox a due metà:** *Da fare ora* in alto e *Proposte da confermare* in basso, ognuna con il suo scorrimento e una maniglia per cambiarne l'altezza; proposte in un box per elemento che si apre a destra, con *Conferma tutte*. **Colonne a metà** e larghezza salvata per sezione. **Scheda dell'elemento:** prima audio, segnalibri e schermate, poi sintesi e trascrizione; sezioni da riordinare trascinandole, con l'ordine per tutti gli elementi. **Barra laterale:** *Aggiungi* cliente o progetto sopra i progetti, Cestino in fondo, + del cliente che crea il progetto con il cliente già scelto, nome intero del progetto dopo due secondi. Schermate della guida rifatte |
 | **1.2.13-beta** | 2 novembre 2026 | Tag `v1.2.13-beta`. **Nuovo stile «colore come segnale»:** testi neutri, colore del tipo solo dove serve, rosso solo per l'urgenza, filo sotto il titolo dei box. **Chiaro, scuro o automatico** dall'icona accanto alle Impostazioni; chiaro con grigi freddi, senza bianco pieno. Foglio «Aggiungi» con il tipo in una tile, Kanban con colonne in box, Attività riordinata. Tutte le schermate della guida rifatte |
 | **1.2.12-beta** | 2 novembre 2026 | Tag `v1.2.12-beta`. **Riepilogo rivisto:** in Gestisci box su due colonne che si ridispongono da soli, tile dei box sempre in alto, ultime decisioni e tappe; in Traccia pagina già divisa con il pannello a destra. **Attività** a tutta finestra con gli ultimi 7 giorni. Icona della modalità cliccabile. Correzioni: «Categorie e tag» di nuovo selezionabile, foglio dei punti chiave non più tagliato |

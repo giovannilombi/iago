@@ -20,7 +20,7 @@ Calls, emails, documents, notes and decisions of every project in a single memor
 
 <p align="center">
   📖 <strong><a href="https://giovannilombi.github.io/iago/en/">Official documentation</a></strong>: how to use it (<em>Usage</em> level) and how it is built (<em>Technical</em> level).<br>
-  <sub>It is the reference: this README is only its summary. Online once the repository is public; until then locally with <code>npm install && npm run docs:dev</code> (VitePress site in <code>docs/</code>).</sub>
+  <sub>It is the reference: this README is only its summary. It can also be viewed locally with <code>npm install && npm run docs:dev</code> (VitePress site in <code>docs/</code>).</sub>
 </p>
 
 > **To use or understand IAGO, start from the [official documentation](https://giovannilombi.github.io/iago/en/)** (locally: `npm run docs:dev`). The user guide, installation, shortcuts and the technical level are there, always updated with every version.
@@ -319,7 +319,7 @@ scripts/install-app.sh        # signed Release installed in /Applications
 scripts/release.sh 1.2.0 --notes "…" --github   # signed release, Sparkle appcast, GitHub Release
 ```
 - **You need:** Xcode with Swift 6, XcodeGen and an Apple ID (even a free one) for signing. The Team ID goes in `Config/Local.xcconfig` (see `Config/Local.xcconfig.example`).
-- **Documentation site:** VitePress in `docs/`, with the guide taken from `App/Resources/Guide` (`npm run docs:dev`); it will be at [giovannilombi.github.io/iago/en](https://giovannilombi.github.io/iago/en/) when the repository becomes public.
+- **Documentation site:** VitePress in `docs/`, with the guide taken from `App/Resources/Guide` (`npm run docs:dev`); online at [giovannilombi.github.io/iago/en](https://giovannilombi.github.io/iago/en/), republished at every push to `main`.
 - **To collaborate:** [`README-collaborators.en.md`](README-collaborators.en.md) explains rules, documents, ADR status, tests and how to work with Claude Code.
 - **Conventions:**
   - one branch per feature;
@@ -343,7 +343,8 @@ The notes of each version are on the [releases page](https://github.com/giovanni
 
 | Version | Date | What it contains |
 |---|---|---|
-| **1.2.15-beta** | November 5, 2026 | On `main` (tag `v1.2.15-beta`; going back to previous versions: see below). **Categories and tags** in three columns, with a category and several tags together. **Ask IAGO** with several projects chosen by you ("Change context") and on the whole window. **Search** (⌘F) in the right pane instead of the field at the top. **Yellow dot** at once when no audio comes from the microphone, and clear panels. **Voices recognized** by default, speaker names with suggestions and saved also when leaving the field, the "You" mark, your name also in Settings › Voices. **Claude** as an alternative on every Mac, with the steps and the restart alert. Guide screenshots retaken |
+| **1.3.0-beta** | November 7, 2026 | On `main` (tag `v1.3.0-beta`; going back to previous versions: see below). **First public version:** public repository and [site](https://giovannilombi.github.io/iago/en/), release downloadable by anyone and automatic updates with Sparkle. **DMG** with background, arrows to Applications and «Leggimi - Read me» instructions in Italian and English («Open Anyway» or the Terminal command). Same features as 1.2.15-beta |
+| **1.2.15-beta** | November 5, 2026 | Tag `v1.2.15-beta`. **Categories and tags** in three columns, with a category and several tags together. **Ask IAGO** with several projects chosen by you ("Change context") and on the whole window. **Search** (⌘F) in the right pane instead of the field at the top. **Yellow dot** at once when no audio comes from the microphone, and clear panels. **Voices recognized** by default, speaker names with suggestions and saved also when leaving the field, the "You" mark, your name also in Settings › Voices. **Claude** as an alternative on every Mac, with the steps and the restart alert. Guide screenshots retaken |
 | **1.2.14-beta** | November 3, 2026 | Tag `v1.2.14-beta`. **Inbox in two halves:** *Do now* at the top and *Suggestions to confirm* at the bottom, each with its own scroll and a handle to change their height; suggestions in one box per item that opens on the right, with *Confirm all*. **Columns half and half** and the width saved per place. **Item card:** first audio, bookmarks and screenshots, then summary and transcript; sections reordered by dragging them, with the order for every item. **Sidebar:** *Add* client or project above the projects, Trash at the bottom, a client's + creating the project with the client already chosen, the whole project name after two seconds. Guide screenshots retaken |
 | **1.2.13-beta** | November 2, 2026 | Tag `v1.2.13-beta`. **New "colour as a signal" style:** neutral text, the kind's colour only where useful, red only for urgency, a thread under box titles. **Light, dark or automatic** from the icon next to Settings; light with cool greys, no full white. "Add" sheet with the kind in a tile, Kanban with columns in boxes, Activity rearranged. Every guide screenshot retaken |
 | **1.2.12-beta** | November 2, 2026 | Tag `v1.2.12-beta`. **Overview revised:** in Manage boxes in two columns that rearrange themselves, the boxes' tiles always at the top, latest decisions and milestones; in Track a page already split with the panel on the right. **Activity** across the window with the last 7 days. Clickable mode icon. Fixes: «Categories and tags» selectable again, key point sheet no longer cut off |
