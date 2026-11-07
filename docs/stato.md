@@ -61,6 +61,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-08, DMG che si apre e istruzioni non più bianche** (ADR-0097, modifica): in cima al README, nella guida all'installazione e nelle istruzioni del DMG il primo passo è sbloccare il DMG scaricato con `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg`, così IAGO si apre senza «Apri comunque». `Leggimi - Read me.html` usciva vuoto per un errore dello script: ora lo fa `scripts/dmg/make-dmg.sh`, che si ferma se è vuoto. DMG della 1.3.1-beta sostituiti. README con una sezione «Scarica e installa» a passi, più leggibile.
 - **2026-11-07:** versione **1.3.1-beta** con la Modalità Raccogli, pubblicata come aggiornamento.
 - **2026-11-07, Modalità Raccogli** (ADR-0098, su un'anteprima approvata dall'utente): terza modalità, la più semplice, per i progetti-archivio da cercare e interrogare.
   - **C'è:** Elementi e Timeline, trascrizioni, segnalibri e schermate, sintesi, proposte di nomi, tag, progetto e collegamenti, *Chiedi a IAGO* e Claude.

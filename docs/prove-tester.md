@@ -359,7 +359,8 @@ Da fare su un Mac o un account utente dove IAGO non è mai stato installato, con
 - [ ] 10y.2 Apri *Leggimi - Read me*: è nella lingua del Mac e il pulsante in alto passa da italiano a inglese. *Mostrami i passi* porta ai quattro passi, *Allergico ai menu?* porta al comando; *Copia* copia il comando.
 - [ ] 10y.3 Trascina IAGO in Applicazioni e aprilo: compare l'avviso. Segui i passi di *Privacy e sicurezza › Apri comunque*: IAGO si apre e le volte successive si apre senza avviso.
 - [ ] 10y.4 Su un altro account o Mac pulito, dopo aver trascinato IAGO, usa invece il comando del Terminale: chiede la password, e poi IAGO si apre senza avviso.
-- [ ] 10y.5 Il link «Scarica IAGO per Mac» in cima al README scarica l'ultima versione.
+- [ ] 10y.5 Il link «Scarica IAGO.dmg» in cima al README scarica l'ultima versione.
+- [ ] 10y.6 Su un Mac pulito, dopo il download: `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg` nel Terminale (senza password), poi il DMG si apre; IAGO trascinato in Applicazioni si apre senza nessun avviso. *Leggimi - Read me* si apre con il suo contenuto, non bianco.
 
 ## 10z. Modalità Raccogli (ADR-0098)
 - [ ] 10z.1 Clic sull'icona della modalità di un progetto: le schede sono tre, Raccogli (scatola arancione), Traccia e Gestisci. Scegli Raccogli: nella barra laterale l'icona diventa la scatola.

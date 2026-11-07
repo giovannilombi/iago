@@ -15,15 +15,22 @@ Bastano una decina di minuti, compresa la configurazione guidata.
 - **Motore locale** (facoltativo, per sintesi, proposte e Chiedi): da 2 a 7 GB a seconda del modello. Le sintesi richiedono almeno Qwen 3.5 9B.
 - **Cuffie:** non obbligatorie, ma senza cuffie il microfono sente anche le casse.
 
-## 1. Copiare l'app
-1. Scarica **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)**, l'ultima versione (le altre sono nella [pagina delle release](https://github.com/giovannilombi/iago/releases)), e aprilo.
-2. Nella finestra che si apre, trascina **IAGO** sulla cartella **Applicazioni**, seguendo le frecce.
-3. Nella stessa finestra c'è **Leggimi - Read me**: spiega, in italiano e in inglese, i passi qui sotto.
+## 1. Scaricare, sbloccare e copiare l'app
+1. Scarica **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)**, l'ultima versione (le altre sono nella [pagina delle release](https://github.com/giovannilombi/iago/releases)). Finisce nella cartella **Download**.
+2. **Sblocca il DMG**, che macOS mette in quarantena perché IAGO non è notarizzato. Apri **Terminale** e incolla:
+
+   ```sh
+   xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg
+   ```
+
+   Non chiede password. Se il Mac chiede se Terminale può accedere a Download, premi **Consenti**. Se il browser ha dato un altro nome al file, per esempio `IAGO (1).dmg`, usa quel nome tra virgolette.
+3. Apri il DMG e trascina **IAGO** sulla cartella **Applicazioni**, seguendo le frecce. Aprilo: con il DMG sbloccato il Mac non chiede altro, e puoi saltare il punto 2 qui sotto.
+4. Nella stessa finestra c'è **Leggimi - Read me**, con gli stessi passi in italiano e in inglese.
 
 Chi sviluppa IAGO usa la propria build compilata dal codice: non installa il DMG sullo stesso account utente, perché due copie di IAGO si contendono permessi e archivio.
 
 ## 2. "Apri comunque" (Gatekeeper, solo la prima volta)
-IAGO non è distribuito tramite l'App Store e non è notarizzato da Apple, perché la notarizzazione richiede un account a pagamento. L'app è comunque firmata. Al primo avvio macOS la blocca con un messaggio del tipo «Impossibile verificare che "IAGO" non contenga malware».
+Serve solo se non hai sbloccato il DMG con il comando del punto 1. IAGO non è distribuito tramite l'App Store e non è notarizzato da Apple, perché la notarizzazione richiede un account a pagamento. L'app è comunque firmata. macOS blocca prima il DMG, poi IAGO al primo avvio, con un messaggio del tipo «Impossibile verificare che "IAGO" non contenga malware»: i passi qui sotto valgono per tutti e due.
 
 1. Premi **Fine**, non "Sposta nel cestino".
 2. Apri **Impostazioni di Sistema › Privacy e sicurezza**, scorri fino a **Sicurezza** e premi **Apri comunque** accanto a IAGO.

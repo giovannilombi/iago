@@ -11,12 +11,31 @@ Call, email, documenti, note e decisioni di ogni progetto in un'unica memoria. C
   macOS 15+ · Apple Silicon · Swift 6 · motore locale · Claude facoltativo · licenza CC BY-NC-SA 4.0
 </p>
 
-<p align="center">
-  <a href="https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg"><strong>⬇️ Scarica IAGO per Mac</strong></a> (ultima versione, DMG)
-  · <a href="https://github.com/giovannilombi/iago/releases">tutte le versioni</a>
-  · <a href="https://giovannilombi.github.io/iago/installazione">come si installa</a><br>
-  <sub>Apri il DMG, trascina IAGO in Applicazioni e segui «Leggimi»: la prima volta il Mac chiede una conferma.</sub>
-</p>
+## Scarica e installa
+
+**Serve:** un Mac con Apple Silicon e macOS 15 o successivo.
+
+1. **Scarica [IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)**, l'ultima versione. Finisce nella cartella **Download**.
+
+2. **Sblocca il DMG.** IAGO non è notarizzato da Apple, quindi macOS mette il file in quarantena e non lo apre. Apri **Terminale** (⌘ Spazio, scrivi «Terminale», Invio), incolla questa riga e premi Invio:
+
+   ```sh
+   xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg
+   ```
+
+   - Non chiede password.
+   - Se il Mac chiede se Terminale può accedere alla cartella Download, premi **Consenti**.
+   - Se il browser ha dato un altro nome al file, per esempio `IAGO (1).dmg`, usa quel nome tra virgolette.
+
+3. **Apri il DMG** con un doppio clic e trascina **IAGO** sulla cartella **Applicazioni**, seguendo le frecce.
+
+4. **Apri IAGO** da Applicazioni: parte la configurazione guidata. Il Mac non chiede altre conferme, e gli aggiornamenti arrivano da soli.
+
+**Senza Terminale:** apri il DMG e premi **Fine** sull'avviso. Poi vai in Impostazioni di Sistema › **Privacy e sicurezza** e premi **Apri comunque**. Fai lo stesso la prima volta che apri IAGO. I passi illustrati sono nel file «Leggimi» dentro il DMG e nella [guida all'installazione](https://giovannilombi.github.io/iago/installazione).
+
+Le versioni precedenti sono nella [pagina delle release](https://github.com/giovannilombi/iago/releases).
+
+---
 
 <p align="center">
   📖 <strong><a href="https://giovannilombi.github.io/iago/">Documentazione ufficiale</a></strong>: come si usa (livello <em>Uso</em>) e come è fatto (livello <em>Tecnico</em>).<br>
@@ -134,13 +153,11 @@ Uno script (`scripts/check-network-apis.sh`, lanciato con i test) fallisce se ne
 - 1,6 GB per i modelli di trascrizione;
 - da 2 a 7 GB in più per il motore locale.
 
-1. Scarica **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)** (le versioni precedenti sono nella [pagina delle release](https://github.com/giovannilombi/iago/releases)), aprilo e trascina **IAGO** in **Applicazioni** seguendo le frecce.
-2. **Primo avvio.** IAGO non è notarizzato da Apple, quindi macOS lo blocca la prima volta. Il file **Leggimi** nel DMG spiega i passi, in italiano e in inglese:
+1. **Scarica e sblocca il DMG:** i passi sono in cima, in [Scarica e installa](#scarica-e-installa). In breve: `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg` nel Terminale, poi apri il DMG e trascina **IAGO** in **Applicazioni**.
+2. **Senza Terminale:** la prima volta macOS blocca il DMG e poi IAGO. Il file **Leggimi** nel DMG spiega i passi, in italiano e in inglese:
    - premi **Fine**;
    - apri **Impostazioni di Sistema › Privacy e sicurezza**;
-   - premi **Apri comunque** accanto a IAGO.
-
-   Oppure, nel Terminale: `sudo xattr -dr com.apple.quarantine /Applications/IAGO.app`, poi la password del Mac.
+   - premi **Apri comunque**.
 3. La **configurazione guidata** ti accompagna:
    - nome;
    - microfono;

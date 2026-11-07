@@ -61,6 +61,7 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-08, a DMG that opens and instructions no longer white** (ADR-0097, change): at the top of the README, in the installation guide and in the DMG instructions the first step is to unblock the downloaded DMG with `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg`, so IAGO opens without «Open Anyway». `Leggimi - Read me.html` shipped empty because of a script error: now `scripts/dmg/make-dmg.sh` builds it and stops if it is empty. 1.3.1-beta DMGs replaced. README with a step-by-step «Download and install» section, easier to read.
 - **2026-11-07:** version **1.3.1-beta** with Collect mode, published as an update.
 - **2026-11-07, Collect mode** (ADR-0098, on a preview approved by the user): a third mode, the simplest, for archive projects to search and query.
   - **What is there:** Items and Timeline, transcripts, bookmarks and screenshots, summaries, suggestions of names, tags, project and links, *Ask IAGO* and Claude.
