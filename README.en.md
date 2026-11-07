@@ -264,7 +264,7 @@ Tests on real calls: [`docs/en/benchmarks/2026-10-21-sintesi-e-glossario.md`](do
 - **EdDSA-signed updates:** IAGO installs only versions signed with the same key.
 
 ## Design decisions
-Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`](docs/en/adr/README.md): 95 so far, with context, rejected alternatives and consequences. Some of them:
+Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`](docs/en/adr/README.md): 96 so far, with context, rejected alternatives and consequences. Some of them:
 
 | ADR | Decision | Why |
 |---|---|---|
