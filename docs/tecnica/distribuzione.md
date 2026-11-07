@@ -15,7 +15,7 @@
 - **Sparkle 2.10** legge `https://github.com/giovannilombi/iago/releases/latest/download/appcast.xml`.
 - Ogni release è un archivio firmato **EdDSA**; la chiave pubblica è nell'app (`SUPublicEDKey`), quella privata nel Portachiavi di chi pubblica. IAGO installa solo versioni firmate dalla stessa chiave.
 - **Versioni maggiori obbligatorie:** l'appcast le segna come *critical*. Da quando IAGO le vede ci sono 2 giorni di margine (`UpdateService.mandatoryDeadline`, data in `update.mandatoryFirstSeen`), con il termine e *Aggiorna ora…* nel menu; poi IAGO non avvia nuove registrazioni, trascrizioni, sintesi e proposte (`AppModel.blockedByUpdate`). Una registrazione in corso continua.
-- Funziona solo con il repository **pubblico**: oggi è privato, quindi il controllo non trova nulla.
+- Funziona perché il repository è **pubblico** (dal 7 novembre 2026, prima release 1.3.0-beta).
 
 ## Fare una release
 ```sh
@@ -33,5 +33,6 @@ Dopo ogni release si aggiorna la tabella **Versioni** del README.
 
 ## Repository e versioni (ADR-0060, ADR-0065)
 - `x.y.z-beta` finché non si decide di distribuire, poi senza `-beta`: il terzo numero sale a ogni PR che cambia l'app, il secondo con un gruppo grande di funzioni. Ogni versione ha un tag annotato con le funzioni, che fa da punto di ripristino (README › Tornare a una versione precedente).
-- `giovannilombi/iago` è privato e nato con un solo commit; la storia precedente è in un archivio privato separato.
-- Il sito di documentazione va online con il repository pubblico (ADR-0068).
+- Dal 7 novembre 2026, con la 1.3.0-beta, si resta in beta per scelta dell'utente: si toglie `-beta` quando lo decide lui.
+- `giovannilombi/iago` è **pubblico** dal 7 novembre 2026 ed è nato con un solo commit; la storia precedente è in un archivio privato separato, che non diventa pubblico.
+- Il sito di documentazione è su GitHub Pages (`deploy.yml`, ADR-0068).

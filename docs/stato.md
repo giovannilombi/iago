@@ -5,9 +5,9 @@
 > Ultimo aggiornamento: **7 novembre 2026**.
 
 ## In breve
-- **Versione:** 1.2.15-beta su `main` (tag `v1.2.15-beta`): app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. La prima versione distribuibile sarà senza `-beta`.
+- **Versione:** 1.3.0-beta su `main` (tag `v1.3.0-beta`), la prima pubblica: [release](https://github.com/giovannilombi/iago/releases/latest) con il DMG e [sito](https://giovannilombi.github.io/iago/). Funzioni della 1.2.15-beta: app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. Si resta in `-beta` finché l'utente non decide altrimenti.
 - **Repository:**
-  - `giovannilombi/iago`, privato, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
+  - `giovannilombi/iago`, **pubblico dal 7 novembre 2026**, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi, solo, fino all'inizio del lavoro sulla condivisione (fase 4); da lì Giovanni Lombi e Gianluca Sestito (ADR-0065, ADR-0089).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
@@ -51,8 +51,8 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
 4. **Distribuzione** (ADR-0059, ADR-0060, ADR-0065):
    - senza account Apple a pagamento l'app non è notarizzata: si distribuisce con il **DMG** di `scripts/release.sh`. **Da verificare prima** su un Mac pulito: «Apri comunque» una sola volta, aggiornamento con Sparkle senza nuovo blocco e con i permessi conservati, durata del certificato gratuito;
    - aggiornamenti obbligatori con 2 giorni di margine: fatti nella 1.2.8-beta (ADR-0056), da provare con una release di prova (10r.7);
-   - numero della versione: si resta sulle 1.2.x-beta fino al repository pubblico, poi **1.3.0** senza `-beta` (salvo indicazioni diverse); quando si distribuisce Claude Code propone il numero e l'utente lo conferma;
-   - repository pubblico (con la CI automatica, gratuita per i repository pubblici), tabella Versioni del README, GitHub Pages per il sito (ADR-0068) e `https://giovannilombi.github.io/iago/` come «Website» del repository.
+   - **fatto il 7 novembre 2026:** repository pubblico, prima release 1.3.0-beta (ancora beta per scelta dell'utente), GitHub Pages per il sito e il sito come «Website» del repository;
+   - da decidere: la CI automatica, ora gratuita perché il repository è pubblico.
 5. **Idee per più avanti:**
    - **ClickUp:** ticket dalle attività, stato di ritorno, registro delle liste seguite, ticket nella memoria ([`docs/design/clickup.md`](design/clickup.md));
    - calendari Google e Microsoft: oggi funzionano tramite Impostazioni di Sistema › Account Internet; una sync diretta servirebbe un ADR di rete;
@@ -61,6 +61,10 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-07, repository pubblico e versione 1.3.0-beta** (ADR-0060, ADR-0097):
+  - **Repository e sito:** `giovannilombi/iago` è pubblico, con il sito su GitHub Pages; la scheda *About* ha descrizione, sito e argomenti.
+  - **Release:** prima release pubblica, con `IAGO.dmg`, il DMG con versione, lo zip e l'appcast di Sparkle. Il link «Scarica IAGO per Mac» in cima al README scarica l'ultima versione.
+  - **Documenti:** dicono che repository e sito sono pubblici; CLAUDE.md fissa le 1.3.x-beta.
 - **2026-11-07, DMG con sfondo e istruzioni** (ADR-0097):
   - **Il DMG:** la finestra ha lo sfondo con «Trascina IAGO in Applicazioni», tre frecce nei colori di IAGO e la fascia che invita a leggere le istruzioni. Il volume ha l'icona di IAGO.
   - **Le istruzioni:** `Leggimi - Read me.html`, in italiano e inglese. Spiegano «Apri comunque» in quattro passi illustrati, e il comando del Terminale per chi preferisce.
