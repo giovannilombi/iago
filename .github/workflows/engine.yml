@@ -1,9 +1,20 @@
-name: Engine (manual)
+name: Engine
 
-# The MLX adapter needs Metal shaders, which `swift test` cannot build (ADR-0048). A full app build costs ~100 of the
-# 2,000 free minutes (macOS counts 10x), so this runs only when started by hand; locally: scripts/test-engine.sh.
+# The MLX adapter needs Metal shaders, which `swift test` cannot build (ADR-0048): a full app build with MLX, on the
+# pull requests that touch the engine (free minutes, the repository is public) and by hand; locally:
+# scripts/test-engine.sh.
 on:
+  pull_request:
+    paths:
+      - "App/Sources/Engine/**"
+      - "Packages/IAGOEngine/**"
+      - "project.yml"
+      - ".github/workflows/engine.yml"
   workflow_dispatch:
+
+concurrency:
+  group: engine-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   engine:

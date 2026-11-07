@@ -3,9 +3,9 @@
 
 ## Checks before the PR
 <!--
-Required for every PR (README-collaborators › Flusso di lavoro). The CI on GitHub runs only by hand, so the checks run
+Required for every PR (README-collaborators › Flusso di lavoro). The CI on GitHub runs the same checks again; these run
 on your Mac: run `scripts/pre-pr.sh` on this branch and paste its summary here, in place of this comment (it is also in
-build/pre-pr-summary.md). A PR without the summary is not merged, unless the CI is run on it.
+build/pre-pr-summary.md). A PR without the summary, or with a red check, is not merged.
 -->
 
 ## By hand

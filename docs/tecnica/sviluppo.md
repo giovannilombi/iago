@@ -65,10 +65,10 @@ L'italiano è la fonte; ogni testo cambiato si aggiorna anche in inglese, nello 
 L'hook `commit-msg` blocca anche un commit che tocca il codice dell'app o dei pacchetti senza toccare la documentazione, a meno che il messaggio non contenga una riga `Docs: <motivo>` (per esempio `Docs: refactoring interno, nessun effetto visibile`).
 
 ## CI
-Tutti i workflow si lanciano **solo a mano** (`gh workflow run <file> --ref <branch>`), quando serve: i minuti di GitHub Free sono pochi e a ottobre 2026 sono finiti. Prima di ogni PR si fanno in locale test dei pacchetti e build del sito; gli hook fanno gli altri controlli.
-- `ci.yml`, su macOS: controllo delle API di rete e test dei pacchetti, circa 4 minuti, che GitHub conta 10 volte.
-- `deploy.yml`, su Ubuntu: compila il sito; lo pubblica su GitHub Pages da solo a ogni push su `main` solo quando il repository sarà pubblico (da privato il job si salta e non consuma minuti).
-- `engine.yml`: build con MLX.
+Dal 7 novembre 2026 il repository è pubblico e i minuti di GitHub Actions sono gratuiti: i workflow partono **da soli**, e si lanciano anche a mano con `gh workflow run <file> --ref <branch>`. Prima di ogni PR i controlli si fanno comunque in locale (`scripts/pre-pr.sh`), e la PR si unisce solo con i controlli verdi.
+- `ci.yml`, su macOS, a ogni PR e push su `main`: controllo delle API di rete e test dei pacchetti, circa 4 minuti.
+- `deploy.yml`, su Ubuntu: sulle PR che toccano documentazione o guida compila il sito (i link rotti lo fanno fallire); a ogni push su `main` lo compila e lo pubblica su GitHub Pages.
+- `engine.yml`, su macOS, sulle PR che toccano il motore: build dell'app con MLX e shader Metal.
 - `privacy.yml`, su Ubuntu: nessun indirizzo email personale nei commit (autore, committer, messaggio) e nei file; italiano e inglese allineati. Pochi secondi; i nomi reali restano un controllo locale, perché il loro elenco non lascia il Mac.
 - I test che usano Vision, PDFKit e gli importatori di AppKit hanno un limite di tempo, e ogni pacchetto si ferma dopo 10 minuti con il suo nome.
 - I tre test di OCR con Vision **non girano in CI**: sui runner macOS di GitHub Vision si blocca senza errore. Girano sul Mac di chi sviluppa con `scripts/test-packages.sh` (si saltano dove è impostata la variabile `CI`).

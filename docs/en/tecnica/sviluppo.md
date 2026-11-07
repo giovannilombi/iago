@@ -65,10 +65,10 @@ Italian is the source; every changed text is also updated in English, in the sam
 The `commit-msg` hook also blocks a commit that touches the code of the app or of the packages without touching the documentation, unless the message contains a `Docs: <motivo>` line (for example `Docs: refactoring interno, nessun effetto visibile`).
 
 ## CI
-All workflows run **only by hand** (`gh workflow run <file> --ref <branch>`), when needed: GitHub Free minutes are few, and in October 2026 they ran out. Before every PR the package tests and the site build run locally; the hooks do the other checks.
-- `ci.yml`, on macOS: network API check and package tests, about 4 minutes, which GitHub counts 10 times.
-- `deploy.yml`, on Ubuntu: builds the site; publishes it on GitHub Pages by itself on every push to `main` only once the repository is public (while private the job is skipped and uses no minutes).
-- `engine.yml`: build with MLX.
+Since November 7, 2026 the repository is public and GitHub Actions minutes are free: the workflows start **by themselves**, and can also be run by hand with `gh workflow run <file> --ref <branch>`. Before every PR the checks are still done locally (`scripts/pre-pr.sh`), and the PR is merged only with green checks.
+- `ci.yml`, on macOS, on every PR and push to `main`: network API check and package tests, about 4 minutes.
+- `deploy.yml`, on Ubuntu: on PRs that touch documentation or guide it builds the site (broken links make it fail); on every push to `main` it builds it and publishes it on GitHub Pages.
+- `engine.yml`, on macOS, on PRs that touch the engine: app build with MLX and Metal shaders.
 - `privacy.yml`, on Ubuntu: no personal email address in commits (author, committer, message) or in files; Italian and English in sync. A few seconds; real names remain a local check, because their list does not leave the Mac.
 - Tests that use Vision, PDFKit and the AppKit importers have a time limit, and each package stops after 10 minutes with its name.
 - The three Vision OCR tests **do not run in CI**: on GitHub's macOS runners Vision hangs without an error. They run on the developer's Mac with `scripts/test-packages.sh` (they are skipped where the `CI` variable is set).

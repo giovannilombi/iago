@@ -54,7 +54,7 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
 - Commit convenzionali in inglese (`feat: …`, `fix: …`, `docs: …`).
 - **Build da sorgente e DMG:** chi sviluppa usa la propria build compilata dal codice (si aggiorna con `git pull` e una nuova build; non cerca aggiornamenti automatici). Il DMG delle release è per chi non sviluppa: per provarlo si usa un altro account utente o un altro Mac, perché due copie di IAGO sullo stesso account si contendono permessi e archivio.
 - **Mai un indirizzo email personale**, né nei file né nei commit (ADR-0065): si firma con l'indirizzo anonimo di GitHub. In GitHub › Settings › Emails vanno attivati "Keep my email addresses private" (così anche i merge fatti dal sito usano l'indirizzo anonimo) e "Block command line pushes that expose my email". I controlli di git bloccano commit e push con un indirizzo personale, e il workflow Privacy fa lo stesso su GitHub.
-- La CI di GitHub si lancia **solo a mano**, quando serve (`gh workflow run ci.yml --ref <branch>`, oppure dalla scheda Actions): i minuti di GitHub Free sono pochi, e quelli macOS contano 10 volte. Con Claude Code: chiede lui se lanciarla e cosa comporta.
+- La CI di GitHub è **automatica** dal 7 novembre 2026 (repository pubblico, minuti gratuiti): test dei pacchetti, controlli di privacy e lingue a ogni PR e push su `main`, build del sito e del motore quando cambiano. Una PR si unisce solo con i controlli verdi.
 - **Controlli prima di ogni PR, per tutti:** sul branch della PR si lancia `scripts/pre-pr.sh`. In un colpo fa:
   - il controllo di dati reali e indirizzi email;
   - l'allineamento di italiano e inglese;
@@ -63,7 +63,7 @@ Questa guida è per chi entra nel progetto senza conoscerne la storia. Spiega co
   - la build con il motore, se cambia;
   - la build del sito, se cambia la documentazione.
 
-  Stampa un riepilogo da incollare nella descrizione della PR: GitHub la apre già con il modello `.github/pull_request_template.md`, che ha il posto per il riepilogo e le caselle da spuntare a mano. **Una PR senza il riepilogo, o con un controllo fallito, non si unisce**, a meno che chi la rivede non lanci la CI su quel branch. Gli hook locali restano in più.
+  Stampa un riepilogo da incollare nella descrizione della PR: GitHub la apre già con il modello `.github/pull_request_template.md`, che ha il posto per il riepilogo e le caselle da spuntare a mano. **Una PR senza il riepilogo, o con un controllo fallito (in locale o nella CI), non si unisce.** Gli hook locali restano in più.
 
 ### Lingue
 - Codice, tipi, commenti e commit: **inglese**.

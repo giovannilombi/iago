@@ -304,7 +304,7 @@ Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`
 - **321 automated tests** in the packages: Store 124, Capture 49, Intelligence 34, Transcription 30, Ingest 22, MCP 20, Core 15, Engine 15, Export 11, Sync 1.
   - The audio pipeline is tested with **synthetic** fixtures (`say` voices), never with real recordings.
   - The engines are tested with fake responses, which also reproduce the real errors of the models.
-- **Before every pull request**, on the Mac: all the tests and the network API check (`scripts/test-packages.sh`); the git hooks check real data, email addresses and languages. GitHub Actions CI runs only by hand, to save the GitHub Free minutes. The build with MLX (`scripts/test-engine.sh`) is done before PRs that touch the engine.
+- **Before every pull request**, on the Mac: all the tests and the network API check (`scripts/test-packages.sh`); the git hooks check real data, email addresses and languages. On GitHub, on every pull request, the CI runs the tests and checks again (data, email addresses, languages, site and, if it changes, the engine). The build with MLX (`scripts/test-engine.sh`) is done before PRs that touch the engine.
 - **Field tests:** measurements on real calls (`docs/benchmarks/`) and a **tester checklist** ([`docs/en/prove-tester.md`](docs/en/prove-tester.md)), ordered and doable by someone who does not know the app.
 - **Languages:** code, comments and commits in English; interface, guide and documents in Italian and English (ADR-0077).
 

@@ -1,11 +1,14 @@
 # No personal email addresses in the repository (ADR-0065), and Italian and English aligned (ADR-0077), checked on GitHub too: the local hooks can be skipped or
 # missing on a new clone, and merges made on the site are commits as well. Ubuntu, a few seconds.
-# Manual only, when the owner asks for it (`gh workflow run privacy.yml --ref <branch>`), to save the GitHub Free
-# minutes; the same checks run in the local hooks. Real names stay a local check: their list
-# (Config/private-terms.local) never leaves the Mac.
+# On every pull request and every push to main, and by hand (`gh workflow run privacy.yml --ref <branch>`); the same
+# checks run in the local hooks. Real names stay a local check: their list (Config/private-terms.local) never leaves
+# the Mac.
 name: Privacy
 
 on:
+  pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:

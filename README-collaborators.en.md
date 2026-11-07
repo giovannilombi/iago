@@ -54,7 +54,7 @@ This guide is for people who join the project without knowing its history. It ex
 - Conventional commits in English (`feat: …`, `fix: …`, `docs: …`).
 - **Builds from source and DMG:** developers use their own build compiled from the code (updated with `git pull` and a new build; it does not look for automatic updates). The release DMG is for people who do not develop: to try it, use another user account or another Mac, because two copies of IAGO on the same account compete for permissions and archive.
 - **Never a personal email address**, neither in files nor in commits (ADR-0065): sign with the anonymous GitHub address. In GitHub › Settings › Emails turn on "Keep my email addresses private" (so merges made from the website also use the anonymous address) and "Block command line pushes that expose my email". The git checks block commits and pushes with a personal address, and the Privacy workflow does the same on GitHub.
-- GitHub's CI runs **only by hand**, when needed (`gh workflow run ci.yml --ref <branch>`, or from the Actions tab): GitHub Free minutes are few, and macOS ones count 10 times. With Claude Code: it asks whether to run it and what that implies.
+- GitHub's CI is **automatic** since November 7, 2026 (public repository, free minutes): package tests, privacy and language checks on every PR and push to `main`, site and engine builds when they change. A PR is merged only with green checks.
 - **Checks before every PR, for everyone:** on the PR's branch run `scripts/pre-pr.sh`. In one go it does:
   - the check for real data and email addresses;
   - the alignment of Italian and English;
@@ -63,7 +63,7 @@ This guide is for people who join the project without knowing its history. It ex
   - the build with the engine, if it changes;
   - the site build, if the documentation changes.
 
-  It prints a summary to paste in the PR description: GitHub opens it already with the template `.github/pull_request_template.md`, which has the place for the summary and the boxes to tick by hand. **A PR without the summary, or with a failed check, is not merged**, unless whoever reviews it runs the CI on that branch. The local hooks remain on top.
+  It prints a summary to paste in the PR description: GitHub opens it already with the template `.github/pull_request_template.md`, which has the place for the summary and the boxes to tick by hand. **A PR without the summary, or with a failed check (locally or in the CI), is not merged.** The local hooks remain on top.
 
 ### Languages
 - Code, types, comments and commits: **English**.

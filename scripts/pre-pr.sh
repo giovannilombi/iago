@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# The checks every pull request needs, for everyone (README-collaborators › Flusso di lavoro): the CI on GitHub runs
-# only by hand, so these run on the Mac of whoever opens the PR. It prints a summary to paste in the PR description
-# (also in build/pre-pr-summary.md); a PR from someone else is not merged without it, or without the CI.
+# The checks every pull request needs, for everyone (README-collaborators › Flusso di lavoro): these run on the Mac of whoever
+# opens the PR, before the CI on GitHub runs them again (and the checks that need the Mac's files, such as real names). It prints a summary to paste in the PR description
+# (also in build/pre-pr-summary.md); a PR is not merged without it, or with a red check in the CI.
 #
 #   scripts/pre-pr.sh          checks what changed against origin/main
 #   scripts/pre-pr.sh --all    every check, whatever changed
