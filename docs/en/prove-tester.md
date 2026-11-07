@@ -361,6 +361,15 @@ To be done on a Mac or user account where IAGO has never been installed, with th
 - [ ] 10y.4 On another clean account or Mac, after dragging IAGO, use the Terminal command instead: it asks for the password, then IAGO opens without a warning.
 - [ ] 10y.5 The "Download IAGO for Mac" link at the top of the README downloads the latest version.
 
+## 10z. Collect mode (ADR-0098)
+- [ ] 10z.1 Click on a project's mode icon: there are three cards, Collect (orange box), Track and Manage. Choose Collect: in the sidebar the icon becomes the box.
+- [ ] 10z.2 In the project in Collect there are only *Items* and *Timeline*, without *Show*; the Timeline shows only the items. *Add* offers the note and the import, not key points.
+- [ ] 10z.3 In a call of the project: bookmarks and screenshots are there, in the transcript too, but without *Becomes a decision…*; the card has no *Key points*. *Find suggestions* proposes names, tags and links, no decision or task.
+- [ ] 10z.4 Inbox: the line «From projects in Collect mode only the suggestions to confirm arrive here» appears; the suggestions of those calls are there, their open work is not.
+- [ ] 10z.5 On a Mac with 16 GB or less and automatic summaries on, a new call of the project gets no summary by itself; *Generate summary* writes it.
+- [ ] 10z.6 Put the project back in Manage: the key points written earlier become visible again.
+- [ ] 10z.7 From Claude, ask to add a decision to the project in Collect: the tool refuses and explains how to change mode.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

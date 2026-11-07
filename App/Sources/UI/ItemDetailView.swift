@@ -227,7 +227,7 @@ struct ItemDetailView: View {
             }
         case "text": textSection(item)
         case "suggestions": SuggestionsSection(model: model, item: item)
-        case "decisions": decisionsSection(item)
+        case "decisions": if keyPoints { decisionsSection(item) }
         case "notes": notesSection(item)
         case "links": LinksSection(model: model, itemID: itemID)
         case "files": assetsSection
@@ -329,7 +329,7 @@ struct ItemDetailView: View {
         tiles.append(count("suggestions", String(localized: "Proposte"), suggestionCount, .indigo))
         if item.type == .call { tiles.append(count("screenshots", String(localized: "Schermate"), shots.count, .teal)) }
         tiles.append(count("notes", String(localized: "Note"), notes.count, .yellow))
-        tiles.append(count("decisions", String(localized: "Punti chiave"), decisions.count, .green))
+        if keyPoints { tiles.append(count("decisions", String(localized: "Punti chiave"), decisions.count, .green)) }
         tiles.append(count("links", String(localized: "Collegamenti"), linkCount, .mint))
         tiles.append(count("files", String(localized: "File"), assets.count, .gray))
         // In the order of the sections.
@@ -385,7 +385,9 @@ struct ItemDetailView: View {
         speakers = (try? archive.speakers(itemID: itemID)) ?? []
         attendees = (try? archive.attendees(itemID: itemID)) ?? []
         hasSummary = (try? archive.summary(itemID: itemID)) != nil
-        suggestionCount = (try? archive.suggestions(itemID: itemID))?.count ?? 0
+        suggestionCount =
+            ((try? archive.suggestions(itemID: itemID)) ?? []).filter { keyPoints || !$0.kind.isKeyPoint }
+            .count
         linkCount = (try? archive.links(itemID: itemID))?.count ?? 0
         activeJob = (try? archive.jobs(itemID: itemID))?.first { $0.isActive }
         if let md = assets.first(where: { $0.kind == .contentMD }), content == nil {
@@ -592,6 +594,10 @@ struct ItemDetailView: View {
         }
     }
 
+    /// The item's project keeps key points: not in «Raccogli» (ADR-0098), where bookmarks and proposals stay but
+    /// nothing becomes a decision.
+    private var keyPoints: Bool { model.workMode(for: model.item(itemID)?.projectId).hasKeyPoints }
+
     // MARK: Bookmarks
 
     private var markersSection: some View {
@@ -609,8 +615,10 @@ struct ItemDetailView: View {
                     Spacer()
                     switch marker.status {
                     case .open:
-                        Button(String(localized: "Diventa decisione…")) { decide(from: marker) }
-                            .buttonStyle(.link)
+                        if keyPoints {
+                            Button(String(localized: "Diventa decisione…")) { decide(from: marker) }
+                                .buttonStyle(.link)
+                        }
                         Button(String(localized: "Scarta")) {
                             model.perform { try model.archive.setMarkerStatus(marker.id, .dismissed) }
                         }

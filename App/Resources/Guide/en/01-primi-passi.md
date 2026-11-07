@@ -19,7 +19,7 @@ You can ask it what was decided, who has to do what, how a choice changed over t
 1. **Collects.** It records calls from the IAGO icon {{icona}} in the menu bar (our parrot with a memory of steel). It imports emails, PDFs, documents, images, audio and Teams transcripts, even on its own from a folder.
 2. **Sorts.** Everything finds its client, project and stream. The category says what kind of meeting it was, and tags cut across projects.
 3. **Understands.** It transcribes, writes the **summary** in the right shape for the type of meeting, and extracts **decisions, milestones and open work** (tasks, open questions, risks, requests), linked to each other when one closes another.
-4. **Keeps track.** The **Inbox**, at the top of the sidebar, gathers what is open, whose it is and when it is due; the **Overview** tells you where a project stands. Every project starts in *Manage mode*, the complete one, which also has the Kanban; put a simple one in *Track mode*, the simple and quick one (see Key points and open work).
+4. **Keeps track.** The **Inbox**, at the top of the sidebar, gathers what is open, whose it is and when it is due; the **Overview** tells you where a project stands. Every project starts in *Manage mode*, the complete one, which also has the Kanban; put a simple one in *Track mode*, simple and quick; a collection of materials to search and query, without management, in *Collect mode* (see Key points and open work).
 5. **Answers.** Search by words or by meaning, or ask IAGO (⌘K): it answers only with your content and cites its sources.
 
 ## Where things are

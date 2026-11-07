@@ -11,7 +11,7 @@ L'**aspetto** (automatico, chiaro o scuro) non è qui: si sceglie dall'icona acc
 
 ![Impostazioni › Voci: il tuo nome e le voci conosciute](img/voci.png)
 - **Motore:** modello locale, ricerca per significato, lavori automatici (proposte e sintesi; spenti di default sotto i 32 GB di memoria).
-- **Progetti:** rinomina, archivia, elimina (in tre passi); la modalità di ciascuno, *Modalità Traccia* o *Modalità Gestisci* (predefinita).
+- **Progetti:** rinomina, archivia, elimina (in tre passi); la modalità di ciascuno, *Modalità Raccogli*, *Modalità Traccia* o *Modalità Gestisci* (predefinita).
 - **Email e persone:** i tuoi indirizzi, contatti, cartelle sorvegliate, regole.
 - **Categorie:** principali e famiglie, colori, ordine, modelli di sintesi.
 - **Claude:** progetti abilitati, scrittura, immagini delle schermate, registro delle modifiche.

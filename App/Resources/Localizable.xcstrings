@@ -5888,6 +5888,16 @@
         }
       }
     },
+    "Dai progetti in Modalità Raccogli qui arrivano solo le proposte da confermare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From projects in Collect mode only the suggestions to confirm arrive here."
+          }
+        }
+      }
+    },
     "Dai un nome a questa catena…" : {
       "localizations" : {
         "en" : {
@@ -6968,6 +6978,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Items and decisions stay in the project: they only lose the stream label."
+          }
+        }
+      }
+    },
+    "Elementi e Timeline" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Items and Timeline"
           }
         }
       }
@@ -9269,11 +9289,22 @@
       }
     },
     "Il Riepilogo dice a che punto è il progetto. La Timeline mette in fila call, email, decisioni e note. La Kanban sposta il lavoro aperto tra le colonne. Il Grafo mostra chi e cosa è collegato a cosa." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The Overview says where the project stands. The Timeline lines up calls, emails, decisions and notes. The Kanban moves open work between columns. The Graph shows who and what is linked to what."
+          }
+        }
+      }
+    },
+    "Il Riepilogo dice a che punto è il progetto. La Timeline mette in fila call, email, decisioni e note. La Kanban sposta il lavoro aperto tra le colonne. Il Grafo mostra chi e cosa è collegato a cosa. Per un archivio da interrogare, senza gestione, metti il progetto in Modalità Raccogli." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Overview says where the project stands. The Timeline lines up calls, emails, decisions and notes. The Kanban moves open work between columns. The Graph shows who and what is linked to what. For an archive to query, without management, put the project in Collect mode."
           }
         }
       }
@@ -10650,11 +10681,22 @@
       }
     },
     "La più semplice e veloce" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The simplest and quickest"
+          }
+        }
+      }
+    },
+    "La più semplice: solo i contenuti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The simplest: only the contents"
           }
         }
       }
@@ -11457,6 +11499,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Manage mode"
+          }
+        }
+      }
+    },
+    "Modalità Raccogli" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collect mode"
           }
         }
       }
@@ -14368,6 +14420,16 @@
         }
       }
     },
+    "Per interviste, archivi e materiali da interrogare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For interviews, archives and materials to query"
+          }
+        }
+      }
+    },
     "Per la sintesi" : {
       "localizations" : {
         "en" : {
@@ -15657,6 +15719,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The project's open tasks, risks, questions and requests appear here, along with the latest decisions. Add them with “Add”."
+          }
+        }
+      }
+    },
+    "Raccogli" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collect"
           }
         }
       }
@@ -17364,11 +17436,22 @@
       }
     },
     "Scegli quanto vuoi seguire questo progetto. In entrambe le modalità puoi scrivere decisioni, attività, rischi e tutti gli altri punti chiave." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose how closely you want to follow this project. In both modes you can write decisions, tasks, risks and all the other key points."
+          }
+        }
+      }
+    },
+    "Scegli quanto vuoi seguire questo progetto. In Traccia e Gestisci scrivi decisioni, attività, rischi e gli altri punti chiave; Raccogli tiene solo i contenuti. Puoi cambiarla quando vuoi: non si perde niente." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose how closely you want to follow this project. In Track and Manage you write decisions, tasks, risks and the other key points; Collect keeps only the contents. You can change it whenever you like: nothing is lost."
           }
         }
       }
@@ -17885,6 +17968,16 @@
         }
       }
     },
+    "Semplice e veloce" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Simple and quick"
+          }
+        }
+      }
+    },
     "Sempre aperta" : {
       "localizations" : {
         "en" : {
@@ -18132,6 +18225,16 @@
         }
       }
     },
+    "Si applicano solo se le confermi." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They are applied only if you confirm them."
+          }
+        }
+      }
+    },
     "Si cerca anche qui. Sintesi, proposte ed esportazioni usano «%@»." : {
       "localizations" : {
         "en" : {
@@ -18339,6 +18442,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Audio only, not transcribed"
+          }
+        }
+      }
+    },
+    "solo i contenuti" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "only the contents"
           }
         }
       }
@@ -20069,6 +20182,16 @@
         }
       }
     },
+    "Trascrizioni, segnalibri, schermate, sintesi e proposte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transcripts, bookmarks, screenshots, summaries and suggestions"
+          }
+        }
+      }
+    },
     "Trasforma in" : {
       "localizations" : {
         "en" : {
@@ -20512,6 +20635,16 @@
         }
       }
     },
+    "Un archivio da cercare e interrogare: elementi, trascrizioni, segnalibri e sintesi, senza punti chiave." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An archive to search and query: items, transcripts, bookmarks and summaries, without key points."
+          }
+        }
+      }
+    },
     "Un box per elemento: aprilo per vedere e confermare le sue proposte a destra." : {
       "localizations" : {
         "en" : {
@@ -20852,11 +20985,22 @@
       }
     },
     "Vale per i progetti nuovi di questo cliente e per quelli a cui non hai scelto una modalità. In entrambe puoi scrivere decisioni, attività, rischi e tutti gli altri punti chiave." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Applies to this client's new projects and to those you haven't chosen a mode for. In both you can write decisions, tasks, risks and all the other key points."
+          }
+        }
+      }
+    },
+    "Vale per i progetti nuovi di questo cliente e per quelli a cui non hai scelto una modalità. In Traccia e Gestisci scrivi decisioni, attività, rischi e gli altri punti chiave; Raccogli tiene solo i contenuti." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It applies to this client's new projects and to those you have not chosen a mode for. In Track and Manage you write decisions, tasks, risks and the other key points; Collect keeps only the contents."
           }
         }
       }

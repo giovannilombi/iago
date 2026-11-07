@@ -152,6 +152,14 @@ enum DemoMode {
                 try? await Task.sleep(for: .seconds(0.5))
                 await shot("modalita", main?.attachedSheet)
                 model.modeIntro = nil
+                // ADR-0098: the same project in «Modalità Raccogli», on its items, with a call open.
+                model.setProjectWorkMode(portal.id, .collect)
+                model.viewMode = .list
+                model.selectedItemID = model.summaries.first { $0.item.type == .call }?.id
+                try? await Task.sleep(for: .seconds(0.5))
+                await shot("raccogli", main)
+                model.selectedItemID = nil
+                model.setProjectWorkMode(portal.id, .manage)
                 model.importing = AppModel.ImportTarget(projectID: portal.id)
                 try? await Task.sleep(for: .seconds(0.5))
                 await shot("importa", main?.attachedSheet)
@@ -197,7 +205,8 @@ enum DemoMode {
             model.searchText = ""
             model.sidePane = nil
             for (pane, name) in [
-                (SettingsView.Pane.permissions, "permessi"), (.engine, "motore"), (.claude, "claude"), (.voices, "voci"),
+                (SettingsView.Pane.permissions, "permessi"), (.engine, "motore"), (.claude, "claude"),
+                (.voices, "voci"),
             ] {
                 model.settingsPane = pane
                 windows.showSettings()

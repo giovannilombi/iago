@@ -11,7 +11,7 @@ The **appearance** (automatic, light or dark) is not here: you choose it from th
 
 ![Settings › Voices: your name and known voices](img/voci.png)
 - **Engine:** local model, search by meaning, automatic jobs (suggestions and summaries; off by default below 32 GB of memory).
-- **Projects:** rename, archive, delete (in three steps); the mode of each one, *Track mode* or *Manage mode* (the default).
+- **Projects:** rename, archive, delete (in three steps); the mode of each one, *Collect mode*, *Track mode* or *Manage mode* (the default).
 - **Email and people:** your addresses, contacts, watched folders, rules.
 - **Categories:** main ones and families, colors, order, summary templates.
 - **Claude:** enabled projects, writing, screenshot images, change log.

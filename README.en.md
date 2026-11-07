@@ -71,7 +71,7 @@ The name comes from the icon: a parrot with a memory of steel.
 
 ### It remembers what matters
 - **Key points:** decisions and milestones (the memory) and open work (tasks with checklists, open questions, risks, requests), each with its source (down to the minute of the call), the people and the date; work items with owner, due date and "waiting for".
-- **Open work under control:** the **Inbox**, at the top of the sidebar, collects what is open across all projects, whose it is and when it is due; the **Overview** tells where a project stands, with a status report to copy. Two modes on the same data, chosen per project: **Manage mode**, the complete and default one, with fine-grained statuses, priorities, dependencies, recurrences and a full-window **Kanban** with your own columns, and **Track mode**, simple and quick: Short overview, tasks to check off, all key point types.
+- **Open work under control:** the **Inbox**, at the top of the sidebar, collects what is open across all projects, whose it is and when it is due; the **Overview** tells where a project stands, with a status report to copy. Three modes on the same data, chosen per project: **Manage mode**, the complete and default one, with fine-grained statuses, priorities, dependencies, recurrences and a full-window **Kanban** with your own columns; **Track mode**, simple and quick: Short overview, tasks to check off, all key point types; **Collect mode**, the simplest: only the contents (items, transcripts, bookmarks, summaries) to search and query, without key points.
 - **The evolution of decisions:** an entry can supersede others, even of a different type, and IAGO keeps the history of how you got there.
 - **Moments marked** during a call, also **with a screenshot** of the shared slide (the text read from it goes into the transcript, the search and the summaries), and dated **notes** on the project or the item, also dictated by voice. The shortcuts (⌃⌥M, ⌃⌥S, ⌃⌥R) work in any app.
 - **Engine suggestions:** after each new piece of content IAGO suggests decisions, tasks (with who, by when, who is waited on), open questions, risks, requests, speaker names, tags, project and links, each with the sentence it comes from. Nothing is applied without your confirmation. Every summary and every suggestion says which model produced it.
@@ -273,7 +273,7 @@ Tests on real calls: [`docs/en/benchmarks/2026-10-21-sintesi-e-glossario.md`](do
 - **EdDSA-signed updates:** IAGO installs only versions signed with the same key.
 
 ## Design decisions
-Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`](docs/en/adr/README.md): 97 so far, with context, rejected alternatives and consequences. Some of them:
+Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`](docs/en/adr/README.md): 98 so far, with context, rejected alternatives and consequences. Some of them:
 
 | ADR | Decision | Why |
 |---|---|---|
@@ -294,6 +294,7 @@ Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`
 | [0074](docs/en/adr/0074-lavoro-aperto-traccia-gestisci.md) | Open work with two modes per project, Track and Manage, on the same data | simple where that is enough, complete where you manage |
 | [0075](docs/en/adr/0075-viste-come-e-cosa.md) | Views as "how to look × what to show", Overview on its own, full-window Kanban | a bar with a clear hierarchy |
 | [0076](docs/en/adr/0076-modalita-inbox-elementi.md) | Truly simple Track mode, Inbox at the top, Items and Graph, import from the project | two modes that stand apart, everyone's work in one place |
+| [0098](docs/en/adr/0098-modalita-raccogli.md) | Collect mode: only the contents, without management | an archive to query stays simple |
 | [0077](docs/en/adr/0077-italiano-e-inglese.md) | Italian and English for app, guide, site and documents, kept aligned by an automatic check | two languages with no forgotten translations |
 | [0056](docs/en/adr/0056-aggiornamenti.md) | Signed Sparkle updates, major ones required | everyone on the same safe version |
 | [0057](docs/en/adr/0057-sync-onedrive.md) | Sharing through a cloud folder | collaborating without a new server |
@@ -301,7 +302,7 @@ Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`
 | [0095](docs/en/adr/0095-claude-come-alternativa-e-riavvio.md) | Claude as an alternative on every Mac, with the steps | you see how to do it, without it being imposed |
 
 ## Quality and tests
-- **321 automated tests** in the packages: Store 124, Capture 49, Intelligence 34, Transcription 30, Ingest 22, MCP 20, Core 15, Engine 15, Export 11, Sync 1.
+- **324 automated tests** in the packages: Store 126, Capture 49, Intelligence 35, Transcription 30, Ingest 22, MCP 20, Core 15, Engine 15, Export 11, Sync 1.
   - The audio pipeline is tested with **synthetic** fixtures (`say` voices), never with real recordings.
   - The engines are tested with fake responses, which also reproduce the real errors of the models.
 - **Before every pull request**, on the Mac: all the tests and the network API check (`scripts/test-packages.sh`); the git hooks check real data, email addresses and languages. On GitHub, on every pull request, the CI runs the tests and checks again (data, email addresses, languages, site and, if it changes, the engine). The build with MLX (`scripts/test-engine.sh`) is done before PRs that touch the engine.
@@ -403,4 +404,4 @@ IAGO stands on excellent open source software:
 
 Full list, with verified versions and licenses: [`docs/en/licenses.md`](docs/en/licenses.md).
 
-**IAGO** © 2026 Giovanni Lombi, from 1.0.0-alpha to 1.3.0-beta; Giovanni Lombi & Gianluca Sestito, later releases. [Creative Commons BY-NC-SA 4.0](LICENSE) license.
+**IAGO** © 2026 Giovanni Lombi, from 1.0.0-alpha to 1.3.x; Giovanni Lombi & Gianluca Sestito, later releases. [Creative Commons BY-NC-SA 4.0](LICENSE) license.

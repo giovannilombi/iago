@@ -361,6 +361,15 @@ Da fare su un Mac o un account utente dove IAGO non è mai stato installato, con
 - [ ] 10y.4 Su un altro account o Mac pulito, dopo aver trascinato IAGO, usa invece il comando del Terminale: chiede la password, e poi IAGO si apre senza avviso.
 - [ ] 10y.5 Il link «Scarica IAGO per Mac» in cima al README scarica l'ultima versione.
 
+## 10z. Modalità Raccogli (ADR-0098)
+- [ ] 10z.1 Clic sull'icona della modalità di un progetto: le schede sono tre, Raccogli (scatola arancione), Traccia e Gestisci. Scegli Raccogli: nella barra laterale l'icona diventa la scatola.
+- [ ] 10z.2 Nel progetto in Raccogli ci sono solo *Elementi* e *Timeline*, senza *Mostra*; la Timeline mostra solo gli elementi. *Aggiungi* offre la nota e l'importazione, non i punti chiave.
+- [ ] 10z.3 In una call del progetto: segnalibri e schermate ci sono, anche nella trascrizione, ma senza *Diventa decisione…*; nella scheda non c'è *Punti chiave*. *Cerca proposte* propone nomi, tag e collegamenti, nessuna decisione o attività.
+- [ ] 10z.4 Inbox: compare la riga «Dai progetti in Modalità Raccogli qui arrivano solo le proposte da confermare»; le proposte di quelle call ci sono, il loro lavoro aperto no.
+- [ ] 10z.5 Su un Mac con 16 GB o meno e le sintesi automatiche accese, una call nuova del progetto non ha la sintesi da sola; *Genera sintesi* la scrive.
+- [ ] 10z.6 Rimetti il progetto in Gestisci: i punti chiave scritti prima tornano visibili.
+- [ ] 10z.7 Da Claude, chiedi di aggiungere una decisione al progetto in Raccogli: lo strumento rifiuta e spiega come cambiare modalità.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

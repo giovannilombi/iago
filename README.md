@@ -71,7 +71,7 @@ Il nome viene dall'icona: un pappagallo con la memoria di ferro.
 
 ### Ricorda ciò che conta
 - **Punti chiave:** decisioni e tappe (la memoria) e lavoro aperto (attività con checklist, punti da chiarire, rischi, richieste), ognuno con la fonte (fino al minuto della call), le persone e la data; il lavoro con responsabile, scadenza e «in attesa di».
-- **Il lavoro aperto sotto controllo:** l'**Inbox**, in cima alla barra laterale, raccoglie cosa è aperto in tutti i progetti, di chi è e per quando; il **Riepilogo** dice a che punto è un progetto, con una sintesi di stato da copiare. Due modalità sugli stessi dati, scelte per progetto: **Modalità Gestisci**, la completa e predefinita, con stati fini, priorità, dipendenze, ricorrenze e **Kanban** a tutta finestra con colonne tue, e **Modalità Traccia**, semplice e veloce: Riepilogo breve, attività da spuntare, tutti i tipi di punto chiave.
+- **Il lavoro aperto sotto controllo:** l'**Inbox**, in cima alla barra laterale, raccoglie cosa è aperto in tutti i progetti, di chi è e per quando; il **Riepilogo** dice a che punto è un progetto, con una sintesi di stato da copiare. Tre modalità sugli stessi dati, scelte per progetto: **Modalità Gestisci**, la completa e predefinita, con stati fini, priorità, dipendenze, ricorrenze e **Kanban** a tutta finestra con colonne tue; **Modalità Traccia**, semplice e veloce: Riepilogo breve, attività da spuntare, tutti i tipi di punto chiave; **Modalità Raccogli**, la più semplice: solo i contenuti (elementi, trascrizioni, segnalibri, sintesi) da cercare e interrogare, senza punti chiave.
 - **L'evoluzione delle decisioni:** una voce può superarne altre, anche di tipo diverso, e IAGO tiene la storia di come ci si è arrivati.
 - **Momenti segnati** durante una call, anche **con lo screenshot** della slide condivisa (il testo letto entra nella trascrizione, nella ricerca e nelle sintesi), e **note** datate sul progetto o sull'elemento, anche dettate a voce. Le scorciatoie (⌃⌥M, ⌃⌥S, ⌃⌥R) funzionano in qualsiasi app.
 - **Proposte del motore:** dopo ogni nuovo contenuto IAGO propone decisioni, attività (con chi, entro quando, chi si aspetta), punti da chiarire, rischi, richieste, nomi degli speaker, tag, progetto e collegamenti, ognuna con la frase da cui viene. Niente viene applicato senza la tua conferma. Ogni sintesi e ogni proposta dice quale modello l'ha prodotta.
@@ -273,7 +273,7 @@ Prove su call reali: [`docs/benchmarks/2026-10-21-sintesi-e-glossario.md`](docs/
 - **Aggiornamenti firmati** EdDSA: IAGO installa solo versioni firmate dalla stessa chiave.
 
 ## Le decisioni di progetto
-Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 97 finora, con contesto, alternative scartate e conseguenze. Alcune:
+Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 98 finora, con contesto, alternative scartate e conseguenze. Alcune:
 
 | ADR | Decisione | Perché |
 |---|---|---|
@@ -294,6 +294,7 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0074](docs/adr/0074-lavoro-aperto-traccia-gestisci.md) | Lavoro aperto con due modi per progetto, Traccia e Gestisci, sugli stessi dati | semplice dove basta, completo dove si gestisce |
 | [0075](docs/adr/0075-viste-come-e-cosa.md) | Viste come «come guardare × cosa mostrare», Riepilogo a parte, Kanban a tutta finestra | una barra con una gerarchia chiara |
 | [0076](docs/adr/0076-modalita-inbox-elementi.md) | Modalità Traccia davvero semplice, Inbox in cima, Elementi e Grafo, import dal progetto | due modalità che si distinguono, il lavoro di tutti in un posto |
+| [0098](docs/adr/0098-modalita-raccogli.md) | Modalità Raccogli: solo i contenuti, senza gestione | un archivio da interrogare resta semplice |
 | [0077](docs/adr/0077-italiano-e-inglese.md) | Italiano e inglese per app, guida, sito e documenti, allineati da un controllo automatico | doppia lingua senza traduzioni dimenticate |
 | [0056](docs/adr/0056-aggiornamenti.md) | Aggiornamenti Sparkle firmati, maggiori obbligatori | tutti sulla stessa versione sicura |
 | [0057](docs/adr/0057-sync-onedrive.md) | Condivisione tramite una cartella cloud | collaborare senza un server nuovo |
@@ -301,7 +302,7 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 | [0095](docs/adr/0095-claude-come-alternativa-e-riavvio.md) | Claude come alternativa su ogni Mac, con i passi | si vede come farlo, senza imporlo |
 
 ## Qualità e test
-- **321 test automatici** nei pacchetti: Store 124, Capture 49, Intelligence 34, Transcription 30, Ingest 22, MCP 20, Core 15, Engine 15, Export 11, Sync 1.
+- **324 test automatici** nei pacchetti: Store 126, Capture 49, Intelligence 35, Transcription 30, Ingest 22, MCP 20, Core 15, Engine 15, Export 11, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
 - **Prima di ogni pull request**, sul Mac: tutti i test e il controllo delle API di rete (`scripts/test-packages.sh`); gli hook di git controllano dati reali, indirizzi email e lingue. Su GitHub, a ogni pull request, la CI rifà test e controlli (dati, indirizzi email, lingue, sito e, se cambia, il motore). La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
@@ -403,4 +404,4 @@ IAGO si regge su ottimo software open source:
 
 Elenco completo, con versioni e licenze verificate: [`docs/licenses.md`](docs/licenses.md).
 
-**IAGO** © 2026 Giovanni Lombi, dalla 1.0.0-alpha alla 1.3.0-beta; Giovanni Lombi & Gianluca Sestito, release successive. Licenza [Creative Commons BY-NC-SA 4.0](LICENSE).
+**IAGO** © 2026 Giovanni Lombi, dalla 1.0.0-alpha alla 1.3.x; Giovanni Lombi & Gianluca Sestito, release successive. Licenza [Creative Commons BY-NC-SA 4.0](LICENSE).

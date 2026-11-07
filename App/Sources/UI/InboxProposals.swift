@@ -92,10 +92,12 @@ struct ItemProposalsPane: View {
                         ScrollView {
                             VStack(alignment: .leading, spacing: 10) {
                                 Text(
-                                    String(
-                                        localized:
-                                            "Diventano punti chiave solo se le confermi. Il minuto apre la trascrizione in quel punto."
-                                    )
+                                    model.workMode(for: item.projectId).hasKeyPoints
+                                        ? String(
+                                            localized:
+                                                "Diventano punti chiave solo se le confermi. Il minuto apre la trascrizione in quel punto."
+                                        )
+                                        : String(localized: "Si applicano solo se le confermi.")
                                 )
                                 .font(.caption).foregroundStyle(.secondary)
                                 ForEach(suggestions) { suggestion in
@@ -166,7 +168,7 @@ struct ItemProposalsPane: View {
     }
 
     private func load() {
-        suggestions = ((try? model.archive.pendingKeyPointSuggestions(.all)) ?? []).filter { $0.itemId == itemID }
+        suggestions = ((try? model.archive.pendingInboxSuggestions()) ?? []).filter { $0.itemId == itemID }
         loaded = true
     }
 }

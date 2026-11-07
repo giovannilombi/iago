@@ -17,6 +17,8 @@ public enum SuggestionEngine {
         public var speakers: [String: String]
         /// When the call took place or the email arrived: "venerdì" counts from here (ADR-0074).
         public var date: Date?
+        /// Key points are proposed too: not for items of a project in «Raccogli» (ADR-0098).
+        public var keyPoints = true
 
         public init(
             itemID: String, projectID: String?, lines: [KeyPointExtractor.Line], isCall: Bool,
@@ -34,6 +36,22 @@ public enum SuggestionEngine {
     public typealias Proposal = (kind: Suggestion.Kind, payload: SuggestionPayload)
 
     public static func propose(
+        _ input: Input, engine: any LLMProvider, embedder: (any TextEmbedder)?, archive: Archive
+    ) async throws -> [Proposal] {
+        var proposals: [Proposal] = []
+        if input.keyPoints {
+            proposals += try await keyPoints(input, engine: engine, embedder: embedder, archive: archive)
+        }
+        if input.isCall { proposals += try await speakerNames(input, engine: engine) }
+        proposals += try await tags(input, engine: engine, archive: archive)
+        if let embedder {
+            proposals += try neighbours(input, model: embedder.modelID, archive: archive)
+        }
+        return proposals
+    }
+
+    /// Decisions, activities, points to clear up, risks and requests, with what they may supersede or close.
+    static func keyPoints(
         _ input: Input, engine: any LLMProvider, embedder: (any TextEmbedder)?, archive: Archive
     ) async throws -> [Proposal] {
         var proposals: [Proposal] = []
@@ -55,11 +73,6 @@ public enum SuggestionEngine {
                 payload.supersedesID = previous.id
             }
             proposals.append((kind(point.kind), payload))
-        }
-        if input.isCall { proposals += try await speakerNames(input, engine: engine) }
-        proposals += try await tags(input, engine: engine, archive: archive)
-        if let embedder {
-            proposals += try neighbours(input, model: embedder.modelID, archive: archive)
         }
         return proposals
     }

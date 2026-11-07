@@ -9,6 +9,12 @@ extension SuggestionEngine.Input {
     /// The text of an item as the engine and Claude read it: a call by turns of speech with names and minutes, plus
     /// the text read on its screenshots at their minute; an email or a document by paragraphs. nil without a text.
     public static func load(_ item: Item, from archive: Archive) throws -> Self? {
+        guard var input = try text(item, from: archive) else { return nil }
+        input.keyPoints = archive.workMode(projectID: item.projectId).hasKeyPoints
+        return input
+    }
+
+    private static func text(_ item: Item, from archive: Archive) throws -> Self? {
         switch item.type {
         case .call:
             guard let asset = try archive.assets(itemID: item.id).first(where: { $0.kind == .transcriptJSON }) else {
