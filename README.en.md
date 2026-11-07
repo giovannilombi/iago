@@ -403,4 +403,4 @@ IAGO stands on excellent open source software:
 
 Full list, with verified versions and licenses: [`docs/en/licenses.md`](docs/en/licenses.md).
 
-**IAGO** © 2026 Giovanni Lombi (until sharing starts, phase 4), Giovanni Lombi and Gianluca Sestito (from the first version with sharing). [Creative Commons BY-NC-SA 4.0](LICENSE) license.
+**IAGO** © 2026 Giovanni Lombi, from 1.0.0-alpha to 1.3.0-beta; Giovanni Lombi & Gianluca Sestito, later releases. [Creative Commons BY-NC-SA 4.0](LICENSE) license.

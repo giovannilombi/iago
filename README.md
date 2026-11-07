@@ -403,4 +403,4 @@ IAGO si regge su ottimo software open source:
 
 Elenco completo, con versioni e licenze verificate: [`docs/licenses.md`](docs/licenses.md).
 
-**IAGO** © 2026 Giovanni Lombi (fino all'inizio della condivisione, fase 4), Giovanni Lombi e Gianluca Sestito (dalla prima versione con la condivisione). Licenza [Creative Commons BY-NC-SA 4.0](LICENSE).
+**IAGO** © 2026 Giovanni Lombi, dalla 1.0.0-alpha alla 1.3.0-beta; Giovanni Lombi & Gianluca Sestito, release successive. Licenza [Creative Commons BY-NC-SA 4.0](LICENSE).
