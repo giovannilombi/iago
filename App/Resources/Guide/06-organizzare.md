@@ -8,7 +8,7 @@
 - **Sotto, fisse:** *Elementi da classificare*, *Recenti*, *Punti chiave*, *Importa*, *Attività*, *Categorie e tag*.
 - **Clienti e progetti** (l'unica parte che scorre). In cima, a destra, **Aggiungi** apre il menu *Aggiungi:* con **Cliente…** e **Progetto…**. Se un nome è troppo lungo per la barra, resta **due secondi** sul nome: compare il nome intero.
   - **In evidenza** (pin rosso): progetti, stream, categorie e tag che fissi.
-  - **I clienti**, ognuno con i suoi progetti. Accanto a ogni progetto una piccola icona dice la sua modalità: un quaderno verde per la *Modalità Traccia*, tre colonne blu per la *Modalità Gestisci*; un clic sull'icona ti fa scegliere l'altra, come la pillola accanto al nome del progetto. Un clic sul nome apre o chiude il cliente; **⌥-clic** apre solo quello e chiude gli altri. Passando sopra compare **+**: crea un progetto di quel cliente, già scelto e non modificabile. Tutti gli elementi del cliente si aprono con il tasto destro › *Apri*.
+  - **I clienti**, ognuno con i suoi progetti. Accanto a ogni progetto una piccola icona dice la sua modalità: una scatola arancione per la *Modalità Raccogli*, un quaderno verde per la *Modalità Traccia*, tre colonne blu per la *Modalità Gestisci*; un clic sull'icona ti fa sceglierne un'altra, come la pillola accanto al nome del progetto. Un clic sul nome apre o chiude il cliente; **⌥-clic** apre solo quello e chiude gli altri. Passando sopra compare **+**: crea un progetto di quel cliente, già scelto e non modificabile. Tutti gli elementi del cliente si aprono con il tasto destro › *Apri*.
   - **Senza cliente** (quadratino grigio), sempre ultimo, con **Non definito** in fondo: gli elementi classificati senza progetto.
 - **In fondo:** il **Cestino**, con il numero di elementi.
 - Con più di 15 progetti compare **Filtra progetti**.
@@ -46,6 +46,7 @@ Un progetto ha una storia sola (call, email, documenti, note, punti chiave); in 
 - **Elementi**: tutte le call, le email e i documenti del progetto, con i filtri per categoria, tag, tipo e periodo.
 - Poi, separate da una linea, le forme della storia: **Timeline** (giorno per giorno), **Kanban** (il lavoro aperto in colonne, solo in *Modalità Gestisci*) e **Grafo** (persone, elementi e punti chiave collegati; in *Modalità Traccia* si può spegnere dalla pillola della modalità).
 - A destra, per Timeline e Grafo, **Mostra**: *Tutto*, solo gli *Elementi* o solo i *Punti chiave*. In *Modalità Traccia* non c'è: si vede tutto.
+- In *Modalità Raccogli* ci sono solo **Elementi** e **Timeline**, con i soli elementi.
 
 Riepilogo, Kanban e Grafo occupano tutta la finestra: ciò che apri compare nel pannello a destra, che chiudi con ✕ o Esc. IAGO ricorda per ogni progetto l'ultima vista scelta.
 

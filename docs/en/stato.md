@@ -11,7 +11,7 @@
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi, alone, until work on sharing (phase 4) begins; from then on Giovanni Lombi and Gianluca Sestito (ADR-0065, ADR-0089).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 321 in the packages, all green (1.2.15-beta).
+- **Automated tests:** 324 in the packages, all green.
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -61,6 +61,13 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-07, Collect mode** (ADR-0098, on a preview approved by the user): a third mode, the simplest, for archive projects to search and query.
+  - **What is there:** Items and Timeline, transcripts, bookmarks and screenshots, summaries, suggestions of names, tags, project and links, *Ask IAGO* and Claude.
+  - **What is not:** no key points, nor Overview, Kanban or Graph.
+  - **Inbox:** it brings only their suggestions, with a line saying so.
+  - **Summaries:** up to 16 GB only on request or with Claude.
+  - **Claude:** the MCP tools refuse key points.
+  - **README copyright:** «Giovanni Lombi, from 1.0.0-alpha to 1.3.x».
 - **2026-11-07, automatic CI and old branches deleted:**
   - **CI:** with the public repository GitHub Actions minutes are free. `ci.yml` and `privacy.yml` start on every PR and push to `main`, `deploy.yml` builds the site on PRs, `engine.yml` builds with MLX on PRs that touch the engine. A PR is merged only with green checks (CLAUDE.md, README-collaborators).
   - **Branches:** seven branches already merged deleted; `release/1.0.x` stays.

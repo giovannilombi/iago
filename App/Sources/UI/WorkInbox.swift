@@ -13,6 +13,8 @@ struct WorkInbox: View {
     @State private var closed: [DecisionSummary] = []
     @State private var proposals: [ProposalGroup] = []
     @State private var checklists: [Checklist] = []
+    /// Projects in «Raccogli» (ADR-0098): they bring only their proposals, and a line says so.
+    @State private var collectProjects = 0
     /// The user as a person («Il tuo nome», «Io»), read once per reload.
     @State private var me: Set<String> = []
     @State private var confirmsDismissAll = false
@@ -221,6 +223,13 @@ struct WorkInbox: View {
                     showsChevron: false
                 ) { showsClosed.toggle() }
             }
+            if collectProjects > 0 {
+                Label(
+                    String(localized: "Dai progetti in Modalità Raccogli qui arrivano solo le proposte da confermare."),
+                    systemImage: WorkModeText.icon(.collect)
+                )
+                .font(.caption).foregroundStyle(.secondary)
+            }
         }
         .padding(.horizontal, 12).padding(.vertical, 10)
     }
@@ -326,21 +335,25 @@ struct WorkInbox: View {
     private func load() {
         let archive = model.archive
         me = model.meIDs
+        // ADR-0098: the key points of a project in «Raccogli» (written before it was) stay out.
+        let keyPoints = { (summary: DecisionSummary) in model.workMode(for: summary.decision.projectId).hasKeyPoints }
         open =
-            (try? archive.decisions(
-                DecisionQuery(scope: .all, statuses: DecisionQuery.current, kinds: Set(Decision.Kind.work)))) ?? []
+            ((try? archive.decisions(
+                DecisionQuery(scope: .all, statuses: DecisionQuery.current, kinds: Set(Decision.Kind.work)))) ?? [])
+            .filter(keyPoints)
         if showsClosed {
             let since = Calendar.current.date(byAdding: .day, value: -Archive.boardArchiveDays, to: Date()) ?? Date()
             closed =
                 ((try? archive.decisions(
                     DecisionQuery(
                         scope: .all, statuses: [.done, .cancelled, .superseded], kinds: Set(Decision.Kind.work)))) ?? [])
-                .filter { ($0.decision.closedAt ?? .distantPast) >= since }
+                .filter { ($0.decision.closedAt ?? .distantPast) >= since && keyPoints($0) }
                 .sorted { ($0.decision.closedAt ?? .distantPast) > ($1.decision.closedAt ?? .distantPast) }
         } else {
             closed = []
         }
-        let pending = (try? archive.pendingKeyPointSuggestions(.all)) ?? []
+        let pending = (try? archive.pendingInboxSuggestions()) ?? []
+        collectProjects = (try? archive.collectProjectCount()) ?? 0
         var order: [String] = []
         var byItem: [String: [Suggestion]] = [:]
         for suggestion in pending {
@@ -389,8 +402,11 @@ struct WorkInboxSidebarLabel: View {
                 (try? model.archive.decisions(
                     DecisionQuery(scope: .all, statuses: DecisionQuery.current, kinds: Set(Decision.Kind.work)))) ?? []
             let me = model.meIDs
-            actions = open.filter { OpenWork.needsAction($0.decision, me: me) }.count
-            proposals = (try? model.archive.pendingKeyPointSuggestions(.all).count) ?? 0
+            actions =
+                open.filter {
+                    OpenWork.needsAction($0.decision, me: me) && model.workMode(for: $0.decision.projectId).hasKeyPoints
+                }.count
+            proposals = (try? model.archive.pendingInboxSuggestions().count) ?? 0
         }
     }
 }

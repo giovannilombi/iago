@@ -419,10 +419,19 @@ final class AppModel {
             if !restoringView { reload() }
         }
     }
-    /// «Mostra» as the view uses it: a project in «Traccia» has no «Mostra» and shows everything.
+    /// «Mostra» as the view uses it: a project in «Traccia» has no «Mostra» and shows everything, one in «Raccogli» only
+    /// the items (ADR-0098).
     var shownContent: ViewContent {
-        workViewsMode(for: decisionScope) == .track && workScope != nil ? .all : viewContent
+        guard workScope != nil else { return viewContent }
+        switch workViewsMode(for: decisionScope) {
+        case .collect: return .materials
+        case .track: return .all
+        case .manage: return viewContent
+        }
     }
+
+    /// A project (or a stream of it) in «Raccogli»: only «Elementi» and «Timeline», no key points (ADR-0098).
+    var collectView: Bool { workScope != nil && workViewsMode(for: decisionScope) == .collect }
     var showsTimeline: Bool { viewMode == .timeline }
     var showsDecisions: Bool { sidebar == .decisions && viewMode != .board }
     var showsGraph: Bool { viewMode == .map && sidebar != .decisions && sidebar != .inbox }
@@ -516,7 +525,7 @@ final class AppModel {
     /// graph turned off in a project) falls back to the overview or the list.
     func fixView() {
         switch viewMode {
-        case .overview where workScope == nil:
+        case .overview where workScope == nil || collectView:
             viewMode = .list
         case .board where !boardAvailable(for: decisionScope):
             viewMode = workScope != nil ? .overview : .list
@@ -784,6 +793,7 @@ final class AppModel {
     /// «Mostra il Grafo» of a project in «Traccia»: on unless turned off. In «Gestisci» the graph is always there.
     func graphShown(projectID: String) -> Bool {
         _ = revision
+        if workMode(for: projectID) == .collect { return false }
         guard workMode(for: projectID) == .track else { return true }
         return !(UserDefaults.standard.stringArray(forKey: Self.hiddenGraphsKey) ?? []).contains(projectID)
     }

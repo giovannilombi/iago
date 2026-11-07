@@ -1,12 +1,17 @@
 import Foundation
 import GRDB
 
-/// How much work management the user sees (ADR-0074): the same data, two views of it.
+/// How much work management the user sees (ADR-0074, ADR-0098): the same data, three views of it, from the simplest.
 public enum WorkMode: String, Codable, Sendable, CaseIterable {
+    /// "Raccogli" (ADR-0098): only the contents, items and timeline, with no key points: an archive to search and ask.
+    case collect
     /// "Traccia": open, waiting, done, cancelled; owner, due date, waiting for, checklist.
     case track
     /// "Gestisci": every state and field, the kanban, the full overview.
     case manage
+
+    /// Key points are written, proposed and shown: in "Traccia" and "Gestisci", not in "Raccogli".
+    public var hasKeyPoints: Bool { self != .collect }
 }
 
 /// A named list of a project, pinned at the top of its overview (ADR-0074).

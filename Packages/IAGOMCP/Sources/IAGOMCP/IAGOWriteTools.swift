@@ -643,6 +643,11 @@ extension IAGOTools {
                         .joined(separator: "; "))
             }
         }
+        if archive.workMode(projectID: project.id) == .collect {
+            throw ToolError(
+                "Il progetto «\(project.name)» è in Modalità Raccogli: tiene solo i contenuti, senza punti chiave. Se l'utente li vuole, la cambia in Traccia o Gestisci dalla pillola accanto al nome del progetto."
+            )
+        }
         if kind == .decision, Self.looksLike(text) == .action {
             doubts.append("Il titolo sembra qualcosa da fare: chiedi all'utente se è un'attività (kind action).")
         }

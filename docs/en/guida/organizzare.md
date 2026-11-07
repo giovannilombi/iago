@@ -7,7 +7,7 @@
 - **Below, always there:** *Unfiled items*, *Recent*, *Key points*, *Import*, *Activity*, *Categories and tags*.
 - **Clients and projects** (the only part that scrolls). At the top, on the right, **Add** opens the *Add:* menu with **Client…** and **Project…**. If a name is too long for the sidebar, stay **two seconds** on the name: the whole name appears.
   - **Pinned** (red pin): projects, streams, categories and tags you pin.
-  - **Clients**, each with its projects. Next to each project a small icon shows its mode: a green notebook for *Track mode*, three blue columns for *Manage mode*; a click on the icon lets you choose the other, like the pill next to the project's name. A click on the name opens or closes the client; **⌥-click** opens only that one and closes the others. On hover **+** appears: it creates a project of that client, already chosen and not editable. All the client's items open with right-click › *Open*.
+  - **Clients**, each with its projects. Next to each project a small icon shows its mode: an orange box for *Collect mode*, a green notebook for *Track mode*, three blue columns for *Manage mode*; a click on the icon lets you choose another one, like the pill next to the project's name. A click on the name opens or closes the client; **⌥-click** opens only that one and closes the others. On hover **+** appears: it creates a project of that client, already chosen and not editable. All the client's items open with right-click › *Open*.
   - **No client** (small gray square), always last, with **Undefined** at the bottom: items filed without a project.
 - **At the bottom:** the **Trash**, with the number of items.
 - With more than 15 projects, **Filter projects** appears.
@@ -45,6 +45,7 @@ A project has a single story (calls, emails, documents, notes, key points); at t
 - **Items**: all the project's calls, emails and documents, with filters for category, tag, type and period.
 - Then, after a separator line, the shapes of the story: **Timeline** (day by day), **Kanban** (open work in columns, only in *Manage mode*) and **Graph** (people, items and key points linked together; in *Track mode* you can turn it off from the mode pill).
 - On the right, for Timeline and Graph, **Show**: *Everything*, only *Items* or only *Key points*. In *Track mode* it is not there: you see everything.
+- In *Collect mode* there are only **Items** and **Timeline**, with the items alone.
 
 Overview, Kanban and Graph fill the whole window: what you open appears in the panel on the right, which you close with ✕ or Esc. IAGO remembers the last view you chose for each project.
 

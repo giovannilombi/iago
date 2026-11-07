@@ -187,6 +187,12 @@ final class IntelligenceService {
         }
     }
 
+    /// A project in «Raccogli» on a Mac with 16 GB or less gets summaries only when the user asks, or from Claude
+    /// (ADR-0098): an archive can hold many recordings, and each summary takes the Mac for minutes.
+    static func summarizesByItself(projectMode: WorkMode, ramGB: Int = EnginePolicy.ramGB) -> Bool {
+        projectMode != .collect || ramGB > 16
+    }
+
     /// Items asked by hand, and new transcribed items whose category has a template (ADR-0054).
     private func summarize(with chat: any LLMProvider) async {
         var queue: [String] = []
@@ -199,7 +205,8 @@ final class IntelligenceService {
             let summarized = (try? archive.summarizedItemIDs()) ?? []
             queue = ((try? archive.summaries(.recent)) ?? [])
                 .filter { summary in
-                    summary.item.createdAt >= since && summary.hasTranscript && !summarized.contains(summary.id)
+                    Self.summarizesByItself(projectMode: archive.workMode(projectID: summary.item.projectId))
+                        && summary.item.createdAt >= since && summary.hasTranscript && !summarized.contains(summary.id)
                         && Self.template(for: summary.item.categoryId.flatMap { categories[$0] }) != nil
                         && (try? archive.setting(Self.summaryDoneKey(summary.id))) == nil
                 }

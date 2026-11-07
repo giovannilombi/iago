@@ -33,12 +33,12 @@ struct WorkModeIntroSheet: View {
         case .project:
             String(
                 localized:
-                    "Scegli quanto vuoi seguire questo progetto. In entrambe le modalità puoi scrivere decisioni, attività, rischi e tutti gli altri punti chiave."
+                    "Scegli quanto vuoi seguire questo progetto. In Traccia e Gestisci scrivi decisioni, attività, rischi e gli altri punti chiave; Raccogli tiene solo i contenuti. Puoi cambiarla quando vuoi: non si perde niente."
             )
         case .client:
             String(
                 localized:
-                    "Vale per i progetti nuovi di questo cliente e per quelli a cui non hai scelto una modalità. In entrambe puoi scrivere decisioni, attività, rischi e tutti gli altri punti chiave."
+                    "Vale per i progetti nuovi di questo cliente e per quelli a cui non hai scelto una modalità. In Traccia e Gestisci scrivi decisioni, attività, rischi e gli altri punti chiave; Raccogli tiene solo i contenuti."
             )
         }
     }
@@ -71,7 +71,7 @@ struct WorkModeIntroSheet: View {
             }
         }
         .padding(22)
-        .frame(width: 560)
+        .frame(width: 760)
     }
 
     private func card(_ option: WorkMode) -> some View {
@@ -85,7 +85,7 @@ struct WorkModeIntroSheet: View {
                 if selected { Image(systemName: "checkmark.circle.fill") }
             }
             .foregroundStyle(tint)
-            Text(option == .track ? String(localized: "La più semplice e veloce") : String(localized: "La completa"))
+            Text(Self.subtitle(option))
                 .font(.callout.weight(.medium))
             VStack(alignment: .leading, spacing: 3) {
                 ForEach(Self.points(option), id: \.self) { point in
@@ -104,8 +104,22 @@ struct WorkModeIntroSheet: View {
         .contentShape(Rectangle())
     }
 
+    static func subtitle(_ mode: WorkMode) -> String {
+        switch mode {
+        case .collect: String(localized: "La più semplice: solo i contenuti")
+        case .track: String(localized: "Semplice e veloce")
+        case .manage: String(localized: "La completa")
+        }
+    }
+
     static func points(_ mode: WorkMode) -> [String] {
         switch mode {
+        case .collect:
+            [
+                String(localized: "Elementi e Timeline"),
+                String(localized: "Trascrizioni, segnalibri, schermate, sintesi e proposte"),
+                String(localized: "Per interviste, archivi e materiali da interrogare"),
+            ]
         case .track:
             [
                 String(localized: "Riepilogo breve, Elementi e Timeline"),

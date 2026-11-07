@@ -52,6 +52,10 @@ public struct Suggestion: Codable, FetchableRecord, PersistableRecord, Sendable,
     /// ADR-0074 adds the open work kinds: a point to clear up, a risk, a request of the client.
     public enum Kind: String, Codable, Sendable, CaseIterable {
         case decision, activity, person, tag, project, link, question, risk, request
+
+        /// A proposal that would become a key point; the others are about the item itself (a name, a tag, a project,
+        /// a link), and stay in projects in "Raccogli" (ADR-0098).
+        public var isKeyPoint: Bool { [.decision, .activity, .question, .risk, .request].contains(self) }
     }
     public enum Status: String, Codable, Sendable { case pending, accepted, rejected, merged }
 
@@ -312,7 +316,8 @@ extension Archive {
         try database.writer.read { db in try Suggestion.fetchOne(db, key: id) }
     }
 
-    /// Pending proposals per item, for the marks in lists and timelines.
+    /// Pending proposals per item, for the marks in lists and timelines: in a project in «Raccogli» key points do not
+    /// count (ADR-0098).
     public func pendingSuggestionCounts() throws -> [String: Int] {
         try database.writer.read { db in
             let rows = try Row.fetchAll(
@@ -320,7 +325,10 @@ extension Archive {
                 sql: """
                     SELECT suggestion.item_id, count(*) AS n FROM suggestion
                     JOIN item ON item.id = suggestion.item_id
+                    LEFT JOIN project ON project.id = item.project_id
                     WHERE suggestion.status = 'pending' AND item.deleted_at IS NULL AND item.trashed_at IS NULL
+                      AND NOT (project.work_mode IS 'collect'
+                        AND suggestion.kind IN ('decision', 'activity', 'question', 'risk', 'request'))
                     GROUP BY suggestion.item_id
                     """)
             return Dictionary(uniqueKeysWithValues: rows.map { ($0["item_id"] as String, $0["n"] as Int) })
@@ -356,6 +364,34 @@ extension Archive {
             }
             sql += " ORDER BY item.occurred_at DESC, suggestion.created_at"
             return try Suggestion.fetchAll(db, sql: sql, arguments: arguments)
+        }
+    }
+
+    /// The proposals of «Inbox» (ADR-0087, ADR-0098): the key points proposed for every item, except those of projects in
+    /// «Raccogli», whose items bring their other proposals (names, tags, project, links) instead. Most recent item first.
+    public func pendingInboxSuggestions() throws -> [Suggestion] {
+        try database.writer.read { db in
+            try Suggestion.fetchAll(
+                db,
+                sql: """
+                    SELECT suggestion.* FROM suggestion
+                    JOIN item ON item.id = suggestion.item_id
+                    LEFT JOIN project ON project.id = item.project_id
+                    WHERE suggestion.status = 'pending'
+                      AND item.deleted_at IS NULL AND item.trashed_at IS NULL
+                      AND CASE WHEN project.work_mode = 'collect'
+                        THEN suggestion.kind IN ('person', 'tag', 'project', 'link')
+                        ELSE suggestion.kind IN ('decision', 'activity', 'question', 'risk', 'request') END
+                    ORDER BY item.occurred_at DESC, suggestion.created_at
+                    """)
+        }
+    }
+
+    /// Projects in «Raccogli» (ADR-0098), for the line in «Inbox» that says they bring only proposals.
+    public func collectProjectCount() throws -> Int {
+        try database.writer.read { db in
+            try Int.fetchOne(
+                db, sql: "SELECT COUNT(*) FROM project WHERE work_mode = 'collect' AND deleted_at IS NULL") ?? 0
         }
     }
 

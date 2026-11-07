@@ -15,16 +15,23 @@ There are six kinds of key points, in two families.
 
 ![Key points in the timeline](img/punti-chiave.png)
 
-## Track mode and Manage mode
-Each project has its own mode, chosen with the pill next to the project name (**Manage mode ▾**) or in Settings › Projects. Both have all the kinds; the data is the same, and switching from one to the other you lose nothing.
-- **Track mode**, *simple and quick*: keep track of the project. Short overview, Items, Timeline and Graph (which you can turn off from the pill). A task is a **checkbox to tick**, with who, by when, "waiting for" and checklist; open questions, risks and requests are written down and closed with their outcome. No Kanban and no *Show* menu.
+## The three modes: Collect, Track, Manage
+Each project has its own mode, chosen with the pill next to the project name (**Manage mode ▾**) or in Settings › Projects. The data is the same, and switching from one to another you lose nothing.
+- **Collect mode**, *only the contents*: an archive to search and query, for interviews, research, materials.
+  - **What is there:** *Items* and *Timeline*, transcripts, bookmarks and screenshots, summaries and suggestions (names, tags, project, links), search, *Ask IAGO* and Claude.
+  - **What is not:** no key points, nor Overview, Kanban or Graph.
+  - **Inbox:** only the suggestions to confirm arrive there.
+  - **Summaries:** on a Mac with 16 GB or less they are made when you ask (*Generate summary*) or with Claude, never by themselves.
+- **Track mode**, *simple and quick*: all kinds of key points, to keep track of the project. Short overview, Items, Timeline and Graph (which you can turn off from the pill). A task is a **checkbox to tick**, with who, by when, "waiting for" and checklist; open questions, risks and requests are written down and closed with their outcome. No Kanban and no *Show* menu.
 - **Manage mode**, *complete* (the default): all statuses, including *In progress* and *Blocked*; priority, dependencies ("depends on"), risk severity, *Became an issue*, "derived from", estimate, start date, recurrences; the **Kanban** and the full **Overview**.
 
 A Manage field already filled in stays saved in Track too: a small icon says so, and it becomes visible again in Manage.
 
-**The first time** you open a project, a window tells you which mode it is in and what changes; a click on the other tab switches mode. *OK* closes it and the window comes back next time; *Don't show again* removes it for that project. A **client** shows it too: there you choose the mode of its new projects and of those you have not set yourself.
+**The first time** you open a project, a window tells you which mode it is in and what changes; a click on another card switches mode. *OK* closes it and the window comes back next time; *Don't show again* removes it for that project. A **client** shows it too: there you choose the mode of its new projects and of those you have not set yourself.
 
 ![The mode window](img/modalita.png)
+
+![A project in Collect mode: only Items and Timeline](img/raccogli.png)
 
 Inbox, Key points and the all-projects Kanban gather the work of **all projects**, in any mode: each entry is shown in the mode of its project.
 

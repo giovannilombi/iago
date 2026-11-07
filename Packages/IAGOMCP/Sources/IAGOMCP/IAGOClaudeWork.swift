@@ -464,6 +464,13 @@ extension IAGOTools {
                 )
             }
         }
+        // ADR-0098: a project in «Raccogli» keeps only its contents, so key points are not proposed there.
+        if archive.workMode(projectID: project.id) == .collect, proposals.contains(where: { $0.kind.isKeyPoint }) {
+            proposals.removeAll { $0.kind.isKeyPoint }
+            doubts.append(
+                "Il progetto è in Modalità Raccogli, senza punti chiave: restano solo i tag. Per decisioni e attività l'utente deve passare a Traccia o Gestisci."
+            )
+        }
         guard !proposals.isEmpty else {
             throw ToolError("Nessuna proposta valida. " + doubts.joined(separator: " "))
         }

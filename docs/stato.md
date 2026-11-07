@@ -11,7 +11,7 @@
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi, solo, fino all'inizio del lavoro sulla condivisione (fase 4); da lì Giovanni Lombi e Gianluca Sestito (ADR-0065, ADR-0089).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 321 nei pacchetti, tutti verdi (1.2.15-beta).
+- **Test automatici:** 324 nei pacchetti, tutti verdi.
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -61,6 +61,13 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-07, Modalità Raccogli** (ADR-0098, su un'anteprima approvata dall'utente): terza modalità, la più semplice, per i progetti-archivio da cercare e interrogare.
+  - **C'è:** Elementi e Timeline, trascrizioni, segnalibri e schermate, sintesi, proposte di nomi, tag, progetto e collegamenti, *Chiedi a IAGO* e Claude.
+  - **Non c'è:** nessun punto chiave, né Riepilogo, Kanban o Grafo.
+  - **Inbox:** porta solo le loro proposte, con una riga che lo dice.
+  - **Sintesi:** fino a 16 GB solo a richiesta o con Claude.
+  - **Claude:** gli strumenti MCP rifiutano i punti chiave.
+  - **Copyright del README:** «Giovanni Lombi, dalla 1.0.0-alpha alla 1.3.x».
 - **2026-11-07, CI automatica e rami vecchi eliminati:**
   - **CI:** con il repository pubblico i minuti di GitHub Actions sono gratuiti. `ci.yml` e `privacy.yml` partono a ogni PR e push su `main`, `deploy.yml` compila il sito sulle PR, `engine.yml` fa la build con MLX sulle PR che toccano il motore. Una PR si unisce solo con i controlli verdi (CLAUDE.md, README-collaborators).
   - **Rami:** eliminati sette rami già uniti; resta `release/1.0.x`.

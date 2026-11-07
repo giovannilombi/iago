@@ -15,16 +15,23 @@ I punti chiave sono di sei tipi, in due famiglie.
 
 ![Punti chiave nella timeline](img/punti-chiave.png)
 
-## Modalità Traccia e Modalità Gestisci
-Ogni progetto ha la sua modalità, scelta con la pillola accanto al nome del progetto (**Modalità Gestisci ▾**) o in Impostazioni › Progetti. In entrambe ci sono tutti i tipi; i dati sono gli stessi e passando dall'una all'altra non perdi nulla.
-- **Modalità Traccia**, *semplice e veloce*: tieni il filo del progetto. Riepilogo breve, Elementi, Timeline e Grafo (che puoi spegnere dalla pillola). Un'attività è una **casella da spuntare**, con chi, entro quando, «in attesa di» e checklist; punti da chiarire, rischi e richieste si scrivono e si chiudono con l'esito. Niente Kanban e niente menu *Mostra*.
+## Le tre modalità: Raccogli, Traccia, Gestisci
+Ogni progetto ha la sua modalità, scelta con la pillola accanto al nome del progetto (**Modalità Gestisci ▾**) o in Impostazioni › Progetti. I dati sono gli stessi e passando dall'una all'altra non perdi nulla.
+- **Modalità Raccogli**, *solo i contenuti*: un archivio da cercare e interrogare, per interviste, ricerche, materiali.
+  - **C'è:** *Elementi* e *Timeline*, trascrizioni, segnalibri e schermate, sintesi e proposte (nomi, tag, progetto, collegamenti), ricerca, *Chiedi a IAGO* e Claude.
+  - **Non c'è:** nessun punto chiave, né Riepilogo, Kanban o Grafo.
+  - **Inbox:** arrivano solo le proposte da confermare.
+  - **Sintesi:** su un Mac con 16 GB o meno si fanno quando le chiedi (*Genera sintesi*) o con Claude, mai da sole.
+- **Modalità Traccia**, *semplice e veloce*: tutti i tipi di punto chiave, per tenere il filo del progetto. Riepilogo breve, Elementi, Timeline e Grafo (che puoi spegnere dalla pillola). Un'attività è una **casella da spuntare**, con chi, entro quando, «in attesa di» e checklist; punti da chiarire, rischi e richieste si scrivono e si chiudono con l'esito. Niente Kanban e niente menu *Mostra*.
 - **Modalità Gestisci**, *completa* (predefinita): tutti gli stati, anche *In corso* e *Bloccata*; priorità, dipendenze («dipende da»), gravità dei rischi, *Diventato problema*, «nata da», stima, data d'inizio, ricorrenze; la **Kanban** e il **Riepilogo** completo.
 
 Un campo di Gestisci già compilato resta salvato anche in Traccia: una piccola icona lo dice, e torna visibile in Gestisci.
 
-**La prima volta** che apri un progetto, una finestra dice in che modalità è e cosa cambia; un clic sull'altra scheda cambia modalità. *OK* la richiude e la finestra torna la volta dopo; *Non mostrare più* la toglie per quel progetto. Anche un **cliente** la mostra: lì scegli la modalità dei suoi progetti nuovi e di quelli a cui non l'hai scelta tu.
+**La prima volta** che apri un progetto, una finestra dice in che modalità è e cosa cambia; un clic su un'altra scheda cambia modalità. *OK* la richiude e la finestra torna la volta dopo; *Non mostrare più* la toglie per quel progetto. Anche un **cliente** la mostra: lì scegli la modalità dei suoi progetti nuovi e di quelli a cui non l'hai scelta tu.
 
 ![La finestra della modalità](img/modalita.png)
+
+![Un progetto in Modalità Raccogli: solo Elementi e Timeline](img/raccogli.png)
 
 Inbox, Punti chiave e la Kanban di tutti raccolgono il lavoro di **tutti i progetti**, in qualsiasi modalità: ogni voce si vede nella modalità del suo progetto.
 

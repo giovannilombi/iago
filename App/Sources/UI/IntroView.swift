@@ -76,7 +76,7 @@ struct IntroView: View {
             title: String(localized: "Ogni progetto, come ti serve"),
             text: String(
                 localized:
-                    "Il Riepilogo dice a che punto è il progetto. La Timeline mette in fila call, email, decisioni e note. La Kanban sposta il lavoro aperto tra le colonne. Il Grafo mostra chi e cosa è collegato a cosa."
+                    "Il Riepilogo dice a che punto è il progetto. La Timeline mette in fila call, email, decisioni e note. La Kanban sposta il lavoro aperto tra le colonne. Il Grafo mostra chi e cosa è collegato a cosa. Per un archivio da interrogare, senza gestione, metti il progetto in Modalità Raccogli."
             ),
             images: [
                 (String(localized: "Riepilogo"), "riepilogo"), (String(localized: "Timeline"), "finestra"),

@@ -212,6 +212,7 @@ private struct LanguageGroup: View {
 enum WorkModeText {
     static func title(_ mode: WorkMode) -> String {
         switch mode {
+        case .collect: String(localized: "Raccogli")
         case .track: String(localized: "Traccia")
         case .manage: String(localized: "Gestisci")
         }
@@ -219,14 +220,16 @@ enum WorkModeText {
 
     static func fullTitle(_ mode: WorkMode) -> String {
         switch mode {
+        case .collect: String(localized: "Modalità Raccogli")
         case .track: String(localized: "Modalità Traccia")
         case .manage: String(localized: "Modalità Gestisci")
         }
     }
 
-    /// Which one is the simple one and which one the complete one.
+    /// From the simplest to the complete one.
     static func level(_ mode: WorkMode) -> String {
         switch mode {
+        case .collect: String(localized: "solo i contenuti")
         case .track: String(localized: "semplice e veloce")
         case .manage: String(localized: "completa")
         }
@@ -234,6 +237,11 @@ enum WorkModeText {
 
     static func explanation(_ mode: WorkMode) -> String {
         switch mode {
+        case .collect:
+            String(
+                localized:
+                    "Un archivio da cercare e interrogare: elementi, trascrizioni, segnalibri e sintesi, senza punti chiave."
+            )
         case .track:
             String(localized: "Tieni il filo del progetto: elementi, decisioni e attività da spuntare.")
         case .manage:
@@ -244,9 +252,10 @@ enum WorkModeText {
         }
     }
 
-    /// A notebook for «Traccia», the columns of a kanban for «Gestisci».
+    /// An archive box for «Raccogli», a notebook for «Traccia», the columns of a kanban for «Gestisci».
     static func icon(_ mode: WorkMode) -> String {
         switch mode {
+        case .collect: "archivebox"
         case .track: "book.closed"
         case .manage: "rectangle.split.3x1"
         }
@@ -254,6 +263,7 @@ enum WorkModeText {
 
     static func color(_ mode: WorkMode) -> Color {
         switch mode {
+        case .collect: .orange
         case .track: .green
         case .manage: .blue
         }

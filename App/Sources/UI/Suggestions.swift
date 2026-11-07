@@ -167,7 +167,11 @@ struct SuggestionsSection: View {
                 }
             }
             .task(id: "\(model.revision)-\(model.intelligence.revision)") {
-                suggestions = (try? model.archive.suggestions(itemID: item.id)) ?? []
+                // ADR-0098: in «Raccogli» only the proposals about the item itself, never key points.
+                let keyPoints = model.workMode(for: item.projectId).hasKeyPoints
+                suggestions = ((try? model.archive.suggestions(itemID: item.id)) ?? []).filter {
+                    keyPoints || !$0.kind.isKeyPoint
+                }
             }
         }
     }

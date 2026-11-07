@@ -185,4 +185,25 @@ import Testing
         #expect(files.payload.waitingOn == "Anna" && files.payload.due != nil && files.payload.dueDate != nil)
         #expect(proposals.first { $0.kind == .risk }?.payload.severity == "high")
     }
+
+    /// ADR-0098: in a project in «Raccogli» the engine proposes names, tags and links, never key points.
+    @Test func aCollectProjectGetsNoKeyPointProposals() async throws {
+        let archive = try memoryArchive()
+        let project = try archive.createProject(name: "Interviste")
+        try archive.setProjectWorkMode(project.id, .collect)
+        let call = try archive.createItem(
+            title: "Intervista", occurredAt: Self.wednesday, source: .recording, status: .transcribed)
+        try archive.updateItem(call.id) { $0.projectId = project.id }
+        let engine = FakeEngine { prompt in
+            if prompt.contains("TAG ESISTENTI") { return #"{"esistenti": [], "nuovi": ["documenti"]}"# }
+            return Self.messyAnswer
+        }
+        var input = SuggestionEngine.Input(
+            itemID: call.id, projectID: project.id, lines: lines, isCall: true, speakers: [:], date: Self.wednesday)
+        input.keyPoints = archive.workMode(projectID: project.id).hasKeyPoints
+        let proposals = try await SuggestionEngine.propose(input, engine: engine, embedder: nil, archive: archive)
+        #expect(engine.requests.allSatisfy { $0.system != KeyPointExtractor.system })
+        #expect(proposals.allSatisfy { !$0.kind.isKeyPoint })
+        #expect(engine.requests.contains { $0.prompt.contains("TAG ESISTENTI") })
+    }
 }

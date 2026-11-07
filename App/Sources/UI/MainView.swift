@@ -683,12 +683,15 @@ struct ViewModePicker: View {
                 } label: {
                     Label(String(localized: "Nota"), systemImage: "note.text")
                 }
-                Divider()
-                ForEach(DecisionRow.allKinds, id: \.self) { kind in
-                    Button {
-                        model.newKeyPoint(kind, projectID: id)
-                    } label: {
-                        Label(DecisionRow.kindLabel(kind), systemImage: DecisionRow.kindIcon(kind))
+                // ADR-0098: a project in «Raccogli» has no key points.
+                if model.workMode(for: id).hasKeyPoints {
+                    Divider()
+                    ForEach(DecisionRow.allKinds, id: \.self) { kind in
+                        Button {
+                            model.newKeyPoint(kind, projectID: id)
+                        } label: {
+                            Label(DecisionRow.kindLabel(kind), systemImage: DecisionRow.kindIcon(kind))
+                        }
                     }
                 }
                 Divider()
@@ -787,7 +790,7 @@ struct ViewModePicker: View {
     /// the history. With «Riepilogo» or «Elementi» chosen no form is selected; a click on one goes to it.
     @ViewBuilder
     private var forms: some View {
-        if model.workScope != nil {
+        if model.workScope != nil, !model.collectView {
             single(.overview, String(localized: "Riepilogo"), "list.bullet.clipboard")
                 .help(
                     trackMode
@@ -827,7 +830,7 @@ struct ViewModePicker: View {
         case .board:
             Text(String(localized: "Mostra: Lavoro aperto")).font(.callout).foregroundStyle(.secondary)
                 .help(String(localized: "La kanban mostra solo attività, punti da chiarire, rischi e richieste"))
-        case .timeline where !trackMode, .map where !trackMode:
+        case .timeline where !trackMode && !model.collectView, .map where !trackMode && !model.collectView:
             Menu {
                 Picker(String(localized: "Mostra"), selection: $model.viewContent) {
                     ForEach(AppModel.ViewContent.allCases, id: \.self) { content in
