@@ -2,7 +2,7 @@
 
 > The restart point for anyone working on IAGO, people and Claude Code sessions.
 > **It must be updated at the end of every piece of work**, in the same PR: what changed, what remains open.
-> Last update: **November 6, 2026**.
+> Last update: **November 7, 2026**.
 
 ## In brief
 - **Version:** 1.2.15-beta on `main` (tag `v1.2.15-beta`): app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. The first distributable version will be without `-beta`.
@@ -61,6 +61,11 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-07, DMG with background and instructions** (ADR-0097):
+  - **The DMG:** the window has a background with "Drag IAGO to Applications", three arrows in IAGO's colours and a band inviting people to read the instructions. The volume has IAGO's icon.
+  - **The instructions:** `Leggimi - Read me.html`, in Italian and English. They explain "Open Anyway" in four illustrated steps, and the Terminal command for those who prefer it.
+  - **How it is built:** `scripts/release.sh` builds the DMG with `dmgbuild` and also attaches `IAGO.dmg`, under a fixed name, linked at the top of the README.
+  - **Releases:** they live on this repository, which becomes public.
 - **2026-11-06, LFM2.5 models tested and not integrated** (ADR-0096, rejected): Liquid AI's LFM2.5 8B-A1B and 24B-A2B tested on the three calls of October 21 ([results](benchmarks/2026-11-06-modelli-lfm.md)).
   - **8B-A1B:** it is fast, but it does not summarise, because it copies speech, and many of its suggestions quote sentences that do not exist.
   - **24B-A2B:** it reasons up to the token limit and gave no usable summary.

@@ -12,6 +12,13 @@ Calls, emails, documents, notes and decisions of every project in a single memor
 </p>
 
 <p align="center">
+  <a href="https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg"><strong>⬇️ Download IAGO for Mac</strong></a> (latest version, DMG)
+  · <a href="https://github.com/giovannilombi/iago/releases">all versions</a>
+  · <a href="https://giovannilombi.github.io/iago/en/installazione">how to install it</a><br>
+  <sub>Open the DMG, drag IAGO to Applications and follow «Read me»: the first time, your Mac asks for a confirmation.</sub>
+</p>
+
+<p align="center">
   📖 <strong><a href="https://giovannilombi.github.io/iago/en/">Official documentation</a></strong>: how to use it (<em>Usage</em> level) and how it is built (<em>Technical</em> level).<br>
   <sub>It is the reference: this README is only its summary. Online once the repository is public; until then locally with <code>npm install && npm run docs:dev</code> (VitePress site in <code>docs/</code>).</sub>
 </p>
@@ -127,11 +134,13 @@ A script (`scripts/check-network-apis.sh`, run with the tests) fails if a connec
 - 1.6 GB for the transcription models;
 - 2 to 7 GB more for the local engine.
 
-1. Download `IAGO-x.y.z.dmg` from the [releases page](https://github.com/giovannilombi/iago/releases/latest), open it and drag **IAGO** into **Applications**.
-2. **First launch.** IAGO is not notarized by Apple, so macOS blocks it the first time:
+1. Download **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)** (earlier versions are on the [releases page](https://github.com/giovannilombi/iago/releases)), open it and drag **IAGO** into **Applications** following the arrows.
+2. **First launch.** IAGO is not notarized by Apple, so macOS blocks it the first time. The **Read me** file in the DMG explains the steps, in Italian and English:
    - press **Done**;
    - open **System Settings › Privacy & Security**;
    - press **Open Anyway** next to IAGO.
+
+   Or, in Terminal: `sudo xattr -dr com.apple.quarantine /Applications/IAGO.app`, then your Mac password.
 3. The **guided setup** walks you through:
    - name;
    - microphone;
@@ -264,7 +273,7 @@ Tests on real calls: [`docs/en/benchmarks/2026-10-21-sintesi-e-glossario.md`](do
 - **EdDSA-signed updates:** IAGO installs only versions signed with the same key.
 
 ## Design decisions
-Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`](docs/en/adr/README.md): 96 so far, with context, rejected alternatives and consequences. Some of them:
+Every important choice is an **Architecture Decision Record** in [`docs/en/adr/`](docs/en/adr/README.md): 97 so far, with context, rejected alternatives and consequences. Some of them:
 
 | ADR | Decision | Why |
 |---|---|---|

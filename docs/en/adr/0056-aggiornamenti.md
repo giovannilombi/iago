@@ -1,6 +1,6 @@
 # ADR-0056 — App updates
 
-- Status: accepted (A, decided by the user on 2026-10-21: the repository becomes public)
+- Status: accepted (A, decided by the user on 2026-10-21: the repository becomes public; confirmed by ADR-0097, with `IAGO.dmg` under a fixed name)
 - Date: 2026-10-21
 - References: CLAUDE.md › Network and privacy; "pre-distribution" memory; user request 2026-10-15 and 2026-10-21 (distribute soon, to colleagues too)
 

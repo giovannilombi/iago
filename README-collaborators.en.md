@@ -141,5 +141,5 @@ What remains to be done, in order, is in [`docs/stato.md`](docs/en/stato.md).
 ## 9. Making a release
 - The version is in `project.yml`, in the form `x.y.z-beta`. The third number goes up with a PR that changes the app (ask Giovanni), the second with a large group of features. At distribution, `-beta` is removed.
 - Every version has an **annotated tag** (`git tag -a v1.0.1-beta -m "…funzioni…"`) that acts as a restore point for code, guide and documentation; see README › *Going back to a previous version*. The `release/1.0.x` branch keeps the 1.0 series.
-- `scripts/release.sh <version> --notes "…" --github` builds, signs the archive for Sparkle (the key is in Giovanni's Keychain) and publishes the release. It works only with the public repository, that is when we decide to distribute.
+- `scripts/release.sh <version> --notes "…" --github` builds, signs the archive for Sparkle (the key is in Giovanni's Keychain) builds the DMG with background and instructions (`scripts/dmg`, ADR-0097; it needs Python 3, and the first time it installs `dmgbuild` in `build/`) and publishes the release. It works only with the public repository, that is when we decide to distribute.
 - At every release the README Versions table is updated.

@@ -1,0 +1,51 @@
+<!doctype html>
+<!-- Source of the DMG window background (ADR-0097): scripts/dmg/make-background.sh renders it at 1x and 2x. Finder
+     draws the icons and their names on top, at the positions in scripts/dmg/settings.py: IAGO (165, 150),
+     Applicazioni (495, 150), the instructions (96, 306). Keep the two files in step. -->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; width: 660px; height: 400px; overflow: hidden; }
+  body { position: relative; background: #f7f4ec; font-family: Inter, sans-serif; }
+  .blob { position: absolute; border-radius: 50%; }
+  .title { position: absolute; left: 0; right: 0; top: 22px; text-align: center; }
+  .title b { display: block; font: 700 22px 'Space Grotesk', sans-serif; color: #13332a; letter-spacing: -0.01em; }
+  .title span { display: block; margin-top: 3px; font-size: 13px; color: #5a5f58; }
+  .arrows { position: absolute; left: 283px; top: 126px; }
+  .band { position: absolute; left: 24px; right: 24px; top: 250px; height: 136px; box-sizing: border-box;
+          border-radius: 14px; background: #fff1bf; box-shadow: inset 0 0 0 1.5px #efd26a; }
+  .band .text { position: absolute; left: 152px; right: 22px; top: 22px; }
+  .band b { display: block; font: 700 16px 'Space Grotesk', sans-serif; color: #13332a; }
+  .band p { margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: #2d3530; }
+  .band p.en { font-size: 12px; color: #5a5f58; }
+</style>
+</head>
+<body>
+  <div class="blob" style="left:-70px; top:-90px; width:300px; height:300px; background:#fdc201; opacity:.16"></div>
+  <div class="blob" style="right:-100px; top:120px; width:280px; height:280px; background:#d7261e; opacity:.07"></div>
+
+  <div class="title">
+    <b>Trascina IAGO in Applicazioni</b>
+    <span>Drag IAGO to Applications</span>
+  </div>
+
+  <svg class="arrows" width="95" height="48" viewBox="0 0 136 68" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 10 L 36 34 L 12 58" stroke="#13332a" stroke-width="15"/>
+    <path d="M12 10 L 36 34 L 12 58" stroke="#d7261e" stroke-width="9"/>
+    <path d="M56 10 L 80 34 L 56 58" stroke="#13332a" stroke-width="15"/>
+    <path d="M56 10 L 80 34 L 56 58" stroke="#fdc201" stroke-width="9"/>
+    <path d="M100 10 L 124 34 L 100 58" stroke="#13332a" stroke-width="15"/>
+    <path d="M100 10 L 124 34 L 100 58" stroke="#2f7a52" stroke-width="9"/>
+  </svg>
+
+  <div class="band">
+    <div class="text">
+      <b>Prima di aprire IAGO, leggi le istruzioni</b>
+      <p>La prima volta il Mac chiede una conferma: le istruzioni spiegano come darla in un minuto.</p>
+      <p class="en">Before opening IAGO, read the instructions: the first time, your Mac asks for a confirmation.</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -353,6 +353,14 @@ You need two real people in the same room (invented names in written tests).
 - [ ] 10x.15 *Don't show again*: a strip "Alternative: you can also make the summary with Claude." remains with *See how*, which opens the box again for that item; opening another item the strip comes back.
 - [ ] 10x.16 With Claude Desktop open, make a project readable by Claude (Settings › Claude, or *Allow* in the box): *Restart Claude Desktop* appears; *Restart Claude* quits and reopens Claude Desktop, which then sees the project. With Claude Desktop closed the alert does not appear.
 
+## 10y. DMG and installation instructions (ADR-0097)
+To be done on a Mac or user account where IAGO has never been installed, with the DMG downloaded from the release (not copied from another Mac).
+- [ ] 10y.1 Open `IAGO.dmg`: the window has the background with "Drag IAGO to Applications", IAGO on the left and Applications on the right, with the three coloured arrows between them; at the bottom, in the yellow band, there is *Leggimi - Read me*. Repeat with the Mac in dark mode and check that the icon names are readable.
+- [ ] 10y.2 Open *Leggimi - Read me*: it is in the Mac's language and the button at the top switches between Italian and English. *Show me the steps* leads to the four steps, *Allergic to menus?* leads to the command; *Copy* copies the command.
+- [ ] 10y.3 Drag IAGO to Applications and open it: the warning appears. Follow the *Privacy & Security › Open Anyway* steps: IAGO opens, and the following times it opens without a warning.
+- [ ] 10y.4 On another clean account or Mac, after dragging IAGO, use the Terminal command instead: it asks for the password, then IAGO opens without a warning.
+- [ ] 10y.5 The "Download IAGO for Mac" link at the top of the README downloads the latest version.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

@@ -1,0 +1,191 @@
+<!doctype html>
+<!-- The instructions in IAGO's DMG (ADR-0097), Italian and English in one page, no network. scripts/release.sh copies
+     it into the DMG as "Leggimi - Read me.html" and replaces __ICON__ with the app icon as a data URI. -->
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installare IAGO · Install IAGO</title>
+<style>
+  :root { --cream: #f7f4ec; --ink: #1d2420; --green: #13332a; --yellow: #fdc201; --muted: #5a5f58; --card: #ffffff; --soft: #f1ede3; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--cream); color: var(--ink); font: 16px/1.55 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 16px 64px; }
+  header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; padding: 28px 0 20px; }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .brand img { width: 56px; height: 56px; }
+  .brand b { display: block; font: 700 22px -apple-system, "SF Pro Display", sans-serif; color: var(--green); }
+  .brand span { font-size: 13px; color: var(--muted); }
+  .lang { display: flex; padding: 3px; border-radius: 999px; background: #e6e1d4; }
+  .lang button { min-height: 36px; padding: 0 16px; border: 0; border-radius: 999px; background: transparent; color: var(--green); font: 500 13px inherit; font-family: inherit; cursor: pointer; }
+  .lang button[aria-pressed="true"] { background: var(--green); color: var(--cream); font-weight: 600; }
+  .hero { padding: 28px 32px; border-radius: 20px; background: var(--green); color: var(--cream); }
+  .hero h1 { margin: 0 0 10px; font-size: 34px; line-height: 1.1; color: var(--yellow); }
+  .hero p { margin: 0 0 10px; max-width: 680px; color: #e7e4da; }
+  .hero p.why { font-size: 14px; color: #b9c4bd; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px 16px; margin-top: 18px; }
+  .cta { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; }
+  .cta.main { background: var(--yellow); color: var(--green); }
+  .cta.quick { box-shadow: inset 0 0 0 2px var(--yellow); color: var(--yellow); }
+  .cta.quick code { font: 13px ui-monospace, "SF Mono", Menlo, monospace; }
+  .cta:focus-visible, button:focus-visible { outline: 3px solid #0a64d8; outline-offset: 2px; }
+  h2 { margin: 40px 0 6px; font-size: 24px; color: var(--green); }
+  .sub { margin: 0 0 20px; color: var(--muted); font-size: 15px; }
+  .step { display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; margin-bottom: 18px; border-radius: 16px; background: var(--card); box-shadow: 0 0 0 1px rgba(20,30,25,.08); }
+  .step .txt { flex: 1 1 300px; min-width: 0; display: flex; gap: 14px; }
+  .num { width: 34px; height: 34px; flex-shrink: 0; border-radius: 50%; background: var(--yellow); color: var(--green); font-weight: 700; display: flex; align-items: center; justify-content: center; }
+  .step h3 { margin: 4px 0 6px; font-size: 17px; color: var(--green); }
+  .step p { margin: 0; font-size: 15px; color: #3d443f; }
+  .shot { flex: 1 1 300px; min-width: 0; border-radius: 12px; background: var(--soft); padding: 18px; display: flex; align-items: center; justify-content: center; gap: 18px; }
+  .dialog { width: 260px; border-radius: 14px; background: #fbfbfa; box-shadow: 0 10px 30px rgba(0,0,0,.18); padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; font-size: 11.5px; }
+  .dialog .t { font-size: 12.5px; font-weight: 600; }
+  .dialog .row { display: flex; gap: 6px; width: 100%; }
+  .dialog .row span { flex: 1; padding: 5px 0; border-radius: 6px; background: #e8e6e1; }
+  .hl { box-shadow: 0 0 0 2px var(--yellow), 0 0 0 1px #d0cdc6 !important; font-weight: 600; }
+  .settings { width: 100%; border-radius: 12px; background: #fbfbfa; box-shadow: 0 10px 30px rgba(0,0,0,.14); overflow: hidden; display: flex; font-size: 11.5px; }
+  .settings .side { width: 38%; background: #ecebe8; padding: 10px 8px; display: flex; flex-direction: column; gap: 4px; }
+  .settings .side span { padding: 4px 6px; }
+  .settings .side .on { border-radius: 6px; background: #0a64d8; color: #fff; font-weight: 600; }
+  .settings .main { flex: 1; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+  .settings .btn { align-self: flex-start; padding: 4px 10px; border-radius: 6px; background: #fff; }
+  .ok { margin: 4px 0 0; padding: 14px 18px; border-radius: 12px; background: #e9f3ec; color: #1f4a35; font-size: 15px; }
+  .quickbox { margin-top: 44px; padding: 26px 28px; border-radius: 20px; background: var(--card); box-shadow: 0 0 0 1px rgba(20,30,25,.08); }
+  .quickbox h2 { margin-top: 0; }
+  .cmd { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; padding: 12px 14px; margin: 14px 0; border-radius: 12px; background: var(--green); }
+  .cmd code { flex: 1 1 360px; min-width: 0; overflow-x: auto; white-space: nowrap; font: 500 14px ui-monospace, "SF Mono", Menlo, monospace; color: var(--yellow); }
+  .cmd button { min-height: 44px; padding: 0 18px; border: 0; border-radius: 10px; background: var(--yellow); color: var(--green); font: 600 14px inherit; font-family: inherit; cursor: pointer; }
+  .quickbox ol { margin: 0 0 12px; padding-left: 20px; color: #3d443f; line-height: 1.7; }
+  .quickbox p { margin: 0 0 8px; font-size: 14px; color: var(--muted); }
+  .quickbox p.caution { color: #7a5c00; font-size: 13px; }
+  footer { margin-top: 36px; font-size: 13px; color: var(--muted); }
+  [data-lang="en"] .it, [data-lang="it"] .en { display: none; }
+</style>
+</head>
+<body data-lang="it">
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <img src="__ICON__" alt="">
+      <div><b>IAGO</b><span class="it">La memoria del tuo lavoro, sul tuo Mac</span><span class="en">The memory of your work, on your Mac</span></div>
+    </div>
+    <div class="lang" role="group" aria-label="Lingua / Language">
+      <button type="button" data-set="it" aria-pressed="true">Italiano</button>
+      <button type="button" data-set="en" aria-pressed="false">English</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1><span class="it">Installare IAGO in due minuti</span><span class="en">Install IAGO in two minutes</span></h1>
+    <p><span class="it">IAGO non viene dall’App Store: la prima volta che lo apri il Mac chiede una conferma. È normale, e si fa una volta sola.</span><span class="en">IAGO does not come from the App Store: the first time you open it, your Mac asks for a confirmation. That is normal, and you only do it once.</span></p>
+    <p class="why"><span class="it">Perché succede: Apple controlla automaticamente solo le app degli sviluppatori iscritti al suo programma a pagamento. IAGO è firmato, ma non passa da quel controllo, quindi il Mac ti chiede se ti fidi.</span><span class="en">Why it happens: Apple checks automatically only the apps of developers enrolled in its paid program. IAGO is signed, but does not go through that check, so your Mac asks whether you trust it.</span></p>
+    <div class="ctas">
+      <a class="cta main" href="#passi"><span class="it">Mostrami i passi</span><span class="en">Show me the steps</span></a>
+      <a class="cta quick" href="#veloce"><code>&gt;_</code><span class="it">Allergico ai menu? Un comando nel Terminale e via</span><span class="en">Allergic to menus? One Terminal command and you’re done</span></a>
+    </div>
+  </section>
+
+  <h2 id="passi"><span class="it">Il modo consigliato</span><span class="en">The recommended way</span></h2>
+  <p class="sub"><span class="it">Quattro passi, tutti dalle Impostazioni del Mac.</span><span class="en">Four steps, all from your Mac’s Settings.</span></p>
+
+  <div class="step">
+    <div class="txt"><div class="num">1</div><div>
+      <h3><span class="it">Trascina IAGO in Applicazioni</span><span class="en">Drag IAGO to Applications</span></h3>
+      <p><span class="it">Nella finestra del DMG trascina l’icona di IAGO sulla cartella Applicazioni. Poi puoi chiudere la finestra.</span><span class="en">In the DMG window, drag the IAGO icon onto the Applications folder. Then you can close the window.</span></p>
+    </div></div>
+    <div class="shot" aria-hidden="true">
+      <img src="__ICON__" alt="" style="width:56px;height:56px">
+      <svg width="64" height="32" viewBox="0 0 136 68" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10 L36 34 L12 58" stroke="#13332a" stroke-width="15"/><path d="M12 10 L36 34 L12 58" stroke="#d7261e" stroke-width="9"/><path d="M56 10 L80 34 L56 58" stroke="#13332a" stroke-width="15"/><path d="M56 10 L80 34 L56 58" stroke="#fdc201" stroke-width="9"/><path d="M100 10 L124 34 L100 58" stroke="#13332a" stroke-width="15"/><path d="M100 10 L124 34 L100 58" stroke="#2f7a52" stroke-width="9"/></svg>
+      <svg width="56" height="56" viewBox="0 0 112 112"><path d="M10 28a8 8 0 0 1 8-8h26l8 8h42a8 8 0 0 1 8 8v8H10z" fill="#5ea7e8"/><rect x="10" y="36" width="92" height="60" rx="8" fill="#7cbcf2"/></svg>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="txt"><div class="num">2</div><div>
+      <h3><span class="it">Apri IAGO una prima volta</span><span class="en">Open IAGO once</span></h3>
+      <p><span class="it">Da Applicazioni fai doppio clic su IAGO. Il Mac mostra un avviso che non può verificarlo: premi <b>Fine</b>. Non è un errore, serve solo al passo successivo.</span><span class="en">In Applications, double-click IAGO. Your Mac shows a warning that it cannot verify it: press <b>Done</b>. It is not an error, it is only needed for the next step.</span></p>
+    </div></div>
+    <div class="shot" aria-hidden="true">
+      <div class="dialog">
+        <img src="__ICON__" alt="" style="width:44px;height:44px">
+        <div class="t"><span class="it">Impossibile verificare che «IAGO» non contenga malware.</span><span class="en">“IAGO” Not Opened</span></div>
+        <div style="color:#5a5f58"><span class="it">macOS non può verificare che questa app non contenga malware.</span><span class="en">Apple could not verify “IAGO” is free of malware.</span></div>
+        <div class="row"><span class="hl"><span class="it">Fine</span><span class="en">Done</span></span><span><span class="it">Sposta nel cestino</span><span class="en">Move to Bin</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="txt"><div class="num">3</div><div>
+      <h3><span class="it">Vai in Privacy e sicurezza</span><span class="en">Go to Privacy &amp; Security</span></h3>
+      <p><span class="it">Apri <b>Impostazioni di Sistema › Privacy e sicurezza</b> e scorri fino a <b>Sicurezza</b>. Accanto a «IAGO è stato bloccato» premi <b>Apri comunque</b>.</span><span class="en">Open <b>System Settings › Privacy &amp; Security</b> and scroll down to <b>Security</b>. Next to “IAGO was blocked” press <b>Open Anyway</b>.</span></p>
+    </div></div>
+    <div class="shot" aria-hidden="true">
+      <div class="settings">
+        <div class="side"><span><span class="it">Aspetto</span><span class="en">Appearance</span></span><span class="on"><span class="it">Privacy e sicurezza</span><span class="en">Privacy &amp; Security</span></span><span><span class="it">Scrivania e Dock</span><span class="en">Desktop &amp; Dock</span></span></div>
+        <div class="main"><b><span class="it">Sicurezza</span><span class="en">Security</span></b><span style="color:#5a5f58"><span class="it">«IAGO» è stato bloccato per proteggere il Mac.</span><span class="en">“IAGO” was blocked to protect your Mac.</span></span><span class="btn hl"><span class="it">Apri comunque</span><span class="en">Open Anyway</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="txt"><div class="num">4</div><div>
+      <h3><span class="it">Conferma con la password</span><span class="en">Confirm with your password</span></h3>
+      <p><span class="it">Il Mac chiede la password con cui accedi (o Touch ID). Poi conferma ancora <b>Apri comunque</b>: IAGO si apre.</span><span class="en">Your Mac asks for the password you log in with (or Touch ID). Then confirm <b>Open Anyway</b> once more: IAGO opens.</span></p>
+    </div></div>
+    <div class="shot" aria-hidden="true">
+      <div class="dialog" style="align-items:stretch;text-align:left">
+        <span class="t"><span class="it">Privacy e sicurezza vuole apportare modifiche.</span><span class="en">Privacy &amp; Security is trying to modify your settings.</span></span>
+        <span style="padding:6px 8px;border-radius:6px;background:#fff;box-shadow:0 0 0 1px #d0cdc6;color:#5a5f58">••••••••</span>
+        <span style="align-self:flex-end;padding:4px 12px;border-radius:6px;background:#0a64d8;color:#fff;font-weight:600"><span class="it">Modifica impostazioni</span><span class="en">Modify Settings</span></span>
+      </div>
+    </div>
+  </div>
+
+  <p class="ok"><span class="it">Fatto. Da ora IAGO si apre come tutte le altre app, e gli aggiornamenti arrivano da soli, senza ripetere questi passi.</span><span class="en">Done. From now on IAGO opens like any other app, and updates arrive by themselves, without repeating these steps.</span></p>
+
+  <section class="quickbox" id="veloce">
+    <h2><span class="it">Il modo veloce, con il Terminale</span><span class="en">The quick way, with Terminal</span></h2>
+    <p style="font-size:15px;color:#3d443f"><span class="it">Se preferisci, fai tutto con un comando. Prima trascina IAGO in Applicazioni (passo 1).</span><span class="en">If you prefer, do it all with one command. First drag IAGO to Applications (step 1).</span></p>
+    <div class="cmd">
+      <code id="command">sudo xattr -dr com.apple.quarantine /Applications/IAGO.app</code>
+      <button type="button" id="copy"><span class="it">Copia</span><span class="en">Copy</span></button>
+    </div>
+    <ol>
+      <li><span class="it">Apri Terminale: Spotlight (⌘ Spazio), scrivi «Terminale», Invio.</span><span class="en">Open Terminal: Spotlight (⌘ Space), type “Terminal”, Return.</span></li>
+      <li><span class="it">Copia il comando qui sopra, incollalo nel Terminale e premi Invio.</span><span class="en">Copy the command above, paste it in Terminal and press Return.</span></li>
+      <li><span class="it">Scrivi la password del Mac e premi Invio: mentre la scrivi non vedi niente, è normale. Poi apri IAGO.</span><span class="en">Type your Mac password and press Return: you see nothing while typing, that is normal. Then open IAGO.</span></li>
+    </ol>
+    <p><span class="it">Cosa fa: il Mac segna le app scaricate da Internet e le controlla al primo avvio. Questo comando toglie quel segno solo a IAGO, cioè dice al Mac che l’hai scaricato tu e ti fidi. La password serve perché la cartella Applicazioni è del sistema.</span><span class="en">What it does: your Mac marks apps downloaded from the Internet and checks them on first launch. This command removes that mark only from IAGO, telling your Mac that you downloaded it and trust it. The password is needed because the Applications folder belongs to the system.</span></p>
+    <p class="caution"><span class="it">Usa questo comando solo per app che conosci e che hai scaricato da una fonte di cui ti fidi.</span><span class="en">Use this command only for apps you know and downloaded from a source you trust.</span></p>
+  </section>
+
+  <footer><span class="it">Serve aiuto? La guida completa è su giovannilombi.github.io/iago, alla pagina Installazione. IAGO funziona su Mac con Apple Silicon e macOS 15 o successivo.</span><span class="en">Need help? The full guide is at giovannilombi.github.io/iago/en, on the Installation page. IAGO runs on Macs with Apple Silicon and macOS 15 or later.</span></footer>
+</div>
+<script>
+  (function () {
+    var body = document.body;
+    function setLang(lang) {
+      body.setAttribute('data-lang', lang);
+      document.documentElement.lang = lang;
+      document.querySelectorAll('[data-set]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.set === lang)); });
+    }
+    document.querySelectorAll('[data-set]').forEach(function (b) { b.addEventListener('click', function () { setLang(b.dataset.set); }); });
+    setLang((navigator.language || 'it').toLowerCase().indexOf('it') === 0 ? 'it' : 'en');
+    var copy = document.getElementById('copy');
+    copy.addEventListener('click', function () {
+      var text = document.getElementById('command').textContent;
+      function done() { copy.innerHTML = '<span class="it">Copiato</span><span class="en">Copied</span>'; }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, fallback);
+      } else { fallback(); }
+      function fallback() {
+        var area = document.createElement('textarea');
+        area.value = text; document.body.appendChild(area); area.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(area);
+      }
+    });
+  })();
+</script>
+</body>
+</html>

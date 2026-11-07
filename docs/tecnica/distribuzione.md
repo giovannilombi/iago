@@ -4,7 +4,11 @@
 - L'App Store richiede la sandbox, che non permette di registrare l'audio delle altre app.
 - La notarizzazione richiede un account Apple a pagamento: IAGO è firmato con un Apple ID gratuito (Apple Development) e chi lo installa fa **"Apri comunque"** la prima volta.
 - Cambiare firma o bundle ID farebbe richiedere di nuovo tutti i permessi: non si fa.
-- **DMG** (modifica del 2026-10-27): la prima installazione è un DMG con IAGO e il collegamento ad Applicazioni; lo zip resta per Sparkle.
+- **DMG** (modifica del 2026-10-27, poi ADR-0097): la prima installazione è un DMG; lo zip resta per Sparkle.
+  - **Contenuto:** IAGO, il collegamento ad *Applicazioni* e `Leggimi - Read me.html`, cioè le istruzioni in italiano e inglese con i passi di «Apri comunque» e il comando del Terminale.
+  - **Sfondo:** nasce da `scripts/dmg/background.html`; `scripts/dmg/make-background.sh` lo disegna a 1x e 2x con Chrome senza finestra e lo salva in `background.tiff`, che è nel repository.
+  - **Posizioni delle icone:** sono in `scripts/dmg/settings.py`, e vanno tenute allineate allo sfondo.
+  - **Disposizione:** la scrive `dmgbuild` (BSD) senza Finder, in `build/venv-dmg`.
 - **Build da sorgente senza aggiornamenti:** `IAGO_DISTRIBUTION` (in `Config/Base.xcconfig`, `NO`) finisce in `Info.plist` come `IAGODistribution`; solo `scripts/release.sh` compila con `YES`. `UpdateService` avvia Sparkle solo se è `YES`: una copia compilata da chi sviluppa si aggiorna con git e non viene sostituita da quella pubblicata, firmata da un altro, che farebbe richiedere tutti i permessi.
 
 ## Aggiornamenti con Sparkle (ADR-0056)
@@ -19,8 +23,9 @@ scripts/release.sh 1.0.0 --notes "Novità…" --github
 ```
 1. Aggiorna versione e build in `project.yml` (`1.1.0`, oppure `1.1.1-beta` per una beta).
 2. Compila la Release firmata e la verifica con `codesign`.
-3. Crea lo zip, lo firma per Sparkle, scrive `appcast.xml`; crea il **DMG** e lo firma con la stessa identità dell'app.
-4. Con `--github` pubblica la release con DMG, zip e appcast, e le istruzioni di installazione nelle note.
+3. Crea lo zip, lo firma per Sparkle e scrive `appcast.xml`.
+4. Crea il **DMG** con `dmgbuild`, mettendo nelle istruzioni l'icona dell'app, e lo firma con la stessa identità dell'app. Lo copia anche come `IAGO.dmg`, il nome fisso del link in cima al README.
+5. Con `--github` pubblica la release, segnata come ultima, con i due DMG, lo zip, l'appcast e le istruzioni di installazione nelle note.
 
 **Da verificare prima di distribuire** (prova su un Mac o un account utente pulito): "Apri comunque" una sola volta, aggiornamento con Sparkle senza un nuovo blocco e con i permessi conservati, durata del certificato gratuito e cosa succede alla scadenza.
 
