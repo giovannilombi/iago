@@ -11,12 +11,31 @@ Calls, emails, documents, notes and decisions of every project in a single memor
   macOS 15+ · Apple Silicon · Swift 6 · local engine · optional Claude · CC BY-NC-SA 4.0 license
 </p>
 
-<p align="center">
-  <a href="https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg"><strong>⬇️ Download IAGO for Mac</strong></a> (latest version, DMG)
-  · <a href="https://github.com/giovannilombi/iago/releases">all versions</a>
-  · <a href="https://giovannilombi.github.io/iago/en/installazione">how to install it</a><br>
-  <sub>Open the DMG, drag IAGO to Applications and follow «Read me»: the first time, your Mac asks for a confirmation.</sub>
-</p>
+## Download and install
+
+**You need:** a Mac with Apple Silicon and macOS 15 or later.
+
+1. **Download [IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)**, the latest version. It ends up in the **Downloads** folder.
+
+2. **Unblock the DMG.** IAGO is not notarized by Apple, so macOS quarantines the file and does not open it. Open **Terminal** (⌘ Space, type "Terminal", Return), paste this line and press Return:
+
+   ```sh
+   xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg
+   ```
+
+   - It does not ask for a password.
+   - If your Mac asks whether Terminal may access the Downloads folder, press **Allow**.
+   - If the browser gave the file another name, for example `IAGO (1).dmg`, use that name in quotes.
+
+3. **Open the DMG** with a double click and drag **IAGO** onto the **Applications** folder, following the arrows.
+
+4. **Open IAGO** from Applications: the guided setup starts. Your Mac asks for no other confirmation, and updates arrive by themselves.
+
+**Without Terminal:** open the DMG and press **Done** on the warning. Then go to System Settings › **Privacy & Security** and press **Open Anyway**. Do the same the first time you open IAGO. The illustrated steps are in the «Read me» file inside the DMG and in the [installation guide](https://giovannilombi.github.io/iago/en/installazione).
+
+Earlier versions are on the [releases page](https://github.com/giovannilombi/iago/releases).
+
+---
 
 <p align="center">
   📖 <strong><a href="https://giovannilombi.github.io/iago/en/">Official documentation</a></strong>: how to use it (<em>Usage</em> level) and how it is built (<em>Technical</em> level).<br>
@@ -134,13 +153,11 @@ A script (`scripts/check-network-apis.sh`, run with the tests) fails if a connec
 - 1.6 GB for the transcription models;
 - 2 to 7 GB more for the local engine.
 
-1. Download **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)** (earlier versions are on the [releases page](https://github.com/giovannilombi/iago/releases)), open it and drag **IAGO** into **Applications** following the arrows.
-2. **First launch.** IAGO is not notarized by Apple, so macOS blocks it the first time. The **Read me** file in the DMG explains the steps, in Italian and English:
+1. **Download and unblock the DMG:** the steps are at the top, in [Download and install](#download-and-install). In short: `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg` in Terminal, then open the DMG and drag **IAGO** into **Applications**.
+2. **Without Terminal:** the first time macOS blocks the DMG and then IAGO. The **Read me** file in the DMG explains the steps, in Italian and English:
    - press **Done**;
    - open **System Settings › Privacy & Security**;
-   - press **Open Anyway** next to IAGO.
-
-   Or, in Terminal: `sudo xattr -dr com.apple.quarantine /Applications/IAGO.app`, then your Mac password.
+   - press **Open Anyway**.
 3. The **guided setup** walks you through:
    - name;
    - microphone;

@@ -28,6 +28,11 @@
   - **Quick way:** the command to copy into Terminal, `sudo xattr -dr com.apple.quarantine /Applications/IAGO.app`. The page says in plain words what it does and why it asks for the password, and advises using it only for apps you trust.
   - At the top, two buttons lead to the steps or to the quick way («Allergic to menus? One Terminal command and you're done»).
 - **No unblocking executable in the DMG**, for the reason given above.
+- **Change of 2026-11-08, unblocking the DMG:** on another Mac the downloaded DMG is quarantined and does not open.
+  - The recommended first step, at the top of the README, in the installation guide and in the instructions, is `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg` in Terminal, without a password.
+  - A DMG without quarantine does not pass it on to IAGO, so the app opens without «Open Anyway».
+  - *Open Anyway* remains the way without Terminal.
+- **The instructions never ship empty:** `scripts/dmg/make-dmg.sh` builds the DMG (also on its own, for an app already built) and stops if `Leggimi - Read me.html` is empty or without the icon. 1.3.0-beta and 1.3.1-beta had shipped with an empty page; the 1.3.1-beta DMGs were replaced.
 
 ## Consequences
 - Whoever downloads IAGO finds everything in the DMG, even without having read the README.

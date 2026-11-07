@@ -359,7 +359,8 @@ To be done on a Mac or user account where IAGO has never been installed, with th
 - [ ] 10y.2 Open *Leggimi - Read me*: it is in the Mac's language and the button at the top switches between Italian and English. *Show me the steps* leads to the four steps, *Allergic to menus?* leads to the command; *Copy* copies the command.
 - [ ] 10y.3 Drag IAGO to Applications and open it: the warning appears. Follow the *Privacy & Security › Open Anyway* steps: IAGO opens, and the following times it opens without a warning.
 - [ ] 10y.4 On another clean account or Mac, after dragging IAGO, use the Terminal command instead: it asks for the password, then IAGO opens without a warning.
-- [ ] 10y.5 The "Download IAGO for Mac" link at the top of the README downloads the latest version.
+- [ ] 10y.5 The "Download IAGO.dmg" link at the top of the README downloads the latest version.
+- [ ] 10y.6 On a clean Mac, after the download: `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg` in Terminal (no password), then the DMG opens; IAGO dragged to Applications opens with no warning at all. *Leggimi - Read me* opens with its content, not white.
 
 ## 10z. Collect mode (ADR-0098)
 - [ ] 10z.1 Click on a project's mode icon: there are three cards, Collect (orange box), Track and Manage. Choose Collect: in the sidebar the icon becomes the box.

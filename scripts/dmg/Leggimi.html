@@ -23,6 +23,8 @@
   .hero h1 { margin: 0 0 10px; font-size: 34px; line-height: 1.1; color: var(--yellow); }
   .hero p { margin: 0 0 10px; max-width: 680px; color: #e7e4da; }
   .hero p.why { font-size: 14px; color: #b9c4bd; }
+  .hero p.done { margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: rgba(253,194,1,.12); color: #f7f4ec; font-size: 14px; }
+  .hero p.done code { font: 13px ui-monospace, "SF Mono", Menlo, monospace; color: var(--yellow); }
   .ctas { display: flex; flex-wrap: wrap; gap: 12px 16px; margin-top: 18px; }
   .cta { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 20px; border-radius: 12px; font-weight: 600; font-size: 15px; text-decoration: none; }
   .cta.main { background: var(--yellow); color: var(--green); }
@@ -78,6 +80,7 @@
     <h1><span class="it">Installare IAGO in due minuti</span><span class="en">Install IAGO in two minutes</span></h1>
     <p><span class="it">IAGO non viene dall’App Store: la prima volta che lo apri il Mac chiede una conferma. È normale, e si fa una volta sola.</span><span class="en">IAGO does not come from the App Store: the first time you open it, your Mac asks for a confirmation. That is normal, and you only do it once.</span></p>
     <p class="why"><span class="it">Perché succede: Apple controlla automaticamente solo le app degli sviluppatori iscritti al suo programma a pagamento. IAGO è firmato, ma non passa da quel controllo, quindi il Mac ti chiede se ti fidi.</span><span class="en">Why it happens: Apple checks automatically only the apps of developers enrolled in its paid program. IAGO is signed, but does not go through that check, so your Mac asks whether you trust it.</span></p>
+    <p class="done"><span class="it">Hai aperto il DMG con il comando del Terminale <code>xattr</code>? Allora hai già finito: trascina IAGO in Applicazioni e aprilo, il Mac non chiede niente.</span><span class="en">Did you open the DMG with the <code>xattr</code> Terminal command? Then you are already done: drag IAGO to Applications and open it, your Mac asks nothing.</span></p>
     <div class="ctas">
       <a class="cta main" href="#passi"><span class="it">Mostrami i passi</span><span class="en">Show me the steps</span></a>
       <a class="cta quick" href="#veloce"><code>&gt;_</code><span class="it">Allergico ai menu? Un comando nel Terminale e via</span><span class="en">Allergic to menus? One Terminal command and you’re done</span></a>

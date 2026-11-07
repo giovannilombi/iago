@@ -15,15 +15,22 @@ It takes about ten minutes, including the guided setup.
 - **Local engine** (optional, for summaries, suggestions and Ask): 2 to 7 GB depending on the model. Summaries require at least Qwen 3.5 9B.
 - **Headphones:** not required, but without headphones the microphone also picks up the speakers.
 
-## 1. Copy the app
-1. Download **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)**, the latest version (the others are on the [releases page](https://github.com/giovannilombi/iago/releases)), and open it.
-2. In the window that opens, drag **IAGO** onto the **Applications** folder, following the arrows.
-3. The same window holds **Leggimi - Read me**: it explains the steps below, in Italian and English.
+## 1. Download, unblock and copy the app
+1. Download **[IAGO.dmg](https://github.com/giovannilombi/iago/releases/latest/download/IAGO.dmg)**, the latest version (the others are on the [releases page](https://github.com/giovannilombi/iago/releases)). It ends up in the **Downloads** folder.
+2. **Unblock the DMG**, which macOS quarantines because IAGO is not notarized. Open **Terminal** and paste:
+
+   ```sh
+   xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg
+   ```
+
+   It does not ask for a password. If your Mac asks whether Terminal may access Downloads, press **Allow**. If the browser gave the file another name, for example `IAGO (1).dmg`, use that name in quotes.
+3. Open the DMG and drag **IAGO** onto the **Applications** folder, following the arrows. Open it: with the DMG unblocked your Mac asks nothing else, and you can skip step 2 below.
+4. The same window holds **Leggimi - Read me**, with the same steps in Italian and English.
 
 Developers of IAGO use their own build compiled from source: they do not install the DMG on the same user account, because two copies of IAGO compete for permissions and archive.
 
 ## 2. "Open Anyway" (Gatekeeper, first time only)
-IAGO is not distributed through the App Store and is not notarized by Apple, because notarization requires a paid account. The app is signed nonetheless. On first launch macOS blocks it with a message like "Apple could not verify "IAGO" is free of malware".
+Needed only if you did not unblock the DMG with the command of step 1. IAGO is not distributed through the App Store and is not notarized by Apple, because notarization requires a paid account. The app is signed nonetheless. macOS blocks first the DMG, then IAGO on first launch, with a message like "Apple could not verify "IAGO" is free of malware": the steps below apply to both.
 
 1. Click **Done**, not "Move to Trash".
 2. Open **System Settings › Privacy & Security**, scroll down to **Security** and click **Open Anyway** next to IAGO.

@@ -9,6 +9,8 @@
   - **Background:** it comes from `scripts/dmg/background.html`; `scripts/dmg/make-background.sh` renders it at 1x and 2x with a windowless Chrome and saves it in `background.tiff`, which is in the repository.
   - **Icon positions:** they are in `scripts/dmg/settings.py`, and must be kept in line with the background.
   - **Layout:** it is written by `dmgbuild` (BSD) without Finder, in `build/venv-dmg`.
+  - **Script:** `scripts/dmg/make-dmg.sh <IAGO.app> <version>` builds the DMG; `release.sh` uses it, and on its own it rebuilds the DMG of an app already built. It stops if the instructions are empty or without the icon.
+  - **Quarantine:** on another Mac the downloaded DMG is quarantined. The first step for whoever installs is `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg`: a DMG without quarantine does not pass it on to the app (ADR-0097, change).
 - **Builds from source without updates:** `IAGO_DISTRIBUTION` (in `Config/Base.xcconfig`, `NO`) ends up in `Info.plist` as `IAGODistribution`; only `scripts/release.sh` builds with `YES`. `UpdateService` starts Sparkle only if it is `YES`: a copy compiled by a developer is updated with git and is not replaced by the published one, signed by someone else, which would make macOS ask for all permissions again.
 
 ## Updates with Sparkle (ADR-0056)
