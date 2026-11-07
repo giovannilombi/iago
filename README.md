@@ -264,7 +264,7 @@ Prove su call reali: [`docs/benchmarks/2026-10-21-sintesi-e-glossario.md`](docs/
 - **Aggiornamenti firmati** EdDSA: IAGO installa solo versioni firmate dalla stessa chiave.
 
 ## Le decisioni di progetto
-Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 95 finora, con contesto, alternative scartate e conseguenze. Alcune:
+Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](docs/adr/README.md): 96 finora, con contesto, alternative scartate e conseguenze. Alcune:
 
 | ADR | Decisione | Perché |
 |---|---|---|

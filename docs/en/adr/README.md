@@ -117,3 +117,4 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0093 | Yellow dot and panels when the microphone is not recording | accepted |
 | 0094 | Voice recognition on, simpler speaker names, your name | accepted |
 | 0095 | Claude as an alternative on every Mac, with the steps, and restarting Claude Desktop | accepted |
+| 0096 | LFM2.5 8B-A1B and 24B-A2B models: tested and not integrated | rejected |

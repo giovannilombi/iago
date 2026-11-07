@@ -124,6 +124,10 @@ function tecnicoSidebar(lang: Lang): DefaultTheme.SidebarItem[] {
         {
           text: t(lang, 'Prova sintesi e glossario', 'Summary and glossary test'),
           link: `${p}/benchmarks/2026-10-21-sintesi-e-glossario`
+        },
+        {
+          text: t(lang, 'Prova modelli LFM2.5', 'LFM2.5 models test'),
+          link: `${p}/benchmarks/2026-11-06-modelli-lfm`
         }
       ]
     },
