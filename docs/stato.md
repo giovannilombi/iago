@@ -5,7 +5,7 @@
 > Ultimo aggiornamento: **7 novembre 2026**.
 
 ## In breve
-- **Versione:** 1.3.0-beta su `main` (tag `v1.3.0-beta`), la prima pubblica: [release](https://github.com/giovannilombi/iago/releases/latest) con il DMG e [sito](https://giovannilombi.github.io/iago/). Funzioni della 1.2.15-beta: app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. Si resta in `-beta` finché l'utente non decide altrimenti.
+- **Versione:** 1.3.1-beta su `main` (tag `v1.3.1-beta`), con la Modalità Raccogli; la 1.3.0-beta è stata la prima pubblica: [release](https://github.com/giovannilombi/iago/releases/latest) con il DMG e [sito](https://giovannilombi.github.io/iago/). Funzioni della 1.2.15-beta: app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.3.0-beta`, `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. Si resta in `-beta` finché l'utente non decide altrimenti.
 - **Repository:**
   - `giovannilombi/iago`, **pubblico dal 7 novembre 2026**, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
@@ -61,6 +61,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-07:** versione **1.3.1-beta** con la Modalità Raccogli, pubblicata come aggiornamento.
 - **2026-11-07, Modalità Raccogli** (ADR-0098, su un'anteprima approvata dall'utente): terza modalità, la più semplice, per i progetti-archivio da cercare e interrogare.
   - **C'è:** Elementi e Timeline, trascrizioni, segnalibri e schermate, sintesi, proposte di nomi, tag, progetto e collegamenti, *Chiedi a IAGO* e Claude.
   - **Non c'è:** nessun punto chiave, né Riepilogo, Kanban o Grafo.
