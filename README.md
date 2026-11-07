@@ -304,7 +304,7 @@ Ogni scelta importante è un **Architecture Decision Record** in [`docs/adr/`](d
 - **321 test automatici** nei pacchetti: Store 124, Capture 49, Intelligence 34, Transcription 30, Ingest 22, MCP 20, Core 15, Engine 15, Export 11, Sync 1.
   - La pipeline audio si prova con fixture **sintetiche** (voci di `say`), mai con registrazioni reali.
   - I motori si provano con risposte finte, che riproducono anche gli errori reali dei modelli.
-- **Prima di ogni pull request**, sul Mac: tutti i test e il controllo delle API di rete (`scripts/test-packages.sh`); gli hook di git controllano dati reali, indirizzi email e lingue. La CI di GitHub Actions si lancia solo a mano, per risparmiare i minuti di GitHub Free. La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
+- **Prima di ogni pull request**, sul Mac: tutti i test e il controllo delle API di rete (`scripts/test-packages.sh`); gli hook di git controllano dati reali, indirizzi email e lingue. Su GitHub, a ogni pull request, la CI rifà test e controlli (dati, indirizzi email, lingue, sito e, se cambia, il motore). La build con MLX (`scripts/test-engine.sh`) si fa prima delle PR che toccano il motore.
 - **Prove sul campo:** misure su call reali (`docs/benchmarks/`) e una **lista di prove per tester** ([`docs/prove-tester.md`](docs/prove-tester.md)), ordinata e fattibile da chi non conosce l'app.
 - **Lingue:** codice, commenti e commit in inglese; interfaccia, guida e documenti in italiano e inglese (ADR-0077).
 

@@ -27,4 +27,4 @@
 ## Come si prova un modello
 - `open /Applications/IAGO.app --args -IAGOEngineBench "<titolo di un elemento>"` fa girare ogni modello scaricato su quell'elemento (Riordina testo, proposte, Chiedi) e scrive tempi e risultati in locale.
 - La prova delle sintesi su call reali è descritta in [sintesi e glossario](/benchmarks/2026-10-21-sintesi-e-glossario): solo numeri e osservazioni, mai contenuti.
-- `scripts/test-engine.sh` compila l'app con MLX e gli shader Metal; la CI non lo fa (costa troppi minuti), quindi va lanciato prima di ogni PR che tocca il motore.
+- `scripts/test-engine.sh` compila l'app con MLX e gli shader Metal; va lanciato prima di ogni PR che tocca il motore, e la CI lo rifà su quelle PR (`engine.yml`).

@@ -1,13 +1,22 @@
 # Documentation site (VitePress) on GitHub Pages, from the official VitePress workflow (ADR-0068).
-# - Push to main: build and deploy, only once giovannilombi/iago is public (GitHub Free has no Pages for private
-#   repositories); while it is private the job is skipped and uses no minutes.
-# - Manually (`gh workflow run deploy.yml --ref <branch>`), when the owner asks for it: builds the site (broken links
-#   fail the build). Before every PR the same build runs on the developer's Mac (`npm run docs:build`).
+# - Push to main: build and deploy.
+# - Pull request: build only (broken links fail the build), when the documentation or the guide changes.
+# - By hand (`gh workflow run deploy.yml --ref <branch>`): build, and deploy from main.
 name: Deploy docs
 
 on:
   push:
     branches: [main]
+    paths:
+      - "docs/**"
+      - "App/Resources/Guide/**"
+      - "Design/iago-logo.svg"
+      - "Design/iago-menubar-colors.svg"
+      - "scripts/docs-sync-guide.mjs"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/deploy.yml"
+  pull_request:
     paths:
       - "docs/**"
       - "App/Resources/Guide/**"
@@ -25,8 +34,8 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
-  cancel-in-progress: false
+  group: ${{ github.event_name == 'pull_request' && format('docs-{0}', github.ref) || 'pages' }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:

@@ -52,7 +52,7 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - without a paid Apple account the app is not notarized: it is distributed with the **DMG** from `scripts/release.sh`. **To be verified first** on a clean Mac: «Open Anyway» only once, Sparkle update without a new block and with permissions kept, duration of the free certificate;
    - mandatory updates with 2 days of margin: done in 1.2.8-beta (ADR-0056), to be tried with a test release (10r.7);
    - **done on November 7, 2026:** public repository, first release 1.3.0-beta (still beta by the user's choice), GitHub Pages for the site and the site as the repository's «Website»;
-   - to be decided: automatic CI, now free because the repository is public.
+   - automatic CI: done on November 7, 2026.
 5. **Ideas for later:**
    - **ClickUp:** tickets from tasks, status coming back, log of followed lists, tickets in the memory ([`docs/design/clickup.md`](design/clickup.md));
    - Google and Microsoft calendars: today they work through System Settings › Internet Accounts; a direct sync would need a network ADR;
@@ -61,6 +61,9 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-07, automatic CI and old branches deleted:**
+  - **CI:** with the public repository GitHub Actions minutes are free. `ci.yml` and `privacy.yml` start on every PR and push to `main`, `deploy.yml` builds the site on PRs, `engine.yml` builds with MLX on PRs that touch the engine. A PR is merged only with green checks (CLAUDE.md, README-collaborators).
+  - **Branches:** seven branches already merged deleted; `release/1.0.x` stays.
 - **2026-11-07, public repository and version 1.3.0-beta** (ADR-0060, ADR-0097):
   - **Repository and site:** `giovannilombi/iago` is public, with the site on GitHub Pages; the *About* box has description, site and topics.
   - **Release:** first public release, with `IAGO.dmg`, the versioned DMG, the zip and the Sparkle appcast. The "Download IAGO for Mac" link at the top of the README downloads the latest version.

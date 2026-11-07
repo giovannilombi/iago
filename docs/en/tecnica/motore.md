@@ -27,4 +27,4 @@
 ## How a model is tested
 - `open /Applications/IAGO.app --args -IAGOEngineBench "<titolo di un elemento>"` runs every downloaded model on that item (Tidy up text, suggestions, Ask) and writes timings and results locally.
 - The test of summaries on real calls is described in [summaries and glossary](/en/benchmarks/2026-10-21-sintesi-e-glossario): only numbers and observations, never content.
-- `scripts/test-engine.sh` builds the app with MLX and the Metal shaders; CI does not do it (it costs too many minutes), so it must be run before every PR that touches the engine.
+- `scripts/test-engine.sh` builds the app with MLX and the Metal shaders; it must be run before every PR that touches the engine, and the CI runs it again on those PRs (`engine.yml`).

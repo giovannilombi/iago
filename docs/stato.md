@@ -52,7 +52,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - senza account Apple a pagamento l'app non è notarizzata: si distribuisce con il **DMG** di `scripts/release.sh`. **Da verificare prima** su un Mac pulito: «Apri comunque» una sola volta, aggiornamento con Sparkle senza nuovo blocco e con i permessi conservati, durata del certificato gratuito;
    - aggiornamenti obbligatori con 2 giorni di margine: fatti nella 1.2.8-beta (ADR-0056), da provare con una release di prova (10r.7);
    - **fatto il 7 novembre 2026:** repository pubblico, prima release 1.3.0-beta (ancora beta per scelta dell'utente), GitHub Pages per il sito e il sito come «Website» del repository;
-   - da decidere: la CI automatica, ora gratuita perché il repository è pubblico.
+   - CI automatica: fatta il 7 novembre 2026.
 5. **Idee per più avanti:**
    - **ClickUp:** ticket dalle attività, stato di ritorno, registro delle liste seguite, ticket nella memoria ([`docs/design/clickup.md`](design/clickup.md));
    - calendari Google e Microsoft: oggi funzionano tramite Impostazioni di Sistema › Account Internet; una sync diretta servirebbe un ADR di rete;
@@ -61,6 +61,9 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-07, CI automatica e rami vecchi eliminati:**
+  - **CI:** con il repository pubblico i minuti di GitHub Actions sono gratuiti. `ci.yml` e `privacy.yml` partono a ogni PR e push su `main`, `deploy.yml` compila il sito sulle PR, `engine.yml` fa la build con MLX sulle PR che toccano il motore. Una PR si unisce solo con i controlli verdi (CLAUDE.md, README-collaborators).
+  - **Rami:** eliminati sette rami già uniti; resta `release/1.0.x`.
 - **2026-11-07, repository pubblico e versione 1.3.0-beta** (ADR-0060, ADR-0097):
   - **Repository e sito:** `giovannilombi/iago` è pubblico, con il sito su GitHub Pages; la scheda *About* ha descrizione, sito e argomenti.
   - **Release:** prima release pubblica, con `IAGO.dmg`, il DMG con versione, lo zip e l'appcast di Sparkle. Il link «Scarica IAGO per Mac» in cima al README scarica l'ultima versione.
