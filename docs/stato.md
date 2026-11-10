@@ -61,6 +61,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-10, tipo di aggiornamento a ogni release** (ADR-0100, richiesta dell'utente): a ogni release Claude Code chiede se l'aggiornamento è obbligatorio e, se non lo è, se si può saltare. `scripts/release.sh` richiede `--update optional|no-skip|mandatory`, `--notes` sempre e `--why` per `no-skip` e `mandatory`. L'app non rende più obbligatoria una versione solo per il numero e riconosce `no-skip` (senza «Salta», nessun blocco): vale dalla prossima versione, quelle installate trattano `no-skip` come obbligatorio. Nessuna versione nuova per questa modifica: entra con la prossima.
 - **2026-11-10:** versione **1.3.2-beta** con l'eliminazione di progetti, clienti e stream, pubblicata come aggiornamento non obbligatorio.
 - **2026-11-10, eliminare progetti, clienti e stream** (ADR-0099, richiesta dell'utente):
   - **Progetto:** *Elimina progetto…* anche dal tasto destro nella barra laterale, con lo stesso dialogo di Impostazioni. Dice cosa contiene, elenca gli stream che se ne vanno con lui e fa scegliere, spiegando la differenza, tra **Cestino per 30 giorni** (predefinito, una conferma, si ripristina com'era) ed **eliminazione definitiva** (DELETE e ultima conferma).

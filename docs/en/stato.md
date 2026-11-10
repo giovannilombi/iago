@@ -61,6 +61,7 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-10, kind of update for every release** (ADR-0100, user request): for every release Claude Code asks whether the update is mandatory and, if not, whether it can be skipped. `scripts/release.sh` requires `--update optional|no-skip|mandatory`, always `--notes` and `--why` for `no-skip` and `mandatory`. The app no longer makes a version mandatory because of its number alone and recognizes `no-skip` (no «Skip», no block): it works from the next version, installed ones treat `no-skip` as mandatory. No new version for this change: it ships with the next one.
 - **2026-11-10:** version **1.3.2-beta** with deletion of projects, clients and streams, published as a non-mandatory update.
 - **2026-11-10, deleting projects, clients and streams** (ADR-0099, user request):
   - **Project:** *Delete project…* also from the right-click menu in the sidebar, with the same dialog as Settings. It says what the project holds, lists the streams that go with it and lets the user choose, explaining the difference, between the **Trash for 30 days** (the default, one confirmation, restored as it was) and **permanent deletion** (DELETE and a last confirmation).

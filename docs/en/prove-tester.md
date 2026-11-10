@@ -382,6 +382,12 @@ On a test archive, with a project that has two streams, a few items, a note and 
 - [ ] 10za.7 Right-click a stream › *Delete stream…*: it says how many items, key points and notes lose the label; afterwards they stay in the project.
 - [ ] 10za.8 Put an item of the project in the Trash, then the project; restore only the item: it goes back to *Unfiled items*.
 
+## 10zb. Kind of update (ADR-0100)
+With a test release, from a version installed from the DMG equal to or later than 1.3.3-beta.
+- [ ] 10zb.1 Release `--update optional`: the update window has *Skip This Version*; the notes say what changes and «Optional update».
+- [ ] 10zb.2 Release `--update no-skip`: no *Skip This Version*; the notes say why it is important; IAGO's menu shows no deadline and recordings start even after 2 days.
+- [ ] 10zb.3 Release `--update mandatory`: no *Skip*; the notes say why it is mandatory; the menu shows the deadline and after 2 days IAGO starts no new recordings.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.
