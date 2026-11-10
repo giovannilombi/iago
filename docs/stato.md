@@ -5,7 +5,7 @@
 > Ultimo aggiornamento: **10 novembre 2026**.
 
 ## In breve
-- **Versione:** 1.3.1-beta su `main` (tag `v1.3.1-beta`), con la Modalità Raccogli; la 1.3.0-beta è stata la prima pubblica: [release](https://github.com/giovannilombi/iago/releases/latest) con il DMG e [sito](https://giovannilombi.github.io/iago/). Funzioni della 1.2.15-beta: app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.3.0-beta`, `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. Si resta in `-beta` finché l'utente non decide altrimenti.
+- **Versione:** 1.3.2-beta su `main` (tag `v1.3.2-beta`), con l'eliminazione di progetti, clienti e stream e il Cestino dei progetti (ADR-0099); la 1.3.1-beta ha portato la Modalità Raccogli; la 1.3.0-beta è stata la prima pubblica: [release](https://github.com/giovannilombi/iago/releases/latest) con il DMG e [sito](https://giovannilombi.github.io/iago/). Funzioni della 1.2.15-beta: app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.3.1-beta`, `v1.3.0-beta`, `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. Si resta in `-beta` finché l'utente non decide altrimenti.
 - **Repository:**
   - `giovannilombi/iago`, **pubblico dal 7 novembre 2026**, nato con un solo commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
@@ -61,6 +61,7 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-10:** versione **1.3.2-beta** con l'eliminazione di progetti, clienti e stream, pubblicata come aggiornamento non obbligatorio.
 - **2026-11-10, eliminare progetti, clienti e stream** (ADR-0099, richiesta dell'utente):
   - **Progetto:** *Elimina progetto…* anche dal tasto destro nella barra laterale, con lo stesso dialogo di Impostazioni. Dice cosa contiene, elenca gli stream che se ne vanno con lui e fa scegliere, spiegando la differenza, tra **Cestino per 30 giorni** (predefinito, una conferma, si ripristina com'era) ed **eliminazione definitiva** (DELETE e ultima conferma).
   - **Cliente:** il dialogo elenca i progetti, con i loro stream, che passano in «Senza cliente». I progetti non si eliminano mai con il cliente.
