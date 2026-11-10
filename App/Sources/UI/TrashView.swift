@@ -26,6 +26,31 @@ struct TrashView: View {
                     Text(String(localized: "Registrazioni scartate durante la registrazione: restano 1 ora."))
                 }
             }
+            if !model.trashedProjects.isEmpty {
+                Section {
+                    ForEach(model.trashedProjects) { project in
+                        TrashRow(
+                            title: project.name,
+                            subtitle: String(localized: "Progetto, con tutto il suo contenuto"),
+                            remaining: String(
+                                localized:
+                                    "eliminato tra \(model.daysLeft(trashedAt: project.trashedAt ?? Date())) giorni"),
+                            restore: { model.perform { try model.archive.restoreProject(project.id) } },
+                            purge: {
+                                model.perform { try model.archive.deleteProject(project.id) }
+                                model.reload()
+                            })
+                    }
+                } header: {
+                    Text(String(localized: "Progetti"))
+                } footer: {
+                    Text(
+                        String(
+                            localized:
+                                "Ripristina rimette il progetto com'era: elementi, stream, note, punti chiave e checklist."
+                        ))
+                }
+            }
             if !model.trashedItems.isEmpty {
                 Section(String(localized: "Elementi")) {
                     ForEach(model.trashedItems) { item in
@@ -56,7 +81,7 @@ struct TrashView: View {
         }
         .scrollContentBackground(.hidden)
         .overlay {
-            if model.trashedItems.isEmpty && model.trashedAssets.isEmpty && model.discardedItems.isEmpty {
+            if isEmpty {
                 ContentUnavailableView(
                     String(localized: "Il cestino è vuoto"), systemImage: "trash",
                     description: Text(
@@ -66,7 +91,7 @@ struct TrashView: View {
         }
         .toolbar {
             Button(String(localized: "Svuota cestino"), role: .destructive) { confirmEmpty = true }
-                .disabled(model.trashedItems.isEmpty && model.trashedAssets.isEmpty && model.discardedItems.isEmpty)
+                .disabled(isEmpty)
         }
         .confirmationDialog(
             String(localized: "Svuotare il cestino?"), isPresented: $confirmEmpty, titleVisibility: .visible
@@ -77,6 +102,11 @@ struct TrashView: View {
         } message: {
             Text(String(localized: "L'operazione non si può annullare."))
         }
+    }
+
+    private var isEmpty: Bool {
+        model.trashedItems.isEmpty && model.trashedAssets.isEmpty && model.discardedItems.isEmpty
+            && model.trashedProjects.isEmpty
     }
 
     static func assetName(_ kind: Asset.Kind) -> String {

@@ -21,7 +21,7 @@ public enum GraphBuilder {
             var edges: [GraphEdge] = []
 
             // Projects and clients in scope.
-            var projectFilter = "deleted_at IS NULL"
+            var projectFilter = "deleted_at IS NULL AND trashed_at IS NULL"
             var arguments: StatementArguments = []
             switch scope {
             case .all: break
@@ -193,7 +193,7 @@ public enum GraphBuilder {
             let projectPlaceholders = projectIDs.map { _ in "?" }.joined(separator: ",").ifEmpty("NULL")
             var decisionSQL = """
                 SELECT id, kind, text, decided_at, project_id, source_item_id, status, derived_from_id FROM decision
-                WHERE deleted_at IS NULL
+                WHERE deleted_at IS NULL AND \(Archive.outsideTrashedProjects("project_id"))
                 """
             var decisionArgs: StatementArguments = []
             if scope != .all {

@@ -445,6 +445,10 @@ enum Migrations {
                 t.primaryKey(["item_id", "name"])
             }
         }
+        migrator.registerMigration("v25-project-trash") { db in
+            // ADR-0099: a project can go to the trash for 30 days before being deleted for good.
+            try db.alter(table: "project") { t in t.add(column: "trashed_at", .datetime) }
+        }
         return migrator
     }
 

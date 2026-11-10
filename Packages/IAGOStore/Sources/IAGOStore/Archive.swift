@@ -134,7 +134,8 @@ public final class Archive: Sendable {
     /// unless asked for (Settings › Progetti).
     public func projects(includeArchived: Bool = false) throws -> [Project] {
         try database.writer.read { db in
-            var request = Project.filter(Column("deleted_at") == nil)
+            // Projects in the trash (ADR-0099) are left out everywhere: see `trashedProjects()`.
+            var request = Project.filter(Column("deleted_at") == nil && Column("trashed_at") == nil)
             if !includeArchived { request = request.filter(Column("archived") == false) }
             return
                 try request
@@ -602,10 +603,21 @@ public final class Archive: Sendable {
         try updateItem(id) { [now] in $0.trashedAt = now() }
     }
 
+    /// An item put back from the trash while its project is still there (ADR-0099) comes back without a project,
+    /// in «Elementi da classificare», so it is not hidden with the project.
     public func restoreItem(_ id: String) throws {
+        let projectTrashed = try database.writer.read { db in
+            try Bool.fetchOne(
+                db,
+                sql: """
+                    SELECT project.trashed_at IS NOT NULL FROM item JOIN project ON project.id = item.project_id
+                    WHERE item.id = ?
+                    """, arguments: [id]) ?? false
+        }
         try updateItem(id) {
             $0.trashedAt = nil
             $0.trashReason = nil
+            if projectTrashed { $0.projectId = nil }
         }
     }
 
@@ -741,6 +753,7 @@ public final class Archive: Sendable {
     public func emptyTrash() throws {
         for item in try trashedItems() + discardedItems() { try purgeItem(item.id) }
         for asset in try trashedAssets() { try purgeAsset(asset.id) }
+        for project in try trashedProjects() { try deleteProject(project.id) }
     }
 
     /// Deletes for good what has been in the trash longer than `trashRetention`. Run at launch and
@@ -755,7 +768,9 @@ public final class Archive: Sendable {
         let assets = try trashedAssets().filter { $0.trashedAt! <= cutoff }
         for item in items { try purgeItem(item.id) }
         for asset in assets { try purgeAsset(asset.id) }
-        return items.count + assets.count
+        let projects = try trashedProjects().filter { $0.trashedAt! <= cutoff }
+        for project in projects { try deleteProject(project.id) }
+        return items.count + assets.count + projects.count
     }
 
     // MARK: Settings and audit log

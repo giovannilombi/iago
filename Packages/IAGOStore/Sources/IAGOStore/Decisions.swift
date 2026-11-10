@@ -305,6 +305,7 @@ extension Archive {
             let kinds = query.kinds.isEmpty ? Set(Decision.Kind.allCases) : query.kinds
             var request = Decision.filter(Column("deleted_at") == nil)
                 .filter(kinds.map(\.rawValue).contains(Column("kind")))
+                .filter(sql: Self.outsideTrashedProjects("project_id"))
             switch query.scope {
             case .all: break
             case .project(let id): request = request.filter(Column("project_id") == id)

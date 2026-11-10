@@ -2,7 +2,7 @@
 
 > Il punto di ripartenza per chiunque lavori su IAGO, persone e sessioni di Claude Code.
 > **Va aggiornato alla fine di ogni lavoro**, nella stessa PR: cosa è cambiato, cosa resta aperto.
-> Ultimo aggiornamento: **7 novembre 2026**.
+> Ultimo aggiornamento: **10 novembre 2026**.
 
 ## In breve
 - **Versione:** 1.3.1-beta su `main` (tag `v1.3.1-beta`), con la Modalità Raccogli; la 1.3.0-beta è stata la prima pubblica: [release](https://github.com/giovannilombi/iago/releases/latest) con il DMG e [sito](https://giovannilombi.github.io/iago/). Funzioni della 1.2.15-beta: app, guida, sito e documenti in italiano e inglese (ADR-0077), con il lavoro aperto rivisto (ADR-0074, ADR-0075, ADR-0076). Punti di ripristino: `v1.3.0-beta`, `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` e `v1.0.1-beta` con il ramo `release/1.0.x` (serie 1.0). Per tornare indietro con un archivio già aperto serve il backup fatto prima di aggiornare. Si resta in `-beta` finché l'utente non decide altrimenti.
@@ -11,7 +11,7 @@
   - `giovannilombi/iago-archivio`, privato, con la storia di sviluppo precedente (contiene dati reali di prova: non va mai reso pubblico).
 - **Autori:** Giovanni Lombi, solo, fino all'inizio del lavoro sulla condivisione (fase 4); da lì Giovanni Lombi e Gianluca Sestito (ADR-0065, ADR-0089).
 - **Fasi:** 0, 1, 2 e 3 sviluppate e unite su `main`. La fase 4 (condivisione) aspetta una decisione (ADR-0057).
-- **Test automatici:** 324 nei pacchetti, tutti verdi.
+- **Test automatici:** 330 nei pacchetti, tutti verdi.
 
 ## Cosa fa oggi IAGO
 La descrizione completa è nel [README](../README.md). In sintesi:
@@ -61,6 +61,13 @@ Elenco riordinato il 30 ottobre 2026 con l'utente: tolte le voci superate (MiniC
    - versione per Windows, una riscrittura: prima di iniziare leggere [`docs/design/windows.md`](design/windows.md).
 
 ## Ultime modifiche
+- **2026-11-10, eliminare progetti, clienti e stream** (ADR-0099, richiesta dell'utente):
+  - **Progetto:** *Elimina progetto…* anche dal tasto destro nella barra laterale, con lo stesso dialogo di Impostazioni. Dice cosa contiene, elenca gli stream che se ne vanno con lui e fa scegliere, spiegando la differenza, tra **Cestino per 30 giorni** (predefinito, una conferma, si ripristina com'era) ed **eliminazione definitiva** (DELETE e ultima conferma).
+  - **Cliente:** il dialogo elenca i progetti, con i loro stream, che passano in «Senza cliente». I progetti non si eliminano mai con il cliente.
+  - **Stream:** la conferma dice quanti elementi, punti chiave e note perdono l'etichetta.
+  - **Cestino:** sezione *Progetti*; *Svuota cestino* e la pulizia dopo 30 giorni eliminano anche i progetti.
+  - **Migrazione `v25-project-trash`:** una sola colonna, `project.trashed_at`. Gli elementi vanno nel Cestino con il progetto; note, punti chiave, checklist, stream, ricerca, grafo e Claude escludono i progetti nel Cestino (`Archive.outsideTrashedProjects`).
+  - **Test:** 6 nuovi (`ProjectTrashTests`). Da provare a mano: 10za in `docs/prove-tester.md`.
 - **2026-11-08, DMG che si apre e istruzioni non più bianche** (ADR-0097, modifica): in cima al README, nella guida all'installazione e nelle istruzioni del DMG il primo passo è sbloccare il DMG scaricato con `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg`, così IAGO si apre senza «Apri comunque». `Leggimi - Read me.html` usciva vuoto per un errore dello script: ora lo fa `scripts/dmg/make-dmg.sh`, che si ferma se è vuoto. DMG della 1.3.1-beta sostituiti. README con una sezione «Scarica e installa» a passi, più leggibile.
 - **2026-11-07:** versione **1.3.1-beta** con la Modalità Raccogli, pubblicata come aggiornamento.
 - **2026-11-07, Modalità Raccogli** (ADR-0098, su un'anteprima approvata dall'utente): terza modalità, la più semplice, per i progetti-archivio da cercare e interrogare.

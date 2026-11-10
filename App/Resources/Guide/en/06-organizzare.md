@@ -10,13 +10,23 @@
   - **Pinned** (red pin): projects, streams, categories and tags you pin.
   - **Clients**, each with its projects. Next to each project a small icon shows its mode: an orange box for *Collect mode*, a green notebook for *Track mode*, three blue columns for *Manage mode*; a click on the icon lets you choose another one, like the pill next to the project's name. A click on the name opens or closes the client; **⌥-click** opens only that one and closes the others. On hover **+** appears: it creates a project of that client, already chosen and not editable. All the client's items open with right-click › *Open*.
   - **No client** (small gray square), always last, with **Undefined** at the bottom: items filed without a project.
-- **At the bottom:** the **Trash**, with the number of items.
+- **At the bottom:** the **Trash**, with the number of items and projects.
 - With more than 15 projects, **Filter projects** appears.
 
 **The columns.** Next to the sidebar, the middle column (the list) and the right one (what you open) start half and half. Drag the divider between them to change them: the width stays for that place only, also the next time. Inbox, Unfiled items, Recent, Key points and the others each have their own; projects, clients, streams, categories and tags share one per view.
 
 ## Projects and streams
-A project belongs to a client (or to none). A **stream** is a line of work inside the project (e.g. Design, Development, Legal): items, notes and key points can belong to one or more streams. Drag a project onto a client to move it. Right-click: settings, new stream, rename, move, pin. A stream can also be pinned at the top with a right-click.
+A project belongs to a client (or to none). A **stream** is a line of work inside the project (e.g. Design, Development, Legal): items, notes and key points can belong to one or more streams. Drag a project onto a client to move it. Right-click: settings, new stream, rename, move, pin, delete. A stream can also be pinned at the top with a right-click.
+
+## Deleting projects, clients and streams
+Delete with a right-click in the sidebar (*Delete project…*, *Delete client…*, *Delete stream…*) or from **Settings › Projects** and **Clients**.
+- **A project:** IAGO says what it holds and lists the streams that go with it. Then choose:
+  - **Move to Trash:** the project disappears from the sidebar, searches, Inbox and Claude, but stays on the Mac. For **30 days** you can restore it from the **Trash** as it was, with items, streams, notes, key points and checklists; then it is deleted for good.
+  - **Delete permanently:** everything in it is destroyed at once. To be safe, you type **DELETE** and confirm one last time. It cannot be recovered, not even from the Trash.
+- **A client:** IAGO lists its projects, with their streams. The projects are not deleted: they move to **No client** with everything in them. To put them back under a client, drag them onto it, or right-click › *Move to client*.
+- **A stream:** IAGO says how many items, key points and notes use it. They stay in the project: they only lose the label.
+
+In the **Trash** projects have their own section, with *Restore* and *Delete*. An item of the project that you put in the Trash on its own, if you restore it while the project is still in the Trash, goes back to *Unfiled items*.
 
 ## The starting example
 In a new archive IAGO creates **example projects** of an invented digital agency, to show every part of the app: the clients **Poldo S.p.A.** (*Headless customer portal*, with the streams *UX/UI* and *Development*, and *Design system*), **Sanna TheBest s.r.l.** (*Rebranding*) and **Atoms** (*Product discovery*), with transcribed calls, emails, documents, summaries, key points and suggestions. The examples do not count in the introduction's first steps. When you no longer need them, **Settings › Projects › Remove the example** deletes them with all their content. They do not come back.

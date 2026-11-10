@@ -250,7 +250,7 @@ private struct ClientHeader: View {
     let newProject: () -> Void
     @State private var dropTargeted = false
     @State private var renaming = false
-    @State private var deleting = false
+    @State private var deleting: Client?
     @State private var hovering = false
 
     var body: some View {
@@ -293,24 +293,14 @@ private struct ClientHeader: View {
             Button(String(localized: "Nuovo progetto in «\(client.name)»…"), action: newProject)
             Button(String(localized: "Rinomina…")) { renaming = true }
             Divider()
-            Button(String(localized: "Elimina cliente…"), role: .destructive) { deleting = true }
+            Button(String(localized: "Elimina cliente…"), role: .destructive) { deleting = client }
         }
         .sheet(isPresented: $renaming) {
             RenameSheet(title: String(localized: "Rinomina cliente"), name: client.name) { name in
                 model.perform { try model.archive.updateClient(client.id) { $0.name = name } }
             }
         }
-        .confirmationDialog(
-            String(localized: "Eliminare il cliente «\(client.name)»?"), isPresented: $deleting,
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "Elimina cliente"), role: .destructive) {
-                model.perform { try model.archive.deleteClient(client.id) }
-                if model.sidebar == .library(.client(client.id)) { model.select(.library(.unclassified)) }
-            }
-        } message: {
-            Text(String(localized: "I suoi progetti restano, senza cliente. Nessun elemento viene eliminato."))
-        }
+        .clientDeletion(model: model, client: $deleting)
     }
 }
 
@@ -359,6 +349,7 @@ private struct ProjectRow: View {
     let newStream: () -> Void
     @State private var hovering = false
     @State private var renaming = false
+    @State private var deleting: Project?
 
     var body: some View {
         let streams = model.streams(of: project.id)
@@ -422,12 +413,15 @@ private struct ProjectRow: View {
             Button(project.pinned ? String(localized: "Togli dall'alto") : String(localized: "Fissa in alto")) {
                 model.setPinned(project, !project.pinned)
             }
+            Divider()
+            Button(String(localized: "Elimina progetto…"), role: .destructive) { deleting = project }
         }
         .sheet(isPresented: $renaming) {
             RenameSheet(title: String(localized: "Rinomina progetto"), name: project.name) { name in
                 model.perform { try model.archive.renameProject(project.id, to: name) }
             }
         }
+        .projectDeletion(model: model, project: $deleting)
     }
 }
 
@@ -504,7 +498,7 @@ private struct StreamRow: View {
     let stream: ProjectStream
     let depth: Int
     @State private var renaming = false
-    @State private var deleting = false
+    @State private var deleting: ProjectStream?
 
     var body: some View {
         HStack(spacing: 6) {
@@ -521,27 +515,14 @@ private struct StreamRow: View {
                     ? String(localized: "Togli dall'alto") : String(localized: "Fissa in alto")
             ) { model.togglePinnedLabel("stream:\(stream.id)") }
             Divider()
-            Button(String(localized: "Elimina stream…"), role: .destructive) { deleting = true }
+            Button(String(localized: "Elimina stream…"), role: .destructive) { deleting = stream }
         }
         .sheet(isPresented: $renaming) {
             RenameSheet(title: String(localized: "Rinomina stream"), name: stream.name) { name in
                 model.perform { try model.archive.updateStream(stream.id) { $0.name = name } }
             }
         }
-        .confirmationDialog(
-            String(localized: "Eliminare lo stream «\(stream.name)»?"), isPresented: $deleting,
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "Elimina stream"), role: .destructive) {
-                model.perform { try model.archive.deleteStream(stream.id) }
-                if model.isPinnedLabel("stream:\(stream.id)") { model.togglePinnedLabel("stream:\(stream.id)") }
-                if model.sidebar == .library(.stream(stream.id)) {
-                    model.select(.library(.project(stream.projectId)))
-                }
-            }
-        } message: {
-            Text(String(localized: "Elementi e decisioni restano nel progetto: perdono solo l'etichetta dello stream."))
-        }
+        .streamDeletion(model: model, stream: $deleting)
     }
 }
 

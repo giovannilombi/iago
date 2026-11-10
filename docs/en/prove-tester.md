@@ -371,6 +371,17 @@ To be done on a Mac or user account where IAGO has never been installed, with th
 - [ ] 10z.6 Put the project back in Manage: the key points written earlier become visible again.
 - [ ] 10z.7 From Claude, ask to add a decision to the project in Collect: the tool refuses and explains how to change mode.
 
+## 10za. Deleting projects, clients and streams (ADR-0099)
+On a test archive, with a project that has two streams, a few items, a note and a key point.
+- [ ] 10za.1 Right-click the project › *Delete project…*: the dialog says how many items, transcripts and notes it holds and lists the two streams. *Move to Trash* is already chosen and has its explanation.
+- [ ] 10za.2 *Move to Trash*: the project and its streams disappear from the sidebar; its items are not in Recent, searching a word of the note finds nothing, the key point is neither in Inbox nor in Key points. The number next to *Trash* goes up by one.
+- [ ] 10za.3 In the Trash, *Projects* section: the project is there with «deleted in 30 days». *Restore*: the project comes back as it was, with streams, items, note and key point, and under the same client.
+- [ ] 10za.4 *Delete project…* again, choose *Delete permanently* › *Continue*: it asks to type DELETE (OK stays off until it is typed), then the last confirmation. The project is not in the Trash.
+- [ ] 10za.5 The same from Settings › Projects › *Delete…*: same dialog.
+- [ ] 10za.6 Right-click a client with projects › *Delete client…*: it lists the projects with their streams. Confirm: the projects are in «No client», with everything in them.
+- [ ] 10za.7 Right-click a stream › *Delete stream…*: it says how many items, key points and notes lose the label; afterwards they stay in the project.
+- [ ] 10za.8 Put an item of the project in the Trash, then the project; restore only the item: it goes back to *Unfiled items*.
+
 ## 11. Tests already queued from previous phases
 - [ ] 11.1 "Tidy up text" on 2-3 dictated notes: the text stays faithful (names, numbers and dates unchanged).
 - [ ] 11.2 Transcription quality on real calls with several people.

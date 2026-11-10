@@ -71,6 +71,7 @@ extension Archive {
     public func streams(projectID: String? = nil, includeArchived: Bool = false) throws -> [ProjectStream] {
         try database.writer.read { db in
             var request = ProjectStream.filter(Column("deleted_at") == nil)
+                .filter(sql: Self.outsideTrashedProjects("project_id"))
             if let projectID { request = request.filter(Column("project_id") == projectID) }
             if !includeArchived { request = request.filter(Column("archived") == false) }
             return try request.order(Column("sort_order"), Column("name")).fetchAll(db)

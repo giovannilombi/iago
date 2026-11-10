@@ -120,3 +120,4 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0096 | Modelli LFM2.5 8B-A1B e 24B-A2B: provati e non integrati | rifiutato |
 | 0097 | DMG con sfondo e istruzioni, release sul repository pubblico | accettato |
 | 0098 | Modalità Raccogli: un archivio da interrogare, senza gestione | accettato |
+| 0099 | Eliminare progetti, clienti e stream: Cestino o eliminazione definitiva | accettato |

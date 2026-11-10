@@ -266,6 +266,7 @@ extension Archive {
             project.name = ""
             project.clientId = nil
             project.pinned = false
+            project.trashedAt = nil
             try writer.tombstone(&project, db)
         }
     }
