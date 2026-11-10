@@ -2,7 +2,7 @@
 
 > The restart point for anyone working on IAGO, people and Claude Code sessions.
 > **It must be updated at the end of every piece of work**, in the same PR: what changed, what remains open.
-> Last update: **November 7, 2026**.
+> Last update: **November 10, 2026**.
 
 ## In brief
 - **Version:** 1.3.1-beta on `main` (tag `v1.3.1-beta`), with Collect mode; 1.3.0-beta was the first public one: [release](https://github.com/giovannilombi/iago/releases/latest) with the DMG and [site](https://giovannilombi.github.io/iago/en/). Features of 1.2.15-beta: app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.3.0-beta`, `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. It stays `-beta` until the user decides otherwise.
@@ -11,7 +11,7 @@
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
 - **Authors:** Giovanni Lombi, alone, until work on sharing (phase 4) begins; from then on Giovanni Lombi and Gianluca Sestito (ADR-0065, ADR-0089).
 - **Phases:** 0, 1, 2 and 3 developed and merged into `main`. Phase 4 (sharing) is waiting for a decision (ADR-0057).
-- **Automated tests:** 324 in the packages, all green.
+- **Automated tests:** 330 in the packages, all green.
 
 ## What IAGO does today
 The full description is in the [README](../../README.en.md). In short:
@@ -61,6 +61,13 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-10, deleting projects, clients and streams** (ADR-0099, user request):
+  - **Project:** *Delete project…* also from the right-click menu in the sidebar, with the same dialog as Settings. It says what the project holds, lists the streams that go with it and lets the user choose, explaining the difference, between the **Trash for 30 days** (the default, one confirmation, restored as it was) and **permanent deletion** (DELETE and a last confirmation).
+  - **Client:** the dialog lists the projects, with their streams, that move to «No client». Projects are never deleted with the client.
+  - **Stream:** the confirmation says how many items, key points and notes lose the label.
+  - **Trash:** a *Projects* section; *Empty Trash* and the 30-day cleanup delete projects too.
+  - **Migration `v25-project-trash`:** a single column, `project.trashed_at`. Items go to the Trash with the project; notes, key points, checklists, streams, search, the graph and Claude leave out projects in the Trash (`Archive.outsideTrashedProjects`).
+  - **Tests:** 6 new ones (`ProjectTrashTests`). To test by hand: 10za in `docs/prove-tester.md`.
 - **2026-11-08, a DMG that opens and instructions no longer white** (ADR-0097, change): at the top of the README, in the installation guide and in the DMG instructions the first step is to unblock the downloaded DMG with `xattr -d com.apple.quarantine ~/Downloads/IAGO.dmg`, so IAGO opens without «Open Anyway». `Leggimi - Read me.html` shipped empty because of a script error: now `scripts/dmg/make-dmg.sh` builds it and stops if it is empty. 1.3.1-beta DMGs replaced. README with a step-by-step «Download and install» section, easier to read.
 - **2026-11-07:** version **1.3.1-beta** with Collect mode, published as an update.
 - **2026-11-07, Collect mode** (ADR-0098, on a preview approved by the user): a third mode, the simplest, for archive projects to search and query.

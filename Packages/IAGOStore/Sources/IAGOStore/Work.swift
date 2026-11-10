@@ -385,6 +385,7 @@ extension Archive {
     public func checklists(projectID: String? = nil, pinnedOnly: Bool = false) throws -> [Checklist] {
         try database.writer.read { db in
             var request = Checklist.filter(Column("deleted_at") == nil)
+                .filter(sql: Self.outsideTrashedProjects("project_id"))
             if let projectID { request = request.filter(Column("project_id") == projectID) }
             if pinnedOnly { request = request.filter(Column("pinned") == true) }
             return try request.order(Column("sort_order"), Column("created_at")).fetchAll(db)

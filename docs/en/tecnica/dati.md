@@ -20,6 +20,7 @@ The database is excluded from Time Machine (it contains the search index in plai
 - **Open work** (ADR-0074): in `decision` owner and wait (`owner_id`, `waiting_on_id` pointing to `entity`), `due_at`, `waiting_until`, `priority`, `starts_at`, `estimate`, `severity`, `happened_at`, `outcome`, `outcome_kind`, `derived_from_id`, `recurrence`, `closed_at`; tables `decision_dependency`, `checklist` and `checklist_item` (sub-items of a task or project lists), `board_column` and `board_place` (free columns of each board); `project.work_mode`.
 - **Suggestions** from the engine or from Claude, always to be confirmed (ADR-0009). Summaries and suggestions have `origin` (`engine`, `claude` or, for speaker names, `voice`) and `model`; a key point confirmed from a suggestion keeps `model` (ADR-0070). **Links** between items (`ItemLink`).
 - **Voices** (ADR-0073, only if enabled): `item_voice` holds the voiceprint of each speaker of a call, encrypted with the item's key; `voice` only the person's name. A person's voiceprint is the average of their calls, computed on the fly: deleting a call removes it. Voices do not enter the `change_log` or exports.
+- **Projects in the Trash** (migration `v25-project-trash`, ADR-0099): `project.trashed_at`. Its items go to the Trash with it, with `trash_reason` = `project`, so they disappear from every query that leaves out trashed items; the project's notes, key points, checklists, streams and search rows are left out with `Archive.outsideTrashedProjects`. `restoreProject` puts everything back as it was; after 30 days, or with *Empty Trash*, `deleteProject` deletes it for good (`IAGOStore/ProjectTrash.swift`).
 - **Present** (migration `v24-attendees`): `item_attendee` (`item_id`, `name`, `position`), who was at a meeting according to the user (ADR-0031); offered as speaker names, in exports and in *Share*.
 - **Speaker names** (migration `v22-speaker-names`): `item_speaker.merged_into`, the speaker of the same call one was joined to; `name_alias` (normalized `alias` → `name`), the nicknames the user said are the same person («Lello» → «Antonello»).
 - **Two transcripts** (ADR-0078): `transcript_json` is the main one, read by summaries, suggestions, exports and MCP; `alternate_transcript_json` the other (Teams beside IAGO or vice versa), in its own file `transcript-alt.json`. Swap and removal in `IAGOStore/Transcripts.swift`. Search also indexes the other one: its `search_index` rows have `source_id` `<item>#alt-<teams|iago>-<segment>` (`Archive.indexAlternateTranscript`); the index is rebuilt once on update (`search_index_version` = 2).
@@ -27,13 +28,13 @@ The database is excluded from Time Machine (it contains the search index in plai
 - **Ready for sync** (ADR-0008): every row has `created_at`, `updated_at`, `deleted_at`, `version`, `device_id`; every change ends up in `change_log`.
 
 ## Migrations
-Twenty-one so far, from `v1` to `v21-work` (open work, ADR-0074: only new columns and tables); `v20-voices` adds voiceprints (ADR-0073); `v19-screenshots` adds call screenshots with their minute and recognized text (ADR-0072); `v18-provenance` records who produced summaries, suggestions and confirmed key points (ADR-0070). A migration is never modified after release: a new one is added. Before installing a build that brings new migrations onto a user's archive, a backup is made.
+Twenty-five so far, up to `v25-project-trash` (ADR-0099: one column); `v21-work` (open work, ADR-0074: only new columns and tables); `v20-voices` adds voiceprints (ADR-0073); `v19-screenshots` adds call screenshots with their minute and recognized text (ADR-0072); `v18-provenance` records who produced summaries, suggestions and confirmed key points (ADR-0070). A migration is never modified after release: a new one is added. Before installing a build that brings new migrations onto a user's archive, a backup is made.
 
 ## Encryption
 - **Block-encrypted files** with AES-GCM (ADR-0027): reads and writes happen in chunks, even for large files, without decrypting them entirely in memory.
 - **One key per item**, in turn protected by a master key in the macOS **Keychain** (ADR-0028).
 - **Permanent deletion = key destruction** (*crypto-shredding*): the files become unreadable even in copies and backups.
-- 30-day **Trash** (ADR-0030); a discarded recording stays recoverable for one hour (ADR-0032).
+- 30-day **Trash** (ADR-0030), also for whole projects (ADR-0099); a discarded recording stays recoverable for one hour (ADR-0032).
 
 ## Backups and exports
 - **Encrypted backup** with a password chosen by the user: a single file with the whole archive, for an external drive or a new Mac (ADR-0041).

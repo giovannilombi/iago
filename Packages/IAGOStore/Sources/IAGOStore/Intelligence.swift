@@ -166,6 +166,7 @@ extension Archive {
                 WHERE chunk.model = ?
                   AND (chunk.item_id IS NULL OR (item.deleted_at IS NULL AND item.trashed_at IS NULL))
                   AND (chunk.note_id IS NULL OR note.deleted_at IS NULL)
+                  AND \(Self.outsideTrashedProjects("COALESCE(item.project_id, note.project_id)"))
                 """
             var arguments: StatementArguments = [model]
             let project = "COALESCE(item.project_id, note.project_id)"
@@ -391,7 +392,10 @@ extension Archive {
     public func collectProjectCount() throws -> Int {
         try database.writer.read { db in
             try Int.fetchOne(
-                db, sql: "SELECT COUNT(*) FROM project WHERE work_mode = 'collect' AND deleted_at IS NULL") ?? 0
+                db,
+                sql:
+                    "SELECT COUNT(*) FROM project WHERE work_mode = 'collect' AND deleted_at IS NULL AND trashed_at IS NULL"
+            ) ?? 0
         }
     }
 
@@ -562,9 +566,14 @@ extension Archive {
         try database.writer.read { db in
             var itemFilter = "item.deleted_at IS NULL AND item.trashed_at IS NULL AND item.updated_at > ?"
             var arguments: StatementArguments = [date]
-            var noteFilter = "note.deleted_at IS NULL AND note.updated_at > ?"
+            var noteFilter =
+                "note.deleted_at IS NULL AND note.updated_at > ? AND "
+                + Self.outsideTrashedProjects(
+                    "COALESCE(note.project_id, (SELECT project_id FROM item WHERE item.id = note.item_id))")
             var noteArguments: StatementArguments = [date]
-            var decisionFilter = "decision.deleted_at IS NULL AND decision.updated_at > ?"
+            var decisionFilter =
+                "decision.deleted_at IS NULL AND decision.updated_at > ? AND "
+                + Self.outsideTrashedProjects("decision.project_id")
             var decisionArguments: StatementArguments = [date]
             switch scope {
             case .all: break

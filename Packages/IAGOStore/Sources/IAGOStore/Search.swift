@@ -180,6 +180,7 @@ extension Archive {
                 LEFT JOIN item ON item.id = search_index.item_id
                 WHERE search_index MATCH ?
                   AND (search_index.item_id IS NULL OR (item.deleted_at IS NULL AND item.trashed_at IS NULL))
+                  AND \(Self.outsideTrashedProjects("search_index.project_id"))
                 """
             var arguments: StatementArguments = [pattern]
             switch scope {

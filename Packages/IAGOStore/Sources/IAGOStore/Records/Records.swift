@@ -21,6 +21,8 @@ public struct Project: SyncRecord, Identifiable, Hashable {
     public var clientId: String?
     /// ADR-0074: `track` keeps this project simple while the app is in "Gestisci"; nil follows the app.
     public var workMode: WorkMode?
+    /// ADR-0099: when the project went to the trash; nil when it is not there.
+    public var trashedAt: Date?
     public var createdAt = Date.distantPast
     public var updatedAt = Date.distantPast
     public var deletedAt: Date?

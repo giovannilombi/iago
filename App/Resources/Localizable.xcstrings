@@ -986,6 +986,22 @@
         }
       }
     },
+    "%lld elementi, %lld punti chiave e %lld note restano nel progetto: perdono solo l'etichetta dello stream." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld items, %2$lld key points and %3$lld notes stay in the project: they only lose the stream's label."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld elementi, %2$lld punti chiave e %3$lld note restano nel progetto: perdono solo l'etichetta dello stream."
+          }
+        }
+      }
+    },
     "%lld email da importare" : {
       "localizations" : {
         "en" : {
@@ -5198,6 +5214,22 @@
         }
       }
     },
+    "Contiene %lld elementi con audio e documenti, %lld trascrizioni e %lld note, con i suoi punti chiave e le sue checklist." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It holds %1$lld items with audio and documents, %2$lld transcripts and %3$lld notes, with its key points and checklists."
+          }
+        },
+        "it" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contiene %1$lld elementi con audio e documenti, %2$lld trascrizioni e %3$lld note, con i suoi punti chiave e le sue checklist."
+          }
+        }
+      }
+    },
     "contiene…" : {
       "localizations" : {
         "en" : {
@@ -6973,6 +7005,7 @@
       }
     },
     "Elementi e decisioni restano nel progetto: perdono solo l'etichetta dello stream." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7128,6 +7161,16 @@
         }
       }
     },
+    "Elimina progetto…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete project…"
+          }
+        }
+      }
+    },
     "Elimina questa trascrizione…" : {
       "localizations" : {
         "en" : {
@@ -7239,6 +7282,17 @@
       }
     },
     "Eliminare il progetto \"%@\"?" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete the project “%@”?"
+          }
+        }
+      }
+    },
+    "Eliminare il progetto «%@»?" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8699,6 +8753,7 @@
       }
     },
     "I suoi progetti restano, senza cliente." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8709,6 +8764,7 @@
       }
     },
     "I suoi progetti restano, senza cliente. Nessun elemento viene eliminato." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -9008,6 +9064,16 @@
         }
       }
     },
+    "Il cliente non ha progetti: nessun elemento viene eliminato." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The client has no projects: no item is deleted."
+          }
+        }
+      }
+    },
     "Il collegamento di Claude con IAGO è limitato ad altri progetti: da lì Claude non vede «%@». Aggiungi un collegamento che lo includa in Impostazioni › Claude." : {
       "localizations" : {
         "en" : {
@@ -9269,11 +9335,22 @@
       }
     },
     "Il progetto \"%@\" e tutto il suo contenuto verranno distrutti. L'operazione non si può annullare." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The project \"%@\" and all its contents will be destroyed. This can't be undone."
+          }
+        }
+      }
+    },
+    "Il progetto «%@» e tutto il suo contenuto verranno distrutti. L'operazione non si può annullare." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The project “%@” and everything in it will be destroyed. This cannot be undone."
           }
         }
       }
@@ -9284,6 +9361,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Project “%@” isn't available to Claude."
+          }
+        }
+      }
+    },
+    "Il progetto sparisce dalla barra laterale, dalle ricerche, dall'Inbox e da Claude, ma resta sul Mac. Per 30 giorni puoi ripristinarlo dal Cestino così com'era; poi viene eliminato per sempre." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The project disappears from the sidebar, searches, Inbox and Claude, but stays on the Mac. For 30 days you can restore it from the Trash as it was; then it is deleted for good."
           }
         }
       }
@@ -10129,6 +10216,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Added via Claude (MCP)"
+          }
+        }
+      }
+    },
+    "Insieme al progetto se ne vanno anche i suoi stream:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its streams go with the project:"
           }
         }
       }
@@ -12412,6 +12509,16 @@
         }
       }
     },
+    "Nessun elemento viene eliminato. Per rimetterli in un cliente trascinali sul cliente, oppure tasto destro › Sposta nel cliente." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No item is deleted. To put them back under a client, drag them onto it, or right-click › Move to client."
+          }
+        }
+      }
+    },
     "nessun file scelto" : {
       "localizations" : {
         "en" : {
@@ -14331,11 +14438,22 @@
       }
     },
     "Per eliminare \"%@\" e tutto il suo contenuto scrivi DELETE qui sotto." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "To delete \"%@\" and all its contents, type DELETE below."
+          }
+        }
+      }
+    },
+    "Per eliminare «%@» e tutto il suo contenuto scrivi DELETE qui sotto." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To delete “%@” and everything in it, type DELETE below."
           }
         }
       }
@@ -14611,6 +14729,7 @@
       }
     },
     "Perderai tutto il materiale del progetto: %lld elementi con audio e documenti, %lld trascrizioni e %lld note. Non si potrà recuperare, nemmeno dal cestino." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -15043,6 +15162,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "IAGO project: “%@”"
+          }
+        }
+      }
+    },
+    "Progetto, con tutto il suo contenuto" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Project, with everything in it"
           }
         }
       }
@@ -15689,6 +15818,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This week"
+          }
+        }
+      }
+    },
+    "Questi progetti restano, con tutto il loro contenuto, e passano in «Senza cliente»:" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "These projects stay, with everything in them, and move to “No client”:"
           }
         }
       }
@@ -16737,6 +16876,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restore original"
+          }
+        }
+      }
+    },
+    "Ripristina rimette il progetto com'era: elementi, stream, note, punti chiave e checklist." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore puts the project back as it was: items, streams, notes, key points and checklists."
           }
         }
       }
@@ -18756,6 +18905,16 @@
         }
       }
     },
+    "Sposta nel Cestino" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Move to Trash"
+          }
+        }
+      }
+    },
     "Sposta nel cliente" : {
       "localizations" : {
         "en" : {
@@ -18988,6 +19147,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stream:"
+          }
+        }
+      }
+    },
+    "Stream: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Streams: %@"
           }
         }
       }
@@ -20520,6 +20689,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "All done"
+          }
+        }
+      }
+    },
+    "Tutto il contenuto viene distrutto subito e non si potrà recuperare, nemmeno dal Cestino. Ti verrà chiesto di scrivere DELETE." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everything in it is destroyed at once and cannot be recovered, not even from the Trash. You will be asked to type DELETE."
           }
         }
       }

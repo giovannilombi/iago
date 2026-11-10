@@ -10,13 +10,23 @@
   - **In evidenza** (pin rosso): progetti, stream, categorie e tag che fissi.
   - **I clienti**, ognuno con i suoi progetti. Accanto a ogni progetto una piccola icona dice la sua modalità: una scatola arancione per la *Modalità Raccogli*, un quaderno verde per la *Modalità Traccia*, tre colonne blu per la *Modalità Gestisci*; un clic sull'icona ti fa sceglierne un'altra, come la pillola accanto al nome del progetto. Un clic sul nome apre o chiude il cliente; **⌥-clic** apre solo quello e chiude gli altri. Passando sopra compare **+**: crea un progetto di quel cliente, già scelto e non modificabile. Tutti gli elementi del cliente si aprono con il tasto destro › *Apri*.
   - **Senza cliente** (quadratino grigio), sempre ultimo, con **Non definito** in fondo: gli elementi classificati senza progetto.
-- **In fondo:** il **Cestino**, con il numero di elementi.
+- **In fondo:** il **Cestino**, con il numero di elementi e di progetti.
 - Con più di 15 progetti compare **Filtra progetti**.
 
 **Le colonne.** Accanto alla barra laterale, la colonna centrale (l'elenco) e quella di destra (ciò che apri) partono a metà e metà. Trascina il divisore tra le due per cambiarle: la larghezza resta per quella sezione soltanto, anche alla prossima apertura. Inbox, Elementi da classificare, Recenti, Punti chiave e le altre ne hanno ognuna una sua; i progetti, i clienti, gli stream, le categorie e i tag ne hanno una in comune per ogni vista.
 
 ## Progetti e stream
-Un progetto appartiene a un cliente (o a nessuno). Uno **stream** è una linea di lavoro dentro il progetto (es. Design, Sviluppo, Legale): elementi, note e punti chiave possono appartenere a uno o più stream. Trascina un progetto su un cliente per spostarlo. Tasto destro: impostazioni, nuovo stream, rinomina, sposta, fissa. Anche uno stream si fissa in alto con il tasto destro.
+Un progetto appartiene a un cliente (o a nessuno). Uno **stream** è una linea di lavoro dentro il progetto (es. Design, Sviluppo, Legale): elementi, note e punti chiave possono appartenere a uno o più stream. Trascina un progetto su un cliente per spostarlo. Tasto destro: impostazioni, nuovo stream, rinomina, sposta, fissa, elimina. Anche uno stream si fissa in alto con il tasto destro.
+
+## Eliminare progetti, clienti e stream
+Si elimina con il tasto destro nella barra laterale (*Elimina progetto…*, *Elimina cliente…*, *Elimina stream…*) oppure da **Impostazioni › Progetti** e **Clienti**.
+- **Un progetto:** IAGO dice cosa contiene ed elenca gli stream che se ne vanno con lui. Poi scegli:
+  - **Sposta nel Cestino:** il progetto sparisce dalla barra laterale, dalle ricerche, dall'Inbox e da Claude, ma resta sul Mac. Per **30 giorni** lo ripristini dal **Cestino** così com'era, con elementi, stream, note, punti chiave e checklist; poi viene eliminato per sempre.
+  - **Elimina definitivamente:** tutto il contenuto viene distrutto subito. Per sicurezza scrivi **DELETE** e confermi un'ultima volta. Non si può recuperare, nemmeno dal Cestino.
+- **Un cliente:** IAGO elenca i suoi progetti, con i loro stream. I progetti non vengono eliminati: passano in **Senza cliente** con tutto il loro contenuto. Per rimetterli in un cliente trascinali sul cliente, oppure tasto destro › *Sposta nel cliente*.
+- **Uno stream:** IAGO dice quanti elementi, punti chiave e note lo usano. Restano nel progetto: perdono solo l'etichetta.
+
+Nel **Cestino** i progetti hanno la loro sezione, con *Ripristina* ed *Elimina*. Un elemento del progetto messo nel Cestino da solo, se lo ripristini mentre il progetto è ancora nel Cestino, torna tra gli *Elementi da classificare*.
 
 ## L'esempio iniziale
 In un archivio nuovo IAGO crea dei **progetti di esempio** di un'agenzia digitale inventata, per far vedere ogni parte dell'app: i clienti **Poldo S.p.A.** (*Portale clienti headless*, con gli stream *UX/UI* e *Sviluppo*, e *Design system*), **Sanna TheBest s.r.l.** (*Rebranding*) e **Atoms** (*Product discovery*), con call trascritte, email, documenti, sintesi, punti chiave e proposte. Gli esempi non contano nei primi passi dell'introduzione. Quando non ti servono più, **Impostazioni › Progetti › Rimuovi l'esempio** li elimina con tutto il loro contenuto. Non ricompaiono.

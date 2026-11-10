@@ -494,7 +494,10 @@ private struct Sidebar: View {
         }
         .background(SidebarMaterial().overlay(IAGOColor.sidebarTint).ignoresSafeArea())
         .onChange(of: askButtonHidden) { allowsShrink = true }
-        .task(id: model.revision) { trashCount = (try? model.archive.trashedItems().count) ?? 0 }
+        .task(id: model.revision) {
+            trashCount =
+                ((try? model.archive.trashedItems().count) ?? 0) + ((try? model.archive.trashedProjects().count) ?? 0)
+        }
         .sheet(isPresented: $creatingClient) {
             NewClientSheet(model: model) { client in
                 model.select(.library(.client(client.id)))

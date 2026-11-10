@@ -371,6 +371,17 @@ Da fare su un Mac o un account utente dove IAGO non è mai stato installato, con
 - [ ] 10z.6 Rimetti il progetto in Gestisci: i punti chiave scritti prima tornano visibili.
 - [ ] 10z.7 Da Claude, chiedi di aggiungere una decisione al progetto in Raccogli: lo strumento rifiuta e spiega come cambiare modalità.
 
+## 10za. Eliminare progetti, clienti e stream (ADR-0099)
+Su un archivio di prova, con un progetto che ha due stream, qualche elemento, una nota e un punto chiave.
+- [ ] 10za.1 Tasto destro sul progetto › *Elimina progetto…*: il dialogo dice quanti elementi, trascrizioni e note contiene ed elenca i due stream. *Sposta nel Cestino* è già scelto e ha la spiegazione.
+- [ ] 10za.2 *Sposta nel Cestino*: il progetto e i suoi stream spariscono dalla barra laterale; i suoi elementi non compaiono in Recenti, la ricerca di una parola della nota non trova nulla, il punto chiave non è in Inbox né in Punti chiave. Il numero accanto a *Cestino* sale di uno.
+- [ ] 10za.3 Nel Cestino, sezione *Progetti*: c'è il progetto con «eliminato tra 30 giorni». *Ripristina*: il progetto torna com'era, con stream, elementi, nota e punto chiave, e nello stesso cliente.
+- [ ] 10za.4 Di nuovo *Elimina progetto…*, scegli *Elimina definitivamente* › *Continua*: chiede di scrivere DELETE (OK resta spento finché non è scritto), poi l'ultima conferma. Il progetto non è nel Cestino.
+- [ ] 10za.5 Lo stesso da Impostazioni › Progetti › *Elimina…*: stesso dialogo.
+- [ ] 10za.6 Tasto destro su un cliente con progetti › *Elimina cliente…*: elenca i progetti con i loro stream. Conferma: i progetti sono in «Senza cliente», con tutto il loro contenuto.
+- [ ] 10za.7 Tasto destro su uno stream › *Elimina stream…*: dice quanti elementi, punti chiave e note perdono l'etichetta; dopo, restano nel progetto.
+- [ ] 10za.8 Metti nel Cestino un elemento del progetto, poi il progetto; ripristina solo l'elemento: torna in *Elementi da classificare*.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

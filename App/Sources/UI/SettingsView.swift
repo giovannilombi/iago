@@ -394,8 +394,8 @@ private struct TranscriptionPane: View {
     }
 }
 
-/// Projects (rename, archive, delete). Deleting asks three times: warning with what is lost, typing
-/// DELETE, final warning.
+/// Projects (rename, archive, delete). Deleting offers the trash for 30 days or deletion for good, which asks for
+/// DELETE and a last warning (ADR-0099).
 private struct ProjectsPane: View {
     let model: AppModel
     @State private var hasExample = false
@@ -403,9 +403,6 @@ private struct ProjectsPane: View {
     @State private var projects: [Project] = []
     @State private var names: [String: String] = [:]
     @State private var deleting: Project?
-    @State private var stats: Archive.ProjectStats?
-    @State private var step = 0
-    @State private var typed = ""
 
     var body: some View {
         if hasExample {
@@ -463,7 +460,7 @@ private struct ProjectsPane: View {
                         reload()
                     }
                     .buttonStyle(.link)
-                    Button(String(localized: "Elimina…"), role: .destructive) { startDelete(project) }.buttonStyle(
+                    Button(String(localized: "Elimina…"), role: .destructive) { deleting = project }.buttonStyle(
                         .link)
                 }
                 // ADR-0074, ADR-0076: each project in «Gestisci» (the default) or kept simple in «Traccia».
@@ -487,54 +484,7 @@ private struct ProjectsPane: View {
             if projects.isEmpty { Text(String(localized: "Nessun progetto creato.")).foregroundStyle(.secondary) }
         }
         .onAppear(perform: reload)
-        // Step 1: what is lost.
-        .alert(
-            String(localized: "Eliminare il progetto \"\(deleting?.name ?? "")\"?"),
-            isPresented: Binding(get: { step == 1 }, set: { if !$0 && step == 1 { cancel() } })
-        ) {
-            Button(String(localized: "Continua"), role: .destructive) { step = 2 }
-            Button(String(localized: "Annulla"), role: .cancel) { cancel() }
-        } message: {
-            Text(
-                String(
-                    localized:
-                        "Perderai tutto il materiale del progetto: \(stats?.items ?? 0) elementi con audio e documenti, \(stats?.transcripts ?? 0) trascrizioni e \(stats?.notes ?? 0) note. Non si potrà recuperare, nemmeno dal cestino."
-                ))
-        }
-        // Step 2: type DELETE.
-        .sheet(isPresented: Binding(get: { step == 2 }, set: { if !$0 && step == 2 { cancel() } })) {
-            VStack(alignment: .leading, spacing: 12) {
-                Label(String(localized: "Conferma l'eliminazione"), systemImage: "exclamationmark.triangle.fill")
-                    .font(.title3).bold().foregroundStyle(.red)
-                Text(
-                    String(
-                        localized:
-                            "Per eliminare \"\(deleting?.name ?? "")\" e tutto il suo contenuto scrivi DELETE qui sotto."
-                    ))
-                TextField("DELETE", text: $typed).textFieldStyle(.roundedBorder).font(.title2.monospaced()).frame(
-                    width: 220)
-                HStack {
-                    Spacer()
-                    Button(String(localized: "Annulla"), role: .cancel) { cancel() }.keyboardShortcut(.cancelAction)
-                    Button(String(localized: "OK")) { step = 3 }.disabled(typed != "DELETE")
-                }
-            }
-            .padding(20).frame(width: 420)
-        }
-        // Step 3: final warning.
-        .alert(
-            String(localized: "Ultima conferma"),
-            isPresented: Binding(get: { step == 3 }, set: { if !$0 && step == 3 { cancel() } })
-        ) {
-            Button(String(localized: "Elimina definitivamente"), role: .destructive) { delete() }
-            Button(String(localized: "Annulla"), role: .cancel) { cancel() }
-        } message: {
-            Text(
-                String(
-                    localized:
-                        "Il progetto \"\(deleting?.name ?? "")\" e tutto il suo contenuto verranno distrutti. L'operazione non si può annullare."
-                ))
-        }
+        .projectDeletion(model: model, project: $deleting, onDone: reload)
     }
 
     private func reload() {
@@ -560,27 +510,6 @@ private struct ProjectsPane: View {
     private func rename(_ project: Project) {
         guard let name = names[project.id], name != project.name else { return }
         model.perform { try model.archive.renameProject(project.id, to: name) }
-        reload()
-    }
-
-    private func startDelete(_ project: Project) {
-        deleting = project
-        stats = try? model.archive.projectStats(project.id)
-        typed = ""
-        step = 1
-    }
-
-    private func cancel() {
-        step = 0
-        deleting = nil
-        typed = ""
-    }
-
-    private func delete() {
-        guard let project = deleting else { return }
-        model.perform { try model.archive.deleteProject(project.id) }
-        if case .library(.project(project.id)) = model.sidebar { model.select(.library(.recent)) }
-        cancel()
         reload()
     }
 }
@@ -1138,7 +1067,8 @@ extension Color {
     }
 }
 
-/// Clients (ADR-0038): rename, archive, delete. Deleting a client never deletes its projects.
+/// Clients (ADR-0038): rename, archive, delete. Deleting a client never deletes its projects: it lists them, with
+/// their streams, before they go to «Senza cliente» (ADR-0099).
 private struct ClientsPane: View {
     let model: AppModel
     @State private var clients: [Client] = []
@@ -1187,19 +1117,7 @@ private struct ClientsPane: View {
         }
         .onAppear(perform: reload)
         .sheet(isPresented: $creating) { NewClientSheet(model: model) { _ in reload() } }
-        .confirmationDialog(
-            String(localized: "Eliminare il cliente «\(deleting?.name ?? "")»?"),
-            isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "Elimina cliente"), role: .destructive) {
-                if let id = deleting?.id { model.perform { try model.archive.deleteClient(id) } }
-                deleting = nil
-                reload()
-            }
-        } message: {
-            Text(String(localized: "I suoi progetti restano, senza cliente."))
-        }
+        .clientDeletion(model: model, client: $deleting, onDone: reload)
     }
 
     private func reload() {
@@ -1248,19 +1166,7 @@ private struct ProjectStreamsEditor: View {
             Button(String(localized: "+ Stream")) { creating = true }.buttonStyle(.link).font(.caption)
         }
         .sheet(isPresented: $creating) { NewStreamSheet(model: model, project: project) { _ in model.reload() } }
-        .confirmationDialog(
-            String(localized: "Eliminare lo stream «\(deleting?.name ?? "")»?"),
-            isPresented: Binding(get: { deleting != nil }, set: { if !$0 { deleting = nil } }),
-            titleVisibility: .visible
-        ) {
-            Button(String(localized: "Elimina stream"), role: .destructive) {
-                if let id = deleting?.id { model.perform { try model.archive.deleteStream(id) } }
-                deleting = nil
-                model.reload()
-            }
-        } message: {
-            Text(String(localized: "Elementi e decisioni restano nel progetto: perdono solo l'etichetta dello stream."))
-        }
+        .streamDeletion(model: model, stream: $deleting)
     }
 }
 

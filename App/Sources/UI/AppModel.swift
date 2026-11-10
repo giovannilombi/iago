@@ -276,6 +276,8 @@ final class AppModel {
     /// Recordings the user discarded while recording: moved to "Scartate temporanee" once saved.
     @ObservationIgnored private var pendingDiscards: Set<String> = []
     private(set) var trashedAssets: [Asset] = []
+    /// Projects in the trash (ADR-0099).
+    private(set) var trashedProjects: [Project] = []
     private(set) var unclassifiedCount = 0
     /// Bumped on every database change; detail views reload when it changes.
     private(set) var revision = 0
@@ -361,6 +363,7 @@ final class AppModel {
             trashedItems = try archive.trashedItems()
             discardedItems = try archive.discardedItems()
             trashedAssets = try archive.trashedAssets()
+            trashedProjects = try archive.trashedProjects()
             unclassifiedCount = try archive.summaries(.unclassified).count
             if case .library(let scope) = sidebar {
                 summaries = filter.apply(try archive.summaries(scope))
@@ -1460,6 +1463,20 @@ final class AppModel {
             case .permanent: try archive.purgeAsset(asset.id)
             }
         }
+    }
+
+    /// After a project went to the trash or was deleted (ADR-0099): leaves its page, its streams and their pins.
+    func leaveRemovedProject(_ id: String, streams removed: [ProjectStream]) {
+        for stream in removed where isPinnedLabel("stream:\(stream.id)") { togglePinnedLabel("stream:\(stream.id)") }
+        let streamIDs = Set(removed.map(\.id))
+        if case .library(let scope) = sidebar {
+            switch scope {
+            case .project(id): select(.library(.recent))
+            case .stream(let streamID) where streamIDs.contains(streamID): select(.library(.recent))
+            default: break
+            }
+        }
+        reload()
     }
 
     func daysLeft(trashedAt: Date) -> Int {
