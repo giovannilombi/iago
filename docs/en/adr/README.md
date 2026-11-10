@@ -121,3 +121,4 @@ Every relevant architectural decision has a numbered ADR. An accepted ADR is not
 | 0097 | DMG with background and instructions, releases on the public repository | accepted |
 | 0098 | Collect mode: an archive to query, without management | accepted |
 | 0099 | Deleting projects, clients and streams: Trash or permanent deletion | accepted |
+| 0100 | Kind of update chosen for every release, with the reason in the notes | accepted |

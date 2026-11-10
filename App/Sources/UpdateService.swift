@@ -4,10 +4,13 @@ import Observation
 import Sparkle
 import os
 
-/// Updates from GitHub Releases through Sparkle (ADR-0056): a check once a day, signed with EdDSA. Minor versions are
-/// offered (install, later, skip); a new major version is mandatory: it is marked critical in the feed, Sparkle offers
-/// no "skip", and after `graceDays` from when IAGO first saw it, IAGO starts no new recording, transcription, summary
-/// or proposal until it is installed. A recording going on is never interrupted; the archive stays readable.
+/// Updates from GitHub Releases through Sparkle (ADR-0056): a check once a day, signed with EdDSA. The user decides the
+/// kind of every release (ADR-0100), written in the feed by `scripts/release.sh`:
+/// - optional: install, later, skip;
+/// - no-skip: critical for Sparkle, which then offers no "skip", plus `<iago:update>no-skip</iago:update>`, so IAGO
+///   blocks nothing;
+/// - mandatory: critical; after `graceDays` from when IAGO first saw it, IAGO starts no new recording, transcription,
+///   summary or proposal until it is installed. A recording going on is never interrupted; the archive stays readable.
 @MainActor
 @Observable
 final class UpdateService: NSObject, SPUUpdaterDelegate {
@@ -83,11 +86,12 @@ final class UpdateService: NSObject, SPUUpdaterDelegate {
 
     nonisolated func updater(_ updater: SPUUpdater, didFindValidUpdate item: SUAppcastItem) {
         let version = item.displayVersionString
-        let critical = item.isCriticalUpdate || Self.isMajor(version, over: Self.currentVersionNonisolated)
+        let mandatory = Self.isMandatory(
+            critical: item.isCriticalUpdate, kind: item.propertiesDictionary[Self.kindElement] as? String)
         Task { @MainActor in
             availableVersion = version
-            if critical { mandatoryVersion = version }
-            logger.notice("Update \(version, privacy: .public) found, mandatory: \(critical)")
+            mandatoryVersion = mandatory ? version : nil
+            logger.notice("Update \(version, privacy: .public) found, mandatory: \(mandatory)")
         }
     }
 
@@ -103,14 +107,12 @@ final class UpdateService: NSObject, SPUUpdaterDelegate {
         Task { @MainActor in try? archive.audit(.update, action: "install", detail: version) }
     }
 
-    nonisolated static var currentVersionNonisolated: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
-    }
+    /// The feed element that says the kind of a critical update (ADR-0100).
+    nonisolated static let kindElement = "iago:update"
 
-    /// 2.0.0 over 1.4.3: a new major version, mandatory.
-    nonisolated static func isMajor(_ new: String, over current: String) -> Bool {
-        let a = Int(new.split(separator: ".").first ?? "") ?? 0
-        let b = Int(current.split(separator: ".").first ?? "") ?? 0
-        return a > b
+    /// Critical without `no-skip`: mandatory. Critical with `no-skip`: only without "skip". The version number alone
+    /// never makes an update mandatory (ADR-0100): the user decides it for every release.
+    nonisolated static func isMandatory(critical: Bool, kind: String?) -> Bool {
+        critical && kind?.trimmingCharacters(in: .whitespacesAndNewlines) != "no-skip"
     }
 }

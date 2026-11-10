@@ -382,6 +382,12 @@ Su un archivio di prova, con un progetto che ha due stream, qualche elemento, un
 - [ ] 10za.7 Tasto destro su uno stream › *Elimina stream…*: dice quanti elementi, punti chiave e note perdono l'etichetta; dopo, restano nel progetto.
 - [ ] 10za.8 Metti nel Cestino un elemento del progetto, poi il progetto; ripristina solo l'elemento: torna in *Elementi da classificare*.
 
+## 10zb. Tipo di aggiornamento (ADR-0100)
+Con una release di prova, da una versione installata dal DMG uguale o successiva alla 1.3.3-beta.
+- [ ] 10zb.1 Release `--update optional`: la finestra dell'aggiornamento ha *Salta questa versione*; le note dicono cosa cambia e «Aggiornamento non obbligatorio».
+- [ ] 10zb.2 Release `--update no-skip`: niente *Salta questa versione*; le note dicono perché è importante; il menu di IAGO non mostra una scadenza e le registrazioni partono anche dopo 2 giorni.
+- [ ] 10zb.3 Release `--update mandatory`: niente *Salta*; le note dicono perché è obbligatorio; il menu mostra la scadenza e dopo 2 giorni IAGO non avvia nuove registrazioni.
+
 ## 11. Prove già in coda dalle fasi precedenti
 - [ ] 11.1 "Riordina testo" su 2-3 note dettate: il testo resta fedele (nomi, numeri e date invariati).
 - [ ] 11.2 Qualità della trascrizione su call reali con più persone.

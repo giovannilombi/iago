@@ -16,16 +16,21 @@
 ## Updates with Sparkle (ADR-0056)
 - **Sparkle 2.10** reads `https://github.com/giovannilombi/iago/releases/latest/download/appcast.xml`.
 - Every release is an **EdDSA**-signed archive; the public key is in the app (`SUPublicEDKey`), the private one in the publisher's Keychain. IAGO installs only versions signed with the same key.
-- **Mandatory major versions:** the appcast marks them as *critical*. From when IAGO sees them there are 2 days of margin (`UpdateService.mandatoryDeadline`, date in `update.mandatoryFirstSeen`), with the deadline and *Update now…* in the menu; then IAGO starts no new recordings, transcriptions, summaries or suggestions (`AppModel.blockedByUpdate`). A recording in progress continues.
+- **Kind of update** (ADR-0100), chosen by the user for every release with `--update`:
+  - `optional`: no mark in the appcast;
+  - `no-skip`: *critical*, so Sparkle offers no «Skip», plus `<iago:update>no-skip</iago:update>` (namespace `https://giovannilombi.github.io/iago/appcast`), so IAGO blocks nothing (`UpdateService.isMandatory`). It works from IAGO 1.3.3-beta: earlier versions treat it as mandatory;
+  - `mandatory`: *critical* only.
+- **Mandatory updates:** from when IAGO sees them there are 2 days of margin (`UpdateService.mandatoryDeadline`, date in `update.mandatoryFirstSeen`), with the deadline and *Update now…* in the menu; then IAGO starts no new recordings, transcriptions, summaries or suggestions (`AppModel.blockedByUpdate`). A recording in progress continues.
 - It works because the repository is **public** (since November 7, 2026, first release 1.3.0-beta).
 
 ## Making a release
 ```sh
-scripts/release.sh 1.0.0 --notes "Novità…" --github
+scripts/release.sh 1.0.0 --update optional --notes "Novità…" --github
+scripts/release.sh 1.0.0 --update mandatory --notes "Novità…" --why "Perché è obbligatorio…" --github
 ```
 1. Updates version and build in `project.yml` (`1.1.0`, or `1.1.1-beta` for a beta).
 2. Builds the signed Release and verifies it with `codesign`.
-3. Creates the zip, signs it for Sparkle and writes `appcast.xml`.
+3. Creates the zip, signs it for Sparkle and writes `appcast.xml`, with the kind of update and, in the notes, what changes and, if needed, why it is mandatory or important.
 4. Creates the **DMG** with `dmgbuild`, putting the app icon in the instructions, and signs it with the same identity as the app. It also copies it as `IAGO.dmg`, the fixed name of the link at the top of the README.
 5. With `--github` it publishes the release, marked as the latest, with the two DMGs, the zip, the appcast and the installation instructions in the notes.
 

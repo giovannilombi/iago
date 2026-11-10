@@ -141,5 +141,11 @@ Cosa resta da fare, in ordine, è in [`docs/stato.md`](docs/stato.md).
 ## 9. Fare una release
 - La versione è in `project.yml`, nella forma `x.y.z-beta`. Il terzo numero sale con una PR che cambia l'app (si chiede a Giovanni), il secondo con un gruppo grande di funzioni. Alla distribuzione si toglie `-beta`.
 - Ogni versione ha un **tag annotato** (`git tag -a v1.0.1-beta -m "…funzioni…"`) che fa da punto di ripristino per codice, guida e documentazione; vedi README › *Tornare a una versione precedente*. Il ramo `release/1.0.x` tiene la serie 1.0.
-- `scripts/release.sh <versione> --notes "…" --github` compila, firma l'archivio per Sparkle (la chiave è nel Portachiavi di Giovanni), crea il DMG con sfondo e istruzioni (`scripts/dmg`, ADR-0097; serve Python 3, la prima volta installa `dmgbuild` in `build/`) e pubblica la release su GitHub, da cui la scaricano gli utenti e arrivano gli aggiornamenti.
+- **Il tipo di aggiornamento lo decide Giovanni a ogni release** (ADR-0100), non il numero di versione:
+  - **non obbligatorio, si può saltare** (`--update optional`): installa, più tardi, salta;
+  - **non obbligatorio, senza «Salta»** (`--update no-skip`): IAGO non blocca nulla, ma la versione non si può saltare;
+  - **obbligatorio** (`--update mandatory`): 2 giorni di margine, poi IAGO non avvia nuove registrazioni finché non si aggiorna.
+
+  Le note dicono sempre **cosa cambia** (`--notes`). Per `no-skip` e `mandatory` dicono anche **perché** (`--why`): perché è obbligatorio, oppure perché è importante installarlo anche se lasciamo tempo. Lo script si ferma se manca qualcosa.
+- `scripts/release.sh <versione> --update … --notes "…" [--why "…"] --github` compila, firma l'archivio per Sparkle (la chiave è nel Portachiavi di Giovanni), crea il DMG con sfondo e istruzioni (`scripts/dmg`, ADR-0097; serve Python 3, la prima volta installa `dmgbuild` in `build/`) e pubblica la release su GitHub, da cui la scaricano gli utenti e arrivano gli aggiornamenti.
 - A ogni release si aggiorna la tabella Versioni del README.

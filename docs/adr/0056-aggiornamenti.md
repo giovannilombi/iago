@@ -65,3 +65,6 @@ Decisione dell'utente: le versioni maggiori restano obbligatorie, con **2 giorni
 - Passati i 2 giorni IAGO non avvia nuove registrazioni, trascrizioni, sintesi e proposte, nemmeno quelle automatiche, e dice come aggiornare. L'utente deve solo premere *Aggiorna ora*.
 - L'archivio resta leggibile ed esportabile, e una registrazione in corso non si interrompe mai.
 - Un Mac sempre senza rete non vede l'aggiornamento e quindi non viene bloccato.
+
+## Modifica del 2026-11-10 (ADR-0100)
+Il tipo di aggiornamento non dipende più dal numero di versione: a ogni release l'utente sceglie tra non obbligatorio, non obbligatorio senza «Salta» e obbligatorio, e le note dicono cosa cambia e, quando serve, perché. Vedi ADR-0100.

@@ -65,3 +65,6 @@ User's decision: major versions stay mandatory, with **2 days of margin**.
 - After the 2 days IAGO starts no new recordings, transcriptions, summaries or suggestions, not even automatic ones, and says how to update. The user only has to press *Update now*.
 - The archive stays readable and exportable, and a recording in progress is never interrupted.
 - A Mac that is always offline does not see the update and so is not blocked.
+
+## Change of 2026-11-10 (ADR-0100)
+The kind of update no longer depends on the version number: for every release the user chooses between optional, optional without «Skip» and mandatory, and the notes say what changes and, when needed, why. See ADR-0100.

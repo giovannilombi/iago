@@ -121,3 +121,4 @@ Ogni decisione architetturale rilevante ha un ADR numerato. Un ADR accettato non
 | 0097 | DMG con sfondo e istruzioni, release sul repository pubblico | accettato |
 | 0098 | Modalità Raccogli: un archivio da interrogare, senza gestione | accettato |
 | 0099 | Eliminare progetti, clienti e stream: Cestino o eliminazione definitiva | accettato |
+| 0100 | Tipo di aggiornamento deciso a ogni release, con il perché nelle note | accettato |
