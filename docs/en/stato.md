@@ -5,7 +5,7 @@
 > Last update: **November 10, 2026**.
 
 ## In brief
-- **Version:** 1.3.1-beta on `main` (tag `v1.3.1-beta`), with Collect mode; 1.3.0-beta was the first public one: [release](https://github.com/giovannilombi/iago/releases/latest) with the DMG and [site](https://giovannilombi.github.io/iago/en/). Features of 1.2.15-beta: app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.3.0-beta`, `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. It stays `-beta` until the user decides otherwise.
+- **Version:** 1.3.2-beta on `main` (tag `v1.3.2-beta`), with deletion of projects, clients and streams and the project Trash (ADR-0099); 1.3.1-beta brought Collect mode; 1.3.0-beta was the first public one: [release](https://github.com/giovannilombi/iago/releases/latest) with the DMG and [site](https://giovannilombi.github.io/iago/en/). Features of 1.2.15-beta: app, guide, site and documents in Italian and English (ADR-0077), with open work revised (ADR-0074, ADR-0075, ADR-0076). Restore points: `v1.3.1-beta`, `v1.3.0-beta`, `v1.2.15-beta`, `v1.2.14-beta`, `v1.2.13-beta`, `v1.2.12-beta`, `v1.2.11-beta`, `v1.2.10-beta`, `v1.2.9-beta`, `v1.2.8-beta`, `v1.2.7-beta`, `v1.2.6-beta`, `v1.2.5-beta`, `v1.2.4-beta`, `v1.2.3-beta`, `v1.2.2-beta`, `v1.2.1-beta`, `v1.2.0-beta`, `v1.1.0-beta` and `v1.0.1-beta` with the `release/1.0.x` branch (1.0 series). To go back with an archive already opened, you need the backup made before updating. It stays `-beta` until the user decides otherwise.
 - **Repositories:**
   - `giovannilombi/iago`, **public since November 7, 2026**, born with a single commit "IAGO 1.0.0-beta" (tag `v1.0.0-beta`);
   - `giovannilombi/iago-archivio`, private, with the previous development history (it contains real test data: it must never be made public).
@@ -61,6 +61,7 @@ List reordered on October 30, 2026 with the user: outdated entries removed (Mini
    - a Windows version, a rewrite: before starting read [`docs/design/windows.md`](design/windows.md).
 
 ## Latest changes
+- **2026-11-10:** version **1.3.2-beta** with deletion of projects, clients and streams, published as a non-mandatory update.
 - **2026-11-10, deleting projects, clients and streams** (ADR-0099, user request):
   - **Project:** *Delete project…* also from the right-click menu in the sidebar, with the same dialog as Settings. It says what the project holds, lists the streams that go with it and lets the user choose, explaining the difference, between the **Trash for 30 days** (the default, one confirmation, restored as it was) and **permanent deletion** (DELETE and a last confirmation).
   - **Client:** the dialog lists the projects, with their streams, that move to «No client». Projects are never deleted with the client.
